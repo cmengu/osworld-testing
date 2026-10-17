@@ -269,6 +269,11 @@ class Collector:
         from rig.snapshot import WINDOWS_SCRIPT, _digest
         from rig.vm import vm_shell
         windows = vm_shell(self.env, WINDOWS_SCRIPT, timeout=20).get("output") or ""
+        if not titles(windows) and "@!" not in windows:
+            # an empty list without even the desktop entry is wmctrl failing, not an empty desktop
+            # (pilot-0210 c07): ask once more before judging
+            time.sleep(3)
+            windows = vm_shell(self.env, WINDOWS_SCRIPT, timeout=20).get("output") or windows
         digest, err = _digest(self.env)
         return windows, digest, err
 
