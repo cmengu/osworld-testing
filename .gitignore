@@ -13,6 +13,13 @@ rig/out/mask_run/*
 !rig/out/smoke_run/
 rig/out/smoke_run/*
 !rig/out/smoke_run/report.md
+!rig/out/pilot_run/
+rig/out/pilot_run/*
+!rig/out/pilot_run/report.md
+!rig/out/pilot_run/rules_log.md
+!rig/out/menu_probe/
+rig/out/menu_probe/*
+!rig/out/menu_probe/log.json
 
 # tree probe: keep the small text outputs, not the screenshot or the raw tree
 calc-tree/screenshot.png

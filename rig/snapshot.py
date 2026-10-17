@@ -130,14 +130,18 @@ def _digest(env):
     return {}, err
 
 
-def take_snapshot(env, out_dir: pathlib.Path, meta: Optional[dict] = None, with_screenshot: bool = True) -> Snapshot:
+def take_snapshot(env, out_dir: pathlib.Path, meta: Optional[dict] = None, with_screenshot: bool = True,
+                  expect: Optional[str] = "LibreOffice", require_office: bool = EXPECT_OFFICE) -> Snapshot:
+    """expect: window-title fragment the tree must contain (None when the application may be closed);
+    require_office: whether `ok` demands a LibreOffice frame with a shallow menu bar (False for states
+    after Ctrl+Q, where the tree legitimately holds no office window)."""
     out_dir = pathlib.Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     meta = dict(meta or {})
     meta["taken_at"] = time.time()
 
     t = time.time()
-    tree_xml, tree_info = fetch_tree(env)
+    tree_xml, tree_info = fetch_tree(env, expect=expect or "")
     meta["tree_seconds"] = round(time.time() - t, 1)
     meta["tree_info"] = tree_info
     (out_dir / "tree.xml").write_text(tree_xml)
@@ -164,8 +168,9 @@ def take_snapshot(env, out_dir: pathlib.Path, meta: Optional[dict] = None, with_
     # different scope (desktop shell, menu items) and would produce thousands of false diffs.
     meta.update({"tree_chars": len(tree_xml), "nodes": len(canon), "files": len(digest),
                  "ok": bool(canon) and bool(digest) and tree_info.get("source") == "fast"
-                       and (not EXPECT_OFFICE or (tree_info.get("office_frames", 0) >= 1
-                                                  and tree_info.get("menus_shallow", 0) >= 1))})
+                       and (not require_office or (tree_info.get("office_frames", 0) >= 1
+                                                   and tree_info.get("menus_shallow", 0) >= 1)),
+                 "require_office": require_office})
     if canon and digest and tree_info.get("source") != "fast":
         meta["tree_error"] = f"tree not from the scoped walker: {tree_info.get('source')}"
     (out_dir / "meta.json").write_text(json.dumps(meta, indent=1, sort_keys=True))

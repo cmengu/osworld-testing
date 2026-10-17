@@ -25,6 +25,7 @@ sed -i "/org\\.openoffice\\.Office\\.Recovery/d" "$HOME"/.config/libreoffice/4/u
 rm -f "$HOME"/.config/libreoffice/4/.lock 2>/dev/null
 # files written by actions under test (the Save As click-spot); never part of the task
 rm -f "$HOME"/smoke_copy* "$HOME"/Documents/smoke_copy* "$HOME"/Desktop/smoke_copy* 2>/dev/null
+rm -f "$HOME"/pilot_* "$HOME"/Documents/pilot_* "$HOME"/Desktop/pilot_* 2>/dev/null
 true
 """
 
@@ -102,3 +103,22 @@ def fresh_start(env, task: dict, fast: bool = True) -> str:
     env.reset(task_config=task)
     time.sleep(SETTLE_SECONDS)
     return "slow"
+
+
+def switch_task(env, task: dict) -> str:
+    """Bring another task's files into the VM without env.reset (which on Modal tears the sandbox down):
+    download them where the task config puts them, prime the cache, then take the fast fresh-start path.
+    Returns the fresh_start result or 'download-failed'."""
+    import shlex
+    cmds = []
+    for step in task.get("config", []):
+        if step.get("type") == "download":
+            for f in step.get("parameters", {}).get("files", []):
+                if f.get("url") and f.get("path"):
+                    cmds.append(f'(wget -q -O {shlex.quote(f["path"])} {shlex.quote(f["url"])} || curl -sL -o {shlex.quote(f["path"])} {shlex.quote(f["url"])})')
+    if cmds:
+        res = vm_shell(env, " && ".join(cmds) + " && echo DOWNLOADED", timeout=110)
+        if "DOWNLOADED" not in (res.get("output") or ""):
+            return "download-failed"
+    prime_cache(env, task)
+    return fresh_start(env, task)
