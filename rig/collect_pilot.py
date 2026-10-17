@@ -72,6 +72,31 @@ def titles(windows_text: str) -> list:
     return sorted(out)
 
 
+def content_score(tree_diffs, fdiffs) -> tuple:
+    """Rank a failed candidate by how far it is from S in CONTENT first (cell text/formula/note, files,
+    windows and dialogs), readouts second.  The closest-failing candidate for the confirming replay is the
+    one with the fewest content differences; raw diff counts ranked a cursor move (1 cell still wrong) above a
+    real undo (0 cells wrong, 25 readout diffs) on pilot-0003."""
+    content = len(fdiffs)
+    for d in tree_diffs:
+        p, a = d["path"], d["attr"]
+        if "table-cell" in p:
+            if a in ("text", "Formula", "Note") or (a == NODE_ATTR and (d.get("old") or d.get("new")) and _cell_has_content(d)):
+                content += 1
+        elif ("/dialog[" in p or "/frame[" in p) and a == NODE_ATTR:
+            content += 1
+    return (content, len(tree_diffs) + len(fdiffs))
+
+
+NODE_ATTR = "__node__"
+
+
+def _cell_has_content(d) -> bool:
+    # a cell node that appears or disappears counts as content only if the differ recorded text on it; the
+    # differ reports node presence without attributes, so presence alone is treated as a viewport change
+    return False
+
+
 def classify_diffs(tree_diffs, fdiffs) -> str:
     """Which layer a disagreement lives in: for the flicker_class field and Table 4."""
     if not tree_diffs and not fdiffs:
@@ -359,7 +384,7 @@ class Collector:
                 if not okq:
                     r.update({"result": "; ".join(reasons)[:300], "tree_taken": False, "file_diffs": len(qf), "quick_reject": True})
                     (cdir / "meta.json").write_text(json.dumps({"quick_reject": reasons, "fresh": rinfo}))
-                    score = 10_000 + len(qf) + (5_000 if any(x.startswith("windows") for x in reasons) else 0)
+                    score = (len(qf) + (100 if any(x.startswith("windows") for x in reasons) else 0), 10_000 + len(qf))
                 else:
                     snap = self.snapshot(cdir, {"row": rid, "kind": "candidate", "seq": cand, **rinfo}, expect_kind="any",
                                          office_expected=office_running or "reopen" in cand)
@@ -367,7 +392,7 @@ class Collector:
                     r.update({"result": "match" if eq_c else f"state differs: {len(td)} tree, {len(fd)} files; {classify_diffs(td, fd)}",
                               "tree_taken": True, "tree_diffs": len(td), "file_diffs": len(fd), "snapshot_ok": snap.ok,
                               "diff_sample": summarize(td, limit=5) if not eq_c else ""})
-                    score = (len(td) + len(fd)) if snap.ok else 9_000
+                    score = content_score(td, fd) if snap.ok else (9_000, 9_000)
                     if eq_c:
                         r["match"] = True
                 if closest is None or score < closest[0]:
@@ -492,7 +517,7 @@ class Collector:
 
     def _diffs_of_closest(self, rdir, closest, S):
         """Re-read the closest candidate's snapshot from disk for the flicker class (it had a full tree if score < 9000)."""
-        if closest is None or closest[0] >= 9_000:
+        if closest is None or closest[0][1] >= 9_000:
             return [], ["(quick reject)"]
         snap = load_snapshot(rdir / f"c{closest[1]:02d}")
         _, td, fd = states_equal(S.canon, S.digest, snap.canon, snap.digest, self.mask)
