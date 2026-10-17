@@ -134,7 +134,10 @@ try:
         frames = kids(app)
         is_office = pid_of(app) in office_pids or any("LibreOffice" in name_of(f) for f in frames)
         stats["apps"].append(name + ("*" if is_office else ""))
-        if name in SKIP_APPS:
+        if name in SKIP_APPS or (not name and not is_office):
+            # the desktop shell, or an application the bus reports without a name that is not LibreOffice
+            # (gnome-shell loses its name for a moment; pilot row pilot-0003 candidates c01/c06 walked 2,000
+            # shell nodes through that gap): recorded as a childless placeholder, never walked
             el = shallow(app)
             if el is not None:
                 root.append(el)
