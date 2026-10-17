@@ -1,0 +1,22 @@
+{
+ "samples": 22,
+ "tree_pairs": [],
+ "tree_attr_by_tag": {},
+ "tree_churn_sites": [],
+ "file_paths": [
+  "/home/user/.config/dconf/user",
+  "/home/user/.config/libreoffice/4/.lock",
+  "/home/user/.config/libreoffice/4/user/pack/registrymodifications.pack",
+  "/home/user/.config/libreoffice/4/user/registrymodifications.xcu",
+  "/home/user/.local/share/gnome-shell/application_state",
+  "/home/user/.local/share/recently-used.xbel"
+ ],
+ "file_dirs": [],
+ "stats": {
+  "tree_pair_count": 0,
+  "tree_attrs_generalised": 0,
+  "tree_churn_sites": 0,
+  "file_path_count": 6,
+  "file_dir_count": 0
+ }
+}

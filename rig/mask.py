@@ -1,0 +1,192 @@
+"""Noise mask: what changes on its own, so it must be ignored when two states are compared.
+
+How it works.  Take many snapshots of the SAME nominal state (idle waits, then harmless
+no-op inputs).  Anything that differs between any two of them cannot be the effect of an
+action, so it is noise: a clock label, a blinking selection flag, an autosave or registry
+file.  The mask is the union of those differences, generalised a little:
+  * an attribute that flickers on three or more nodes of one tag (e.g. 'focused' on
+    table-cell) is masked for every node of that tag;
+  * a node that comes and goes is masked together with everything under it (a
+    notification banner's text differs next time, the banner's place does not);
+  * a place in the tree where three or more differently named nodes of one tag come and
+    go under the same parent (the top-bar clock: label[11:49], label[11:50], ...) is a
+    "churn site": every node of that tag under that parent is ignored, descendants too;
+  * a file that flickers inside a directory with three or more flickering files masks
+    the whole directory.
+Files compare by (size, content hash): the modified time is never compared, and for
+office files the content hash leaves the embedded metadata out (see snapshot.py).
+Comparing two states = apply the mask to both, then require exact equality of the rest.
+"""
+import os
+from collections import Counter, defaultdict
+from typing import Dict, List, Tuple
+
+from .treediff import NODE, Canon, diff, tag_of
+
+Digest = Dict[str, dict]
+GENERALISE_AT = 3
+# System journals inside the home directory that grow on their own and never hold document state: the X
+# server log (the smoke test caught it growing by 5 KB between two replays of Save As) and the GNOME
+# file-metadata journal (rewritten across VM boots).  Ignored on both sides of every comparison.
+IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/share/gvfs-metadata/")
+
+
+def file_sig(v: dict):
+    """What counts as 'the same file': size and content hash (office files: metadata-free)."""
+    if v is None:
+        return None
+    return (v.get("s"), v.get("c") or v.get("h"))
+
+
+def _is_lock(path: str) -> bool:
+    """A LibreOffice lock file (.~lock.<document>#) holds user, host and a timestamp: its presence says
+    a document is open, its bytes change on every launch.  Lock files compare by presence only."""
+    name = os.path.basename(path)
+    return name.startswith(".~lock.") and name.endswith("#")
+
+
+def _fsig(path: str, v: dict):
+    if v is None:
+        return None
+    return ("lock",) if _is_lock(path) else file_sig(v)
+
+
+def _parent_and_tag(path: str) -> Tuple[str, str]:
+    parent, last = path.rsplit("/", 1)
+    return parent, last.split("[", 1)[0]
+
+
+def _pairs_within_groups(items, groups):
+    """Comparisons: each item against the first of its group and against its predecessor."""
+    by_group = defaultdict(list)
+    for item, g in zip(items, groups or [None] * len(items)):
+        by_group[g].append(item)
+    out = []
+    for members in by_group.values():
+        out += [(members[0], m) for m in members[1:]] + list(zip(members[1:], members[2:]))
+    return out
+
+
+def build_mask(canons: List[Canon], digests: List[Digest], groups=None) -> dict:
+    """groups: optional label per snapshot (idle / noop / restart).  Differences are only
+    collected between snapshots of the same group, so a different launch regime is not
+    mistaken for noise."""
+    assert len(canons) >= 2, "need at least two snapshots of the same state"
+    pair_hits: Counter = Counter()                                   # (path, attr) -> count
+    attr_paths: Dict[Tuple[str, str], set] = defaultdict(set)         # (tag, attr) -> paths
+    churn_paths: Dict[Tuple[str, str], set] = defaultdict(set)        # (parent, tag) -> churned node paths
+    comparisons = _pairs_within_groups(canons, groups)
+    for a, b in comparisons:
+        for d in diff(a, b):
+            key = (d["path"], d["attr"])
+            pair_hits[key] += 1
+            if d["attr"] == NODE:
+                churn_paths[_parent_and_tag(d["path"])].add(d["path"])
+            else:
+                attr_paths[(tag_of(d["path"]), d["attr"])].add(d["path"])
+
+    attr_by_tag: Dict[str, List[str]] = defaultdict(list)
+    for (tag, attr), paths in attr_paths.items():
+        if len(paths) >= GENERALISE_AT:
+            attr_by_tag[tag].append(attr)
+    churn_sites = sorted(f"{parent}\t{tag}" for (parent, tag), paths in churn_paths.items()
+                         if len(paths) >= GENERALISE_AT and parent.count("/") > 1)   # never at the root
+    pairs = sorted({f"{p}\t{a}" for (p, a) in pair_hits})
+
+    file_hits: Counter = Counter()
+    fcomparisons = _pairs_within_groups(digests, groups)
+    for a, b in fcomparisons:
+        for p in set(a) | set(b):
+            if p.startswith(IGNORED_FILE_PREFIXES):
+                continue
+            if _fsig(p, a.get(p)) != _fsig(p, b.get(p)):
+                file_hits[p] += 1
+    dir_counts: Counter = Counter(os.path.dirname(p) for p in file_hits)
+    file_dirs = sorted(d for d, n in dir_counts.items() if n >= GENERALISE_AT)
+    file_paths = sorted(p for p in file_hits if os.path.dirname(p) not in file_dirs)
+
+    return {
+        "samples": len(canons),
+        "tree_pairs": pairs,
+        "tree_attr_by_tag": {t: sorted(a) for t, a in sorted(attr_by_tag.items())},
+        "tree_churn_sites": churn_sites,
+        "file_paths": file_paths,
+        "file_dirs": file_dirs,
+        "stats": {
+            "tree_pair_count": len(pairs),
+            "tree_attrs_generalised": sum(len(v) for v in attr_by_tag.values()),
+            "tree_churn_sites": len(churn_sites),
+            "file_path_count": len(file_paths),
+            "file_dir_count": len(file_dirs),
+        },
+    }
+
+
+def _dropped_prefixes(canon: Canon, mask: dict) -> tuple:
+    """Node paths (with trailing '/') whose whole subtree is ignored."""
+    prefixes = set()
+    for pair in mask.get("tree_pairs", []):
+        path, attr = pair.rsplit("\t", 1)
+        if attr == NODE:
+            prefixes.add(path + "/")
+    sites = set(mask.get("tree_churn_sites", []))
+    if sites:
+        for path in canon:
+            parent, tag = _parent_and_tag(path)
+            if f"{parent}\t{tag}" in sites:
+                prefixes.add(path + "/")
+    return tuple(sorted(prefixes))
+
+
+def apply_tree_mask(canon: Canon, mask: dict) -> Canon:
+    masked_pairs = set(mask.get("tree_pairs", []))
+    attr_by_tag = {t: set(a) for t, a in mask.get("tree_attr_by_tag", {}).items()}
+    prefixes = _dropped_prefixes(canon, mask)
+    out: Canon = {}
+    for path, attrs in canon.items():
+        if prefixes and (path + "/").startswith(prefixes):
+            continue
+        tag = tag_of(path)
+        kept = {}
+        for attr, val in attrs.items():
+            if f"{path}\t{attr}" in masked_pairs:
+                continue
+            if attr in attr_by_tag.get(tag, ()):
+                continue
+            kept[attr] = val
+        out[path] = kept
+    return out
+
+
+def apply_file_mask(digest: Digest, mask: dict) -> Digest:
+    masked_paths = set(mask.get("file_paths", []))
+    masked_dirs = tuple(d.rstrip("/") + "/" for d in mask.get("file_dirs", []))
+    return {p: v for p, v in digest.items()
+            if p not in masked_paths and not p.startswith(masked_dirs) and not p.startswith(IGNORED_FILE_PREFIXES)}
+
+
+def states_equal(a_canon: Canon, a_digest: Digest, b_canon: Canon, b_digest: Digest, mask: dict):
+    """(equal?, tree differences, file differences) after masking."""
+    tree_diffs = diff(apply_tree_mask(a_canon, mask), apply_tree_mask(b_canon, mask))
+    fa, fb = apply_file_mask(a_digest, mask), apply_file_mask(b_digest, mask)
+    file_diffs = sorted(p for p in set(fa) | set(fb) if _fsig(p, fa.get(p)) != _fsig(p, fb.get(p)))
+    return (not tree_diffs and not file_diffs), tree_diffs, file_diffs
+
+
+def describe(mask: dict, limit: int = 12) -> str:
+    s = mask["stats"]
+    lines = [
+        f"mask from {mask['samples']} snapshots: {s['tree_pair_count']} exact tree pairs, "
+        f"{s['tree_attrs_generalised']} tag-wide attributes, {s.get('tree_churn_sites', 0)} churn sites, "
+        f"{s['file_path_count']} files, {s['file_dir_count']} directories",
+    ]
+    for tag, attrs in list(mask["tree_attr_by_tag"].items())[:limit]:
+        lines.append(f"  tag {tag}: {', '.join(attrs)}")
+    for site in mask.get("tree_churn_sites", [])[:limit]:
+        parent, tag = site.split("\t")
+        lines.append(f"  churn {tag} under ...{parent[-70:]}")
+    for p in mask["file_paths"][:limit]:
+        lines.append(f"  file {p}")
+    for d in mask["file_dirs"][:limit]:
+        lines.append(f"  dir  {d}/")
+    return "\n".join(lines)

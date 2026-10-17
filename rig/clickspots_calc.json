@@ -1,0 +1,106 @@
+[
+ {
+  "id": "a1_text",
+  "desc": "type text into A1",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.typewrite('hello'); pyautogui.press('enter')"
+ },
+ {
+  "id": "b2_number",
+  "desc": "type a number into B2",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.press('right'); pyautogui.press('down'); pyautogui.typewrite('42'); pyautogui.press('enter')"
+ },
+ {
+  "id": "a1_delete",
+  "desc": "delete the content of A1",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.press('delete')"
+ },
+ {
+  "id": "a1_bold",
+  "desc": "bold A1",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'b')"
+ },
+ {
+  "id": "a1_formula",
+  "desc": "enter a SUM formula in A1",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.typewrite('=SUM(B2:B5)'); pyautogui.press('enter')"
+ },
+ {
+  "id": "save_ctrl_s",
+  "desc": "save in place (accept keep-format dialog)",
+  "code": "pyautogui.hotkey('ctrl', 's'); time.sleep(4); pyautogui.press('enter'); time.sleep(3)",
+  "pause": 3
+ },
+ {
+  "id": "save_as_new",
+  "desc": "save a copy as smoke_copy (xlsx); waits sized for a slow VM, cursor returned to A1",
+  "code": "pyautogui.hotkey('ctrl', 'shift', 's'); time.sleep(4); pyautogui.typewrite('smoke_copy'); time.sleep(1); pyautogui.press('enter'); time.sleep(4); pyautogui.press('enter'); time.sleep(3); pyautogui.hotkey('ctrl', 'home')",
+  "pause": 3
+ },
+ {
+  "id": "close_doc",
+  "desc": "close the document (dialog if modified, else Start Center)",
+  "code": "pyautogui.hotkey('ctrl', 'w'); time.sleep(1)",
+  "pause": 2
+ },
+ {
+  "id": "find_bar",
+  "desc": "open the find bar",
+  "code": "pyautogui.hotkey('ctrl', 'f'); time.sleep(1)"
+ },
+ {
+  "id": "select_all",
+  "desc": "select all cells",
+  "code": "pyautogui.hotkey('ctrl', 'a')"
+ },
+ {
+  "id": "autofilter",
+  "desc": "toggle autofilter on the data",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'shift', 'l'); time.sleep(1)"
+ },
+ {
+  "id": "format_cells_dialog",
+  "desc": "open the Format Cells dialog",
+  "code": "pyautogui.hotkey('ctrl', '1'); time.sleep(1)",
+  "pause": 2
+ },
+ {
+  "id": "cut_a1",
+  "desc": "cut A1 to the clipboard",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'x')"
+ },
+ {
+  "id": "fill_down",
+  "desc": "fill A1 down to A5",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('shift', 'down'); pyautogui.hotkey('shift', 'down'); pyautogui.hotkey('shift', 'down'); pyautogui.hotkey('shift', 'down'); pyautogui.hotkey('ctrl', 'd')"
+ },
+ {
+  "id": "delete_row",
+  "desc": "delete row 1",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('shift', 'space'); pyautogui.hotkey('ctrl', '-'); time.sleep(1)"
+ },
+ {
+  "id": "hide_column",
+  "desc": "hide column A",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', '0')"
+ },
+ {
+  "id": "hide_row",
+  "desc": "hide row 1",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', '9')"
+ },
+ {
+  "id": "clear_formatting",
+  "desc": "clear direct formatting of A1",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'm')"
+ },
+ {
+  "id": "insert_comment",
+  "desc": "insert a comment on A1",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'alt', 'c'); time.sleep(1); pyautogui.typewrite('note'); pyautogui.press('esc')"
+ },
+ {
+  "id": "edit_then_undo",
+  "desc": "type into A1 then undo",
+  "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.typewrite('tmp'); pyautogui.press('enter'); time.sleep(1); pyautogui.hotkey('ctrl', 'z')"
+ }
+]

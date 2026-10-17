@@ -1,0 +1,24 @@
+# secrets
+.env
+
+# the upstream OSWorld checkout is its own repository (2 GB); the local patch lives in toolset-patch.diff
+OSWorld/
+
+# snapshots and logs (about 211 MB); keep only the small reports and the learned mask
+rig/out/*
+!rig/out/mask_run/
+rig/out/mask_run/*
+!rig/out/mask_run/mask.json
+!rig/out/mask_run/report.md
+!rig/out/smoke_run/
+rig/out/smoke_run/*
+!rig/out/smoke_run/report.md
+
+# tree probe: keep the small text outputs, not the screenshot or the raw tree
+calc-tree/screenshot.png
+calc-tree/tree_raw.xml
+
+# python and macOS noise
+__pycache__/
+*.pyc
+.DS_Store

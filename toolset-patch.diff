@@ -1,0 +1,294 @@
+--- /Users/ngchenmeng/ai-research/osworld-testing/OSWorld/mm_agents/anthropic/utils.py.orig-20261016	2026-10-16 10:29:06
++++ /Users/ngchenmeng/ai-research/osworld-testing/OSWorld/mm_agents/anthropic/utils.py	2026-10-16 10:36:03
+@@ -29,7 +29,35 @@
+ 
+ PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
+ 
++# Computer-use request shapes.  The Claude 5.5 family (claude-sonnet-5-5, claude-opus-5-5,
++# claude-haiku-5-5) accepts computer use on the Claude API only through the
++# computer_toolset_20260801 toolset: no beta header, no name/display size, the action is
++# the member tool's name, several tool_use blocks per turn, and every tool_result must
++# echo toolset_name.  Older models keep the computer_20251124 tool and its beta header.
++COMPUTER_USE_BETA = "computer-use-2025-11-24"
++COMPUTER_TOOLSET_TYPE = "computer_toolset_20260801"
++# Lets a request replay thinking blocks after this harness pruned old screenshots from
++# earlier turns (preserved thinking would otherwise reject the edited history).
++THINKING_BINDING_BETA = "thinking-binding-controls-2026-08-01"
+ 
++
++def uses_computer_toolset(model_name: str, provider=None) -> bool:
++    """True when requests must use the computer toolset instead of computer_20251124.
++
++    OSWORLD_CLAUDE_TOOLSET=1/0 forces the choice.  Otherwise the 5.5 family uses the
++    toolset on the Claude API and Vertex; Amazon Bedrock still accepts the older tool.
++    """
++    import os
++    forced = os.getenv("OSWORLD_CLAUDE_TOOLSET", "").strip().lower()
++    if forced in ("1", "true", "yes"):
++        return True
++    if forced in ("0", "false", "no"):
++        return False
++    if provider is not None and getattr(provider, "value", provider) == "bedrock":
++        return False
++    return "-5-5" in (model_name or "")
++
++
+ class APIProvider(Enum):
+     ANTHROPIC = "anthropic"
+     BEDROCK = "bedrock"
+@@ -63,6 +91,10 @@
+     (APIProvider.BEDROCK, "claude-opus-4-7"): "global.anthropic.claude-opus-4-7-v1",
+     (APIProvider.ANTHROPIC, "claude-sonnet-4-7"): "claude-sonnet-4-7",
+     (APIProvider.BEDROCK, "claude-sonnet-4-7"): "global.anthropic.claude-sonnet-4-7-v1",
++    # Claude 5.5 family: computer use through computer_toolset_20260801 (see uses_computer_toolset)
++    (APIProvider.ANTHROPIC, "claude-sonnet-5-5"): "claude-sonnet-5-5",
++    (APIProvider.ANTHROPIC, "claude-opus-5-5"): "claude-opus-5-5",
++    (APIProvider.ANTHROPIC, "claude-haiku-5-5"): "claude-haiku-5-5",
+ }
+ 
+ 
+@@ -420,13 +452,19 @@
+         client = make_anthropic_client(
+             api_key=api_key or os.environ.get("ANTHROPIC_API_KEY"),
+             max_retries=4,
+-        ).with_options(default_headers={"anthropic-beta": "computer-use-2025-11-24"})
++        )
++        toolset = uses_computer_toolset(model_name, APIProvider.ANTHROPIC)
++        if not toolset:
++            client = client.with_options(default_headers={"anthropic-beta": COMPUTER_USE_BETA})
++        elif thinking_mode in ("regular", "isp"):
++            print("ℹ️  5.5 models reject fixed thinking budgets; validating with adaptive thinking")
++            thinking_mode = "adaptive"
+         
+         # Same message format as main agent - always use structured format with cache_control
+         messages = [{"role": "user", "content": [{"type": "text", "text": "Respond with 'OK'", "cache_control": {"type": "ephemeral"}}]}]
+         
+         # Same betas configuration as main agent
+-        betas = ["computer-use-2025-11-24"]
++        betas = [] if toolset else [COMPUTER_USE_BETA]
+ 
+         # Add thinking-specific beta headers
+         if thinking_mode == "isp":
+@@ -434,9 +472,12 @@
+         system = [{"type": "text", "text": "You are Claude. Respond with 'OK'."}]
+ 
+         # Same tools configuration as main agent - use modern computer tool for all models
+-        computer_tool_type = "computer_20251124"
+-        tools = [{"name": "computer", "type": computer_tool_type,
+-                 "display_width_px": 1280, "display_height_px": 720, "display_number": 1}]
++        if toolset:
++            tools = [{"type": COMPUTER_TOOLSET_TYPE}]
++        else:
++            computer_tool_type = "computer_20251124"
++            tools = [{"name": "computer", "type": computer_tool_type,
++                     "display_width_px": 1280, "display_height_px": 720, "display_number": 1}]
+ 
+         # Same thinking configuration as main agent
+         max_tokens = 50  # Base validation max_tokens
+@@ -472,7 +513,7 @@
+         for attempt in range(max_attempts):
+             try:
+                 # Same API call pattern as main agent
+-                client.beta.messages.create(
++                api_fallback_create(client,
+                     max_tokens=actual_max_tokens,
+                     messages=messages,
+                     model=get_model_name(APIProvider.ANTHROPIC, model_name),
+@@ -526,8 +567,10 @@
+                         thinking_block["signature"] = getattr(block, "signature", None)
+                     res.append(cast(BetaContentBlockParam, thinking_block))
+             else:
+-                # Handle tool use blocks normally
+-                res.append(cast(BetaToolUseBlockParam, block.model_dump()))
++                # Tool use / thinking blocks: replay as returned, minus null fields.
++                # Toolset tool_use blocks carry toolset_name, which must be echoed back.
++                dumped = {k: v for k, v in block.model_dump().items() if v is not None}
++                res.append(cast(BetaToolUseBlockParam, dumped))
+         return res
+     else:
+         return []
+@@ -554,4 +597,7 @@
+     agent goes through one function. ``_agent`` is accepted for
+     call-site compatibility and ignored.
+     """
++    if not kwargs.get("betas"):
++        # Nothing beta requested (computer toolset path): send no anthropic-beta header.
++        kwargs.pop("betas", None)
+     return client.beta.messages.create(**kwargs)
+--- /Users/ngchenmeng/ai-research/osworld-testing/OSWorld/mm_agents/anthropic/main.py.orig-20261016	2026-10-16 10:29:06
++++ /Users/ngchenmeng/ai-research/osworld-testing/OSWorld/mm_agents/anthropic/main.py	2026-10-16 10:36:56
+@@ -19,6 +19,7 @@
+     BetaTextBlockParam,
+ )
+ from .utils import PROMPT_CACHING_BETA_FLAG, SYSTEM_PROMPT, SYSTEM_PROMPT_WINDOWS, BATCHED_ACTION_PROMPT, BATCHED_TOOL_SCHEMA, APIProvider, get_model_name
++from .utils import uses_computer_toolset, COMPUTER_USE_BETA, COMPUTER_TOOLSET_TYPE, THINKING_BINDING_BETA
+ from .utils import api_fallback_create
+ from .utils import make_anthropic_client
+ 
+@@ -93,6 +94,18 @@
+         self.max_steps = kwargs.get('max_steps', 15)
+         self.current_step = 0
+ 
++        # Computer toolset (Claude 5.5 family on the Claude API) vs computer_20251124.
++        self.use_toolset = uses_computer_toolset(model, provider)
++        self.enable_zoom = kwargs.get('enable_zoom', True)
++        if self.use_toolset and self.thinking_mode != "adaptive":
++            logger.warning(
++                f"thinking_mode={self.thinking_mode!r} is not usable with {model}: 5.5 models reject "
++                "fixed thinking budgets and run adaptive thinking anyway; using adaptive"
++            )
++            self.thinking_mode = "adaptive"
++        if self.use_toolset:
++            logger.info(f"Using {COMPUTER_TOOLSET_TYPE} for {model} (zoom={'on' if self.enable_zoom else 'off'})")
++
+         # API resolution
+         api_resolution = kwargs.get('api_resolution', '720p')
+         if api_resolution == '1080p':
+@@ -163,6 +176,9 @@
+                 "content": [{"type": "text", "text": result}]
+             }
+         ]
++        if getattr(self, "use_toolset", False):
++            # A result that omits toolset_name is rejected by the API.
++            tool_result_content[0]["toolset_name"] = "computer"
+ 
+         # Add primary screenshot if provided
+         if screenshot is not None:
+@@ -177,6 +193,17 @@
+                     self._make_image_block(extra)
+                 )
+ 
++        last = self.messages[-1] if self.messages else None
++        if (
++            getattr(self, "use_toolset", False)
++            and last is not None
++            and last.get("role") == "user"
++            and isinstance(last.get("content"), list)
++            and any(isinstance(b, dict) and b.get("type") == "tool_result" for b in last["content"])
++        ):
++            # Toolset batch: all results answering one assistant turn go in ONE user message.
++            last["content"].extend(tool_result_content)
++            return
+         self.messages.append({
+             "role": "user",
+             "content": tool_result_content
+@@ -247,6 +274,14 @@
+                 else:
+                     raw_response_str += f"[OTHER] {str(block)}\n"
+         return raw_response_str.strip()
++
++    def _as_legacy_tool_call(self, block: Dict) -> Dict:
++        """Toolset blocks name the action (left_click, type, ...) and carry no input.action;
++        rewrite them into the computer_20251124 shape the converter below expects."""
++        tool_input = block.get("input") or {}
++        if "action" in tool_input or block.get("name") == "computer":
++            return block
++        return {**block, "input": {"action": block.get("name"), **tool_input}}
+ 
+     def parse_actions_from_tool_call(self, tool_call: Dict) -> str:
+         result = ""
+@@ -256,7 +291,7 @@
+ 
+         action = function_args.get("action")
+         if not action:
+-            action = tool_call.function.name
++            action = tool_call.get("name")
+         action_conversion = {
+             "left click": "click",
+             "right click": "right_click"
+@@ -545,6 +580,9 @@
+             for i, tool_block in enumerate(tool_use_blocks):
+                 tool_input = tool_block.get("input", {})
+                 action = tool_input.get("action")
++                if action is None and (tool_block.get("toolset_name") or self.use_toolset):
++                    # Toolset member: the action is the block's name (screenshot, zoom, ...)
++                    action = tool_block.get("name")
+                 is_last_tool = i == len(tool_use_blocks) - 1
+ 
+                 # Handle computer use tool results
+@@ -618,9 +656,9 @@
+                 })
+ 
+         enable_prompt_caching = False
+-        computer_use_beta = "computer-use-2025-11-24"
+-        if self.batch_tool_prompt:
+-            betas = []  # No computer-use beta needed for custom tool schema
++        computer_use_beta = COMPUTER_USE_BETA
++        if self.batch_tool_prompt or self.use_toolset:
++            betas = []  # custom tool schema / computer toolset: no computer-use beta
+         else:
+             betas = [computer_use_beta]
+ 
+@@ -632,9 +670,9 @@
+             
+         image_truncation_threshold = 10
+         if self.provider == APIProvider.ANTHROPIC:
+-            client = make_anthropic_client(api_key=self.api_key, max_retries=4).with_options(
+-                default_headers={"anthropic-beta": computer_use_beta}
+-            )
++            client = make_anthropic_client(api_key=self.api_key, max_retries=4)
++            if not self.use_toolset:
++                client = client.with_options(default_headers={"anthropic-beta": computer_use_beta})
+             enable_prompt_caching = True
+         elif self.provider == APIProvider.VERTEX:
+             client = AnthropicVertex()
+@@ -649,7 +687,8 @@
+                 aws_region=os.getenv('AWS_DEFAULT_REGION'),
+             )
+         if enable_prompt_caching:
+-            betas.append(PROMPT_CACHING_BETA_FLAG)
++            if not self.use_toolset:
++                betas.append(PROMPT_CACHING_BETA_FLAG)  # legacy flag; caching itself is GA
+             _inject_prompt_caching(self.messages)
+             image_truncation_threshold = 20
+             system["cache_control"] = {"type": "ephemeral"}
+@@ -666,6 +705,13 @@
+             # Use custom batched tool schema instead of built-in computer tool
+             tools = [BATCHED_TOOL_SCHEMA]
+             logger.info("Using batched tool prompt")
++        elif self.use_toolset:
++            # Claude 5.5 family: the toolset takes no name, display size or beta header.
++            # cursor_position is withheld because this harness does not track the cursor.
++            configs = {"cursor_position": {"enabled": False}}
++            if not self.enable_zoom:
++                configs["zoom"] = {"enabled": False}
++            tools = [{"type": COMPUTER_TOOLSET_TYPE, "configs": configs}]
+         else:
+             # Use modern computer tool for all models
+             tool_config = {
+@@ -689,6 +735,13 @@
+         elif self.thinking_mode == "adaptive":
+             # Adaptive thinking — model decides budget
+             extra_body["thinking"] = {"type": "adaptive"}
++            if self.use_toolset:
++                # This harness prunes old screenshots out of earlier turns.  Preserved
++                # thinking rejects such edited history (400 on accounts created after
++                # 2026-08-31); drop_block makes the API drop the affected thinking blocks
++                # instead of failing the request.
++                extra_body["thinking"]["block_binding"] = {"prefix_mismatch_behavior": "drop_block"}
++                betas.append(THINKING_BINDING_BETA)
+             logger.info("Thinking mode: ADAPTIVE (model decides budget)")
+ 
+         else:
+@@ -804,9 +857,9 @@
+             try:
+                 logger.warning("Retrying with backup API key...")
+ 
+-                backup_client = make_anthropic_client(api_key=os.environ.get("ANTHROPIC_API_KEY_BACKUP"), max_retries=4).with_options(
+-                    default_headers={"anthropic-beta": computer_use_beta}
+-                )
++                backup_client = make_anthropic_client(api_key=os.environ.get("ANTHROPIC_API_KEY_BACKUP"), max_retries=4)
++                if not self.use_toolset:
++                    backup_client = backup_client.with_options(default_headers={"anthropic-beta": computer_use_beta})
+                 response = api_fallback_create(backup_client, _agent=self,
+                     timeout=3600.0,  # bypass SDK nonstreaming guard (max_tokens>21333)
+                     max_tokens=actual_max_tokens,
+@@ -899,7 +952,7 @@
+                                 "input": cast(dict[str, Any], content_block["input"]),
+                                 "id": content_block["id"],
+                                 "action_type": content_block.get("type"),
+-                                "command": self.parse_actions_from_tool_call(content_block),
++                                "command": self.parse_actions_from_tool_call(self._as_legacy_tool_call(content_block)),
+                                 "raw_response": raw_response_str  # Add raw response to each action
+                             })
+                     elif content_block["type"] == "text":
