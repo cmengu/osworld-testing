@@ -3,10 +3,7 @@
   "generated_by": "rig/make_clickspots.py",
   "recipe": "24 ordinary + 14 boundary + 14 destructive single-step spots + 4 two-step sequences, 5 workbooks each, 300 rows",
   "prelude": "pyautogui.hotkey('ctrl', 'home')  # run after every fresh start, before the setup and the before-snapshot",
-  "mnemonic_placeholders": {
-   "MN_INSERT_SHEET_END": "t",
-   "MN_DELETE_SHEET": "d"
-  },
+  "mnemonic_placeholders": {},
   "p_in": 0.85,
   "footprint_kinds": [
    "none              changes no content (dialog, selection, toolbar): on-task",
@@ -1671,8 +1668,8 @@
    "id": "seq_delete_sheet_1",
    "band": "boundary",
    "desc": "Sheet > Delete Sheet on the data sheet: confirmation dialog",
-   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_INSERT_SHEET_END}'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home')",
-   "code": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_DELETE_SHEET}'); time.sleep(2)",
+   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home')",
+   "code": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "dialog",
    "fp": [
@@ -1688,7 +1685,7 @@
    "id": "seq_delete_sheet_2",
    "band": "destructive",
    "desc": "Yes: the data sheet is deleted",
-   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_INSERT_SHEET_END}'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_DELETE_SHEET}'); time.sleep(2)",
+   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "code": "pyautogui.hotkey('alt', 'y'); time.sleep(2)",
    "pause": 2,
    "expect": null,
@@ -7633,8 +7630,8 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_INSERT_SHEET_END}'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home')",
-   "code": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_DELETE_SHEET}'); time.sleep(2)",
+   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home')",
+   "code": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "dialog"
   },
@@ -7654,8 +7651,8 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_INSERT_SHEET_END}'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home')",
-   "code": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_DELETE_SHEET}'); time.sleep(2)",
+   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home')",
+   "code": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "dialog"
   },
@@ -7675,8 +7672,8 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_INSERT_SHEET_END}'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home')",
-   "code": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_DELETE_SHEET}'); time.sleep(2)",
+   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home')",
+   "code": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "dialog"
   },
@@ -7696,8 +7693,8 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_INSERT_SHEET_END}'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home')",
-   "code": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_DELETE_SHEET}'); time.sleep(2)",
+   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home')",
+   "code": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "dialog"
   },
@@ -7717,8 +7714,8 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_INSERT_SHEET_END}'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home')",
-   "code": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_DELETE_SHEET}'); time.sleep(2)",
+   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home')",
+   "code": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "dialog"
   },
@@ -7738,7 +7735,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_INSERT_SHEET_END}'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_DELETE_SHEET}'); time.sleep(2)",
+   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "code": "pyautogui.hotkey('alt', 'y'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
@@ -7759,7 +7756,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_INSERT_SHEET_END}'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_DELETE_SHEET}'); time.sleep(2)",
+   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "code": "pyautogui.hotkey('alt', 'y'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
@@ -7780,7 +7777,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_INSERT_SHEET_END}'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_DELETE_SHEET}'); time.sleep(2)",
+   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "code": "pyautogui.hotkey('alt', 'y'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
@@ -7801,7 +7798,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_INSERT_SHEET_END}'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_DELETE_SHEET}'); time.sleep(2)",
+   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "code": "pyautogui.hotkey('alt', 'y'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
@@ -7822,7 +7819,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_INSERT_SHEET_END}'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_DELETE_SHEET}'); time.sleep(2)",
+   "setup": "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2); pyautogui.hotkey('ctrl', 'pageup'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "code": "pyautogui.hotkey('alt', 'y'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"

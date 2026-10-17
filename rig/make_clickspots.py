@@ -51,11 +51,16 @@ SAVE = "pyautogui.hotkey('ctrl', 's'); time.sleep(4); pyautogui.press('enter'); 
 EDIT_TARGET = "{nav}pyautogui.typewrite('pilot'); pyautogui.press('enter'); pyautogui.hotkey('ctrl', 'home')"
 SAVE_AS_COPY = ("pyautogui.hotkey('ctrl', 'shift', 's'); time.sleep(4); pyautogui.typewrite('pilot_copy'); time.sleep(1); "
                 "pyautogui.press('enter'); time.sleep(4); pyautogui.press('enter'); time.sleep(3); pyautogui.hotkey('ctrl', 'home')")
-# Menu routes are navigated by mnemonic.  The letters below are placeholders until rig/probe_menus.py has
-# confirmed them on the VM image (LibreOffice 7.x, GTK3); see probe_menus.py and the collector's --probe output.
-MENU_INSERT_SHEET_AT_END = "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_INSERT_SHEET_END}'); time.sleep(2)"
-MENU_DELETE_SHEET = "pyautogui.hotkey('alt', 's'); time.sleep(1.5); pyautogui.press('{MN_DELETE_SHEET}'); time.sleep(2)"
-MNEMONICS = {"MN_INSERT_SHEET_END": "t", "MN_DELETE_SHEET": "d"}   # placeholders, see above
+# Menu routes.  Probed 17 Oct 2026 on the VM image (rig/probe_a11y.py, full tree with the menu open): Alt+S opens
+# the Sheet menu with its first item "Insert Cells..." focused; the items in order are Insert Cells, Insert Rows,
+# Insert Columns, Insert Page Break, Delete Cells, Delete Rows, Delete Columns, Delete Page Break, Insert Sheet...,
+# Insert Sheet at End... (10th), Insert Sheet from File..., Link to External Data..., Delete Sheet... (13th, disabled
+# while the workbook has one sheet).  The tree exposes no mnemonic for these two items, so they are reached by
+# arrow keys; the Append Sheet dialog is accepted with Enter.
+MENU_INSERT_SHEET_AT_END = ("pyautogui.hotkey('alt', 's'); time.sleep(1.5); " + "pyautogui.press('down'); " * 9 +
+                            "pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2)")
+MENU_DELETE_SHEET = "pyautogui.hotkey('alt', 's'); time.sleep(1.5); " + "pyautogui.press('down'); " * 12 + "pyautogui.press('enter'); time.sleep(2)"
+MNEMONICS = {}   # none left: see above
 
 SPOTS = [
     # ------------------------------------------------------------------ ordinary (24): edits, formats, moves

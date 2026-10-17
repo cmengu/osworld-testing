@@ -1,0 +1,135 @@
+[
+ {
+  "probe": "menu_sheet",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0320008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:05 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 62
+ },
+ {
+  "probe": "menu_sheet_released",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x03c0008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:06 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 62
+ },
+ {
+  "probe": "menu_edit",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0480008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:07 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 54
+ },
+ {
+  "probe": "menu_file",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0500008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:08 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 51
+ },
+ {
+  "probe": "menu_data",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x05c0008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:09 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 52
+ },
+ {
+  "probe": "delete_sheet_d",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0660008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:10 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 54
+ },
+ {
+  "probe": "insert_sheet_end_t",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0700008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:11 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 52
+ },
+ {
+  "probe": "insert_row_ctrl_plus",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0780008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:12 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 52
+ },
+ {
+  "probe": "backspace_dialog",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0780008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n0x07800556  0 user-virtual-machine Delete Contents\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:12 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 46
+ },
+ {
+  "probe": "paste_special",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x08e0008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n0x08e00ae0  0 user-virtual-machine Paste Special\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:13 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 64
+ },
+ {
+  "probe": "paste_over_used_range",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0960008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n0x09600a18  0 user-virtual-machine \n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:14 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 61
+ },
+ {
+  "probe": "save_as_dialog",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0a20008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n0x0a2009fb  0 user-virtual-machine Save\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:16 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 63
+ },
+ {
+  "probe": "close_unsaved_dialog",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0ac0008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n0x0ac009ff  0 user-virtual-machine Save Document?\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:17 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 61
+ },
+ {
+  "probe": "print_dialog",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0ac0008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n0x0ac00827  0 user-virtual-machine Print\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:18 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 56
+ },
+ {
+  "probe": "ctrl_n",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0be0008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n0x0be009fc  0 user-virtual-machine Untitled 1 - LibreOffice Calc\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:19 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 64
+ },
+ {
+  "probe": "quit_then_alt_f2",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:20 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 65
+ },
+ {
+  "probe": "reopen_via_alt_f2",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0da0008b  0 user-virtual-machine Multiply_Time_Number.xlsx - LibreOffice Calc\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:21 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 81
+ },
+ {
+  "probe": "start_center_open",
+  "fresh": "fast",
+  "windows": "---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:22 /home/user/Multiply_Time_Number.xlsx",
+  "seconds": 66
+ },
+ {
+  "probe": "replace_dialog",
+  "fresh": "fast",
+  "windows": "0x01200003 -1 user-virtual-machine @!0,0;BDHF\n0x0e40008b  0 user-virtual-machine pilot_copy.xlsx - LibreOffice Calc\n0x0e400dc8  0 user-virtual-machine Save\n0x0e400dcd  0 user-virtual-machine Save\n---",
+  "files": "-rw-r--r-- 1 user user 10246 Oct 17 19:24 /home/user/Multiply_Time_Number.xlsx\n-rw-r--r-- 1 user user  5946 Oct 17 19:24 /home/user/pilot_copy.xlsx\n-rw-r--r-- 1 user user  5946 Oct 17 19:24 /home/user/pilot_copy.xlsx",
+  "seconds": 85
+ }
+]

@@ -27,14 +27,16 @@ GENERIC: List[Candidate] = [
     ["key:escape", "key:ctrl+home"],
 ]
 
-# Calc-specific routes.  Menu mnemonics are placeholders until rig/probe_menus.py confirms them on the image.
-MNEMONICS = {"MN_UNDO": "u", "MN_RELOAD": "r", "MN_INSERT_SHEET_END": "t", "MN_DELETE_SHEET": "d"}
+# Calc-specific routes.  Probed 17 Oct 2026: a menu opened by its Alt accelerator has its first item focused, so
+# Edit > Undo is Alt+E then Enter.  File > Reload sits deep in a menu with state-dependent disabled items and is
+# left out; "discard and reopen" covers the same ground.
+MNEMONICS = {}
 CALC: List[Candidate] = [
     ["key:ctrl+w", "key:alt+d", "reopen"],                       # discard the open document and reopen the file
-    ["menu:alt+e,{MN_UNDO}"],                                    # Edit > Undo
-    ["menu:alt+f,{MN_RELOAD}", "wait:2", "key:alt+y"],           # File > Reload, confirm "discard changes?"
+    ["key:alt+e", "key:enter"],                                  # Edit > Undo (first item of the Edit menu)
     ["key:ctrl+shift+l"],                                        # AutoFilter toggles back
     ["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3"],  # undo in memory, then save the undone state back
+    ["key:ctrl+w", "key:alt+d", "reopen", "key:ctrl+home"],       # discard, reopen, cursor home
 ]
 
 # atoms for the blind pair tier
