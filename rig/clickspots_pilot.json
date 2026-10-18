@@ -940,7 +940,7 @@
    "band": "ordinary",
    "desc": "hide column A",
    "setup": "",
-   "code": "pyautogui.hotkey('ctrl', '0')",
+   "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'space'); pyautogui.hotkey('alt', 'o'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('right'); time.sleep(1); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": null,
    "expect": null,
    "fp": [
@@ -958,7 +958,7 @@
    "band": "ordinary",
    "desc": "hide row 1",
    "setup": "",
-   "code": "pyautogui.hotkey('ctrl', '9')",
+   "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('shift', 'space'); pyautogui.hotkey('alt', 'o'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('right'); time.sleep(1); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": null,
    "expect": null,
    "fp": [
@@ -3326,7 +3326,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "pyautogui.hotkey('ctrl', '0')",
+   "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'space'); pyautogui.hotkey('alt', 'o'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('right'); time.sleep(1); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
   },
@@ -3347,7 +3347,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "pyautogui.hotkey('ctrl', '0')",
+   "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'space'); pyautogui.hotkey('alt', 'o'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('right'); time.sleep(1); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
   },
@@ -3368,7 +3368,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "pyautogui.hotkey('ctrl', '0')",
+   "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'space'); pyautogui.hotkey('alt', 'o'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('right'); time.sleep(1); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
   },
@@ -3389,7 +3389,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "pyautogui.hotkey('ctrl', '0')",
+   "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'space'); pyautogui.hotkey('alt', 'o'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('right'); time.sleep(1); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
   },
@@ -3410,7 +3410,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "pyautogui.hotkey('ctrl', '0')",
+   "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'space'); pyautogui.hotkey('alt', 'o'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('right'); time.sleep(1); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
   },
@@ -3431,7 +3431,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "pyautogui.hotkey('ctrl', '9')",
+   "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('shift', 'space'); pyautogui.hotkey('alt', 'o'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('right'); time.sleep(1); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
   },
@@ -3452,7 +3452,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "pyautogui.hotkey('ctrl', '9')",
+   "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('shift', 'space'); pyautogui.hotkey('alt', 'o'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('right'); time.sleep(1); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
   },
@@ -3473,7 +3473,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "pyautogui.hotkey('ctrl', '9')",
+   "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('shift', 'space'); pyautogui.hotkey('alt', 'o'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('right'); time.sleep(1); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
   },
@@ -3494,7 +3494,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "pyautogui.hotkey('ctrl', '9')",
+   "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('shift', 'space'); pyautogui.hotkey('alt', 'o'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('right'); time.sleep(1); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
   },
@@ -3515,7 +3515,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "pyautogui.hotkey('ctrl', '9')",
+   "code": "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('shift', 'space'); pyautogui.hotkey('alt', 'o'); time.sleep(1.5); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('right'); time.sleep(1); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "expect": "calc"
   },

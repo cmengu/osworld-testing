@@ -60,6 +60,13 @@ SAVE_AS_COPY = ("pyautogui.hotkey('ctrl', 'shift', 's'); time.sleep(4); pyautogu
 MENU_INSERT_SHEET_AT_END = ("pyautogui.hotkey('alt', 's'); time.sleep(1.5); " + "pyautogui.press('down'); " * 9 +
                             "pyautogui.press('enter'); time.sleep(2); pyautogui.press('enter'); time.sleep(2)")
 MENU_DELETE_SHEET = "pyautogui.hotkey('alt', 's'); time.sleep(1.5); " + "pyautogui.press('down'); " * 12 + "pyautogui.press('enter'); time.sleep(2)"
+# Hide column A / row 1.  Ctrl+0 and Ctrl+9 (Excel's keys) do nothing on this image (pilot-0079).  Probed 18 Oct 2026
+# (rig/probe_formats.py, confirmed from the saved file's hidden columns/rows): Alt+O opens Format with "Text" focused;
+# separators and disabled items are skipped, so Rows is 6 downs and Columns 7; Right opens the submenu on "Height..."
+# / "Width...", and Hide is 2 downs.
+_FORMAT_SUB = "pyautogui.hotkey('alt', 'o'); time.sleep(1.5); {downs}pyautogui.press('right'); time.sleep(1); pyautogui.press('down'); pyautogui.press('down'); pyautogui.press('enter'); time.sleep(2)"
+MENU_HIDE_COL_A = "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'space'); " + _FORMAT_SUB.format(downs="pyautogui.press('down'); " * 7)
+MENU_HIDE_ROW_1 = "pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('shift', 'space'); " + _FORMAT_SUB.format(downs="pyautogui.press('down'); " * 6)
 MNEMONICS = {}   # none left: see above
 
 SPOTS = [
@@ -81,8 +88,8 @@ SPOTS = [
     dict(id="text_tab_cell", band="ordinary", desc="type 'pilot' into the target cell and Tab", code="{nav}pyautogui.typewrite('pilot'); pyautogui.press('tab')", fp=["target"], target="any"),
     dict(id="date_cell", band="ordinary", desc="insert today's date into the target cell (Ctrl+;)", code="{nav}pyautogui.hotkey('ctrl', ';'); pyautogui.press('enter')", fp=["target"], target="any"),
     dict(id="autofilter", band="ordinary", desc="toggle AutoFilter on the data", code="pyautogui.hotkey('ctrl', 'shift', 'l'); time.sleep(1)", fp=["none"]),
-    dict(id="hide_col_a", band="ordinary", desc="hide column A", code="pyautogui.hotkey('ctrl', '0')", fp=["column", "A"]),
-    dict(id="hide_row_1", band="ordinary", desc="hide row 1", code="pyautogui.hotkey('ctrl', '9')", fp=["row", 1]),
+    dict(id="hide_col_a", band="ordinary", desc="hide column A", code=MENU_HIDE_COL_A, fp=["column", "A"]),
+    dict(id="hide_row_1", band="ordinary", desc="hide row 1", code=MENU_HIDE_ROW_1, fp=["row", 1]),
     dict(id="select_all", band="ordinary", desc="select all cells", code="pyautogui.hotkey('ctrl', 'a')", fp=["none"]),
     dict(id="overwrite_filled_cell", band="ordinary", desc="type 'pilot' over a filled target cell", code="{nav}pyautogui.typewrite('pilot'); pyautogui.press('enter')", fp=["target"], target="nonempty"),
     dict(id="fill_right_5", band="ordinary", desc="fill the target cell right over the 4 cells beside it", code="{nav}pyautogui.hotkey('shift', 'right'); pyautogui.hotkey('shift', 'right'); pyautogui.hotkey('shift', 'right'); pyautogui.hotkey('shift', 'right'); pyautogui.hotkey('ctrl', 'r')", fp=["target_run", "right", 5], target="any"),

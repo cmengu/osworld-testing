@@ -32,9 +32,13 @@ IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/sha
 
 
 def file_sig(v: dict):
-    """What counts as 'the same file': size and content hash (office files: metadata-free)."""
+    """What counts as 'the same file'.  Spreadsheets with a cell signature (k): the cells, their formats,
+    hidden rows/columns and merges, whoever wrote the file (re-saving rewrites the XML, not the sheet).
+    Other files: size and content hash (office files: metadata-free)."""
     if v is None:
         return None
+    if v.get("k"):
+        return ("cells", v["k"])
     return (v.get("s"), v.get("c") or v.get("h"))
 
 

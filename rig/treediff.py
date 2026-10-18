@@ -13,6 +13,19 @@ removes a little later; a defunct node that still has children is kept) and chil
 never descends into: they carry a name and nothing else, and they come and go between identical
 fresh starts, so a snapshot taken 40 s later would differ by them alone).  Toolbar buttons keep their
 names and values but lose their enabled/sensitive flags (see TOOLBAR_STATE_ATTRS).
+
+Four rules added on 18 Oct 2026 after the ten-row measurement (logged in rig/out/pilot_run/rules_log.md):
+  * empty cells: a table-cell with no text, formula, note, border, shadow or non-plain format is dropped.  Which empty cells the
+    accessibility table exposes depends on the viewport, not on the document (one to three extra rows of them
+    appeared after an undo, same window and scroll).
+  * cursor readouts: the Name Box and Input line (Formula Tool Bar) lose their text.  They echo the cell under
+    the cursor, so they say where the cursor is, not what the document holds.
+  * empty unnamed panels: a childless panel with no name and no text is dropped before siblings are numbered.
+    A document reopened from the Start Center keeps such leftovers in front of its content panels, which
+    shifted every path (pilot-0131, 766 differences, identical content).  Dropping them, instead of erasing
+    the index, keeps every remaining path unique.
+  * nameless non-office applications are not walked (the recorder's own scope fix of 17 Oct, applied here too
+    so rows recorded before it compare the same way).
 """
 from typing import Dict, List
 import xml.etree.ElementTree as ET
@@ -24,6 +37,9 @@ IGNORED_ATTRS = frozenset({"screencoord", "size", "focused", "active"})
 # smoke test caught 2 of 20 click-spots differing on exactly these flags (Paste after a cut, Data Sources
 # after a row delete) with the document identical, so they are dropped on every node under a tool-bar.
 TOOLBAR_STATE_ATTRS = frozenset({"enabled", "sensitive"})
+# A cell carrying any of these is content or visible formatting and is never dropped as empty.
+CELL_CONTENT_ATTRS = ("text", "Formula", "Note", "TopBorder", "BottomBorder", "LeftBorder", "RightBorder", "Shadow", "format")
+CURSOR_READOUT_BAR = "/tool-bar[Formula Tool Bar]"
 
 
 def _local(name: str) -> str:
@@ -37,6 +53,13 @@ def _defunct(el: ET.Element) -> bool:
 def _office_app(el: ET.Element) -> bool:
     """An application node whose top-level window is a LibreOffice window."""
     return any("LibreOffice" in (w.get("name") or "") for w in list(el))
+
+
+def _empty_cell(el: ET.Element) -> bool:
+    if len(el) or (el.text or "").strip():
+        return False
+    attrs = {_local(k): v for k, v in el.attrib.items()}
+    return not any(attrs.get(a) for a in CELL_CONTENT_ATTRS[1:])
 
 
 def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
@@ -56,6 +79,8 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
         if text:
             attrs["text"] = text
         attrs["name"] = name
+        if CURSOR_READOUT_BAR in path and _local(node.tag) in ("text", "paragraph"):
+            attrs.pop("text", None)     # Name Box / Input line: echo of the cursor cell
         out[path] = attrs
 
     def walk(node: ET.Element, prefix: str) -> None:
@@ -69,6 +94,12 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
                 continue                # dead, childless registration of a killed process, gone a little later
             if tag == "application" and len(child) == 0:
                 continue                # placeholder for an app the walker never enters: name only
+            if tag == "application" and not name:
+                continue                # nameless non-office application (gnome-shell through a naming gap)
+            if tag == "panel" and not name and len(child) == 0 and not (child.text or "").strip():
+                continue                # empty unnamed panel: Start Center leftovers sit in front of content
+            if tag == "table-cell" and _empty_cell(child):
+                continue                # viewport placeholder: no content, no formatting
             key = (tag, name)
             idx = counts.get(key, 0)
             counts[key] = idx + 1

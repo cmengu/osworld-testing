@@ -142,7 +142,7 @@ class Collector:
         self.out.mkdir(parents=True, exist_ok=True)
         self.mask = json.load(open(args.mask))
         self.mask_version = _sha(pathlib.Path(args.mask))
-        self.rules_version = hashlib.sha256((HERE / "treediff.py").read_bytes() + (HERE / "mask.py").read_bytes()).hexdigest()[:12]
+        self.rules_version = hashlib.sha256((HERE / "treediff.py").read_bytes() + (HERE / "mask.py").read_bytes() + (HERE / "xlsxsig.py").read_bytes()).hexdigest()[:12]
         data = json.load(open(args.spots))
         self.spots = {s["id"]: s for s in data["spots"]}
         self.rows_all = data["rows"]

@@ -158,6 +158,78 @@ try:
             el = build(app, 1)
             if el is not None:
                 root.append(el)
+    # Cell formats (added 18 Oct 2026, rig/probe_formats.py): the server's builder records no font attributes, so
+    # a bold was visible only through the Formatting toolbar at the cursor cell.  Each sheet cell the builder
+    # recorded gets a `format` attribute read from its Text interface (weight, style, underline, strike-through,
+    # colours, size, family, justification).  Cells without text get it only when it is not the plain default,
+    # so viewport placeholders stay attribute-free.  Bounded: at most FMT_MAX cells and FMT_DEADLINE s.
+    FMT_KEYS = ("weight", "style", "underline", "strikethrough", "fg-color", "bg-color", "size", "family-name", "justification")
+    FMT_PLAIN = {"weight": "400", "style": "normal", "underline": "none", "strikethrough": "none"}
+    FMT_MAX, FMT_DEADLINE = 1500, 85
+    stats["format_cells"] = 0
+    stats["format_skipped"] = 0
+    import re as _re
+    def _sheet_tables(node, d=0):
+        r = role(node)
+        if r == "table" and name_of(node).startswith("Sheet"):
+            yield node
+            return
+        if d > 12 or r in ("menu bar", "tool bar", "menu"):
+            return
+        for ch in kids(node):
+            yield from _sheet_tables(ch, d + 1)
+    def _fmt(cell):
+        tx = cell.queryText()
+        n = tx.characterCount
+        run = tx.getAttributeRun(0, True)[0] if n else tx.getDefaultAttributes()
+        if isinstance(run, str):
+            run = run.split(";")
+        kv = dict(x.split(":", 1) for x in run if ":" in x)
+        if not n and all(kv.get(k, v) == v for k, v in FMT_PLAIN.items()):
+            return None
+        return ";".join(k + "=" + kv[k] for k in FMT_KEYS if k in kv)
+    def _local(tag):
+        return tag.rsplit("}", 1)[-1] if isinstance(tag, str) else ""
+    def _attr(el, key):
+        for k, v in el.attrib.items():
+            if _local(k) == key:
+                return v
+        return None
+    try:
+        xml_tables = {}
+        for el in root.iter():
+            if _local(el.tag) == "table" and (_attr(el, "name") or "").startswith("Sheet"):
+                xml_tables.setdefault(_attr(el, "name"), el)
+        for app in desktop:
+            if pid_of(app) not in office_pids:
+                continue
+            for t in _sheet_tables(app):
+                el = xml_tables.get(name_of(t))
+                if el is None:
+                    continue
+                tab = t.queryTable()
+                for cel in el:
+                    if _local(cel.tag) != "table-cell":
+                        continue
+                    if stats["format_cells"] >= FMT_MAX or time.time() - t0 > FMT_DEADLINE:
+                        stats["format_skipped"] += 1
+                        continue
+                    m = _re.match(r"^([A-Z]+)([0-9]+)$", _attr(cel, "name") or "")
+                    if not m:
+                        continue
+                    col = 0
+                    for ch in m.group(1):
+                        col = col * 26 + ord(ch) - 64
+                    try:
+                        f = _fmt(tab.getAccessibleAt(int(m.group(2)) - 1, col - 1))
+                    except Exception:
+                        stats["format_errors"] = stats.get("format_errors", 0) + 1
+                        continue
+                    stats["format_cells"] += 1
+                    if f:
+                        cel.set("format", f)
+    except Exception as exc:
+        stats["format_error"] = repr(exc)[:300]
     xml = lxml.etree.tostring(root, encoding="unicode")
     with open("%s", "w") as fh:
         fh.write(xml)

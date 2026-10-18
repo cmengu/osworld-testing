@@ -16,12 +16,12 @@ Candidate = List[str]
 
 GENERIC: List[Candidate] = [
     ["key:ctrl+z"],
+    ["key:ctrl+z", "key:ctrl+home"],        # second since 18 Oct: after a real undo the cursor sits on the undone cell
     ["key:ctrl+z", "key:ctrl+z"],
     ["key:ctrl+z", "key:ctrl+z", "key:ctrl+z"],
     ["key:escape"],
     ["key:escape", "key:escape"],
     ["key:ctrl+home"],
-    ["key:ctrl+z", "key:ctrl+home"],
     ["reopen"],
     ["key:escape", "key:ctrl+z"],
     ["key:escape", "key:ctrl+home"],

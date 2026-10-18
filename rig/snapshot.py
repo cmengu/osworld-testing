@@ -7,8 +7,9 @@ Everything is written to a directory so a run can be audited and re-compared lat
 The tree comes from rig.fasttree (scoped, parallel, errors reported) with the server's own
 walk as a fallback.  File digest fields per path: s = size, m = mtime (recorded, never
 compared), h = sha256 of the bytes, c = content hash for zip-based office files with the
-metadata parts left out, so a re-save that only refreshes embedded timestamps compares
-equal.  Equality in mask.py uses (s, c or h).
+metadata parts left out, k = cell-level signature for .xlsx/.xlsm (rig/xlsxsig.py: what a user sees, not
+how the writer stored it), v = the readable workbook view behind k.  Equality in mask.py uses k when present,
+otherwise (s, c or h).
 """
 import json
 import pathlib
@@ -20,8 +21,14 @@ from .fasttree import fast_tree
 from .treediff import Canon, canonicalize
 from .vm import vm_shell
 
+# The digest script carries rig/xlsxsig.py verbatim, so the VM computes the same cell-level signature that the
+# offline tests check.  For .xlsx/.xlsm it adds k = cell signature and v = the readable workbook view (kept when
+# under VIEW_CAP bytes) so a later criteria change can be re-applied to recorded rows without a new run.
+_XLSXSIG_SRC = (pathlib.Path(__file__).resolve().parent / "xlsxsig.py").read_text()
 DIGEST_SCRIPT = r"""python3 - <<'PY'
+""" + _XLSXSIG_SRC + r"""
 import os, hashlib, json, zipfile
+VIEW_CAP = 400 * 1024
 home = os.path.expanduser("~")
 skip = ("/.cache/", "/.local/share/Trash/", "/.mozilla/", "/.config/google-chrome/",
         "/snap/", "/.dbus/", "/.gvfs/", "/home/user/server/", "/home/user/.rig_cache/")
@@ -64,6 +71,15 @@ for root, dirs, files in os.walk(home):
             c = content_hash(p)
             if c:
                 row["c"] = c
+        if p.lower().endswith((".xlsx", ".xlsm")) and st.st_size <= cap and "/.~lock." not in p:
+            try:
+                view = workbook_view(p)
+                row["k"] = hashlib.sha256(json.dumps(view, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+                vtext = json.dumps(view, ensure_ascii=False)
+                if len(vtext) <= VIEW_CAP:
+                    row["v"] = view
+            except Exception as exc:
+                row["k_error"] = str(exc)[:200]
         rows.append(row)
 print(json.dumps(rows))
 PY"""
@@ -97,10 +113,16 @@ def fetch_tree(env, attempts: int = 4, delay: float = 4.0, expect: str = "LibreO
     last_xml = ""
     for i in range(attempts):
         xml, stats = fast_tree(env)
-        if xml and (not expect or expect in xml):
+        formats_whole = not stats.get("format_skipped") and not stats.get("format_error")
+        if xml and (not expect or expect in xml) and formats_whole:
             info = {"source": "fast", **stats, "attempt": i + 1}
             return xml, info
-        if xml:
+        if xml and (not expect or expect in xml):
+            # cell formats read only in part: some cells would carry a format and others not, which reads as
+            # a change against any complete snapshot; retried, and flagged (ok=False) if it never completes
+            last_xml = xml
+            info = {"source": "fast-partial-formats", "attempt": i + 1, **stats}
+        elif xml:
             last_xml = xml
             info = {"source": "fast-missing-app", "attempt": i + 1, **stats}
         else:
