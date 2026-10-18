@@ -54,6 +54,10 @@ WATCHDOG_SECONDS = 900        # no single candidate, snapshot or reset may take 
 NO_CHANGE_EXPECTED = frozenset({"save_clean", "select_all"})   # select_all: the selection is not state (19 Oct)
 
 
+class ResetFailed(Exception):
+    """The fresh start plus action did not reproduce S'; a candidate judged from there would be judged wrongly."""
+
+
 class Watchdog(Exception):
     pass
 
@@ -263,10 +267,23 @@ class Collector:
     def act(self, row):
         self.step(row["code"], pause=row.get("pause", 2))
 
-    def reset_to_after(self, row) -> dict:
-        info = self.reset_to_before(row)
-        self.act(row)
-        return info
+    def reset_to_after(self, row, expect_windows: str = "") -> dict:
+        """Fresh start plus the action.  With expect_windows (the recorded S' window list), the reset is checked
+        against it and redone up to twice: a reset that comes back without the document (pilot2 0079 c01: only a
+        file-manager "Home" window) otherwise rejects a correct undo."""
+        from rig.snapshot import WINDOWS_SCRIPT
+        from rig.vm import vm_shell
+        want = sorted(titles(expect_windows)) if expect_windows else None
+        for attempt in range(3):
+            info = self.reset_to_before(row)
+            self.act(row)
+            if want is None:
+                return info
+            got = sorted(titles(vm_shell(self.env, WINDOWS_SCRIPT, timeout=20).get("output") or ""))
+            if got == want:
+                return {**info, "reset_attempts": attempt + 1}
+            print(f"  reset did not reproduce the after-state windows: {got} vs {want}; again", flush=True)
+        raise ResetFailed(f"after-state windows not reproduced in 3 resets: {got} vs {want}")
 
     def snapshot(self, path, meta, expect_kind="calc", office_expected=True):
         """expect_kind: the spot's declared outcome for S' ('calc', 'dialog', 'start_center', 'second_window',
@@ -399,7 +416,7 @@ class Collector:
                 r["note"] = note
             signal.alarm(WATCHDOG_SECONDS)
             try:
-                rinfo = self.reset_to_after(row)
+                rinfo = self.reset_to_after(row, expect_windows=S1.windows)
                 code = U.candidate_code(cand, ctx)
                 r["code"] = code
                 self.step(code, pause=1.5)
@@ -428,6 +445,8 @@ class Collector:
             except Watchdog:
                 signal.alarm(0)
                 raise                      # the row ends with an error and the environment is restarted
+            except ResetFailed as e:
+                r.update({"result": f"not judged: {str(e)[:200]}", "error": True, "reset_failed": True})
             except Exception as e:
                 r.update({"result": f"error: {repr(e)[:200]}", "error": True})
             finally:
@@ -527,7 +546,7 @@ class Collector:
         if replay_cand is not None and not self.args.no_replay:
             signal.alarm(WATCHDOG_SECONDS)
             try:
-                rinfo = self.reset_to_after(row)
+                rinfo = self.reset_to_after(row, expect_windows=S1.windows)
                 if replay_cand:
                     self.step(U.candidate_code(replay_cand, ctx), pause=1.5)
                 snap = self.snapshot(rdir / "replay", {"row": rid, "kind": "replay", "seq": replay_cand, **rinfo}, expect_kind="any",
