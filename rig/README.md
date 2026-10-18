@@ -26,6 +26,7 @@ with the OSWorld virtualenv, long runs inside `tmux attach -t rig`.
 | Menu probe | `probe_menus.py` | screenshots of the menus/dialogs the spots use; confirms mnemonics before the pilot |
 | Dialog keys | `dialog_keys.py` | the keys that press Don't Save / Yes on this image (read from the recorded trees), accessibility helpers that select a file in the file dialog or press a named button |
 | Dialog probe | `probe_dialogs.py` | one sandbox, ~45 min: confirms the dialog keys and the two top-up spots (Save As over a second workbook, delete it from the file dialog) by what actually happens |
+| Spot-check page | `make_spotcheck.py` | review page per run folder(s): task, action, before / after / after-undo screenshots, label, on-task flag, two questions; answers go to the published page's db (`verdicts/<row>`) |
 
 ```bash
 cd ~/ai-research/osworld-testing
@@ -37,6 +38,7 @@ OSWorld/.venv/bin/python -I rig/rebuild_mask.py                                 
 OSWorld/.venv/bin/python -I rig/make_clickspots.py                                # regenerate clickspots_pilot.json (prints the tallies)
 OSWorld/.venv/bin/python -I rig/probe_menus.py                                    # one sandbox, ~10 min: menu/dialog screenshots
 OSWorld/.venv/bin/python -I -u rig/probe_dialogs.py                              # one sandbox, ~45 min: dialog keys + top-up routes
+OSWorld/.venv/bin/python -I rig/make_spotcheck.py --runs rig/out/pilot_run2 rig/out/pilot_rerun  # rig/out/spotcheck/index.html + img/
 OSWorld/.venv/bin/python -I rig/collect_pilot.py --rows 90,79,121 --dry           # plan + worst-case cost, no VM
 OSWorld/.venv/bin/python -I rig/collect_pilot.py --rows 90,79,121 --row-minutes 45 # one sandbox; resumable; results in rig/out/pilot_run/
 OSWorld/.venv/bin/python -I rig/collect_pilot.py --recompare                      # re-judge rows on disk after a treediff/mask rule change
