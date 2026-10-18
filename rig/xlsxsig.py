@@ -13,7 +13,8 @@ ever match (pilot-0210, every candidate rejected on the file alone).
     (bold, italic, underline, strike-through, number format, fill, horizontal alignment);
   * hidden columns and rows, and merged ranges.
 Excel's built-in short date (14) and short date-time (22) follow the machine's locale, so they are named by
-meaning, not by an en-US pattern.  Formula cells compare by their stored result plus a formula flag, not by formula text, because writers store
+meaning, not by an en-US pattern; the VM's own short-date code (_LOCALE_SHORTDATE), which LibreOffice writes for
+14, is named the same way.  Text cells carry no number format (it does not change how text is shown).  Formula cells compare by their stored result plus a formula flag, not by formula text, because writers store
 the same formula differently (Excel's shared formulas are written out cell by cell by LibreOffice).
 
 Standard library only: this file's source is also sent into the VM inside the digest script (snapshot.py).
@@ -31,6 +32,11 @@ _BUILTIN_FMT = {0: "general", 1: "0", 2: "0.00", 3: "#,##0", 4: "#,##0.00", 9: "
                 37: "#,##0 ;(#,##0)", 38: "#,##0 ;[red](#,##0)", 39: "#,##0.00;(#,##0.00)",
                 40: "#,##0.00;[red](#,##0.00)", 45: "mm:ss", 46: "[h]:mm:ss", 47: "mmss.0", 48: "##0.0e+0", 49: "@"}
 _MAX_COL = 16384
+# The VM's own short-date pattern.  LibreOffice writes Excel's locale-following short date (built-in 14) out as
+# this explicit code, so the same dates read as a format change after a plain re-save (recheck pilot-0231,
+# 19 Oct 2026: 4,002 date cells, every value equal).  Shown identically on this machine, so named by meaning.
+_LOCALE_SHORTDATE = {"dd/mm/yyyy"}
+_TEXT_TYPES = ("s", "inlineStr", "str")   # a number format does not change how text is shown
 _DEFAULT_FMT = (False, False, False, False, "general", None, None)
 
 
@@ -103,7 +109,8 @@ def _styles(z):
     fmts = dict(_BUILTIN_FMT)
     nf = _kid(root, "numFmts")
     for f in (_kids(nf, "numFmt") if nf is not None else []):
-        fmts[int(f.get("numFmtId"))] = _fmt_code(f.get("formatCode", ""))
+        code = _fmt_code(f.get("formatCode", ""))
+        fmts[int(f.get("numFmtId"))] = "builtin:shortdate" if code in _LOCALE_SHORTDATE else code
     fonts = []
     fe = _kid(root, "fonts")
     for f in (_kids(fe, "font") if fe is not None else []):
@@ -198,7 +205,8 @@ def workbook_view(path):
                     fmt = styles[s] if s < len(styles) else _DEFAULT_FMT
                     if value == "" and f is None and fmt == _DEFAULT_FMT:
                         continue
-                    cells[c.get("r")] = [value, f is not None, list(fmt[:4]), fmt[4], fmt[5], fmt[6]]
+                    numfmt = "general" if t in _TEXT_TYPES else fmt[4]
+                    cells[c.get("r")] = [value, f is not None, list(fmt[:4]), numfmt, fmt[5], fmt[6]]
             merges = sorted(m.get("ref") for m in root.iter() if _l(m.tag) == "mergeCell")
             view.append({"name": name, "state": state, "cells": cells, "hidden_cols": _ranges(hidden_cols),
                          "hidden_rows": hidden_rows, "merges": merges})

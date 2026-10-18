@@ -26,7 +26,18 @@ Four rules added on 18 Oct 2026 after the ten-row measurement (logged in rig/out
     the index, keeps every remaining path unique.
   * nameless non-office applications are not walked (the recorder's own scope fix of 17 Oct, applied here too
     so rows recorded before it compare the same way).
+Added 19 Oct 2026 after the 30-row batch and the save recheck:
+  * formatting readouts: under the Formatting toolbar, the font-name and size boxes lose their text and the
+    buttons lose checked/value/pressed.  Like the Name Box, they echo the cell under the cursor (Bold lit,
+    Currency vs General), so an undo that put every cell back but left the cursor elsewhere was rejected
+    (pilot-0079 hide_col_a: Ctrl+Z twice; recheck 0126: undo, save, redo).  Cell formats are recorded on the
+    cells themselves since 18 Oct, so nothing about the document is lost.
+  * selection: the `selected` flag of the sheet table and its cells, and the status-bar readouts of the selection
+    ("Selected: 1,048,576 rows", Sum=...), are dropped.  The written definition given to guess B already said the
+    cursor position and the selection are not state; the checker now says the same (recheck 0210: undo, save, redo
+    restored file and cells, and differed only in 87 highlighted cells).
 """
+import re
 from typing import Dict, List
 import xml.etree.ElementTree as ET
 
@@ -40,6 +51,11 @@ TOOLBAR_STATE_ATTRS = frozenset({"enabled", "sensitive"})
 # A cell carrying any of these is content or visible formatting and is never dropped as empty.
 CELL_CONTENT_ATTRS = ("text", "Formula", "Note", "TopBorder", "BottomBorder", "LeftBorder", "RightBorder", "Shadow", "format")
 CURSOR_READOUT_BAR = "/tool-bar[Formula Tool Bar]"
+FORMAT_READOUT_BAR = "/tool-bar[Formatting]"
+FORMAT_READOUT_ATTRS = ("checked", "value", "pressed", "indeterminate")
+# The definition (rig/prompts/guess_b_definition.txt) excludes the cursor position and the selection from the state.
+SELECTION_TAGS = ("table", "table-cell")          # their `selected` flag is the spreadsheet selection
+SELECTION_READOUT = re.compile(r"^(Selected:|Sum\b|Average\b|Count\b|Min\b|Max\b)")   # status-bar echoes of it
 
 
 def _local(name: str) -> str:
@@ -81,6 +97,15 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
         attrs["name"] = name
         if CURSOR_READOUT_BAR in path and _local(node.tag) in ("text", "paragraph"):
             attrs.pop("text", None)     # Name Box / Input line: echo of the cursor cell
+        if _local(node.tag) in SELECTION_TAGS:
+            attrs.pop("selected", None)     # which cells are highlighted is not document state
+        if "/status-bar[" in path and SELECTION_READOUT.match(attrs.get("text", "")):
+            attrs.pop("text", None)         # "Selected: 3 rows", "Sum=12": echoes of the selection
+        if FORMAT_READOUT_BAR in path:
+            if _local(node.tag) in ("text", "paragraph"):
+                attrs.pop("text", None) # font name / size boxes: echo of the cursor cell
+            for a in FORMAT_READOUT_ATTRS:
+                attrs.pop(a, None)      # Bold, Currency, ...: lit for the cursor cell
         out[path] = attrs
 
     def walk(node: ET.Element, prefix: str) -> None:

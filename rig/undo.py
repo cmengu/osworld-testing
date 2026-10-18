@@ -9,8 +9,9 @@ language shared with the proposer:
 Every step is something a user could do at the keyboard; nothing here touches snapshots, backups or copies.
 """
 import itertools
+import re
 import shlex
-from typing import List
+from typing import List, Optional
 
 Candidate = List[str]
 
@@ -32,6 +33,7 @@ GENERIC: List[Candidate] = [
 # left out; "discard and reopen" covers the same ground.
 MNEMONICS = {}
 CALC: List[Candidate] = [
+    ["key:ctrl+w"],                                              # close a window the action opened (new document, 0181)
     ["key:ctrl+w", "key:alt+d", "reopen"],                       # discard the open document and reopen the file
     ["key:alt+e", "key:enter"],                                  # Edit > Undo (first item of the Edit menu)
     ["key:ctrl+shift+l"],                                        # AutoFilter toggles back
@@ -108,11 +110,42 @@ def step_code(step: str, ctx: dict) -> str:
             # Start Center or another window: open the file through the Open dialog
             return ("pyautogui.hotkey('ctrl', 'o'); time.sleep(3); pyautogui.typewrite(" + _py(path) + "); time.sleep(1); "
                     "pyautogui.press('enter'); time.sleep(8); pyautogui.hotkey('super', 'up'); time.sleep(3)")
-        # no LibreOffice at all: the GNOME run dialog
-        return ("pyautogui.hotkey('alt', 'f2'); time.sleep(2); pyautogui.typewrite(" + _py("libreoffice --calc " + shlex.quote(path)) + "); time.sleep(1); "
-                "pyautogui.press('enter'); time.sleep(15); pyautogui.hotkey('super', 'up'); time.sleep(3)")
+        # no LibreOffice at all: start it on the file, as a double-click in the file manager would.  The GNOME run
+        # dialog (Alt+F2) used before never opened anything on this image (pilot2 0141: every reopen after Ctrl+Q
+        # left no window).
+        return ("__import__('subprocess').Popen(['libreoffice', '--calc', " + _py(path) + "], start_new_session=True, "
+                "stdout=__import__('subprocess').DEVNULL, stderr=__import__('subprocess').DEVNULL); time.sleep(15); "
+                "pyautogui.hotkey('super', 'up'); time.sleep(3)")
     raise ValueError(f"unknown step {step!r}")
 
 
 def candidate_code(c: Candidate, ctx: dict) -> str:
     return "; ".join(step_code(s, ctx) for s in c)
+
+
+# ---------------------------------------------------------------------------------------------------------
+# Guess B names its own shortest undo in free text ("ctrl+z (undo typing 'pilot' in H33)", "enter (Keep Current
+# Format)").  Tried as one candidate after the generic tier: in pilot2 its undo for the saves (undo, save, redo)
+# was right and appeared nowhere in the fixed lists.  The label stays executed: the guess only proposes.
+# ---------------------------------------------------------------------------------------------------------
+_KEY_TOKEN = re.compile(r"^(?:(?:ctrl|alt|shift|super)\+)*(?:[a-z0-9]|f[0-9]{1,2}|enter|escape|esc|tab|space|delete|backspace|home|end|"
+                        r"up|down|left|right|pageup|pagedown|plus|minus|-|\+)$")
+
+
+def from_guess(steps) -> Optional[Candidate]:
+    """Guess B's shortest_undo as a candidate, or None when any step is not a plain key or a reopen."""
+    if not steps or not isinstance(steps, list) or len(steps) > 8:
+        return None
+    out: Candidate = []
+    for raw in steps:
+        tok = str(raw).strip().lower().split(" ", 1)[0].split("(", 1)[0].strip().rstrip(",;.")
+        tok = "escape" if tok == "esc" else tok
+        if tok in ("reopen", "reload"):
+            out.append("reopen")
+        elif _KEY_TOKEN.match(tok):
+            out.append("key:" + tok)
+            if tok == "ctrl+s":
+                out.append("wait:4")      # the keep-format question takes a moment to appear
+        else:
+            return None
+    return out

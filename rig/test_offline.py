@@ -155,6 +155,40 @@ def move_cursor(root):
     raise AssertionError("fixture has no Formula Tool Bar")
 assert variant(move_cursor) == A
 
+# The Formatting toolbar echoes the cursor cell too (font box, Bold lit, Currency vs General): never counts.
+def format_readouts(root):
+    for e in root.iter():
+        if local(e.tag) == "tool-bar" and e.get("name") == "Formatting":
+            touched = 0
+            for t in e.iter():
+                if local(t.tag) in ("text", "paragraph") and (t.text or "").strip():
+                    t.text = "Some Other Font"; touched += 1
+                for k in list(t.attrib):
+                    if k.rsplit("}", 1)[-1] in ("checked", "value"):
+                        t.set(k, "true" if t.get(k) != "true" else "false"); touched += 1
+            assert touched, "Formatting toolbar in the fixture has nothing to vary"
+            return
+    raise AssertionError("fixture has no Formatting toolbar")
+assert variant(format_readouts) == A
+# The selection is not state: highlighted cells compare equal.
+def select_cells(root):
+    n = 0
+    for e in root.iter():
+        if local(e.tag) == "table-cell":
+            e.set("selected", "true"); n += 1
+            if n >= 30:
+                return
+    raise AssertionError("fixture has too few cells")
+assert variant(select_cells) == A
+# ...but a toolbar that disappears is still a difference
+def drop_formatting(root):
+    for parent in root.iter():
+        for c in list(parent):
+            if local(c.tag) == "tool-bar" and c.get("name") == "Formatting":
+                parent.remove(c); return
+    raise AssertionError("fixture has no Formatting toolbar")
+assert variant(drop_formatting) != A
+
 # Empty unnamed panels in front of content panels (Start Center leftovers) shift nothing.
 def leftovers(root):
     for parent in root.iter():
@@ -173,4 +207,14 @@ def shell(root):
 assert variant(shell) == A
 
 json.dumps(mask)  # serialisable
+# Guess B's free-text undo becomes a candidate only when every step is a plain key or a reopen.
+from rig.undo import from_guess, step_code
+assert from_guess(["ctrl+z (undo typing 'pilot' in H33)", "ctrl+s", "enter (Keep Current Format)", "ctrl+y (redo 'pilot')"]) == \
+    ["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "key:ctrl+y"]
+assert from_guess(["Esc"]) == ["key:escape"] and from_guess(["reopen the file"]) == ["reopen"]
+assert from_guess(["click Undo in the Edit menu"]) is None and from_guess(None) is None and from_guess([]) is None
+# reopen after a full quit starts LibreOffice on the file instead of typing into the GNOME run dialog
+assert "Popen(['libreoffice', '--calc'" in step_code("reopen", {"doc_path": "/home/user/x.xlsx", "office_running": False})
+assert "ctrl', 'o'" in step_code("reopen", {"doc_path": "/home/user/x.xlsx", "office_running": True})
+
 print("ALL OFFLINE CHECKS PASSED")

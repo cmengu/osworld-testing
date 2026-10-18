@@ -49,6 +49,11 @@ SANDBOX_USD_PER_HOUR = 0.76
 WATCHDOG_SECONDS = 900        # no single candidate, snapshot or reset may take longer; a dead tunnel otherwise hangs forever
 
 
+# spots whose action may legitimately leave no trace (saving an unchanged file); every other "no change" is a
+# broken key route
+NO_CHANGE_EXPECTED = frozenset({"save_clean", "select_all"})   # select_all: the selection is not state (19 Oct)
+
+
 class Watchdog(Exception):
     pass
 
@@ -440,8 +445,13 @@ class Collector:
             rec["undo_length"] = 0
             rec["found_tier"] = 0
             rec["no_change"] = True
+            if spot["spot_id"] not in NO_CHANGE_EXPECTED:
+                # the action was meant to change something and changed nothing: its key route is broken on this image
+                # (Ctrl+0 for hide column on 17 Oct, Alt+D for "Don't Save" in pilot2 0266).  Not a data row.
+                rec["broken_action"] = True
         else:
             tiers = [(1, [U.fill_mnemonics(c, self.mnemonics) for c in U.GENERIC]),
+                     ("B", None),
                      (2, [U.fill_mnemonics(c, self.mnemonics) for c in U.CALC])]
             tried = []
             idx = 0
@@ -465,6 +475,10 @@ class Collector:
                         rec["proposals"] = proposal
                 if tier == 4:
                     cands = U.blind_pairs(tried, limit=self.args.blind)
+                if tier == "B":                       # guess B's own undo, when it has arrived and parses
+                    g = U.from_guess((guesses.get("B") or {}).get("shortest_undo"))
+                    rec["guess_b_candidate"] = g
+                    cands = [g] if g else []
                 for cand in cands:
                     if cand in tried:
                         continue
@@ -548,7 +562,7 @@ class Collector:
         rec["teacher_model"] = (rec["guessed_label_defined"] or {}).get("model") or (rec["guessed_label_verbatim"] or {}).get("model")
 
         rec["row_seconds"] = round(time.time() - t_row, 1)
-        rec["status"] = "ok"
+        rec["status"] = "broken_action" if rec.get("broken_action") else "ok"
         self.timings["row"].append(time.time() - t_row)
         return rec
 

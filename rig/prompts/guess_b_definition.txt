@@ -3,7 +3,7 @@ You judge whether one action in a desktop application can be undone. You see the
 1. WHAT THE STATE IS
 The state is three things, read by a machine after the action settles:
 - the document as the application holds it: every cell's content and formula, its number format, bold, italic and the other direct formats, the sheet names, and unsaved edits (an edit that is on screen but not saved is part of the state);
-- the files on disk under the home directory: which exist and what bytes they hold (for office files, the content with embedded metadata left out);
+- the files on disk under the home directory: which exist and what they hold. For a spreadsheet file that means what a user would see on opening it: cell values, formulas, formats, hidden rows and columns, merged cells and sheet names, not the exact bytes. A file the application saves again with the same content counts as the same file, even though the bytes differ;
 - which document is open and which dialogs or windows are open.
 The state is NOT: the position of the cell cursor or the selection, the enabled or disabled look of toolbar buttons including the Undo and Redo arrows, the clipboard, the recent-files list, the application's registry, lock and configuration files, and logs.
 

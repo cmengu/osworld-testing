@@ -26,36 +26,49 @@ RELS = ('<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/re
         'Target="{target}"/></Relationships>')
 
 
-def styles(fonts, xfs):
+def styles(fonts, xfs, numfmts=""):
     f = "".join(fonts)
     x = "".join(xfs)
-    return (f'<styleSheet {NS}><fonts count="{len(fonts)}">{f}</fonts>'
+    return (f'<styleSheet {NS}>{numfmts}<fonts count="{len(fonts)}">{f}</fonts>'
             '<fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills>'
             f'<cellXfs count="{len(xfs)}">{x}</cellXfs></styleSheet>')
 
 
-def build(path, *, sheet_name="Data", writer="excel", bold_b1=True, value_a2="42", hide_c=False):
+# date column: Excel's locale short date (built-in 14), the code LibreOffice writes for it on the VM, or a
+# genuinely different pattern a user picked
+DATE_FMTS = {"builtin14": ("", 14), "vm_short": ('<numFmts count="1"><numFmt numFmtId="164" formatCode="DD/MM/YYYY"/></numFmts>', 164),
+             "iso": ('<numFmts count="1"><numFmt numFmtId="164" formatCode="YYYY-MM-DD"/></numFmts>', 164)}
+
+
+def build(path, *, sheet_name="Data", writer="excel", bold_b1=True, value_a2="42", hide_c=False, date="builtin14",
+          header_dated=False):
     plain = '<font><sz val="11"/><name val="Calibri"/></font>'
     bold = '<font><b/><sz val="11"/><name val="Calibri"/></font>'
     cols = '<cols><col min="3" max="3" width="9" hidden="1" customWidth="1"/></cols>' if hide_c else ""
     if writer == "excel":       # shared strings, plain font first, bold xf at index 1, workbook rels with ../ path
-        st = styles([plain, bold], ['<xf numFmtId="0" fontId="0" fillId="0"/>', f'<xf numFmtId="0" fontId="{1 if bold_b1 else 0}" fillId="0"/>'])
+        nf, fid = DATE_FMTS[date]
+        st = styles([plain, bold], ['<xf numFmtId="0" fontId="0" fillId="0"/>', f'<xf numFmtId="0" fontId="{1 if bold_b1 else 0}" fillId="0"/>',
+                                    f'<xf numFmtId="{fid}" fontId="0" fillId="0" applyNumberFormat="1"/>'], nf)
         shared = f'<sst {NS}><si><t>Name</t></si><si><t>Total</t></si></sst>'
-        a1 = '<c r="A1" t="s"><v>0</v></c>'
+        a1 = f'<c r="A1"{" s=\"2\"" if header_dated else ""} t="s"><v>0</v></c>'
+        a3 = '<c r="A3" s="2"><v>44076</v></c>'
         b1 = '<c r="B1" s="1" t="s"><v>1</v></c>'
         target, rid = "worksheets/sheet1.xml", "rId1"
         a2 = f'<c r="A2"><v>{value_a2}</v></c>'
         b2 = '<c r="B2"><f t="shared" ref="B2:B2" si="0">A2*2</f><v>84</v></c>'
     else:                       # LibreOffice-like: inline strings, bold font first, extra unused style, absolute target
+        nf, fid = DATE_FMTS["vm_short" if date == "builtin14" else date]   # LibreOffice spells 14 out
         st = styles([bold, plain, plain], ['<xf numFmtId="0" fontId="1" fillId="0"/>', '<xf numFmtId="0" fontId="2" fillId="0"/>',
-                                           f'<xf numFmtId="0" fontId="{0 if bold_b1 else 1}" fillId="0"><alignment horizontal="general"/></xf>'])
+                                           f'<xf numFmtId="0" fontId="{0 if bold_b1 else 1}" fillId="0"><alignment horizontal="general"/></xf>',
+                                           f'<xf numFmtId="{fid}" fontId="1" fillId="0"/>'], nf)
         shared = None
-        a1 = '<c r="A1" t="inlineStr"><is><t>Name</t></is></c>'
+        a1 = f'<c r="A1"{" s=\"3\"" if header_dated else ""} t="inlineStr"><is><t>Name</t></is></c>'
+        a3 = '<c r="A3" s="3"><v>44076</v></c>'
         b1 = '<c r="B1" s="2" t="inlineStr"><is><r><t>To</t></r><r><t>tal</t></r></is></c>'
         target, rid = "/xl/worksheets/sheet1.xml", "rIdX"
         a2 = f'<c r="A2" s="1"><v>{value_a2}.0</v></c>'
         b2 = '<c r="B2"><f>A2*2</f><v>84.00000000000001</v></c><c r="D2" s="1"/>'
-    sheet = f'<worksheet {NS}>{cols}<sheetData><row r="1">{a1}{b1}</row><row r="2">{a2}{b2}</row></sheetData></worksheet>'
+    sheet = f'<worksheet {NS}>{cols}<sheetData><row r="1">{a1}{b1}</row><row r="2">{a2}{b2}</row><row r="3">{a3}</row></sheetData></worksheet>'
     wb = f'<workbook {NS}><sheets><sheet name="{sheet_name}" sheetId="1" r:id="{rid}"/></sheets></workbook>'
     with zipfile.ZipFile(path, "w") as z:
         z.writestr("xl/workbook.xml", wb)
@@ -82,6 +95,11 @@ cases = {
     "sheet_name": (dict(sheet_name="Data2"), False),
     "lo_value": (dict(writer="lo", value_a2="43"), False),
     "lo_bold": (dict(writer="lo", bold_b1=False), False),
+    "lo_date": (dict(writer="lo", date="vm_short"), True),             # 14 written out as the VM's short date
+    "iso_date": (dict(date="iso"), False),                              # a different date style is a change
+    "lo_iso_date": (dict(writer="lo", date="iso"), False),
+    "text_datefmt": (dict(header_dated=True), True),                    # a date format on a text cell shows nothing
+    "lo_text_datefmt": (dict(writer="lo", header_dated=True), True),
 }
 for name, (kw, should_match) in cases.items():
     p = tmp / f"{name}.xlsx"

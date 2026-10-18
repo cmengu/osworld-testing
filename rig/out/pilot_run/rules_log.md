@@ -30,3 +30,27 @@ nodes, which condition two excluded; it is limited to cells carrying no text, fo
 cell with content or visible formatting is ever dropped. The first panel-order draft (erase the index of every unnamed
 panel) merged 14 distinct paths per snapshot and was rejected for the drop-empty-panels form, which gives the same
 labels with every path unique.
+
+## 19 October 2026, after the 30-row batch (rig/out/pilot_run2) and the save recheck (rig/out/pilot_recheck)
+
+| date | file | rule | class of node | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-19 | treediff.py | formatting readouts | under tool-bar[Formatting]: text of the font-name/size boxes; checked, value, pressed, indeterminate of its buttons (echo of the cursor cell; cell formats are on the cells since 18 Oct) | pilot-0079 c02, recheck 0126 c14 | 30 + 2 | see below |
+| 2026-10-19 | treediff.py | selection | `selected` on table and table-cell; status-bar text starting "Selected:", "Sum", "Average", "Count", "Min", "Max". Brings the checker in line with the written definition, which already excluded the selection | recheck 0210 c14 | 30 + 2 | see below |
+| 2026-10-19 | xlsxsig.py | locale short date; text cells | the VM's short-date code (dd/mm/yyyy) is read as Excel's built-in 14; text cells carry no number format | recheck 0231 c13 (4,002 date cells, every value equal) | 0 (recorded rows hold only the hash) | takes effect on new recordings; checked by hand on the kept views of 0231 c13/c14/c15: equal |
+
+Departure from the four conditions: the selection rule drops an attribute of cells (`selected`), not a non-content
+node. Admitted because the written definition (rig/prompts/guess_b_definition.txt, line 8) already excluded the
+selection, so the checker was stricter than the definition the teacher is scored against.
+
+Flips (`collect_pilot.py --recompare`, rules 8f168a3d3bda, mask 9a1602b2c845):
+pilot-0079 hide_col_a NO-UNDO-FOUND -> REVERSIBLE (ctrl+z); recheck pilot-0126 save_after_edit and pilot-0210
+save_after_clear_all NO-UNDO-FOUND -> REVERSIBLE (ctrl+z, ctrl+s, enter, ctrl+y). Under the new rules
+select_all and save_clean leave no trace (S1 = S); both are listed in NO_CHANGE_EXPECTED in collect_pilot.py.
+
+Same day, outside the comparison rules: guess B's prompt now defines a spreadsheet file by its content, not its
+bytes (prompt hash changes; rows carry prompt_sha256); undo list gains plain Ctrl+W, undo-save-redo(-home) and
+guess B's own undo as one candidate after the generic tier; reopen after a full quit starts LibreOffice on the
+file instead of the GNOME run dialog; an action that changes nothing outside NO_CHANGE_EXPECTED is marked
+status=broken_action; the proposer call is bounded.
+
