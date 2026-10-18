@@ -169,6 +169,17 @@ except Exception:
 PY""" % TREE_PATH
 
 
+def _get_file(env, path: str, timeout=(10, 120)):
+    """The controller's get_file posts without a timeout; when the Modal tunnel dies that call blocks forever
+    (the first pilot run hung four hours on it on 18 Oct 2026).  Same route, bounded."""
+    import requests
+    try:
+        r = requests.post(env.controller.http_server + "/file", data={"file_path": path}, timeout=timeout)
+        return r.content if r.status_code == 200 else None
+    except Exception:
+        return None
+
+
 def fast_tree(env, timeout: int = 110):
     """Returns (xml_text, stats).  xml_text is '' on failure, with the reason in stats['error']."""
     res = vm_shell(env, FAST_TREE_SCRIPT, timeout=timeout)
@@ -181,7 +192,7 @@ def fast_tree(env, timeout: int = 110):
         stats = json.loads(out[marker + len("__TREE__"):].strip().splitlines()[0])
     except (json.JSONDecodeError, IndexError):
         stats = {}
-    data = env.controller.get_file(TREE_PATH)
+    data = _get_file(env, TREE_PATH)
     if not data:
         return "", {"error": "tree file could not be fetched", **stats}
     return data.decode("utf-8", errors="replace"), stats

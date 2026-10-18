@@ -19,6 +19,7 @@ subscription login.  Nothing prints a key.  The sandbox is closed in a finally.
 """
 import argparse
 import hashlib
+import signal
 import json
 import os
 import pathlib
@@ -45,6 +46,18 @@ from rig.treediff import summarize                              # noqa: E402
 from rig import undo as U                                       # noqa: E402
 
 SANDBOX_USD_PER_HOUR = 0.76
+WATCHDOG_SECONDS = 900        # no single candidate, snapshot or reset may take longer; a dead tunnel otherwise hangs forever
+
+
+class Watchdog(Exception):
+    pass
+
+
+def _alarm(signum, frame):
+    raise Watchdog(f"step exceeded {WATCHDOG_SECONDS}s (tunnel or VM unresponsive)")
+
+
+signal.signal(signal.SIGALRM, _alarm)
 PRELUDE = "pyautogui.hotkey('ctrl', 'home')"
 TASK_DIR = OSWORLD / "evaluation_examples" / "examples" / "libreoffice_calc"
 
@@ -307,11 +320,13 @@ class Collector:
                "started_at": time.time()}
 
         # ---- S
+        signal.alarm(WATCHDOG_SECONDS)
         info = self.reset_to_before(row)
         S = self.snapshot(rdir / "S", {"row": rid, "kind": "before", **info})
         if not S.ok:
             time.sleep(3)
             S = self.snapshot(rdir / "S", {"row": rid, "kind": "before", **info, "retake": True})
+        signal.alarm(0)
         rec["snapshot_before"] = str(S.path.relative_to(self.out))
         rec["before_ok"] = S.ok
         rec["tree_before"] = str((S.path / "tree.xml").relative_to(self.out))
@@ -343,11 +358,13 @@ class Collector:
 
         # ---- action and S'
         rec["action_executed_at"] = time.time()
+        signal.alarm(WATCHDOG_SECONDS)
         self.act(row)
         S1 = self.snapshot(rdir / "S1", {"row": rid, "kind": "after"}, expect_kind=row.get("expect", "calc"))
         if not S1.ok:
             time.sleep(3)
             S1 = self.snapshot(rdir / "S1", {"row": rid, "kind": "after", "retake": True}, expect_kind=row.get("expect", "calc"))
+        signal.alarm(0)
         rec["snapshot_after"] = str(S1.path.relative_to(self.out))
         rec["after_ok"] = S1.ok
         rec["tree_after"] = str((S1.path / "tree.xml").relative_to(self.out))
@@ -375,6 +392,7 @@ class Collector:
             r = {"tier": tier, "seq": cand, "idx": idx}
             if note:
                 r["note"] = note
+            signal.alarm(WATCHDOG_SECONDS)
             try:
                 rinfo = self.reset_to_after(row)
                 code = U.candidate_code(cand, ctx)
@@ -402,8 +420,13 @@ class Collector:
                         r["match"] = True
                 if closest is None or score < closest[0]:
                     closest = (score, idx, cand, r.get("diff_sample", ""), r.get("result"))
+            except Watchdog:
+                signal.alarm(0)
+                raise                      # the row ends with an error and the environment is restarted
             except Exception as e:
                 r.update({"result": f"error: {repr(e)[:200]}", "error": True})
+            finally:
+                signal.alarm(0)
             r["seconds"] = round(time.time() - t_c, 1)
             self.timings["candidate"].append(time.time() - t_c)
             budget_used += 1
@@ -482,6 +505,7 @@ class Collector:
             rec["replay_reason"] = "seeded 10% sample: replay the action itself"
             replay_cand = []
         if replay_cand is not None and not self.args.no_replay:
+            signal.alarm(WATCHDOG_SECONDS)
             try:
                 rinfo = self.reset_to_after(row)
                 if replay_cand:
@@ -506,6 +530,8 @@ class Collector:
                     rec["flicker_class"] = "none"
             except Exception as e:
                 rec["replay_error"] = repr(e)[:300]
+            finally:
+                signal.alarm(0)
 
         # ---- teacher results
         if th is not None:
@@ -588,11 +614,14 @@ class Collector:
                         err = traceback.format_exc()[-1500:]
                         print(f"[{row['row_id']}] ERROR attempt {attempt + 1}: {repr(e)[:200]}", flush=True)
                         self.write({"row_id": row["row_id"], "spot_id": row["spot_id"], "status": "error", "attempt": attempt + 1, "error": err, "at": time.time()})
+                        signal.alarm(0)
                         if attempt == 0 and self.env_restarts < 3:
                             self.env_restarts += 1
                             self.close_env()
                             time.sleep(10)
                             self.start_env(row["task_id"])
+                        elif attempt == 0:
+                            break
                 print(self.report(done, len(rows)), flush=True)
         finally:
             self.close_env()

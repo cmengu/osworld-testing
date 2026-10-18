@@ -12,6 +12,9 @@ Rules on offer:
   cursor_readouts   drop the text of the Name Box and the Input line (Formula Tool Bar): they echo the cursor cell
   toolbar_readouts  drop text/checked/value of every node under a tool-bar (font name/size, Bold, alignment ...):
                     NOTE this also hides the only trace the tree holds of the cursor cell's format
+  container_order   collapse the sibling index of unnamed panels (panel[]#8 -> panel[]): a document opened from
+                    the Start Center keeps its content but its panels sit after the Start Center's leftovers
+                    (pilot-0131 c07: 766 diffs, all present/gone pairs of the same subtrees)
   shell_scope       drop everything under a nameless application node (gnome-shell walked through a naming gap;
                     a recorder-scope artefact, fixed in fasttree.py on 17 Oct, applied here to rows recorded before)
 """
@@ -27,9 +30,14 @@ from rig.snapshot import load_snapshot        # noqa: E402
 from rig.treediff import tag_of               # noqa: E402
 
 
+import re as _re
+
+
 def apply_rules(canon, rules):
     out = {}
     for path, attrs in canon.items():
+        if "container_order" in rules:
+            path = _re.sub(r"/panel\[\]#\d+", "/panel[]", path)
         tag = tag_of(path)
         if "shell_scope" in rules and path.startswith("/desktop-frame/application[]#"):
             continue
