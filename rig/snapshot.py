@@ -28,7 +28,7 @@ _XLSXSIG_SRC = (pathlib.Path(__file__).resolve().parent / "xlsxsig.py").read_tex
 DIGEST_SCRIPT = r"""python3 - <<'PY'
 """ + _XLSXSIG_SRC + r"""
 import os, hashlib, json, zipfile
-VIEW_CAP = 400 * 1024
+VIEW_CAP = 3 * 1024 * 1024   # 18 Oct: raised from 400 KB so big workbooks (pilot-0231, 105 KB xlsx) keep a readable view
 home = os.path.expanduser("~")
 skip = ("/.cache/", "/.local/share/Trash/", "/.mozilla/", "/.config/google-chrome/",
         "/snap/", "/.dbus/", "/.gvfs/", "/home/user/server/", "/home/user/.rig_cache/")

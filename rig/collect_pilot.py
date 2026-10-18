@@ -694,6 +694,9 @@ def main():
     ap.add_argument("--yes", action="store_true")
     ap.add_argument("--recompare", action="store_true", help="re-judge the rows on disk with the current mask and rules")
     args = ap.parse_args()
+    if not os.path.isabs(args.out):
+        # the module chdirs into OSWorld at import, so a relative --out would land under OSWorld/ (pilot_run2 did)
+        args.out = str((BASE / args.out).resolve())
     c = Collector(args)
     if args.recompare:
         c.recompare()
