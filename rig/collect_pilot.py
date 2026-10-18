@@ -454,7 +454,13 @@ class Collector:
                     cands = []
                     if not self.args.no_proposer and budget_used < self.args.budget and time.time() < deadline:
                         from rig.proposer import propose
-                        proposal = propose(before_text, after_text, rec["file_diff"], spot["desc"], row["code"], instruction)
+                        signal.alarm(WATCHDOG_SECONDS)       # an API call that never returns would otherwise hang the row
+                        try:
+                            proposal = propose(before_text, after_text, rec["file_diff"], spot["desc"], row["code"], instruction)
+                        except Watchdog:
+                            proposal = {"ok": False, "model": None, "candidates": [], "error": "proposer exceeded the watchdog"}
+                        finally:
+                            signal.alarm(0)
                         cands = [c["steps"] for c in proposal.get("candidates", [])]
                         rec["proposals"] = proposal
                 if tier == 4:

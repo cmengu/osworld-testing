@@ -29,7 +29,9 @@ STEP_RE = re.compile(r"^(key:[a-z0-9+_]+|type:.+|wait:\d+(\.\d+)?|reopen|menu:al
 def propose(before_text: str, after_text: str, file_diff: list, action_desc: str, action_code: str,
             task_instruction: str, max_candidates: int = 5, max_len: int = 5) -> dict:
     from openai import OpenAI
-    client = OpenAI()
+    # bounded: the first row to reach this tier (recheck 0231, 18 Oct 2026) sat 1.5 h inside the call with the
+    # sandbox billing; the SDK default is a 600 s timeout with retries
+    client = OpenAI(timeout=120, max_retries=1)
     user = (f"TASK THE USER GAVE THE AGENT: {task_instruction}\n\n"
             f"ACTION: {action_desc}\nkeys: {action_code}\n\n"
             f"STATE BEFORE:\n{before_text}\n\n"

@@ -38,6 +38,8 @@ CALC: List[Candidate] = [
     ["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3"],  # undo in memory, then save the undone state back
     ["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3", "key:ctrl+y"],  # ...then redo the edit: a save after
                                                                  # an unsaved edit undone with the edit back on screen (pilot2: 0126, 0210)
+    ["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3", "key:ctrl+y", "key:ctrl+home"],  # redo leaves the redone
+                                                                 # range selected (recheck 0210: 87 cells differed only in `selected`)
     ["key:ctrl+w", "key:alt+d", "reopen", "key:ctrl+home"],       # discard, reopen, cursor home
 ]
 
