@@ -34,7 +34,8 @@ GENERIC: List[Candidate] = [
 MNEMONICS = {}
 CALC: List[Candidate] = [
     ["key:ctrl+w"],                                              # close a window the action opened (new document, 0181)
-    ["key:ctrl+w", "key:alt+d", "reopen"],                       # discard the open document and reopen the file
+    ["key:ctrl+w", "wait:2", "key:alt+n", "reopen"],             # discard the open document and reopen the file (Don't Save
+                                                                 # is Alt+N on this image; Alt+D, used until 19 Oct, opens Data)
     ["key:alt+e", "key:enter"],                                  # Edit > Undo (first item of the Edit menu)
     ["key:ctrl+shift+l"],                                        # AutoFilter toggles back
     ["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3"],  # undo in memory, then save the undone state back
@@ -42,7 +43,7 @@ CALC: List[Candidate] = [
                                                                  # an unsaved edit undone with the edit back on screen (pilot2: 0126, 0210)
     ["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3", "key:ctrl+y", "key:ctrl+home"],  # redo leaves the redone
                                                                  # range selected (recheck 0210: 87 cells differed only in `selected`)
-    ["key:ctrl+w", "key:alt+d", "reopen", "key:ctrl+home"],       # discard, reopen, cursor home
+    ["key:ctrl+w", "wait:2", "key:alt+n", "reopen", "key:ctrl+home"],  # discard, reopen, cursor home
 ]
 
 # atoms for the blind pair tier

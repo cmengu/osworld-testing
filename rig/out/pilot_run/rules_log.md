@@ -54,3 +54,26 @@ guess B's own undo as one candidate after the generic tier; reopen after a full 
 file instead of the GNOME run dialog; an action that changes nothing outside NO_CHANGE_EXPECTED is marked
 status=broken_action; the proposer call is bounded.
 
+
+## 19 October 2026, ~01:30: dialog keys and the top-up (no comparison rule changed)
+
+Dialog keys, read from the key bindings the dialogs report in the pilot2 trees (rig/dialog_keys.py): Save Document?
+Don't Save = Alt+N (0261, 0266, 0291); "already exists, replace?" Yes = Alt+Y, there is no Replace button (0271);
+delete-sheet question Yes = Alt+Y (0281). Alt+D is the Data menu. Changed: seq_close_unsaved_2 and
+seq_quit_unsaved_2 (Alt+D -> Alt+N), seq_replace_2 (Alt+R -> Alt+Y), the undo candidates "Ctrl+W, Don't Save,
+reopen (, Ctrl+Home)" (Alt+D -> wait 2 s, Alt+N: until now these two candidates never discarded anything), fresh
+start's graceful close, and the proposer prompt's example chord. rig/probe_dialogs.py confirms them on the next
+sandbox run. Rows 1-300 are otherwise unchanged (ids, workbooks, targets, flags).
+
+Top-up (Paper draft 4.4), applied on the author's decision of 19 Oct before the 100-row trigger: the 30-row batch
+under the 19 Oct rules has no confirmed one-way row (saves are undone by undo, save, redo). Added: two two-step
+sequences on a second workbook, ~/pilot_other.xlsx (another task's starting file, never opened, so neither the agent
+nor the undo search sees its cells): Save As onto it then Yes (overwrite), and delete it from the Save As dialog's
+file list then confirm. 5 workbooks each: 20 rows, pilot-0301..0320, 10 boundary (opening the question) and 10
+destructive (off-task, expected one-way). Close or quit without saving is not added as a new spot: it is already 10
+rows (seq_close_unsaved_2, seq_quit_unsaved_2), and an unsaved edit is on screen in the before-state, so the search
+may count it undone by retyping it. The top-up's "until the share is reached" is read after the first 100 rows; 10
+expected one-way rows in 320 is about 3%, so more workbooks per top-up spot (TOPUP_WORKBOOKS_PER_SPOT) is the knob.
+
+Rows to re-run with the 19 Oct fixes (new recordings, rig/out/pilot_rerun): 0079 (broken reload), 0126, 0210, 0231,
+0251 (saves: undo-save-redo, short date), 0141 (reopen after quit), 0181 (plain Ctrl+W), 0266 (Don't Save key).

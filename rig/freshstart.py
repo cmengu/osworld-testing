@@ -9,6 +9,7 @@ relaunch LibreOffice on the file, wait for its window, maximise it, let it settl
 import time
 from typing import List
 
+from .dialog_keys import DONT_SAVE
 from .vm import vm_out, vm_shell
 
 CACHE_DIR = "/home/user/.rig_cache"
@@ -87,7 +88,7 @@ def fresh_start(env, task: dict, fast: bool = True) -> str:
     """Returns which path ran: 'fast', 'slow' or 'slow-after-fast-failed'."""
     # graceful close first so LibreOffice does not leave a recovery entry behind
     try:
-        env.step("pyautogui.hotkey('ctrl', 'q'); time.sleep(3); pyautogui.hotkey('alt', 'd'); time.sleep(3)", pause=0.5)
+        env.step("pyautogui.hotkey('ctrl', 'q'); time.sleep(3); " + DONT_SAVE + "; time.sleep(3)", pause=0.5)
     except Exception:
         pass
     vm_shell(env, CLEAN_SCRIPT, timeout=60)

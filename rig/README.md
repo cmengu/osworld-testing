@@ -24,6 +24,8 @@ with the OSWorld virtualenv, long runs inside `tmux attach -t rig`.
 | Teacher guesses | `teacher.py`, `prompts/` | Guess A = SafePred App. G verbatim (`safepred_appendix_g_template.txt` + `safepred_fill.json`), Guess B = five-part definition prompt; headless `claude -p`, Opus 5.5, model id logged; both asked before the action runs |
 | Compact state | `compact.py` | window chrome + non-empty cells + home files, for the teacher and the proposer |
 | Menu probe | `probe_menus.py` | screenshots of the menus/dialogs the spots use; confirms mnemonics before the pilot |
+| Dialog keys | `dialog_keys.py` | the keys that press Don't Save / Yes on this image (read from the recorded trees), accessibility helpers that select a file in the file dialog or press a named button |
+| Dialog probe | `probe_dialogs.py` | one sandbox, ~45 min: confirms the dialog keys and the two top-up spots (Save As over a second workbook, delete it from the file dialog) by what actually happens |
 
 ```bash
 cd ~/ai-research/osworld-testing
@@ -34,6 +36,7 @@ OSWorld/.venv/bin/python -I rig/smoke.py --compare-only                         
 OSWorld/.venv/bin/python -I rig/rebuild_mask.py                                   # rebuild mask.json after a mask.py change
 OSWorld/.venv/bin/python -I rig/make_clickspots.py                                # regenerate clickspots_pilot.json (prints the tallies)
 OSWorld/.venv/bin/python -I rig/probe_menus.py                                    # one sandbox, ~10 min: menu/dialog screenshots
+OSWorld/.venv/bin/python -I -u rig/probe_dialogs.py                              # one sandbox, ~45 min: dialog keys + top-up routes
 OSWorld/.venv/bin/python -I rig/collect_pilot.py --rows 90,79,121 --dry           # plan + worst-case cost, no VM
 OSWorld/.venv/bin/python -I rig/collect_pilot.py --rows 90,79,121 --row-minutes 45 # one sandbox; resumable; results in rig/out/pilot_run/
 OSWorld/.venv/bin/python -I rig/collect_pilot.py --recompare                      # re-judge rows on disk after a treediff/mask rule change
