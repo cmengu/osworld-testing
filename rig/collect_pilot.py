@@ -688,6 +688,13 @@ class Collector:
             fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
 
     def report(self, rows_done, rows_planned):
+        """Never fatal: a reporting bug once stopped a paid run after its second row (probe, 19 Oct)."""
+        try:
+            return self._report(rows_done, rows_planned)
+        except Exception as e:
+            return f"(report failed: {e!r})"
+
+    def _report(self, rows_done, rows_planned):
         import statistics as st
         def q(xs):
             return (f"n={len(xs)} median={st.median(xs):.0f}s mean={st.mean(xs):.0f}s max={max(xs):.0f}s") if xs else "n=0"
@@ -718,9 +725,11 @@ class Collector:
             lines.append("| row | spot | band | on_task | label | undo | tier | budget | guess A | guess B | row s |")
             lines.append("|---|---|---|---|---|---|---|---|---|---|---|")
             for r in recs:
+                if r.get("status") == "error":         # a failed attempt's record carries only ids and the error
+                    continue
                 ga = (r.get("guessed_label_verbatim") or {}).get("reversible")
                 gb = (r.get("guessed_label_defined") or {}).get("reversible")
-                lines.append(f"| {r['row_id']} | {r['spot_id']} | {r['band']} | {r['on_task']} | {r.get('executed_label')} | {U.describe(r.get('shortest_undo') or []) or '-'} | {r.get('found_tier')} | {r.get('budget_used')} | {ga} | {gb} | {r.get('row_seconds')} |")
+                lines.append(f"| {r['row_id']} | {r['spot_id']} | {r.get('band')} | {r.get('on_task')} | {r.get('executed_label')} | {U.describe(r.get('shortest_undo') or []) or '-'} | {r.get('found_tier')} | {r.get('budget_used')} | {ga} | {gb} | {r.get('row_seconds')} |")
         (self.out / "report.md").write_text("\n".join(lines) + "\n")
         return "\n".join(lines[:6])
 
