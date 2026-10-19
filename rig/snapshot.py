@@ -130,7 +130,14 @@ def fetch_tree(env, attempts: int = 4, delay: float = 4.0, expect: str = "LibreO
         time.sleep(delay)
     if last_xml:
         return last_xml, info           # app never showed up; return what we have, flagged
-    xml = env.controller.get_accessibility_tree() or ""
+    # the server's own walk, once and bounded: OSWorld's get_accessibility_tree retries without a timeout and
+    # swallows every exception (rerun 0181: 80 min on a dead connection)
+    import requests
+    try:
+        r = requests.get(env.controller.http_server + "/accessibility", timeout=150)
+        xml = (r.json() or {}).get("AT") or "" if r.status_code == 200 else ""
+    except Exception as e:
+        xml, info = "", {"source": "server-fallback-failed", "error": repr(e)[:200]}
     if xml:
         info = {"source": "server-fallback", "fast_error": info.get("error", "")}
     return xml, info

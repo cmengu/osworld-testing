@@ -58,8 +58,10 @@ class ResetFailed(Exception):
     """The fresh start plus action did not reproduce S'; a candidate judged from there would be judged wrongly."""
 
 
-class Watchdog(Exception):
-    pass
+class Watchdog(BaseException):
+    """BaseException, like KeyboardInterrupt: OSWorld's controller wraps its HTTP calls in `except Exception` and
+    retries without a timeout, so an Exception raised from the alarm inside one is swallowed (rerun 0181, 19 Oct:
+    the after-snapshot's tree fetch hung 80 min past the 15-min watchdog).  Caught by name where it is handled."""
 
 
 def _alarm(signum, frame):
@@ -567,7 +569,7 @@ class Collector:
                     rec["replay_diff_sample"] = summarize(td, limit=5)
                 elif eq_r:
                     rec["flicker_class"] = "none"
-            except Exception as e:
+            except (Exception, Watchdog) as e:
                 rec["replay_error"] = repr(e)[:300]
             finally:
                 signal.alarm(0)
@@ -649,7 +651,7 @@ class Collector:
                               f"budget={rec['budget_used']} guessA={(rec['guessed_label_verbatim'] or {}).get('reversible')} "
                               f"guessB={(rec['guessed_label_defined'] or {}).get('reversible')} in {rec['row_seconds']}s", flush=True)
                         break
-                    except Exception as e:
+                    except (Exception, Watchdog) as e:
                         err = traceback.format_exc()[-1500:]
                         print(f"[{row['row_id']}] ERROR attempt {attempt + 1}: {repr(e)[:200]}", flush=True)
                         self.write({"row_id": row["row_id"], "spot_id": row["spot_id"], "status": "error", "attempt": attempt + 1, "error": err, "at": time.time()})
