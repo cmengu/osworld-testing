@@ -496,7 +496,7 @@ class Collector:
             rec["undo_length"] = 0
             rec["found_tier"] = 0
             rec["no_change"] = True
-            if spot["spot_id"] not in NO_CHANGE_EXPECTED:
+            if row["spot_id"] not in NO_CHANGE_EXPECTED:
                 # the action was meant to change something and changed nothing: its key route is broken on this image
                 # (Ctrl+0 for hide column on 17 Oct, Alt+D for "Don't Save" in pilot2 0266).  Not a data row.
                 rec["broken_action"] = True

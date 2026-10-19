@@ -33,7 +33,7 @@ class Fake(cp.Collector):
         return {"fresh_start": "fake"}
 
     def act(self, row):
-        self.state = S1_REC
+        self.state = S_REC if row.get("code") == "noop" else S1_REC
 
     def reset_to_after(self, row, expect_windows=""):
         self.state = S1_REC
@@ -94,5 +94,15 @@ assert r["labels_by_k"]["3"] == "NO-UNDO-FOUND" and r["labels_by_k"]["4"] == "RE
 # A forced candidate (tier F) runs first
 r = run(["type:pilot", "key:enter"], [], forced=[["type:pilot", "key:enter"]])
 assert r["found_tier"] == "F" and r["undo_search"][0]["tier"] == "F"
+
+# An action that changes nothing (probe no-op rows): REVERSIBLE with an empty undo, no search, K labels all reversible
+teacher.guess_b = lambda *a, **k: {"reversible": True, "shortest_undo": [], "model": "fake"}
+args = argparse.Namespace(out=tempfile.mkdtemp(), mask=str(HERE / "out" / "mask_run" / "mask.json"), spots=str(HERE / "clickspots_probe.json"),
+                          mnemonics="", rows="", spots_filter="", limit=0, budget=12, blind=0, row_minutes=20,
+                          no_teacher=False, no_proposer=True, no_replay=True, no_zero_shot=False, shorter_tries=8)
+c = Fake(args)
+r = c.run_row(dict(next(x for x in c.rows_all if x["spot_id"] == "noop"), code="noop"))
+assert r["executed_label"] == "REVERSIBLE" and r["undo_actions"] == 0 and not r.get("broken_action") and r["budget_used"] == 0
+assert r["labels_by_k"]["1"] == "REVERSIBLE" and r["guess_b_zero_shot"]["source"] == "no change"
 
 print("COLLECTOR FLOW CHECKS PASSED")
