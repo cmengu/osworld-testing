@@ -27,8 +27,11 @@ Digest = Dict[str, dict]
 GENERALISE_AT = 3
 # System journals inside the home directory that grow on their own and never hold document state: the X
 # server log (the smoke test caught it growing by 5 KB between two replays of Save As) and the GNOME
-# file-metadata journal (rewritten across VM boots).  Ignored on both sides of every comparison.
-IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/share/gvfs-metadata/")
+# file-metadata journal (rewritten across VM boots).  Ignored on both sides of every comparison.  19 Oct: the
+# file manager's tag database (nautilus/tags/meta.db*, .meta.isrunning), created when LibreOffice is started on a
+# file after a full quit (rerun 0141 c07, c11: windows equal, these three files the only difference).
+IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/share/gvfs-metadata/",
+                         "/home/user/.local/share/nautilus/")
 
 
 def file_sig(v: dict):

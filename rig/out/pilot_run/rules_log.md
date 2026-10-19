@@ -90,3 +90,14 @@ close, no window was listed 5 s later (plain Ctrl+W in 0131 left the Start Cente
 The GTK file dialog on this image has no Delete: its list offers Rename and Create Folder only; Delete, Shift+Delete
 and the context menu all left the file on disk. seq_delete_other_file is dropped; seq_save_over_other takes its 5
 workbooks (10 workbooks, still 20 top-up rows pilot-0301..0320, 10 expected one-way). Rows 1-300 unchanged.
+
+## 19 October 2026, 11:00: file manager's tag database ignored
+
+| date | file | rule | class | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-19 | mask.py | ignored journals | files under ~/.local/share/nautilus/ (the file manager's tag database meta.db*, .meta.isrunning), next to the GNOME file-metadata journal already ignored. A diary of the desktop, never document state (Paper draft 3.1 exclusions) | rerun 0141 c07, c11: LibreOffice relaunched on the file after Ctrl+Q, windows equal, these three files the only difference | pilot_run2 30, pilot_recheck 2 | 0 (rules 246c0c6ea946) |
+
+The rerun was stopped and resumed to apply it (rows 0079 and 0126 kept; 0141 re-run from the start, since its
+reopen attempts were quick-rejected and kept no tree to re-judge). Stopping with Ctrl+C inside the tmux pane left
+the sandbox running (stopped by hand with `modal container stop`); stop a run with `pkill -INT -f rig/collect_pilot.py`
+and always check `modal container list` after.

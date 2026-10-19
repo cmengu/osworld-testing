@@ -6,7 +6,10 @@
 #   rig/run_in_tmux.sh pilot2 --rows 1-10 --row-minutes 45 --yes     # start
 #   tmux attach -t pilot2                                             # watch (detach: ctrl+b then d)
 #   tail -f rig/out/pilot2.log                                        # or just read the log
-#   tmux kill-session -t pilot2                                       # stop (the sandbox closes in a finally)
+#   pkill -INT -f rig/collect_pilot.py                                # stop: the sandbox closes in a finally.  Not Ctrl+C in the
+#                                                                     # pane or kill-session: they also kill tee, and the finally
+#                                                                     # died on the broken pipe (19 Oct, orphan sandbox).  Then
+#                                                                     # check `modal container list`.
 set -eu
 name="${1:?usage: rig/run_in_tmux.sh <session-name> <collector args...>}"
 shift
@@ -21,4 +24,4 @@ for a in "$@"; do args+=" ${(q)a}"; done
 cmd="caffeinate -i OSWorld/.venv/bin/python -I -u rig/collect_pilot.py${args} 2>&1 | tee -a ${(q)log}"
 tmux new-session -d -s "$name" "$cmd; echo; echo '[collector exited]'; sleep 86400"
 echo "started tmux session '$name'; log: $log"
-echo "watch: tmux attach -t $name    stop: tmux kill-session -t $name"
+echo "watch: tmux attach -t $name    stop: pkill -INT -f rig/collect_pilot.py, then modal container list"
