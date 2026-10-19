@@ -29,7 +29,10 @@ try:
 except Exception:
     pass
 import pyatspi
-pids = set(int(x) for x in subprocess.run(["pgrep", "-f", "soffice"], capture_output=True, text=True).stdout.split())
+# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise
+_proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None
+pids = set(int(x) for x in subprocess.run(["pgrep", "-x", _proc] if _proc else ["pgrep", "-f", "soffice"],
+                                          capture_output=True, text=True).stdout.split())
 def norm(s):
     return (s or "").replace("’", "'").replace("~", "").replace("_", "").lower()
 def walk(n, ok, d=0):
@@ -95,9 +98,19 @@ print("selected" if ok else "select failed")
 '''
 
 
-def press_code(label: str, settle: float = 3) -> str:
-    return ("__import__('subprocess').run(['python3', '-c', " + repr(PRESS_PY) + ", " + repr(label) + "], timeout=30); "
+def press_code(label: str, settle: float = 3, proc: str = "") -> str:
+    """proc: the process whose windows to search (pgrep -x name, e.g. 'nautilus'); LibreOffice when empty."""
+    return ("__import__('subprocess').run(['python3', '-c', " + repr(PRESS_PY) + ", " + repr(label) + ", " + repr(proc) + "], timeout=30); "
             f"time.sleep({settle})")
+
+
+# GNOME Files 42 (nautilus-trash-bar.c, gnome-42): the Trash view's bar has "_Settings", "_Restore" and "_Empty…",
+# so Alt+E empties from the keyboard; the confirmation (nautilus-file-operations.c) is "Empty all items from
+# Trash?" with "Empty _Trash" (Alt+T).  In the Trash view, Delete asks "permanently delete?" with "_Delete" (Alt+D).
+FILES_GO_TRASH = "pyautogui.hotkey('ctrl', 'l'); time.sleep(1); pyautogui.typewrite('trash:///'); pyautogui.press('enter'); time.sleep(3)"
+FILES_EMPTY_TRASH = "pyautogui.hotkey('alt', 'e'); time.sleep(3)"
+FILES_CONFIRM_EMPTY = "pyautogui.hotkey('alt', 't'); time.sleep(3)"
+FILES_CONFIRM_DELETE = "pyautogui.hotkey('alt', 'd'); time.sleep(3)"
 
 
 def select_file_code(name: str, settle: float = 1) -> str:

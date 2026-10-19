@@ -237,7 +237,8 @@ assert "Popen(['nautilus', '/home/user/Desktop']" in step_code("reopen", {"reope
 from rig.mask import file_sig
 assert file_sig({"s": 3, "h": "a", "mode": 0o644}) != file_sig({"s": 3, "h": "a", "mode": 0o600})
 assert file_sig({"s": 3, "h": "a"}) == file_sig({"s": 3, "h": "a"})
-assert file_sig({"d": 1, "mode": 0o755}) == ("dir", 0o755) and file_sig({"l": "Desktop"}) == ("link", "Desktop")
+assert file_sig({"d": 1, "mode": 0o755}) == ("dir", 0o755, None) and file_sig({"l": "Desktop"}) == ("link", "Desktop")
+assert file_sig({"d": 1, "mode": 0o755, "u": 0}) != file_sig({"d": 1, "mode": 0o755, "u": 1000})   # a sudo-made folder
 assert file_sig({"k": "x", "s": 1, "mode": 0o664}) == file_sig({"k": "x", "s": 2, "mode": 0o664})   # cells, not bytes
 
 # Tasks that are not one spreadsheet take the generic reset; every Calc task keeps the fast path.

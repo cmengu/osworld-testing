@@ -114,3 +114,19 @@ Not a comparison rule, logged for the record: guess B's prompt now asks for its 
 (old prompt: 24 by the free-text reader, 4 not at all); labels agree with the executed label on 28 of 30 (0251: guess
 says one-way, executed undo-save-redo restores it; 0266: guess says retype restores it, unverified). The worked
 example (part 4) is unchanged until the 0266 retype probe decides it.
+
+## 19 October 2026, late: owner in the file state; reset as root
+
+| date | file | rule | class | trigger | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-19 | snapshot.py, mask.py | file state | the owner uid (u) of every file and folder joins the signature: a folder made with sudo (os/e0df059f) differs from the same folder made by the user | the reset could not remove root-owned folders; fixed by running the generic restore as root (OSWorld's own `echo {CLIENT_PASSWORD} \| sudo -S` route), which also brings owners back | pilot_run2 30, pilot_recheck 2, pilot_rerun 8 | 0 against the previous re-compare (rules b36b5dacf46a) |
+
+Prompts: guess B's definition and the proposer's prompt are now app-neutral (documents, files and folders with
+permissions and owner, the Trash, the folder the file manager shows; terminal text is not state; typing a command
+into an open terminal is an allowed undo action, 20 characters per typing step). Guess B's worked example no longer
+uses the disputed close-without-saving case (0266, open until the retype probe): it uses a permanent delete of a file
+whose content was never shown (one-way by construction), closing an untouched document (reopen, confirmed on 0131)
+and typing (Ctrl+Z).
+Re-asked on the 30 pilot rows with the app-neutral prompt (rig/out/reask_b2): 28 of 28 undos parse, labels agree on 29
+of 30 (0251 now right: undo, save, redo; 0266 still says retype works, the one open case), 10 undos identical to the
+executed one (8 before). One sample each, so a one-row difference is within run-to-run variation.

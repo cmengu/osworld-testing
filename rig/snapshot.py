@@ -7,7 +7,7 @@ Everything is written to a directory so a run can be audited and re-compared lat
 The tree comes from rig.fasttree (scoped, parallel, errors reported) with the server's own
 walk as a fallback.  File digest fields per path: s = size, m = mtime (recorded, never
 compared), h = sha256 of the bytes, c = content hash for zip-based office files with the
-metadata parts left out, mode = permission bits, k = cell-level signature for .xlsx/.xlsm (rig/xlsxsig.py: what a user sees, not
+metadata parts left out, mode = permission bits, u = owner uid, k = cell-level signature for .xlsx/.xlsm (rig/xlsxsig.py: what a user sees, not
 how the writer stored it), v = the readable workbook view behind k.  Directories are entries ending in "/" with d = 1
 and their mode; symbolic links carry l = the target.  Equality in mask.py uses k when present,
 otherwise (s, c or h).
@@ -56,7 +56,8 @@ for root, dirs, files in os.walk(home):
         dirs[:] = []
         continue
     try:
-        rows.append({"p": root.rstrip("/") + "/", "d": 1, "mode": os.lstat(root).st_mode & 0o7777})
+        st = os.lstat(root)
+        rows.append({"p": root.rstrip("/") + "/", "d": 1, "mode": st.st_mode & 0o7777, "u": st.st_uid})
     except OSError:
         pass
     for f in files + [d for d in dirs if os.path.islink(os.path.join(root, d))]:
@@ -85,7 +86,7 @@ for root, dirs, files in os.walk(home):
                 h = hashlib.sha256(data).hexdigest()
             except OSError:
                 h = None
-        row = {"p": p, "s": size, "m": st.st_mtime_ns, "h": h, "mode": st.st_mode & 0o7777}
+        row = {"p": p, "s": size, "m": st.st_mtime_ns, "h": h, "mode": st.st_mode & 0o7777, "u": st.st_uid}
         if p.lower().endswith(office) and st.st_size <= cap:
             c = content_hash(p)
             if c:

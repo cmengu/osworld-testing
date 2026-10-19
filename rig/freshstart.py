@@ -135,9 +135,11 @@ def switch_task(env, task: dict) -> str:
 # Generic fresh start (19 Oct 2026), for tasks that are not "LibreOffice on one spreadsheet": Files, terminal and
 # multi_apps rows.  Of the 27 usable multi_apps tasks, 13 open nothing, 11 run setup commands and 5 launch an
 # application, so "copy the workbook back and relaunch Calc" does not reset them.  Instead:
-#   prime (once, right after the task's own env.reset):  tar the user's folders as the setup left them, and record
+#   prime (once, right after the task's own env.reset):  tar the user's folders as the setup left them (as root, so
+#       root-owned folders are archived with their owner), and record
 #       the top-level entries of $HOME and the window titles the setup produced;
-#   reset (every time):  close every application, restore the folders from the tar (files, folders, modes, Trash),
+#   reset (every time):  close every application, restore the folders from the tar as root (files, folders, modes,
+#       owners, Trash; a folder made with sudo is removed and comes back root-owned),
 #       replay only the setup steps that open windows (open, launch, and execute/command steps that start a GUI
 #       program), wait for the recorded windows, maximise them, settle.
 # Setup steps that only change files (mkdir, unzip, tar, pip, history -c) are not replayed: their result is in the
@@ -194,8 +196,10 @@ mkdir -p {cache}; cd "$HOME"
 ls -A1 | grep -v '^\.' > {top}
 ROOTS=""; for r in {roots}; do [ -e "$r" ] && ROOTS="$ROOTS $r"; done
 TOPFILES=$(find . -maxdepth 1 -type f ! -name '.*' -printf '%P\n')
-tar -cpf {tar} $ROOTS $TOPFILES 2>/dev/null; echo "tar=$?"
-(wmctrl -l 2>/dev/null | awk '{{ $1=$2=$3=""; sub(/^ +/, ""); print }}' | grep -v '^@!' | sort) > {windows}
+tar -cpf {tar} $ROOTS $TOPFILES 2>/dev/null; echo "tar=$?"; chown -R user:user {cache} 2>/dev/null
+"""
+# window titles as the user: root has no access to the user's X display
+PRIME_WINDOWS = r"""(wmctrl -l 2>/dev/null | awk '{{ $1=$2=$3=""; sub(/^ +/, ""); print }}' | grep -v '^@!' | sort) > {windows}
 echo PRIMED; cat {windows}
 """
 
@@ -207,14 +211,23 @@ for r in {roots}; do rm -rf "./$r" 2>/dev/null; done
 find . -maxdepth 1 -type f ! -name '.*' -delete 2>/dev/null
 # top-level folders the agent created (not in the recorded listing); never the VM's server or the rig cache
 ls -A1 | grep -v '^\.' | while IFS= read -r e; do grep -qxF "$e" {top} || [ "$e" = server ] || rm -rf "./$e"; done
-tar -xpf {tar} 2>/dev/null; echo "untar=$?"
+tar -xpf {tar} --same-owner 2>/dev/null; echo "untar=$?"
 """
+
+
+def as_root(env, script: str) -> str:
+    """The script run by root with HOME=/home/user, the way OSWorld's own setup steps use sudo (os/e0df059f:
+    `echo {CLIENT_PASSWORD} | sudo -S ...`).  Root is needed for what the setup or the agent made with sudo: a
+    root-owned folder (e0df059f's todo_list_Jan_1) can be neither archived nor removed by the user, and only root
+    restores its owner.  The password is the provider's VM password (DesktopEnv.client_password), never stored."""
+    pw = getattr(env, "client_password", "") or "password"
+    return (f"echo {_shlex.quote(pw)} | sudo -S -p '' env HOME=/home/user DISPLAY=:0 sh -c {_shlex.quote(script)}")
 
 
 def prime_generic(env, task: dict) -> str:
     script = PRIME_GENERIC.format(cache=CACHE_DIR, top=BASELINE_TOP, tar=BASELINE_TAR, windows=BASELINE_WINDOWS,
                                   roots=" ".join(_shlex.quote(r) for r in HOME_ROOTS))
-    return vm_out(env, script, timeout=110)
+    return vm_out(env, as_root(env, script), timeout=110) + "\n" + vm_out(env, PRIME_WINDOWS.format(windows=BASELINE_WINDOWS), timeout=20)
 
 
 def _windows_now(env) -> list:
@@ -250,8 +263,8 @@ def generic_fresh_start(env, task: dict, wait_s: int = 90) -> str:
         except Exception:
             pass
     vm_shell(env, CLEAN_SCRIPT, timeout=60)
-    vm_shell(env, RESTORE_GENERIC.format(procs=" ".join(GUI_PROCS), top=BASELINE_TOP, tar=BASELINE_TAR,
-                                         roots=" ".join(_shlex.quote(r) for r in HOME_ROOTS)), timeout=110)
+    vm_shell(env, as_root(env, RESTORE_GENERIC.format(procs=" ".join(GUI_PROCS), top=BASELINE_TOP, tar=BASELINE_TAR,
+                                                      roots=" ".join(_shlex.quote(r) for r in HOME_ROOTS))), timeout=110)
     for s in gui_steps(task):
         _replay_step(env, s)
     want = [l for l in vm_out(env, f"cat {BASELINE_WINDOWS} 2>/dev/null", timeout=15).splitlines() if l.strip()]

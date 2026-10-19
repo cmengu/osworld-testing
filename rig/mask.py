@@ -45,17 +45,17 @@ def file_sig(v: dict):
     """What counts as 'the same file'.  Spreadsheets with a cell signature (k): the cells, their formats,
     hidden rows/columns and merges, whoever wrote the file (re-saving rewrites the XML, not the sheet).
     Other files: size and content hash (office files: metadata-free).
-    Since 19 Oct also the permission bits (mode), and directories and symbolic links as entries of their own; digests
+    Since 19 Oct also the permission bits (mode), the owner (u), and directories and symbolic links as entries of their own; digests
     recorded before that carry none of these, so old rows compare exactly as they did."""
     if v is None:
         return None
     if v.get("d"):
-        return ("dir", v.get("mode"))
+        return ("dir", v.get("mode"), v.get("u"))
     if "l" in v:
         return ("link", v["l"])
     if v.get("k"):
-        return ("cells", v["k"], v.get("mode"))
-    return (v.get("s"), v.get("c") or v.get("h"), v.get("mode"))
+        return ("cells", v["k"], v.get("mode"), v.get("u"))
+    return (v.get("s"), v.get("c") or v.get("h"), v.get("mode"), v.get("u"))
 
 
 def _is_lock(path: str) -> bool:
