@@ -26,6 +26,10 @@ with the OSWorld virtualenv, long runs inside `tmux attach -t rig`.
 | Menu probe | `probe_menus.py` | screenshots of the menus/dialogs the spots use; confirms mnemonics before the pilot |
 | Dialog keys | `dialog_keys.py` | the keys that press Don't Save / Yes on this image (read from the recorded trees), accessibility helpers that select a file in the file dialog or press a named button |
 | Dialog probe | `probe_dialogs.py` | one sandbox, ~45 min: confirms the dialog keys and the two top-up spots (Save As over a second workbook, delete it from the file dialog) by what actually happens |
+| Generic reset | `freshstart.py` (`generic_fresh_start`) | tasks that are not one spreadsheet (Files, multi_apps, Thunderbird): user folders restored from a tar taken after the task's setup, only the window-opening setup steps replayed, windows waited for and maximised; a new sandbox per task |
+| Probe rows | `make_probe_rows.py` → `clickspots_probe.json`, `tasks/rig-files-probe.json` | 27 rows run by the collector itself: Calc known answers, the 0266 retype test (forced candidates), Files on a hand-built folder, 5 multi_apps tasks, Thunderbird; no-op rows are the noise gate |
+| Guess B re-ask | `reask_guess_b.py` | re-asks guess B on collected rows with the current prompt (no VM); parse rate and agreement |
+| Flow test | `test_collector_flow.py` | `run_row` on recorded snapshots with the VM faked: undo search, shorter search, zero-shot, labels at every K, forced tier |
 | Spot-check page | `make_spotcheck.py` | review page per run folder(s): task, action, before / after / after-undo screenshots, label, on-task flag, two questions; answers go to the published page's db (`verdicts/<row>`) |
 
 ```bash
@@ -42,7 +46,17 @@ OSWorld/.venv/bin/python -I rig/make_spotcheck.py --runs rig/out/pilot_run2 rig/
 OSWorld/.venv/bin/python -I rig/collect_pilot.py --rows 90,79,121 --dry           # plan + worst-case cost, no VM
 OSWorld/.venv/bin/python -I rig/collect_pilot.py --rows 90,79,121 --row-minutes 45 # one sandbox; resumable; results in rig/out/pilot_run/
 OSWorld/.venv/bin/python -I rig/collect_pilot.py --recompare                      # re-judge rows on disk after a treediff/mask rule change
+OSWorld/.venv/bin/python -I rig/test_collector_flow.py                            # no VM: the row logic on recorded snapshots
+python3 rig/make_probe_rows.py                                                    # regenerate clickspots_probe.json
+OSWorld/.venv/bin/python -I rig/collect_pilot.py --spots rig/clickspots_probe.json --out rig/out/probe_run \
+    --row-minutes 20 --budget 12 --blind 0 --no-proposer --no-teacher --max-usd 8   # the probes: one sandbox per task
 ```
+
+Rows since 19 Oct carry `labels_by_k` (K = 1..5 actions, waits not counted; after a match the search spends up to
+`--shorter-tries` on strictly shorter candidates), `undo_actions`, `guess_b_zero_shot` (guess B's own undo, in the
+step language since 19 Oct, executed even when the search did not reach it; a match is an executed undo and counts),
+`baseline` (Ctrl+Z alone, Escape alone) and, on probe rows, `known_answer`.  `type:` steps are capped at 20
+characters (`undo.TYPE_MAX`).
 
 Comparison rules (`treediff.py`, `mask.py`) change only under the four conditions of Paper draft 4.3 (a class of
 node, never a row; non-content nodes only; every row re-compared and flips reported; logged with the trigger

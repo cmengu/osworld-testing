@@ -39,7 +39,7 @@ os.environ.setdefault("MODAL_SANDBOX_TIMEOUT", "36000")   # 10 h: a serial run o
 os.chdir(OSWORLD)
 
 from rig.compact import file_diff, render                      # noqa: E402
-from rig.freshstart import fresh_start, prime_cache, switch_task  # noqa: E402
+from rig.freshstart import fresh_start, is_calc_task, prime_cache, switch_task  # noqa: E402
 from rig.mask import apply_file_mask, file_sig, states_equal    # noqa: E402
 from rig.snapshot import load_snapshot, take_snapshot           # noqa: E402
 from rig.treediff import summarize                              # noqa: E402
@@ -51,7 +51,8 @@ WATCHDOG_SECONDS = 900        # no single candidate, snapshot or reset may take 
 
 # spots whose action may legitimately leave no trace (saving an unchanged file); every other "no change" is a
 # broken key route
-NO_CHANGE_EXPECTED = frozenset({"save_clean", "select_all"})   # select_all: the selection is not state (19 Oct)
+NO_CHANGE_EXPECTED = frozenset({"save_clean", "select_all",   # select_all: the selection is not state (19 Oct)
+                                "noop", "term_ls"})           # probe rows: a bare Shift press; a command that writes nothing
 
 
 class ResetFailed(Exception):
@@ -71,6 +72,7 @@ def _alarm(signum, frame):
 signal.signal(signal.SIGALRM, _alarm)
 PRELUDE = "pyautogui.hotkey('ctrl', 'home')"
 TASK_DIR = OSWORLD / "evaluation_examples" / "examples" / "libreoffice_calc"
+EXAMPLES = OSWORLD / "evaluation_examples" / "examples"
 
 
 def _load_env_file():
@@ -208,7 +210,12 @@ class Collector:
 
     def task(self, task_id):
         if task_id not in self.tasks:
-            self.tasks[task_id] = json.loads((TASK_DIR / f"{task_id}.json").read_text())
+            f = TASK_DIR / f"{task_id}.json"
+            if not f.exists():                         # Files, multi_apps, Thunderbird rows (19 Oct)
+                f = HERE / "tasks" / f"{task_id}.json"  # hand-built tasks (the Files probe)
+            if not f.exists():
+                f = next(EXAMPLES.glob(f"*/{task_id}.json"))
+            self.tasks[task_id] = json.loads(f.read_text())
         return self.tasks[task_id]
 
     # ------------------------------------------------------------------ environment
@@ -241,6 +248,12 @@ class Collector:
         if self.env is None:
             self.start_env(task_id)
             return "env-start"
+        if task_id != self.current_task_id and not (is_calc_task(self.task(task_id)) and is_calc_task(self.task(self.current_task_id))):
+            # a task that is not one spreadsheet runs setup commands, launches programs and leaves files and
+            # folders behind: it gets a sandbox of its own (about 3 min, 0.04 USD), so no task sees another's files
+            self.close_env()
+            self.start_env(task_id)
+            return "env-restart"
         if task_id != self.current_task_id:
             t0 = time.time()
             how = switch_task(self.env, self.task(task_id))
@@ -261,7 +274,9 @@ class Collector:
         how = fresh_start(self.env, self.task(row["task_id"]))
         t_fs = time.time() - t
         self.timings["fresh_start"].append(t_fs)
-        self.step(PRELUDE, pause=1.0)
+        prelude = row.get("prelude", PRELUDE)
+        if prelude:
+            self.step(prelude, pause=1.0)
         if row.get("setup"):
             self.step(row["setup"], pause=2.0)
         return {"fresh_start": how, "fresh_start_seconds": round(t_fs, 1), "setup_seconds": round(time.time() - t - t_fs, 1)}
@@ -290,9 +305,17 @@ class Collector:
     def snapshot(self, path, meta, expect_kind="calc", office_expected=True):
         """expect_kind: the spot's declared outcome for S' ('calc', 'dialog', 'start_center', 'second_window',
         'app_closed'); 'any' for undo candidates and replays, whose outcome is unknown: the tree is taken as it is
-        (waiting for a LibreOffice window only when one is expected) and completeness is not a gate."""
+        (waiting for a LibreOffice window only when one is expected) and completeness is not a gate;
+        'apps:<bus name>,...' for rows outside LibreOffice: those applications must be in the tree with a window."""
         t = time.time()
-        if expect_kind == "any":
+        if expect_kind == "none":                     # no readiness gate: an application whose bus name is not known yet
+            snap = take_snapshot(self.env, path, meta, expect=None, require_office=False)
+        elif expect_kind.startswith("apps:"):
+            apps = [a for a in expect_kind[5:].split(",") if a]
+            office = "soffice" in apps
+            snap = take_snapshot(self.env, path, meta, expect="LibreOffice" if office else None, require_office=office,
+                                 expect_apps=[a for a in apps if a != "soffice"])
+        elif expect_kind == "any":
             snap = take_snapshot(self.env, path, meta, expect="LibreOffice" if office_expected else None, require_office=False)
         else:
             app_may_be_closed = expect_kind == "app_closed"
@@ -334,33 +357,35 @@ class Collector:
         rdir.mkdir(parents=True, exist_ok=True)
         task = self.task(row["task_id"])
         env_how = self.ensure_task(row["task_id"])
-        rec = {"row_id": rid, "app": "libreoffice-calc", "task_id": row["task_id"], "workbook": row["workbook"],
+        rec = {"row_id": rid, "app": row.get("app", "libreoffice-calc"), "task_id": row["task_id"], "workbook": row["workbook"],
                "spot_id": row["spot_id"], "band": row["band"], "on_task": row["on_task"], "on_task_reason": row["on_task_reason"],
                "seed": row["seed"], "sequence": row.get("sequence"), "step": row.get("step"), "twin_of": row.get("twin_of"),
                "target_cell": row.get("target_cell"), "target_in_set": row.get("target_in_set"),
                "action": {"type": "pyautogui", "desc": spot["desc"], "code": row["code"], "setup": row.get("setup") or "",
-                          "prelude": PRELUDE, "pause": row.get("pause", 2), "expect": row.get("expect", "calc")},
+                          "prelude": row.get("prelude", PRELUDE), "pause": row.get("pause", 2), "expect": row.get("expect", "calc")},
+               "known_answer": row.get("known_answer"),
                "mask_version": self.mask_version, "rules_version": self.rules_version, "env": env_how,
                "started_at": time.time()}
 
         # ---- S
         signal.alarm(WATCHDOG_SECONDS)
         info = self.reset_to_before(row)
-        S = self.snapshot(rdir / "S", {"row": rid, "kind": "before", **info})
+        S = self.snapshot(rdir / "S", {"row": rid, "kind": "before", **info}, expect_kind=row.get("expect_before", "calc"))
         if not S.ok:
             time.sleep(3)
-            S = self.snapshot(rdir / "S", {"row": rid, "kind": "before", **info, "retake": True})
+            S = self.snapshot(rdir / "S", {"row": rid, "kind": "before", **info, "retake": True}, expect_kind=row.get("expect_before", "calc"))
         signal.alarm(0)
         rec["snapshot_before"] = str(S.path.relative_to(self.out))
         rec["before_ok"] = S.ok
         rec["tree_before"] = str((S.path / "tree.xml").relative_to(self.out))
-        before_text = render(S.canon, S.digest, S.windows)
+        files_scope = "office" if rec["app"] == "libreoffice-calc" else "user"
+        before_text = render(S.canon, S.digest, S.windows, files=files_scope)
         rec["state_before_compact"] = before_text
         rec["state_before_tokens_est"] = len(before_text) // 4
 
         # ---- teacher guesses, requested before the action runs
         guesses = {}
-        trajectory = ["Ctrl+Home (cursor to A1)"] + ([f"setup keys: {row['setup']}"] if row.get("setup") else [])
+        trajectory = row.get("trajectory") or (["Ctrl+Home (cursor to A1)"] + ([f"setup keys: {row['setup']}"] if row.get("setup") else []))
         instruction = task["instruction"]
 
         def ask():
@@ -392,7 +417,7 @@ class Collector:
         rec["snapshot_after"] = str(S1.path.relative_to(self.out))
         rec["after_ok"] = S1.ok
         rec["tree_after"] = str((S1.path / "tree.xml").relative_to(self.out))
-        after_text = render(S1.canon, S1.digest, S1.windows)
+        after_text = render(S1.canon, S1.digest, S1.windows, files=files_scope)
         rec["state_after_compact"] = after_text
         rec["file_diff"] = file_diff(S.digest, S1.digest, self.mask)
         eq, tdiffs, fdiffs = states_equal(S.canon, S.digest, S1.canon, S1.digest, self.mask)
@@ -407,7 +432,12 @@ class Collector:
         closest = None           # (score, index, candidate, tdiffs, fdiffs)
         proposal = {"model": None}
         office_running = any("LibreOffice" in t for t in titles(S1.windows))
-        ctx = {"doc_path": row["open_path"], "office_running": office_running}
+        ctx = {"doc_path": row.get("open_path"), "office_running": office_running, "reopen_cmd": row.get("reopen_cmd")}
+        reopens_office = not row.get("reopen_cmd") or "libreoffice" in " ".join(row["reopen_cmd"])
+
+        def office_after(cand):
+            # wait for a LibreOffice window only where one can be: a Files row's reopen starts Files, not Calc
+            return office_running or ("reopen" in (cand or []) and reopens_office)
         deadline = t_row + self.args.row_minutes * 60
 
         def try_candidate(cand, tier, idx, note=""):
@@ -434,7 +464,7 @@ class Collector:
                     score = (len(qf) + (100 if any(x.startswith("windows") for x in reasons) else 0), 10_000 + len(qf))
                 else:
                     snap = self.snapshot(cdir, {"row": rid, "kind": "candidate", "seq": cand, **rinfo}, expect_kind="any",
-                                         office_expected=office_running or "reopen" in cand)
+                                         office_expected=office_after(cand))
                     eq_c, td, fd = states_equal(S.canon, S.digest, snap.canon, snap.digest, self.mask)
                     r.update({"result": "match" if eq_c else f"state differs: {len(td)} tree, {len(fd)} files; {classify_diffs(td, fd)}",
                               "tree_taken": True, "tree_diffs": len(td), "file_diffs": len(fd), "snapshot_ok": snap.ok,
@@ -471,19 +501,23 @@ class Collector:
                 # (Ctrl+0 for hide column on 17 Oct, Alt+D for "Don't Save" in pilot2 0266).  Not a data row.
                 rec["broken_action"] = True
         else:
-            tiers = [(1, [U.fill_mnemonics(c, self.mnemonics) for c in U.GENERIC]),
+            # a probe row can name candidates to try first (tier F): the 0266 retype test executes guess B's undo
+            tiers = ([("F", [U.parse_steps(c) for c in row["forced_candidates"] if U.parse_steps(c)])]
+                     if row.get("forced_candidates") else [])
+            tiers += [(1, [U.fill_mnemonics(c, self.mnemonics) for c in U.GENERIC]),
                      ("B", None),
-                     (2, [U.fill_mnemonics(c, self.mnemonics) for c in U.CALC])]
+                     (2, [U.fill_mnemonics(c, self.mnemonics) for c in U.tier2(rec["app"])])]
             tried = []
             idx = 0
             stop = False
             skipped = 0
+            extra = 0                                  # tries spent looking for a shorter undo after the first match
             for tier, cands in tiers + [(3, None), (4, None)]:
                 if stop:
                     break
                 if tier == 3:
                     cands = []
-                    if not self.args.no_proposer and budget_used < self.args.budget and time.time() < deadline:
+                    if found is None and not self.args.no_proposer and budget_used < self.args.budget and time.time() < deadline:
                         from rig.proposer import propose
                         signal.alarm(WATCHDOG_SECONDS)       # an API call that never returns would otherwise hang the row
                         try:
@@ -497,24 +531,35 @@ class Collector:
                 if tier == 4:
                     cands = U.blind_pairs(tried, limit=self.args.blind)
                 if tier == "B":                       # guess B's own undo, when it has arrived and parses
-                    g = U.from_guess((guesses.get("B") or {}).get("shortest_undo"))
+                    g, how = U.guess_parse((guesses.get("B") or {}).get("shortest_undo"))
                     rec["guess_b_candidate"] = g
+                    rec["guess_b_parse"] = how if "B" in guesses else "not arrived"
                     cands = [g] if g else []
                 for cand in cands:
                     if cand in tried:
                         continue
-                    if budget_used >= self.args.budget:
-                        skipped += 1
+                    # labels at every K (19 Oct): after a match, only strictly shorter candidates are worth a try,
+                    # and at most --shorter-tries of them
+                    if found is not None and U.action_count(cand) >= U.action_count(found[1]):
                         continue
-                    if time.time() > deadline:
-                        skipped += 1
-                        continue
-                    tried.append(cand)
-                    if try_candidate(cand, tier, idx):
-                        found = (tier, cand, idx)
+                    if found is not None and extra >= self.args.shorter_tries:
                         stop = True
                         break
+                    if budget_used >= self.args.budget or time.time() > deadline:
+                        if found is None:
+                            skipped += 1
+                        continue
+                    tried.append(cand)
+                    if found is not None:
+                        extra += 1
+                    matched = try_candidate(cand, tier, idx)
                     idx += 1
+                    if matched:
+                        found = (tier, cand, idx - 1)
+                        if U.action_count(cand) <= 1:
+                            stop = True
+                            break
+            rec["shorter_search"] = {"tries": extra, "limit": self.args.shorter_tries} if found is not None else None
             if skipped:
                 search.append({"tier": "-", "seq": [], "result": f"skipped {skipped} candidates: budget {self.args.budget} / {self.args.row_minutes} min reached"})
             if found:
@@ -552,7 +597,7 @@ class Collector:
                 if replay_cand:
                     self.step(U.candidate_code(replay_cand, ctx), pause=1.5)
                 snap = self.snapshot(rdir / "replay", {"row": rid, "kind": "replay", "seq": replay_cand, **rinfo}, expect_kind="any",
-                                     office_expected=office_running or "reopen" in (replay_cand or []))
+                                     office_expected=office_after(replay_cand))
                 eq_r, td, fd = states_equal(S.canon, S.digest, snap.canon, snap.digest, self.mask)
                 rec["replay_done"] = True
                 rec["replay_matched"] = bool(eq_r)
@@ -574,10 +619,52 @@ class Collector:
             finally:
                 signal.alarm(0)
 
-        # ---- teacher results
+        # ---- guess B's own undo, executed as a separate measurement (zero-shot rollback rate, 19 Oct).  The guess
+        # only proposes: a match is an executed undo like any other, so it can still turn a no-undo label round.
         if th is not None:
             th.join(timeout=900)
             rec["guess_pending"] = th.is_alive()
+        gb = guesses.get("B") or {}
+        zs = {"claimed_reversible": gb.get("reversible"), "steps": gb.get("shortest_undo"), "candidate": None,
+              "parse": None, "executed": False, "matched": None, "source": None}
+        if gb.get("reversible") is True and not eq:
+            cand, how = U.guess_parse(gb.get("shortest_undo"))
+            zs.update(candidate=cand, parse=how)
+            if cand is not None:
+                prior = next((x for x in search if x.get("seq") == cand and "result" in x and not x.get("error")), None)
+                if prior is not None:
+                    zs.update(executed=True, matched=bool(prior.get("match")), source="search")
+                elif not self.args.no_zero_shot and time.time() < deadline + 15 * 60:
+                    m = try_candidate(cand, "B0", idx)
+                    idx += 1
+                    zs.update(executed=True, matched=m, source="separate")
+                    if m and (rec["executed_label"] == "NO-UNDO-FOUND"
+                              or U.action_count(cand) < U.action_count(rec.get("shortest_undo") or [])):
+                        rec["executed_label"] = "REVERSIBLE"
+                        rec["shortest_undo"] = cand
+                        rec["undo_length"] = len(cand)
+                        rec["found_tier"] = "B0"
+                    rec["budget_used"] = budget_used
+                    rec["undo_search"] = search
+        elif gb.get("reversible") is True and eq:
+            zs.update(parse="no change", matched=True, source="no change")
+        rec["guess_b_zero_shot"] = zs
+
+        # ---- labels at every K (decided 19 Oct): K counts actions, waits excluded.  Below the length of the shortest
+        # undo found, the label is NO-UNDO-FOUND as far as the search went (shorter_search says how far).
+        n = 0 if eq else (U.action_count(rec["shortest_undo"]) if rec["executed_label"] == "REVERSIBLE" else None)
+        rec["undo_actions"] = n
+        rec["labels_by_k"] = {str(k): ("REVERSIBLE" if n is not None and n <= k else "NO-UNDO-FOUND") for k in range(1, 6)}
+
+        # ---- trivial-undo baselines: would Ctrl+Z alone, or Escape alone, have undone it (None = not tried)
+        def _alone(seq):
+            if eq:
+                return True
+            hits = [x for x in search if x.get("seq") == seq and "result" in x and not x.get("error")]
+            return any(x.get("match") for x in hits) if hits else None
+        rec["baseline"] = {"ctrl+z": _alone(["key:ctrl+z"]), "escape": _alone(["key:escape"])}
+
+        # ---- teacher results
         rec["guessed_label_verbatim"] = guesses.get("A") or {"reversible": None, "model": None, "prompt": "SafePred App. G", "skipped": self.args.no_teacher}
         rec["guessed_label_defined"] = guesses.get("B") or {"reversible": None, "model": None, "prompt": "definition-matched", "skipped": self.args.no_teacher}
         rec["teacher_model"] = (rec["guessed_label_defined"] or {}).get("model") or (rec["guessed_label_verbatim"] or {}).get("model")
@@ -616,6 +703,17 @@ class Collector:
             from collections import Counter
             lab = Counter(r.get("executed_label") for r in recs if r.get("status") == "ok")
             lines.append(f"- labels: {dict(lab)}; flipped {sum(1 for r in recs if r.get('flipped'))}; replays {sum(1 for r in recs if r.get('replay_done'))}")
+            ok = [r for r in recs if r.get("status") == "ok"]
+            ka = [r for r in ok if r.get("known_answer")]
+            if ka:
+                miss = [r["row_id"] for r in ka if r.get("executed_label") != r["known_answer"]]
+                lines.append(f"- known-answer rows: {len(ka) - len(miss)}/{len(ka)} reproduced" + (f"; WRONG: {', '.join(miss)}" if miss else ""))
+            zs = [r["guess_b_zero_shot"] for r in ok if (r.get("guess_b_zero_shot") or {}).get("executed")]
+            if zs:
+                lines.append(f"- guess B zero-shot undo: {sum(1 for z in zs if z.get('matched'))}/{len(zs)} executed undos restored S")
+            bz = [r["baseline"]["ctrl+z"] for r in ok if r.get("baseline") and r["baseline"].get("ctrl+z") is not None]
+            if bz:
+                lines.append(f"- Ctrl+Z alone undoes {sum(bz)}/{len(bz)} rows")
             lines.append("")
             lines.append("| row | spot | band | on_task | label | undo | tier | budget | guess A | guess B | row s |")
             lines.append("|---|---|---|---|---|---|---|---|---|---|---|")
@@ -731,13 +829,16 @@ def main():
     ap.add_argument("--no-teacher", action="store_true")
     ap.add_argument("--no-proposer", action="store_true")
     ap.add_argument("--no-replay", action="store_true")
+    ap.add_argument("--no-zero-shot", action="store_true", help="do not execute guess B's undo when the search did not try it")
+    ap.add_argument("--shorter-tries", type=int, default=8, help="after a match, tries spent on strictly shorter candidates (labels at every K)")
     ap.add_argument("--dry", action="store_true", help="print the plan and the worst-case cost, no VM")
     ap.add_argument("--yes", action="store_true")
     ap.add_argument("--recompare", action="store_true", help="re-judge the rows on disk with the current mask and rules")
     args = ap.parse_args()
-    if not os.path.isabs(args.out):
-        # the module chdirs into OSWorld at import, so a relative --out would land under OSWorld/ (pilot_run2 did)
-        args.out = str((BASE / args.out).resolve())
+    # the module chdirs into OSWorld at import, so a relative path would resolve under OSWorld/ (pilot_run2's --out did)
+    for k in ("out", "spots", "mask"):
+        if not os.path.isabs(getattr(args, k)):
+            setattr(args, k, str((BASE / getattr(args, k)).resolve()))
     c = Collector(args)
     if args.recompare:
         c.recompare()

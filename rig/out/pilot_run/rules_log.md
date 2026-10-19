@@ -101,3 +101,16 @@ The rerun was stopped and resumed to apply it (rows 0079 and 0126 kept; 0141 re-
 reopen attempts were quick-rejected and kept no tree to re-judge). Stopping with Ctrl+C inside the tmux pane left
 the sandbox running (stopped by hand with `modal container stop`); stop a run with `pkill -INT -f rig/collect_pilot.py`
 and always check `modal container list` after.
+
+## 19 October 2026, evening: Files-domain state, terminal text, step-language guesses
+
+| date | file | rule | class | trigger | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-19 | snapshot.py, mask.py | file state | the digest now records ~/.local/share/Trash (a .trashinfo hashed without its DeletionDate), directories (d, mode), permission bits (mode) and symbolic links (l); `file_sig` compares them. Digests recorded before carry none of these and compare exactly as before | research note (Empty Trash, chmod and empty folders were invisible) | pilot_run2 30, pilot_recheck 2, pilot_rerun 8 | 0 against the previous re-compare (rules af139251f2e2) |
+| 2026-10-19 | mask.py | ignored tree attribute | `text` of a `terminal` node (gnome-terminal's whole buffer). Provisional until the probe: every typed command changes it and no undo restores scrollback; what commands do to files is in the digest | research note; no Calc row has a terminal | same 40 | 0 (rules b889e6000dd8) |
+
+Not a comparison rule, logged for the record: guess B's prompt now asks for its undo in the step language
+(prompt sha 212c96be…, was 5c036d50…). Re-asked on the 30 pilot rows (rig/out/reask_b): 27 of 27 undos parse
+(old prompt: 24 by the free-text reader, 4 not at all); labels agree with the executed label on 28 of 30 (0251: guess
+says one-way, executed undo-save-redo restores it; 0266: guess says retype restores it, unverified). The worked
+example (part 4) is unchanged until the 0266 retype probe decides it.

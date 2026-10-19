@@ -1,0 +1,12 @@
+{
+  "id": "rig-files-probe",
+  "snapshot": "",
+  "instruction": "In the folder ~/Desktop/probe, rename a.txt to c.txt. Leave every other file as it is.",
+  "source": "hand-built for the Files probe (rig, 19 Oct 2026); not an OSWorld task",
+  "related_apps": ["os"],
+  "config": [
+    {"type": "execute", "parameters": {"command": ["bash", "-c", "mkdir -p /home/user/Desktop/probe/sub && printf 'alpha\\n' > /home/user/Desktop/probe/a.txt && printf 'bravo\\n' > /home/user/Desktop/probe/b.txt && printf 'other\\n' > /home/user/Desktop/probe/sub/b.txt"]}},
+    {"type": "launch", "parameters": {"command": ["nautilus", "--select", "/home/user/Desktop/probe/a.txt"]}}
+  ],
+  "evaluator": {"func": "infeasible"}
+}

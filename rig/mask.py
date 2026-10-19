@@ -34,15 +34,28 @@ IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/sha
                          "/home/user/.local/share/nautilus/")
 
 
+# Tree attributes that are never state.  19 Oct, provisional until the Files/multi_apps probe: the text of a
+# gnome-terminal (its whole visible buffer, prompt, output and history).  Every typed command changes it and no
+# undo brings old scrollback back, so comparing it would make every terminal action one-way by construction; what
+# a command does to files is in the digest.  No Calc row has a terminal node.
+IGNORED_TREE_ATTRS = {("terminal", "text")}
+
+
 def file_sig(v: dict):
     """What counts as 'the same file'.  Spreadsheets with a cell signature (k): the cells, their formats,
     hidden rows/columns and merges, whoever wrote the file (re-saving rewrites the XML, not the sheet).
-    Other files: size and content hash (office files: metadata-free)."""
+    Other files: size and content hash (office files: metadata-free).
+    Since 19 Oct also the permission bits (mode), and directories and symbolic links as entries of their own; digests
+    recorded before that carry none of these, so old rows compare exactly as they did."""
     if v is None:
         return None
+    if v.get("d"):
+        return ("dir", v.get("mode"))
+    if "l" in v:
+        return ("link", v["l"])
     if v.get("k"):
-        return ("cells", v["k"])
-    return (v.get("s"), v.get("c") or v.get("h"))
+        return ("cells", v["k"], v.get("mode"))
+    return (v.get("s"), v.get("c") or v.get("h"), v.get("mode"))
 
 
 def _is_lock(path: str) -> bool:
@@ -159,6 +172,8 @@ def apply_tree_mask(canon: Canon, mask: dict) -> Canon:
             if f"{path}\t{attr}" in masked_pairs:
                 continue
             if attr in attr_by_tag.get(tag, ()):
+                continue
+            if (tag, attr) in IGNORED_TREE_ATTRS:
                 continue
             kept[attr] = val
         out[path] = kept

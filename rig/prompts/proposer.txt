@@ -2,7 +2,7 @@ You propose ways to undo one action in LibreOffice Calc on an Ubuntu GNOME deskt
 
 Steps may only be things a user could do with the keyboard:
 - "key:<chord>" presses a key or chord, named like pyautogui: key:ctrl+z, key:escape, key:enter, key:alt+n, key:ctrl+home, key:f2, key:down, key:ctrl+shift+l
-- "type:<text>" types literal text
+- "type:<text>" types literal text, at most {TYPE_MAX} characters
 - "wait:<seconds>" waits (use after dialogs and file operations, at most 5)
 - "reopen" relaunches LibreOffice if it is closed, or opens the task file from the Start Center, maximised
 - "menu:<alt-chord>,<letters>" opens a menu by its Alt accelerator and presses the item's mnemonic letters, e.g. menu:alt+e,u for Edit > Undo

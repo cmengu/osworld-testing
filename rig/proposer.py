@@ -7,10 +7,11 @@ it is never printed or stored in a row.
 """
 import json
 import pathlib
-import re
 import time
 
-PROMPT = (pathlib.Path(__file__).resolve().parent / "prompts" / "proposer.txt").read_text()
+from .undo import TYPE_MAX, parse_steps
+
+PROMPT = (pathlib.Path(__file__).resolve().parent / "prompts" / "proposer.txt").read_text().replace("{TYPE_MAX}", str(TYPE_MAX))
 MODELS = ["gpt-6.1-sol", "gpt-5.6-sol"]
 SCHEMA = {
     "type": "object",
@@ -23,7 +24,6 @@ SCHEMA = {
     "required": ["candidates", "note"],
     "additionalProperties": False,
 }
-STEP_RE = re.compile(r"^(key:[a-z0-9+_]+|type:.+|wait:\d+(\.\d+)?|reopen|menu:alt\+[a-z],[a-z]{1,4})$", re.I)
 
 
 def propose(before_text: str, after_text: str, file_diff: list, action_desc: str, action_code: str,
@@ -51,8 +51,9 @@ def propose(before_text: str, after_text: str, file_diff: list, action_desc: str
             data = json.loads(r.output_text)
             cands = []
             for c in data.get("candidates", []):
-                steps = [s.strip() for s in c.get("steps", []) if isinstance(s, str) and s.strip()]
-                if not steps or len(steps) > max_len or not all(STEP_RE.match(s) for s in steps):
+                # one parser for every model-written undo (rig/undo.py): it also enforces the type: cap
+                steps = parse_steps([s for s in c.get("steps", []) if isinstance(s, str) and s.strip()])
+                if not steps or len(steps) > max_len:
                     continue
                 cands.append({"steps": steps, "why": c.get("why", "")[:300]})
                 if len(cands) >= max_candidates:

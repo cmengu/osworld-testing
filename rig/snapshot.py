@@ -7,8 +7,9 @@ Everything is written to a directory so a run can be audited and re-compared lat
 The tree comes from rig.fasttree (scoped, parallel, errors reported) with the server's own
 walk as a fallback.  File digest fields per path: s = size, m = mtime (recorded, never
 compared), h = sha256 of the bytes, c = content hash for zip-based office files with the
-metadata parts left out, k = cell-level signature for .xlsx/.xlsm (rig/xlsxsig.py: what a user sees, not
-how the writer stored it), v = the readable workbook view behind k.  Equality in mask.py uses k when present,
+metadata parts left out, mode = permission bits, k = cell-level signature for .xlsx/.xlsm (rig/xlsxsig.py: what a user sees, not
+how the writer stored it), v = the readable workbook view behind k.  Directories are entries ending in "/" with d = 1
+and their mode; symbolic links carry l = the target.  Equality in mask.py uses k when present,
 otherwise (s, c or h).
 """
 import json
@@ -30,7 +31,10 @@ DIGEST_SCRIPT = r"""python3 - <<'PY'
 import os, hashlib, json, zipfile
 VIEW_CAP = 3 * 1024 * 1024   # 18 Oct: raised from 400 KB so big workbooks (pilot-0231, 105 KB xlsx) keep a readable view
 home = os.path.expanduser("~")
-skip = ("/.cache/", "/.local/share/Trash/", "/.mozilla/", "/.config/google-chrome/",
+# 19 Oct: the Trash is recorded (a delete to Trash and Empty Trash were invisible), and so are directories (d),
+# permission bits (mode) and symbolic links (l), for the Files domain.  A .trashinfo file is hashed without its
+# DeletionDate line: trashing the same file again writes a new date and is still the same Trash.
+skip = ("/.cache/", "/.mozilla/", "/.config/google-chrome/",
         "/snap/", "/.dbus/", "/.gvfs/", "/home/user/server/", "/home/user/.rig_cache/")
 office = (".xlsx", ".xlsm", ".ods", ".docx", ".odt", ".pptx", ".odp")
 meta_parts = ("docProps/", "meta.xml", "[Content_Types].xml")
@@ -51,22 +55,37 @@ for root, dirs, files in os.walk(home):
     if any(s in root + "/" for s in skip):
         dirs[:] = []
         continue
-    for f in files:
+    try:
+        rows.append({"p": root.rstrip("/") + "/", "d": 1, "mode": os.lstat(root).st_mode & 0o7777})
+    except OSError:
+        pass
+    for f in files + [d for d in dirs if os.path.islink(os.path.join(root, d))]:
         p = os.path.join(root, f)
         try:
             st = os.lstat(p)
         except OSError:
             continue
-        if os.path.islink(p) or not os.path.isfile(p):
+        if os.path.islink(p):
+            try:
+                rows.append({"p": p, "l": os.readlink(p)})
+            except OSError:
+                pass
+            continue
+        if not os.path.isfile(p):
             continue
         h = None
+        size = st.st_size
         if st.st_size <= cap:
             try:
                 with open(p, "rb") as fh:
-                    h = hashlib.sha256(fh.read()).hexdigest()
+                    data = fh.read()
+                if p.endswith(".trashinfo") and "/.local/share/Trash/info/" in p:
+                    data = b"\n".join(l for l in data.splitlines() if not l.startswith(b"DeletionDate="))
+                    size = len(data)
+                h = hashlib.sha256(data).hexdigest()
             except OSError:
                 h = None
-        row = {"p": p, "s": st.st_size, "m": st.st_mtime_ns, "h": h}
+        row = {"p": p, "s": size, "m": st.st_mtime_ns, "h": h, "mode": st.st_mode & 0o7777}
         if p.lower().endswith(office) and st.st_size <= cap:
             c = content_hash(p)
             if c:
@@ -103,21 +122,29 @@ class Snapshot:
         return bool(self.meta.get("ok"))
 
 
-def fetch_tree(env, attempts: int = 4, delay: float = 4.0, expect: str = "LibreOffice"):
+def apps_ready(stats: dict, expect_apps) -> bool:
+    """Every expected non-office application (bus name, e.g. org.gnome.Nautilus, gnome-terminal-server) is in the
+    tree with at least one window under it.  Added 19 Oct for the Files and multi_apps rows: the walker always
+    walked these applications in full, but readiness was judged by the LibreOffice window alone."""
+    have = stats.get("app_children") or {}
+    return all(have.get(a, 0) >= 1 for a in expect_apps or [])
+
+
+def fetch_tree(env, attempts: int = 4, delay: float = 4.0, expect: str = "LibreOffice", expect_apps=None):
     """Fast scoped walk first; the server's full walk as a last resort.  Returns (xml, info).
 
     A dump taken before the application has registered on the accessibility bus comes back
-    without it, so a tree that lacks `expect` (a window-title fragment) is retried.
+    without it, so a tree that lacks `expect` (a window-title fragment) or one of `expect_apps` is retried.
     """
     info = {}
     last_xml = ""
     for i in range(attempts):
         xml, stats = fast_tree(env)
         formats_whole = not stats.get("format_skipped") and not stats.get("format_error")
-        if xml and (not expect or expect in xml) and formats_whole:
+        if xml and (not expect or expect in xml) and apps_ready(stats, expect_apps) and formats_whole:
             info = {"source": "fast", **stats, "attempt": i + 1}
             return xml, info
-        if xml and (not expect or expect in xml):
+        if xml and (not expect or expect in xml) and apps_ready(stats, expect_apps):
             # cell formats read only in part: some cells would carry a format and others not, which reads as
             # a change against any complete snapshot; retried, and flagged (ok=False) if it never completes
             last_xml = xml
@@ -160,17 +187,18 @@ def _digest(env):
 
 
 def take_snapshot(env, out_dir: pathlib.Path, meta: Optional[dict] = None, with_screenshot: bool = True,
-                  expect: Optional[str] = "LibreOffice", require_office: bool = EXPECT_OFFICE) -> Snapshot:
+                  expect: Optional[str] = "LibreOffice", require_office: bool = EXPECT_OFFICE, expect_apps=None) -> Snapshot:
     """expect: window-title fragment the tree must contain (None when the application may be closed);
     require_office: whether `ok` demands a LibreOffice frame with a shallow menu bar (False for states
-    after Ctrl+Q, where the tree legitimately holds no office window)."""
+    after Ctrl+Q, where the tree legitimately holds no office window); expect_apps: non-office applications that
+    must be in the tree with a window (apps_ready)."""
     out_dir = pathlib.Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     meta = dict(meta or {})
     meta["taken_at"] = time.time()
 
     t = time.time()
-    tree_xml, tree_info = fetch_tree(env, expect=expect or "")
+    tree_xml, tree_info = fetch_tree(env, expect=expect or "", expect_apps=expect_apps)
     meta["tree_seconds"] = round(time.time() - t, 1)
     meta["tree_info"] = tree_info
     (out_dir / "tree.xml").write_text(tree_xml)
@@ -198,8 +226,9 @@ def take_snapshot(env, out_dir: pathlib.Path, meta: Optional[dict] = None, with_
     meta.update({"tree_chars": len(tree_xml), "nodes": len(canon), "files": len(digest),
                  "ok": bool(canon) and bool(digest) and tree_info.get("source") == "fast"
                        and (not require_office or (tree_info.get("office_frames", 0) >= 1
-                                                   and tree_info.get("menus_shallow", 0) >= 1)),
-                 "require_office": require_office})
+                                                   and tree_info.get("menus_shallow", 0) >= 1))
+                       and apps_ready(tree_info, expect_apps),
+                 "require_office": require_office, "expect_apps": expect_apps or []})
     if canon and digest and tree_info.get("source") != "fast":
         meta["tree_error"] = f"tree not from the scoped walker: {tree_info.get('source')}"
     (out_dir / "meta.json").write_text(json.dumps(meta, indent=1, sort_keys=True))

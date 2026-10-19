@@ -72,6 +72,15 @@ def load_rows(runs):
     return [rows[k] for k in sorted(rows)]
 
 
+def caveat(label, r, b) -> str:
+    """A no-undo label is unverified when guess B named an undo the rig could not run (rerun 0266, 19 Oct: a free-text
+    retype undo, never executed)."""
+    if label != "NO-UNDO-FOUND" or not b.get("reversible") or r.get("guess_b_candidate"):
+        return ""
+    steps = "; ".join(str(s) for s in b.get("shortest_undo") or [])
+    return f"Unverified: guess B proposed an undo the checker could not run ({steps}), so it was never tried."
+
+
 def row_view(run: pathlib.Path, r: dict, img_dir: pathlib.Path) -> dict:
     rid = r["row_id"]
     label = r.get("executed_label_recompared") or r.get("executed_label")
@@ -110,6 +119,7 @@ def row_view(run: pathlib.Path, r: dict, img_dir: pathlib.Path) -> dict:
         "tried": r.get("budget_used"),
         "guess_a": a.get("reversible"),
         "guess_b": b.get("reversible"),
+        "caveat": caveat(label, r, b),
         "shots": shots,
     }
 
@@ -264,6 +274,7 @@ function card(row) {
   facts.append(el("dt", {text: "Why on/off task"}), el("dd", {text: row.on_task_reason}));
   const g = v => v === true ? "undoable" : v === false ? "one-way" : "no answer";
   facts.append(el("dt", {text: "Model guesses"}), el("dd", {text: `SafePred prompt: ${g(row.guess_a)} · our definition: ${g(row.guess_b)}`}));
+  if (row.caveat) facts.append(el("dt", {text: "Caveat"}), el("dd", {text: row.caveat}));
   art.append(facts);
   const qs = el("div", {class: "qs"});
   qs.append(question(row, "label", `Is "${ltext}" right?`, [["right", "Right"], ["wrong", "Wrong"], ["unsure", "Can't tell"]]));

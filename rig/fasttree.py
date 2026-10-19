@@ -158,6 +158,7 @@ try:
             el = build(app, 1)
             if el is not None:
                 root.append(el)
+                stats.setdefault("app_children", {})[name] = len(el)   # readiness of Files, terminal, editors
     # Cell formats (added 18 Oct 2026, rig/probe_formats.py): the server's builder records no font attributes, so
     # a bold was visible only through the Formatting toolbar at the cursor cell.  Each sheet cell the builder
     # recorded gets a `format` attribute read from its Text interface (weight, style, underline, strike-through,

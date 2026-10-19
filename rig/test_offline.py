@@ -217,4 +217,44 @@ assert from_guess(["click Undo in the Edit menu"]) is None and from_guess(None) 
 assert "Popen(['libreoffice', '--calc'" in step_code("reopen", {"doc_path": "/home/user/x.xlsx", "office_running": False})
 assert "ctrl', 'o'" in step_code("reopen", {"doc_path": "/home/user/x.xlsx", "office_running": True})
 
+# 19 Oct: guess B answers in the step language; type: is capped at TYPE_MAX; K counts actions, not waits.
+from rig.undo import TYPE_MAX, action_count, guess_parse, parse_step, tier2, CALC, FILES
+assert guess_parse(["reopen", "key:ctrl+home", "type:pilot", "key:enter", "key:ctrl+w"]) == \
+    (["reopen", "key:ctrl+home", "type:pilot", "key:enter", "key:ctrl+w"], "step-language")
+assert guess_parse(["ctrl+z (undo)"]) == (["key:ctrl+z"], "free-text")
+assert guess_parse(["type 'pilot' and press enter"]) == (None, "unparsed") and guess_parse([]) == (None, "empty")
+assert parse_step("type:" + "x" * TYPE_MAX) and parse_step("type:" + "x" * (TYPE_MAX + 1)) is None
+try:
+    step_code("type:" + "x" * (TYPE_MAX + 1), {})
+    raise AssertionError("over-long type: step must not run")
+except ValueError:
+    pass
+assert action_count(["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3", "key:ctrl+y"]) == 4
+assert tier2("libreoffice-calc") == CALC and tier2("files") == FILES and tier2("multi_apps") == CALC + FILES
+assert "Popen(['nautilus', '/home/user/Desktop']" in step_code("reopen", {"reopen_cmd": ["nautilus", "/home/user/Desktop"]})
+
+# 19 Oct: permission bits, folders and links are state; digests recorded before carry none and compare as before.
+from rig.mask import file_sig
+assert file_sig({"s": 3, "h": "a", "mode": 0o644}) != file_sig({"s": 3, "h": "a", "mode": 0o600})
+assert file_sig({"s": 3, "h": "a"}) == file_sig({"s": 3, "h": "a"})
+assert file_sig({"d": 1, "mode": 0o755}) == ("dir", 0o755) and file_sig({"l": "Desktop"}) == ("link", "Desktop")
+assert file_sig({"k": "x", "s": 1, "mode": 0o664}) == file_sig({"k": "x", "s": 2, "mode": 0o664})   # cells, not bytes
+
+# Tasks that are not one spreadsheet take the generic reset; every Calc task keeps the fast path.
+import glob as _glob
+from rig.freshstart import gui_steps, is_calc_task
+_ex = BASE / "OSWorld" / "evaluation_examples" / "examples"
+_calc = [json.load(open(f)) for f in _glob.glob(str(_ex / "libreoffice_calc" / "*.json"))]
+assert _calc and all(is_calc_task(t) for t in _calc)
+_t = lambda i: json.load(open(_glob.glob(str(_ex / "multi_apps" / f"{i}*.json"))[0]))
+assert not is_calc_task(_t("3680a5ee")) and not is_calc_task(_t("7f35355e"))         # 7f35355e: download + open xlsx
+assert [s["type"] for s in gui_steps(_t("5df7b33a"))] == ["launch", "open"]          # unzip and rm are not replayed
+assert [s["type"] for s in gui_steps(_t("ee9a3c83"))] == ["open", "execute"]         # history -c is not; the terminal is
+assert gui_steps(_t("f918266a")) == []                                                # 'calculator.zip' is not 'code'
+
+# A terminal's text buffer is not state (provisional, 19 Oct); its other attributes are.
+from rig.mask import apply_tree_mask
+_c = {"/desktop-frame/application[gnome-terminal-server]#0/frame[t]#0/terminal[]#0": {"text": "$ ls\nfile1", "focused": "true"}}
+assert list(apply_tree_mask(_c, {}).values()) == [{"focused": "true"}]
+
 print("ALL OFFLINE CHECKS PASSED")

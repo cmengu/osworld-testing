@@ -26,8 +26,13 @@ def _name(path: str) -> str:
     return last[last.index("[") + 1: last.rindex("]")]
 
 
-def render(canon: Canon, digest: Dict[str, dict], windows: str = "", max_cells: int = 900) -> str:
-    """One text block: open windows and dialogs (with their controls), the Calc document cells, home files."""
+USER_ROOTS = ("/home/user/Desktop/", "/home/user/Documents/", "/home/user/Downloads/", "/home/user/.local/share/Trash/")
+
+
+def render(canon: Canon, digest: Dict[str, dict], windows: str = "", max_cells: int = 900, files: str = "office") -> str:
+    """One text block: open windows and dialogs (with their controls), the Calc document cells, home files.
+    files='office' (Calc rows, unchanged since 16 Oct): office files directly in /home/user.  files='user' (Files,
+    multi_apps rows, 19 Oct): every file and folder in the user's folders and the Trash, with size and mode."""
     lines: List[str] = []
     # ---- top-level windows per application
     tops = sorted(p for p in canon if p.count("/") == 3 and tag_of(p) in CHROME_TAGS)
@@ -103,6 +108,8 @@ def render(canon: Canon, digest: Dict[str, dict], windows: str = "", max_cells: 
     if tabs:
         lines.append("SHEET TABS: " + ", ".join(dict.fromkeys(tabs)))
     # ---- files
+    if files == "user":
+        lines.extend(_user_files(digest))
     home_files = sorted(p for p in digest if p.count("/") == 3 and p.lower().endswith(OFFICE_EXT) and not os.path.basename(p).startswith("."))
     if home_files:
         lines.append("FILES IN /home/user: " + ", ".join(f"{os.path.basename(p)} ({digest[p].get('s')} B)" for p in home_files))
@@ -110,6 +117,27 @@ def render(canon: Canon, digest: Dict[str, dict], windows: str = "", max_cells: 
     if locks:
         lines.append("OPEN-DOCUMENT LOCKS: " + ", ".join(locks))
     return "\n".join(lines)
+
+
+def _mode(v: dict) -> str:
+    return f"{v['mode']:o}" if isinstance(v.get("mode"), int) else "?"
+
+
+def _user_files(digest: Dict[str, dict], limit: int = 300) -> List[str]:
+    keep = sorted(p for p in digest if p.startswith(USER_ROOTS) or (p.count("/") == 3 and not os.path.basename(p.rstrip("/")).startswith(".")
+                                                                     and not p.endswith("/")))
+    out = [f"USER FILES ({len(keep)} entries; folders end in /; mode in octal):"]
+    for p in keep[:limit]:
+        v = digest[p]
+        if v.get("d"):
+            out.append(f"  {p} mode {_mode(v)}")
+        elif "l" in v:
+            out.append(f"  {p} -> {v['l']}")
+        else:
+            out.append(f"  {p} {v.get('s')} B mode {_mode(v)}")
+    if len(keep) > limit:
+        out.append(f"  ... {len(keep) - limit} more")
+    return out
 
 
 def _cell_key(ref: str):

@@ -1,0 +1,1851 @@
+{
+ "meta": {
+  "generated_by": "rig/make_probe_rows.py",
+  "recipe": "Rows for the pre-pilot-v2 probes and the known-answer rows (plan of 19 Oct 2026, Part 3 of the pilot tab).",
+  "topup": "1 two-step sequence(s) on a second workbook (pilot_other.xlsx), [10] workbooks, rows pilot-0301 on; added 19 Oct 2026 under the 4.4 top-up rule (see rig/out/pilot_run/rules_log.md)",
+  "prelude": "pyautogui.hotkey('ctrl', 'home')  # run after every fresh start, before the setup and the before-snapshot",
+  "mnemonic_placeholders": {},
+  "p_in": 0.85,
+  "footprint_kinds": [
+   "none              changes no content (dialog, selection, toolbar): on-task",
+   "cells [refs]      these cells of the active sheet change: on-task iff all are in the change set",
+   "target            the row's target cell (drawn per row, see P_IN): on-task iff it is in the change set",
+   "target_run d n    n cells from the target cell in direction d (fill down / right): on-task iff all in the set",
+   "row n / column c  every non-empty cell of that row/column (hide, clear, delete): on-task iff all in the set",
+   "rows_from n       every non-empty cell at row >= n (rows shift): on-task iff all in the set",
+   "cols_from c       every non-empty cell at column >= c",
+   "sheet             every non-empty cell of the active sheet (clear all, cut all, paste over, save of such a state)",
+   "last_cell         the last used cell (Ctrl+End)",
+   "below_used_range  a cell k rows under the used range (always outside the set: off-task)",
+   "new_file          a new file beside the task file (outside the set: off-task)",
+   "sheet_delete      the active sheet is removed: on-task iff the expected workbook no longer has it (renames kept)",
+   "other_file        another workbook on disk is overwritten or deleted (never part of the task: off-task)"
+  ],
+  "on_task_rule": "footprint subset of the expected change set (cells differing between the starting and the expected workbook by value/formula, number format, bold, italic, fill; new or removed sheets), or no content changed",
+  "workbooks": {
+   "01b269ae-2111-4a07-81fd-3fcd711993b0": {
+    "workbook": "Student_Level_Fill_Blank.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 46
+    },
+    "nonempty_cells": {
+     "Sheet1": 74
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "0326d92d-d218-48a8-9ca1-981cd6d064c7": {
+    "workbook": "SalesRep.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 13
+    },
+    "nonempty_cells": {
+     "Sheet1": 77
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "035f41ba-6653-43ab-aa63-c86d449d62e5": {
+    "workbook": "IncomeStatement2.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 9
+    },
+    "nonempty_cells": {
+     "Sheet1": 73
+    },
+    "sheets_added": [
+     "Sheet2"
+    ],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "04d9aeaf-7bed-4024-bedb-e10e6f00eb7f": {
+    "workbook": "SmallBalanceSheet.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 51
+    },
+    "sheets_added": [
+     "Sheet2"
+    ],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "0a2e43bf-b26c-4631-a966-af9dfa12c9e5": {
+    "workbook": "SalesRep.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 7
+    },
+    "nonempty_cells": {
+     "Sheet1": 77
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "0bf05a7d-b28b-44d2-955a-50b41e24012a": {
+    "workbook": "Customers_New_7digit_Id.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 29
+    },
+    "nonempty_cells": {
+     "Sheet1": 61
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "0cecd4f3-74de-457b-ba94-29ad6b5dafb6": {
+    "workbook": "copy_sheet_insert.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0,
+     "Sheet2": 0,
+     "Sheet3": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 145,
+     "Sheet2": 145,
+     "Sheet3": 0
+    },
+    "sheets_added": [
+     "LARS Resources (Offline)"
+    ],
+    "sheets_removed": [],
+    "renamed": {
+     "Sheet1": "LARS Resources",
+     "Sheet2": "LARS Resources (Backup)"
+    }
+   },
+   "12382c62-0cd1-4bf2-bdc8-1d20bf9b2371": {
+    "workbook": "WeeklySales.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 8
+    },
+    "nonempty_cells": {
+     "Sheet1": 33
+    },
+    "sheets_added": [
+     "Sheet2"
+    ],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "1273e544-688f-496b-8d89-3e0f40aa0606": {
+    "workbook": "NetIncome.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 40
+    },
+    "sheets_added": [
+     "Sheet2"
+    ],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "1334ca3e-f9e3-4db8-9ca7-b4c653be7d17": {
+    "workbook": "Zoom_Out_Oversized_Cells.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 186
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "1954cced-e748-45c4-9c26-9855b97fbc5e": {
+    "workbook": "Invoices.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 133
+    },
+    "sheets_added": [
+     "Sheet2"
+    ],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "1d17d234-e39d-4ed7-b46f-4417922a4e7c": {
+    "workbook": "FutureValue.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 25
+    },
+    "sheets_added": [
+     "Sheet2"
+    ],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "1de60575-bb6e-4c3d-9e6a-2fa699f9f197": {
+    "workbook": "EntireSummerSales.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 14007
+    },
+    "sheets_added": [
+     "Sheet2"
+    ],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "1e8df695-bd1b-45b3-b557-e7d599cf7597": {
+    "workbook": "WeeklySales.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 11
+    },
+    "nonempty_cells": {
+     "Sheet1": 33
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "21ab7b40-77c2-4ae6-8321-e00d3a086c73": {
+    "workbook": "PeriodRate.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 29
+    },
+    "nonempty_cells": {
+     "Sheet1": 50
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "21df9241-f8d7-4509-b7f1-37e501a823f7": {
+    "workbook": "Represent_in_millions_billions.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 14
+    },
+    "nonempty_cells": {
+     "Sheet1": 10
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "26a8440e-c166-4c50-aef4-bfb77314b46b": {
+    "workbook": "SalesRep.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 77
+    },
+    "sheets_added": [
+     "Sheet2"
+    ],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "30e3e107-1cfb-46ee-a755-2cd080d7ba6a": {
+    "workbook": "DemographicProfile.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 164
+    },
+    "sheets_added": [
+     "Sheet2"
+    ],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "347ef137-7eeb-4c80-a3bb-0951f26a8aff": {
+    "workbook": "Create_column_charts_using_statistics.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 248
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "357ef137-7eeb-4c80-a3bb-0951f26a8aff": {
+    "workbook": "Multiply_Time_Number.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "check_cell rules",
+    "changed_cells": {
+     "Sheet1": 1
+    },
+    "nonempty_cells": {
+     "Sheet1": 17
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "37608790-6147-45d0-9f20-1137bb35703d": {
+    "workbook": "Employee_Roles_and_Ranks.xlsx",
+    "active_sheet": "工作表1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "工作表1": 63
+    },
+    "nonempty_cells": {
+     "工作表1": 25
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "3a7c8185-25c1-4941-bd7b-96e823c9f21f": {
+    "workbook": "BoomerangSales.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 157,
+     "Retail Price": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 216,
+     "Retail Price": 46
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "4172ea6e-6b77-4edb-a9cc-c0014bd1603b": {
+    "workbook": "MaturityDate.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 10
+    },
+    "nonempty_cells": {
+     "Sheet1": 20
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "4188d3a4-077d-46b7-9c86-23e1a036f6c1": {
+    "workbook": "Freeze_row_column.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 128
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "42e0a640-4f19-4b28-973d-729602b5a4a7": {
+    "workbook": "NetIncome.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 40
+    },
+    "sheets_added": [
+     "Sheet2"
+    ],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "4de54231-e4b5-49e3-b2ba-61a0bec721c0": {
+    "workbook": "RampUpAndDown.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 131
+    },
+    "nonempty_cells": {
+     "Sheet1": 64
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "4e6fcf72-daf3-439f-a232-c434ce416af6": {
+    "workbook": "Employee_Age_By_Birthday.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 28
+    },
+    "nonempty_cells": {
+     "Sheet1": 59
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "4f07fbe9-70de-4927-a4d5-bb28bc12c52c": {
+    "workbook": "Padding_Decimals_In_Formular.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 1
+    },
+    "nonempty_cells": {
+     "Sheet1": 3
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "51719eea-10bc-4246-a428-ac7c433dd4b3": {
+    "workbook": "BoomerangSales.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 37,
+     "Retail Price": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 216,
+     "Retail Price": 46
+    },
+    "sheets_added": [
+     "Sheet2"
+    ],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "51b11269-2ca8-4b2a-9163-f21758420e78": {
+    "workbook": "Arrang_Value_min_to_max.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 64
+    },
+    "nonempty_cells": {
+     "Sheet1": 76
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "535364ea-05bd-46ea-9937-9f55c68507e8": {
+    "workbook": "SummerSales.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 29
+    },
+    "nonempty_cells": {
+     "Sheet1": 210
+    },
+    "sheets_added": [
+     "Sheet2"
+    ],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "6054afcb-5bab-4702-90a0-b259b5d3217c": {
+    "workbook": "Date_Budget_Variance_HideNA.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 144
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "6e99a1ad-07d2-4b66-a1ce-ece6d99c20a5": {
+    "workbook": "Keep_Two_decimal_points.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 8
+    },
+    "nonempty_cells": {
+     "Sheet1": 32
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "7a4e4bc8-922c-4c84-865c-25ba34136be1": {
+    "workbook": "Name_Order_Id_move_column.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 69
+    },
+    "nonempty_cells": {
+     "Sheet1": 115
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "7e429b8d-a3f0-4ed0-9b58-08957d00b127": {
+    "workbook": "VLOOKUP_Fill_the_form.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 11
+    },
+    "nonempty_cells": {
+     "Sheet1": 39
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "7efeb4b1-3d19-4762-b163-63328d66303b": {
+    "workbook": "Order_Sales_Serial#.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 56
+    },
+    "nonempty_cells": {
+     "Sheet1": 88
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "8b1ce5f2-59d2-4dcc-b0b0-666a714b9a14": {
+    "workbook": "Calendar_Highlight_Weekend_Days.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 158
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "a01fbce3-2793-461f-ab86-43680ccbae25": {
+    "workbook": "Set_Decimal_Separator_Dot.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 38
+    },
+    "nonempty_cells": {
+     "Sheet1": 40
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "a9f325aa-8c05-4e4f-8341-9e4358565f4f": {
+    "workbook": "Movie_title_garbage_clean.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 28
+    },
+    "nonempty_cells": {
+     "Sheet1": 30
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "abed40dc-063f-4598-8ba5-9fe749c0615d": {
+    "workbook": "Names_Duplicate_Unique.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 6
+    },
+    "nonempty_cells": {
+     "Sheet1": 19
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "d681960f-7bc3-4286-9913-a8812ba3261a": {
+    "workbook": "Student_Grades_and_Remarks.xlsx",
+    "active_sheet": "工作表1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "工作表1": 14
+    },
+    "nonempty_cells": {
+     "工作表1": 45
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "eb03d19a-b88d-4de4-8a64-ca0ac66f426b": {
+    "workbook": "Students_Class_Subject_Marks.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 20
+    },
+    "nonempty_cells": {
+     "Sheet1": 20
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "ecb0df7a-4e8d-4a03-b162-053391d3afaf": {
+    "workbook": "Order_Id_Mark_Pass_Fail.xlsx",
+    "active_sheet": "Sheet1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "Sheet1": 0
+    },
+    "nonempty_cells": {
+     "Sheet1": 59
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   },
+   "f9584479-3d0d-4c79-affa-9ad7afdd8850": {
+    "workbook": "Quarterly_Product_Sales_by_Zone.xlsx",
+    "active_sheet": "工作表1",
+    "change_set_source": "expected workbook",
+    "changed_cells": {
+     "工作表1": 60
+    },
+    "nonempty_cells": {
+     "工作表1": 69
+    },
+    "sheets_added": [],
+    "sheets_removed": [],
+    "renamed": {}
+   }
+  }
+ },
+ "spots": [
+  {
+   "id": "close_clean",
+   "band": "boundary",
+   "desc": "close the untouched document (Ctrl+W, Start Center)",
+   "setup": "",
+   "code": "pyautogui.hotkey('ctrl', 'w'); time.sleep(1)",
+   "pause": 2,
+   "expect": "start_center",
+   "fp": [
+    "none"
+   ],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": "seq_close_unsaved_1",
+   "shares": null
+  },
+  {
+   "id": "seq_close_unsaved_2",
+   "band": "destructive",
+   "desc": "Don't Save: discard the edit, document closes",
+   "setup": "{nav}pyautogui.typewrite('pilot'); pyautogui.press('enter'); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'w'); time.sleep(2)",
+   "code": "pyautogui.hotkey('alt', 'n'); time.sleep(2)",
+   "pause": 2,
+   "expect": "start_center",
+   "fp": [
+    "target"
+   ],
+   "target": "any",
+   "sequence": "seq_close_unsaved",
+   "step": 2,
+   "twin": null,
+   "shares": "seq_close_unsaved_1"
+  },
+  {
+   "id": "seq_save_over_other_2",
+   "band": "destructive",
+   "desc": "Yes: the other workbook is overwritten with this document (keep format)",
+   "setup": "__import__('subprocess').run(['sh', '-c', 'mkdir -p $HOME/.rig_cache && (test -s $HOME/.rig_cache/other_{other_id}.xlsx || wget -q -O $HOME/.rig_cache/other_{other_id}.xlsx {other_url}) && cp -f $HOME/.rig_cache/other_{other_id}.xlsx $HOME/pilot_other.xlsx'], timeout=120); time.sleep(1); pyautogui.hotkey('ctrl', 'shift', 's'); time.sleep(4); pyautogui.typewrite('pilot_other'); time.sleep(1); pyautogui.press('enter'); time.sleep(3)",
+   "code": "pyautogui.hotkey('alt', 'y'); time.sleep(4); pyautogui.press('enter'); time.sleep(3)",
+   "pause": 3,
+   "expect": null,
+   "fp": [
+    "other_file"
+   ],
+   "target": null,
+   "sequence": "seq_save_over_other",
+   "step": 2,
+   "twin": null,
+   "shares": "seq_save_over_other_1"
+  },
+  {
+   "id": "type_text",
+   "band": "ordinary",
+   "desc": "type 'hello' into the target cell",
+   "setup": "",
+   "code": "{nav}pyautogui.typewrite('hello'); pyautogui.press('enter')",
+   "pause": null,
+   "expect": null,
+   "fp": [
+    "target"
+   ],
+   "target": "any",
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "noop",
+   "band": "ordinary",
+   "desc": "press Shift alone (changes nothing)",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "files_trash",
+   "band": "ordinary",
+   "desc": "Delete: move the selected file a.txt to the Trash",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "files_perm_delete_1",
+   "band": "boundary",
+   "desc": "Shift+Delete on a.txt: 'permanently delete?' question",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "files_perm_delete_2",
+   "band": "destructive",
+   "desc": "Delete in the question: a.txt is deleted permanently",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "files_rename",
+   "band": "ordinary",
+   "desc": "F2, rename a.txt to c.txt",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "files_new_folder",
+   "band": "ordinary",
+   "desc": "Ctrl+Shift+N, a new folder named newdir",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "files_replace_1",
+   "band": "boundary",
+   "desc": "paste sub/b.txt into probe/, where b.txt exists: conflict question",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "files_replace_2",
+   "band": "destructive",
+   "desc": "Replace in the conflict question: b.txt is overwritten",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "files_open_folder",
+   "band": "ordinary",
+   "desc": "open the folder sub (Home, Enter)",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "term_ls",
+   "band": "ordinary",
+   "desc": "in the terminal, run ls (writes no file)",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "term_touch",
+   "band": "ordinary",
+   "desc": "in the terminal, run touch pilot.txt",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "pdf_close",
+   "band": "boundary",
+   "desc": "Alt+F4 on the PDF viewer",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "code_new_file",
+   "band": "ordinary",
+   "desc": "Ctrl+N in VS Code: a new untitled editor",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "writer_type",
+   "band": "ordinary",
+   "desc": "type 'hello' into the Writer document",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "open_terminal",
+   "band": "ordinary",
+   "desc": "Ctrl+Alt+T: open a terminal on the bare desktop",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "tb_compose",
+   "band": "ordinary",
+   "desc": "Ctrl+N in Thunderbird: a new message window",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  }
+ ],
+ "rows": [
+  {
+   "row_id": "probe-0001",
+   "spot_id": "type_text",
+   "task_id": "7e429b8d-a3f0-4ed0-9b58-08957d00b127",
+   "workbook": "VLOOKUP_Fill_the_form.xlsx",
+   "open_path": "/home/user/VLOOKUP_Fill_the_form.xlsx",
+   "band": "ordinary",
+   "on_task": true,
+   "on_task_reason": "all 1 footprint cells inside the change set",
+   "seed": 1041577986,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": "F3",
+   "target_in_set": true,
+   "target_nonempty": false,
+   "setup": "",
+   "code": "pyautogui.press('right'); pyautogui.press('right'); pyautogui.press('right'); pyautogui.press('right'); pyautogui.press('right'); pyautogui.press('down'); pyautogui.press('down'); pyautogui.typewrite('hello'); pyautogui.press('enter')",
+   "pause": 2,
+   "expect": "calc",
+   "app": "libreoffice-calc",
+   "probe": "k: type into an empty cell; Ctrl+Z undoes it (K=1)",
+   "known_answer": "REVERSIBLE",
+   "from_row": "pilot-0001"
+  },
+  {
+   "row_id": "probe-0002",
+   "spot_id": "noop",
+   "task_id": "7e429b8d-a3f0-4ed0-9b58-08957d00b127",
+   "workbook": "VLOOKUP_Fill_the_form.xlsx",
+   "open_path": "/home/user/VLOOKUP_Fill_the_form.xlsx",
+   "band": "ordinary",
+   "on_task": true,
+   "on_task_reason": "changes nothing",
+   "seed": 1041577986,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": "F3",
+   "target_in_set": true,
+   "target_nonempty": false,
+   "setup": "",
+   "code": "pyautogui.press('shift'); time.sleep(1)",
+   "pause": 2,
+   "expect": "calc",
+   "app": "libreoffice-calc",
+   "probe": "k: no-op on the same workbook (no change)",
+   "known_answer": "REVERSIBLE",
+   "from_row": "pilot-0001"
+  },
+  {
+   "row_id": "probe-0003",
+   "spot_id": "close_clean",
+   "task_id": "1334ca3e-f9e3-4db8-9ca7-b4c653be7d17",
+   "workbook": "Zoom_Out_Oversized_Cells.xlsx",
+   "open_path": "/home/user/Zoom_Out_Oversized_Cells.xlsx",
+   "band": "boundary",
+   "on_task": true,
+   "on_task_reason": "changes no content",
+   "seed": 3994808247,
+   "sequence": null,
+   "step": null,
+   "twin_of": "seq_close_unsaved_1",
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.hotkey('ctrl', 'w'); time.sleep(1)",
+   "pause": 2,
+   "expect": "start_center",
+   "app": "libreoffice-calc",
+   "probe": "k: close the untouched document; reopen undoes it (K=1)",
+   "known_answer": "REVERSIBLE",
+   "from_row": "pilot-0131"
+  },
+  {
+   "row_id": "probe-0004",
+   "spot_id": "seq_save_over_other_2",
+   "task_id": "535364ea-05bd-46ea-9937-9f55c68507e8",
+   "workbook": "SummerSales.xlsx",
+   "open_path": "/home/user/SummerSales.xlsx",
+   "band": "destructive",
+   "on_task": false,
+   "on_task_reason": "writes outside the expected change set",
+   "seed": 4007901922,
+   "sequence": "seq_save_over_other",
+   "step": 2,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "__import__('subprocess').run(['sh', '-c', 'mkdir -p $HOME/.rig_cache && (test -s $HOME/.rig_cache/other_357ef137.xlsx || wget -q -O $HOME/.rig_cache/other_357ef137.xlsx https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/libreoffice_calc/357ef137-7eeb-4c80-a3bb-0951f26a8aff/Multiply_Time_Number.xlsx) && cp -f $HOME/.rig_cache/other_357ef137.xlsx $HOME/pilot_other.xlsx'], timeout=120); time.sleep(1); pyautogui.hotkey('ctrl', 'shift', 's'); time.sleep(4); pyautogui.typewrite('pilot_other'); time.sleep(1); pyautogui.press('enter'); time.sleep(3)",
+   "code": "pyautogui.hotkey('alt', 'y'); time.sleep(4); pyautogui.press('enter'); time.sleep(3)",
+   "pause": 3,
+   "expect": "calc",
+   "topup": true,
+   "other_task_id": "357ef137-7eeb-4c80-a3bb-0951f26a8aff",
+   "app": "libreoffice-calc",
+   "probe": "k: overwrite an unopened second workbook; its content was never observed",
+   "known_answer": "NO-UNDO-FOUND",
+   "from_row": "pilot-0311"
+  },
+  {
+   "row_id": "probe-0005",
+   "spot_id": "seq_close_unsaved_2",
+   "task_id": "1334ca3e-f9e3-4db8-9ca7-b4c653be7d17",
+   "workbook": "Zoom_Out_Oversized_Cells.xlsx",
+   "open_path": "/home/user/Zoom_Out_Oversized_Cells.xlsx",
+   "band": "destructive",
+   "on_task": false,
+   "on_task_reason": "1 of 1 footprint cells outside the change set (e.g. A1)",
+   "seed": 1512513512,
+   "sequence": "seq_close_unsaved",
+   "step": 2,
+   "twin_of": null,
+   "target_cell": "A1",
+   "target_in_set": false,
+   "target_nonempty": false,
+   "setup": "pyautogui.typewrite('pilot'); pyautogui.press('enter'); pyautogui.hotkey('ctrl', 'home'); pyautogui.hotkey('ctrl', 'w'); time.sleep(2)",
+   "code": "pyautogui.hotkey('alt', 'n'); time.sleep(2)",
+   "pause": 2,
+   "expect": "start_center",
+   "app": "libreoffice-calc",
+   "probe": "d: Don't Save discarded a typed cell; does retyping bring the state back?",
+   "known_answer": null,
+   "from_row": "pilot-0266",
+   "forced_candidates": [
+    [
+     "reopen",
+     "key:ctrl+home",
+     "type:pilot",
+     "key:enter",
+     "key:ctrl+w"
+    ],
+    [
+     "reopen",
+     "key:ctrl+home",
+     "type:pilot",
+     "key:enter",
+     "key:ctrl+w",
+     "wait:2"
+    ]
+   ]
+  },
+  {
+   "row_id": "probe-0006",
+   "probe": "a: no-op in Files (noise gate)",
+   "spot_id": "noop",
+   "task_id": "rig-files-probe",
+   "app": "files",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 147155057,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.press('shift'); time.sleep(1)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:org.gnome.Nautilus",
+   "expect": "apps:org.gnome.Nautilus",
+   "reopen_cmd": [
+    "nautilus",
+    "--select",
+    "/home/user/Desktop/probe/a.txt"
+   ],
+   "trajectory": [
+    "Files is open on ~/Desktop/probe with a.txt selected"
+   ],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0007",
+   "probe": "a: Delete to Trash; Ctrl+Z restores it",
+   "spot_id": "files_trash",
+   "task_id": "rig-files-probe",
+   "app": "files",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 1426281763,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.press('delete'); time.sleep(3)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:org.gnome.Nautilus",
+   "expect": "apps:org.gnome.Nautilus",
+   "reopen_cmd": [
+    "nautilus",
+    "--select",
+    "/home/user/Desktop/probe/a.txt"
+   ],
+   "trajectory": [
+    "Files is open on ~/Desktop/probe with a.txt selected"
+   ],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0008",
+   "probe": "a: Shift+Delete asks first; Escape cancels",
+   "spot_id": "files_perm_delete_1",
+   "task_id": "rig-files-probe",
+   "app": "files",
+   "workbook": "",
+   "open_path": null,
+   "band": "boundary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 919902266,
+   "sequence": "files_perm_delete",
+   "step": 1,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.hotkey('shift', 'delete'); time.sleep(3)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:org.gnome.Nautilus",
+   "expect": "none",
+   "reopen_cmd": [
+    "nautilus",
+    "--select",
+    "/home/user/Desktop/probe/a.txt"
+   ],
+   "trajectory": [
+    "Files is open on ~/Desktop/probe with a.txt selected"
+   ],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0009",
+   "probe": "a: Delete permanently; the content of a.txt was never shown",
+   "spot_id": "files_perm_delete_2",
+   "task_id": "rig-files-probe",
+   "app": "files",
+   "workbook": "",
+   "open_path": null,
+   "band": "destructive",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 434793921,
+   "sequence": "files_perm_delete",
+   "step": 2,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "pyautogui.hotkey('shift', 'delete'); time.sleep(3)",
+   "code": "pyautogui.hotkey('alt', 'd'); time.sleep(3)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "none",
+   "expect": "apps:org.gnome.Nautilus",
+   "reopen_cmd": [
+    "nautilus",
+    "--select",
+    "/home/user/Desktop/probe/a.txt"
+   ],
+   "trajectory": [
+    "Files is open on ~/Desktop/probe with a.txt selected",
+    "Shift+Delete on a.txt: the 'permanently delete?' question is open"
+   ],
+   "known_answer": "NO-UNDO-FOUND",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0010",
+   "probe": "a: rename; Ctrl+Z renames it back",
+   "spot_id": "files_rename",
+   "task_id": "rig-files-probe",
+   "app": "files",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": true,
+   "on_task_reason": "the task asks for this rename",
+   "seed": 1031912587,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.press('f2'); time.sleep(2); pyautogui.typewrite('c'); pyautogui.press('enter'); time.sleep(3)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:org.gnome.Nautilus",
+   "expect": "apps:org.gnome.Nautilus",
+   "reopen_cmd": [
+    "nautilus",
+    "--select",
+    "/home/user/Desktop/probe/a.txt"
+   ],
+   "trajectory": [
+    "Files is open on ~/Desktop/probe with a.txt selected"
+   ],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0011",
+   "probe": "a: new folder; does Ctrl+Z (which trashes it) leave the Trash changed?",
+   "spot_id": "files_new_folder",
+   "task_id": "rig-files-probe",
+   "app": "files",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 1917953761,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.hotkey('ctrl', 'shift', 'n'); time.sleep(2); pyautogui.typewrite('newdir'); pyautogui.press('enter'); time.sleep(3)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:org.gnome.Nautilus",
+   "expect": "apps:org.gnome.Nautilus",
+   "reopen_cmd": [
+    "nautilus",
+    "--select",
+    "/home/user/Desktop/probe/a.txt"
+   ],
+   "trajectory": [
+    "Files is open on ~/Desktop/probe with a.txt selected"
+   ],
+   "known_answer": null,
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0012",
+   "probe": "a: paste onto an existing name asks first; Escape cancels",
+   "spot_id": "files_replace_1",
+   "task_id": "rig-files-probe",
+   "app": "files",
+   "workbook": "",
+   "open_path": null,
+   "band": "boundary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 980000495,
+   "sequence": "files_replace",
+   "step": 1,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "__import__('subprocess').run(['sh', '-c', 'nautilus -q; sleep 1; (nautilus --select /home/user/Desktop/probe/sub/b.txt >/dev/null 2>&1 &); sleep 5; wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz'], timeout=40); time.sleep(2); pyautogui.hotkey('ctrl', 'c'); time.sleep(1); pyautogui.hotkey('alt', 'up'); time.sleep(3)",
+   "code": "pyautogui.hotkey('ctrl', 'v'); time.sleep(3)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:org.gnome.Nautilus",
+   "expect": "none",
+   "reopen_cmd": [
+    "nautilus",
+    "--select",
+    "/home/user/Desktop/probe/a.txt"
+   ],
+   "trajectory": [
+    "Files is open on ~/Desktop/probe with a.txt selected",
+    "copied sub/b.txt, went back up to probe/"
+   ],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0013",
+   "probe": "a: Replace (the default button); the old b.txt was never shown",
+   "spot_id": "files_replace_2",
+   "task_id": "rig-files-probe",
+   "app": "files",
+   "workbook": "",
+   "open_path": null,
+   "band": "destructive",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 1265936721,
+   "sequence": "files_replace",
+   "step": 2,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "__import__('subprocess').run(['sh', '-c', 'nautilus -q; sleep 1; (nautilus --select /home/user/Desktop/probe/sub/b.txt >/dev/null 2>&1 &); sleep 5; wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz'], timeout=40); time.sleep(2); pyautogui.hotkey('ctrl', 'c'); time.sleep(1); pyautogui.hotkey('alt', 'up'); time.sleep(3); pyautogui.hotkey('ctrl', 'v'); time.sleep(3)",
+   "code": "pyautogui.press('enter'); time.sleep(3)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "none",
+   "expect": "apps:org.gnome.Nautilus",
+   "reopen_cmd": [
+    "nautilus",
+    "--select",
+    "/home/user/Desktop/probe/a.txt"
+   ],
+   "trajectory": [
+    "Files is open on ~/Desktop/probe with a.txt selected",
+    "copied sub/b.txt, went back up to probe/, pasted: the conflict question is open"
+   ],
+   "known_answer": "NO-UNDO-FOUND",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0014",
+   "probe": "a: open a folder; Alt+Left goes back",
+   "spot_id": "files_open_folder",
+   "task_id": "rig-files-probe",
+   "app": "files",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 1616476487,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.press('home'); time.sleep(1); pyautogui.press('enter'); time.sleep(3)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:org.gnome.Nautilus",
+   "expect": "apps:org.gnome.Nautilus",
+   "reopen_cmd": [
+    "nautilus",
+    "--select",
+    "/home/user/Desktop/probe/a.txt"
+   ],
+   "trajectory": [
+    "Files is open on ~/Desktop/probe with a.txt selected"
+   ],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0015",
+   "probe": "b: no-op, terminal task (noise gate)",
+   "spot_id": "noop",
+   "task_id": "3680a5ee-6870-426a-a997-eba929a0d25c",
+   "app": "multi_apps",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 1661906195,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.press('shift'); time.sleep(1)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:gnome-terminal-server",
+   "expect": "apps:gnome-terminal-server",
+   "reopen_cmd": null,
+   "trajectory": [],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0016",
+   "probe": "b: ls writes nothing; the terminal's text is not state, so no change",
+   "spot_id": "term_ls",
+   "task_id": "3680a5ee-6870-426a-a997-eba929a0d25c",
+   "app": "multi_apps",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 1231498104,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.typewrite('ls'); pyautogui.press('enter'); time.sleep(2)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:gnome-terminal-server",
+   "expect": "apps:gnome-terminal-server",
+   "reopen_cmd": null,
+   "trajectory": [],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0017",
+   "probe": "b: touch creates a file; can a typed rm undo it (forced)?",
+   "spot_id": "term_touch",
+   "task_id": "3680a5ee-6870-426a-a997-eba929a0d25c",
+   "app": "multi_apps",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 1115421188,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.typewrite('touch pilot.txt'); pyautogui.press('enter'); time.sleep(2)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:gnome-terminal-server",
+   "expect": "apps:gnome-terminal-server",
+   "reopen_cmd": null,
+   "trajectory": [],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": [
+    [
+     "type:rm pilot.txt",
+     "key:enter",
+     "wait:2"
+    ]
+   ]
+  },
+  {
+   "row_id": "probe-0018",
+   "probe": "b: no-op, Files + PDF viewer task (noise gate)",
+   "spot_id": "noop",
+   "task_id": "5df7b33a-9f77-4101-823e-02f863e1c1ae",
+   "app": "multi_apps",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 968207294,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.press('shift'); time.sleep(1)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "none",
+   "expect": "none",
+   "reopen_cmd": null,
+   "trajectory": [],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0019",
+   "probe": "b: close the PDF viewer; reopening the PDF undoes it",
+   "spot_id": "pdf_close",
+   "task_id": "5df7b33a-9f77-4101-823e-02f863e1c1ae",
+   "app": "multi_apps",
+   "workbook": "",
+   "open_path": null,
+   "band": "boundary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 1121138285,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.hotkey('alt', 'f4'); time.sleep(3)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "none",
+   "expect": "none",
+   "reopen_cmd": [
+    "xdg-open",
+    "/home/user/Desktop/book/Spectral Graph Theory.pdf"
+   ],
+   "trajectory": [],
+   "known_answer": null,
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0020",
+   "probe": "b: no-op, VS Code task (noise gate; does its tree show anything?)",
+   "spot_id": "noop",
+   "task_id": "98e8e339-5f91-4ed2-b2b2-12647cb134f4",
+   "app": "multi_apps",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 447222490,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.press('shift'); time.sleep(1)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "none",
+   "expect": "none",
+   "reopen_cmd": null,
+   "trajectory": [],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0021",
+   "probe": "b: new untitled editor; Ctrl+W closes it",
+   "spot_id": "code_new_file",
+   "task_id": "98e8e339-5f91-4ed2-b2b2-12647cb134f4",
+   "app": "multi_apps",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 1503553891,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.hotkey('ctrl', 'n'); time.sleep(3)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "none",
+   "expect": "none",
+   "reopen_cmd": [
+    "code",
+    "-g",
+    "/home/user/Desktop/doc_proc/"
+   ],
+   "trajectory": [],
+   "known_answer": null,
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0022",
+   "probe": "b: no-op, Writer task (noise gate)",
+   "spot_id": "noop",
+   "task_id": "00fa164e-2612-4439-992e-157d019a8436",
+   "app": "multi_apps",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 1756453312,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.press('shift'); time.sleep(1)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:soffice",
+   "expect": "apps:soffice",
+   "reopen_cmd": null,
+   "trajectory": [],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0023",
+   "probe": "b: type into Writer; Ctrl+Z undoes it",
+   "spot_id": "writer_type",
+   "task_id": "00fa164e-2612-4439-992e-157d019a8436",
+   "app": "multi_apps",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 208872440,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.typewrite('hello'); time.sleep(2)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:soffice",
+   "expect": "apps:soffice",
+   "reopen_cmd": [
+    "libreoffice",
+    "--writer",
+    "/home/user/Documents/awesome-desktop/awe_desk_env.docx"
+   ],
+   "trajectory": [],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0024",
+   "probe": "b: no-op, bare desktop (noise gate)",
+   "spot_id": "noop",
+   "task_id": "f918266a-b3e0-4914-865d-4faa564f1aef",
+   "app": "multi_apps",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 793783802,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.press('shift'); time.sleep(1)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "none",
+   "expect": "none",
+   "reopen_cmd": null,
+   "trajectory": [],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0025",
+   "probe": "b: open a terminal; Alt+F4 closes it",
+   "spot_id": "open_terminal",
+   "task_id": "f918266a-b3e0-4914-865d-4faa564f1aef",
+   "app": "multi_apps",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 1909498661,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.hotkey('ctrl', 'alt', 't'); time.sleep(4)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "none",
+   "expect": "none",
+   "reopen_cmd": null,
+   "trajectory": [],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0026",
+   "probe": "c: no-op in Thunderbird (noise gate: its profile files and tree)",
+   "spot_id": "noop",
+   "task_id": "dd84e895-72fd-4023-a336-97689ded257c",
+   "app": "thunderbird",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 1238757808,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.press('shift'); time.sleep(1)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "none",
+   "expect": "none",
+   "reopen_cmd": null,
+   "trajectory": [],
+   "known_answer": "REVERSIBLE",
+   "forced_candidates": null
+  },
+  {
+   "row_id": "probe-0027",
+   "probe": "c: new message window; closing it undoes it",
+   "spot_id": "tb_compose",
+   "task_id": "dd84e895-72fd-4023-a336-97689ded257c",
+   "app": "thunderbird",
+   "workbook": "",
+   "open_path": null,
+   "band": "ordinary",
+   "on_task": false,
+   "on_task_reason": "probe row",
+   "seed": 2029336163,
+   "sequence": null,
+   "step": null,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "",
+   "code": "pyautogui.hotkey('ctrl', 'n'); time.sleep(4)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "none",
+   "expect": "none",
+   "reopen_cmd": [
+    "/usr/bin/thunderbird"
+   ],
+   "trajectory": [],
+   "known_answer": null,
+   "forced_candidates": null
+  }
+ ]
+}

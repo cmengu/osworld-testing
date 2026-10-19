@@ -50,7 +50,10 @@ def task_open_path(task: dict):
 
 
 def prime_cache(env, task: dict) -> str:
-    """Call once right after the first env.reset: keep pristine copies of the task files."""
+    """Call once right after the first env.reset: keep pristine copies of the task files (generic tasks: the
+    folders, the top-level listing and the window titles, prime_generic)."""
+    if not is_calc_task(task):
+        return prime_generic(env, task)
     files = task_files(task)
     if not files:
         return "no task files"
@@ -85,7 +88,10 @@ def _launch_and_wait(env, path: str, title_hint: str = "LibreOffice Calc", wait_
 
 
 def fresh_start(env, task: dict, fast: bool = True) -> str:
-    """Returns which path ran: 'fast', 'slow' or 'slow-after-fast-failed'."""
+    """Returns which path ran: 'fast', 'slow' or 'slow-after-fast-failed'; for tasks that are not one spreadsheet,
+    the generic path below ('generic' or 'generic-incomplete:...')."""
+    if not is_calc_task(task):
+        return generic_fresh_start(env, task)
     # graceful close first so LibreOffice does not leave a recovery entry behind
     try:
         env.step("pyautogui.hotkey('ctrl', 'q'); time.sleep(3); " + DONT_SAVE + "; time.sleep(3)", pause=0.5)
@@ -123,3 +129,141 @@ def switch_task(env, task: dict) -> str:
             return "download-failed"
     prime_cache(env, task)
     return fresh_start(env, task)
+
+
+# ---------------------------------------------------------------------------------------------------------
+# Generic fresh start (19 Oct 2026), for tasks that are not "LibreOffice on one spreadsheet": Files, terminal and
+# multi_apps rows.  Of the 27 usable multi_apps tasks, 13 open nothing, 11 run setup commands and 5 launch an
+# application, so "copy the workbook back and relaunch Calc" does not reset them.  Instead:
+#   prime (once, right after the task's own env.reset):  tar the user's folders as the setup left them, and record
+#       the top-level entries of $HOME and the window titles the setup produced;
+#   reset (every time):  close every application, restore the folders from the tar (files, folders, modes, Trash),
+#       replay only the setup steps that open windows (open, launch, and execute/command steps that start a GUI
+#       program), wait for the recorded windows, maximise them, settle.
+# Setup steps that only change files (mkdir, unzip, tar, pip, history -c) are not replayed: their result is in the
+# tar.  A different task gets a new sandbox (collect_pilot.ensure_task), so tasks never see each other's files.
+# ---------------------------------------------------------------------------------------------------------
+import json as _json
+import shlex as _shlex
+
+SPREADSHEET_EXT = (".xlsx", ".xlsm", ".xls", ".ods", ".csv")
+GUI_PROCS = ("soffice.bin", "oosplash", "nautilus", "gnome-terminal-server", "code", "evince", "eog", "gedit",
+             "gnome-text-editor", "thunderbird", "thunderbird-bin", "totem", "file-roller")
+GUI_LAUNCHERS = ("gnome-terminal", "nautilus", "code", "xdg-open", "libreoffice", "soffice", "evince", "eog", "gedit",
+                 "thunderbird")
+HOME_ROOTS = ("Desktop", "Documents", "Downloads", "Pictures", "Music", "Videos", "Templates", "Public",
+              ".local/share/Trash", ".config/Code", ".thunderbird", ".bash_history")
+BASELINE_TAR = CACHE_DIR + "/home_baseline.tar"
+BASELINE_TOP = CACHE_DIR + "/home_top.txt"
+BASELINE_WINDOWS = CACHE_DIR + "/windows.txt"
+
+
+def is_calc_task(task: dict) -> bool:
+    """The case the fast path was built for: a Calc task that downloads, then opens one spreadsheet, nothing else.
+    A multi_apps task with the same setup (7f35355e) still takes the generic path: its actions reach other programs."""
+    if any(a.lower().replace(" ", "_") != "libreoffice_calc" for a in task.get("related_apps", [])):
+        return False
+    steps = task.get("config", [])
+    opens = [s for s in steps if s.get("type") == "open"]
+    return (len(opens) == 1 and all(s.get("type") in ("download", "open") for s in steps)
+            and str(opens[0].get("parameters", {}).get("path", "")).lower().endswith(SPREADSHEET_EXT))
+
+
+_GUI_RE = __import__("re").compile(r"(?:^|[\s/;&|])(?:" + "|".join(GUI_LAUNCHERS) + r")(?:\s|$)")
+
+
+def _cmd_text(params: dict) -> str:
+    c = params.get("command")
+    return c if isinstance(c, str) else " ".join(map(str, c or []))
+
+
+def gui_steps(task: dict) -> list:
+    """The setup steps that open windows, in order."""
+    out = []
+    for s in task.get("config", []):
+        t, p = s.get("type"), s.get("parameters", {})
+        if t in ("open", "launch", "sleep", "activate_window"):
+            out.append(s)
+        elif t in ("execute", "command") and _GUI_RE.search(_cmd_text(p)):
+            out.append(s)
+    return out
+
+
+PRIME_GENERIC = r"""
+mkdir -p {cache}; cd "$HOME"
+ls -A1 | grep -v '^\.' > {top}
+ROOTS=""; for r in {roots}; do [ -e "$r" ] && ROOTS="$ROOTS $r"; done
+TOPFILES=$(find . -maxdepth 1 -type f ! -name '.*' -printf '%P\n')
+tar -cpf {tar} $ROOTS $TOPFILES 2>/dev/null; echo "tar=$?"
+(wmctrl -l 2>/dev/null | awk '{{ $1=$2=$3=""; sub(/^ +/, ""); print }}' | grep -v '^@!' | sort) > {windows}
+echo PRIMED; cat {windows}
+"""
+
+RESTORE_GENERIC = r"""
+[ -s {tar} ] || {{ echo "no baseline tar: nothing removed"; exit 1; }}
+for p in {procs}; do pkill -x "$p" 2>/dev/null; done; sleep 2; for p in {procs}; do pkill -9 -x "$p" 2>/dev/null; done
+cd "$HOME" || exit 1
+for r in {roots}; do rm -rf "./$r" 2>/dev/null; done
+find . -maxdepth 1 -type f ! -name '.*' -delete 2>/dev/null
+# top-level folders the agent created (not in the recorded listing); never the VM's server or the rig cache
+ls -A1 | grep -v '^\.' | while IFS= read -r e; do grep -qxF "$e" {top} || [ "$e" = server ] || rm -rf "./$e"; done
+tar -xpf {tar} 2>/dev/null; echo "untar=$?"
+"""
+
+
+def prime_generic(env, task: dict) -> str:
+    script = PRIME_GENERIC.format(cache=CACHE_DIR, top=BASELINE_TOP, tar=BASELINE_TAR, windows=BASELINE_WINDOWS,
+                                  roots=" ".join(_shlex.quote(r) for r in HOME_ROOTS))
+    return vm_out(env, script, timeout=110)
+
+
+def _windows_now(env) -> list:
+    out = vm_out(env, "wmctrl -l 2>/dev/null | awk '{ $1=$2=$3=\"\"; sub(/^ +/, \"\"); print }' | grep -v '^@!' | sort", timeout=15)
+    return [l for l in out.splitlines() if l.strip()]
+
+
+def _replay_step(env, s: dict) -> None:
+    t, p = s.get("type"), s.get("parameters", {})
+    if t == "sleep":
+        time.sleep(min(float(p.get("seconds", 1)), 30))
+    elif t == "open":
+        vm_shell(env, f"nohup xdg-open {_shlex.quote(p['path'])} >/dev/null 2>&1 &", timeout=20)
+        time.sleep(5)
+    elif t == "activate_window":
+        vm_shell(env, f"wmctrl -a {_shlex.quote(p.get('window_name', ''))} 2>/dev/null; true", timeout=15)
+    else:   # launch, or execute/command that starts a GUI program
+        c = p.get("command")
+        text = c if isinstance(c, str) else " ".join(_shlex.quote(str(x)) for x in c)
+        if p.get("shell") or isinstance(c, str):
+            text = "sh -c " + _shlex.quote(text)
+        vm_shell(env, f"export DISPLAY=:0; nohup {text} >/dev/null 2>&1 &", timeout=20)
+        time.sleep(5)
+
+
+def generic_fresh_start(env, task: dict, wait_s: int = 90) -> str:
+    """Returns 'generic' or 'generic-incomplete:<missing windows>'."""
+    # LibreOffice first, gracefully, so it leaves no recovery entry (as in the fast path); only when it is running
+    if "soffice" in vm_out(env, "pgrep -x soffice.bin >/dev/null && echo soffice; true", timeout=15):
+        try:
+            vm_shell(env, "wmctrl -a 'LibreOffice' 2>/dev/null; true", timeout=15)
+            env.step("pyautogui.hotkey('ctrl', 'q'); time.sleep(3); " + DONT_SAVE + "; time.sleep(3)", pause=0.5)
+        except Exception:
+            pass
+    vm_shell(env, CLEAN_SCRIPT, timeout=60)
+    vm_shell(env, RESTORE_GENERIC.format(procs=" ".join(GUI_PROCS), top=BASELINE_TOP, tar=BASELINE_TAR,
+                                         roots=" ".join(_shlex.quote(r) for r in HOME_ROOTS)), timeout=110)
+    for s in gui_steps(task):
+        _replay_step(env, s)
+    want = [l for l in vm_out(env, f"cat {BASELINE_WINDOWS} 2>/dev/null", timeout=15).splitlines() if l.strip()]
+    deadline = time.time() + wait_s
+    missing = want
+    while time.time() < deadline:
+        have = _windows_now(env)
+        missing = [w for w in want if w not in have]
+        if not missing:
+            break
+        time.sleep(3)
+    vm_shell(env, "for w in $(wmctrl -l | awk '$2 != \"-1\" {print $1}'); do wmctrl -i -r $w -b add,maximized_vert,maximized_horz; done; true",
+             timeout=20)
+    time.sleep(SETTLE_SECONDS)
+    return "generic" if not missing else "generic-incomplete:" + _json.dumps(missing)[:200]
