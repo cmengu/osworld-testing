@@ -230,7 +230,7 @@ try:
 except ValueError:
     pass
 assert action_count(["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3", "key:ctrl+y"]) == 4
-assert tier2("libreoffice-calc") == CALC and tier2("files") == FILES and tier2("multi_apps") == CALC + FILES
+assert tier2("libreoffice-calc") == CALC and tier2("files") == FILES and tier2("multi_apps")[:len(FILES)] == FILES
 assert "Popen(['nautilus', '/home/user/Desktop']" in step_code("reopen", {"reopen_cmd": ["nautilus", "/home/user/Desktop"]})
 
 # 19 Oct: permission bits, folders and links are state; digests recorded before carry none and compare as before.

@@ -59,6 +59,8 @@ FILES: List[Candidate] = [
     ["key:alt+right"],
     ["key:alt+up"],
     ["key:escape", "key:ctrl+z"],
+    ["key:alt+f4"],                        # close the window the action opened (a terminal, a compose window)
+    ["key:ctrl+w"],                        # close the tab or editor the action opened
     ["key:ctrl+w", "wait:2", "reopen"],
 ]
 
@@ -69,7 +71,7 @@ def tier2(app: str) -> List[Candidate]:
         return FILES
     if app == "libreoffice-calc":
         return CALC
-    return CALC + FILES
+    return FILES + [c for c in CALC if c not in FILES]   # multi_apps: the cheap generic window moves first
 
 
 # atoms for the blind pair tier
