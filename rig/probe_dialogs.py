@@ -18,7 +18,9 @@ import json, os, pathlib, signal, sys, time
 HERE = pathlib.Path(__file__).resolve().parent; BASE = HERE.parent; OSWORLD = BASE / "OSWorld"
 sys.path.insert(0, str(BASE)); sys.path.insert(0, str(OSWORLD)); os.chdir(OSWORLD)
 from desktop_env.desktop_env import DesktopEnv
-from rig.dialog_keys import CONFIRM_DELETE_FILE, CONFIRM_YES, DONT_SAVE, press_code, select_file_code
+from rig.dialog_keys import CONFIRM_YES, DONT_SAVE, press_code, select_file_code
+
+CONFIRM_DELETE_FILE = "pyautogui.hotkey('alt', 'd')"   # GTK's _Delete; the dialog never came up (19 Oct run)
 from rig.freshstart import fresh_start, prime_cache, switch_task
 from rig.snapshot import WINDOWS_SCRIPT, _digest
 from rig.vm import vm_out

@@ -9,15 +9,13 @@ Read 19 Oct 2026 offline from the key bindings the dialogs themselves report in 
 
 Alt+D, used until now for Don't Save, is the accelerator of the Data menu (probe_menus "menu_data"): it reached the
 document behind the alert, which explains pilot-0266 (dialog still open) and the stray save in pilot-0181.
-rig/probe_dialogs.py confirms these by what actually happens (windows, file) on the next sandbox run; if a key does
-not work there, the probe's working route replaces it here and in nothing else.
+rig/probe_dialogs.py confirmed Alt+N (close and quit) and Alt+Y (replace, also onto a second workbook) on 19 Oct by
+what actually happened to the windows and the files.
 """
 DONT_SAVE = "pyautogui.hotkey('alt', 'n')"
 CONFIRM_YES = "pyautogui.hotkey('alt', 'y')"      # replace-existing-file and delete-sheet questions
 # Save As of an .xlsx: after the file is written, LibreOffice asks whether to keep the Excel format; Enter keeps it
 KEEP_FORMAT = "pyautogui.press('enter')"
-# GTK's "permanently delete?" question of the file dialog: buttons _Cancel and _Delete.  Unverified until the probe.
-CONFIRM_DELETE_FILE = "pyautogui.hotkey('alt', 'd')"
 
 # ---------------------------------------------------------------------------------------------------------------
 # Accessibility helpers, sent as spot code: python3 in a subprocess inside the VM, because the pyautogui context
@@ -107,7 +105,6 @@ def select_file_code(name: str, settle: float = 1) -> str:
             f"time.sleep({settle})")
 
 
-# Delete the selected file from GTK's file dialog: the Delete key, then the "permanently delete?" question.
-# Unverified: GTK 3 offers Delete in the list's context menu (Shift+F10) in a Save dialog; whether the bare Delete
-# key is bound is what probe_dialogs case E finds out, along with the working route.
-DELETE_SELECTED_FILE = "pyautogui.press('delete'); time.sleep(2)"
+# Confirmed 19 Oct (probe_dialogs, rig/out/dialog_probe/log.json): every key above works as read.  The GTK file
+# dialog on this image has no way to delete a file: its list offers Rename and Create Folder only, and Delete,
+# Shift+Delete and the context menu (Shift+F10) all left the file on disk.

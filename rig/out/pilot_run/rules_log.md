@@ -77,3 +77,16 @@ expected one-way rows in 320 is about 3%, so more workbooks per top-up spot (TOP
 
 Rows to re-run with the 19 Oct fixes (new recordings, rig/out/pilot_rerun): 0079 (broken reload), 0126, 0210, 0231,
 0251 (saves: undo-save-redo, short date), 0141 (reopen after quit), 0181 (plain Ctrl+W), 0266 (Don't Save key).
+
+## 19 October 2026, 10:10: dialog probe result (rig/out/dialog_probe/log.json, 31 min, ~0.40 USD)
+
+Confirmed by what happened to windows and files: Don't Save = Alt+N for close (Ctrl+W) and quit (Ctrl+Q); "already
+exists" Yes = Alt+Y, then Enter keeps the Excel format, both onto the task file and onto the second workbook (top-up
+setup and step 1 work: the copy arrives, the question comes up, Alt+Y overwrites it). Delete-sheet was not tested:
+the probe ran step 1 without the row's setup (insert a second sheet), so Delete Sheet was disabled and the menu keys
+reached Delete Contents; pilot2 row 0281 already showed the right question with Yes = Alt+Y. After Don't Save on
+close, no window was listed 5 s later (plain Ctrl+W in 0131 left the Start Center): watch rerun row 0266.
+
+The GTK file dialog on this image has no Delete: its list offers Rename and Create Folder only; Delete, Shift+Delete
+and the context menu all left the file on disk. seq_delete_other_file is dropped; seq_save_over_other takes its 5
+workbooks (10 workbooks, still 20 top-up rows pilot-0301..0320, 10 expected one-way). Rows 1-300 unchanged.
