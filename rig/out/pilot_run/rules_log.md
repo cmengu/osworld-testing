@@ -150,3 +150,18 @@ restore from the Trash); re-entering lost content or typing commands does not co
 and the proposer's prompt. Effect: no pilot label used a typed undo (pilot_run2 30, pilot_rerun 8: 0); probe-0005
 (0266, Don't Save after typing) was reversible only by retyping and is one-way under the new rule (its 8 untyped
 attempts failed); probe-0023 (terminal touch) loses its forced typed rm undo.
+
+## 20 October 2026, 22:30: the action must take effect; a row ends inside its cap
+
+Not comparison rules, for the record. probe-0007 (Delete to Trash) recorded an after-state in which the Delete had
+not happened: a.txt still in place, Trash empty, the only difference a scroll-bar readout. The search then compared
+every undo against S itself, and the row ran 5.8 h (4.4 USD) because the sandbox reached its 3 h lifetime mid-row
+and nothing stopped the failing resets (the 15-min watchdog did not fire; cause not found). Changes
+(collect_pilot.py, vm.py, freshstart.py, make_probe_rows.py): probe rows name what their action must change
+(`expect_change`: files, windows, tree); an action that changed none of it is retried on a fresh instance up to
+twice, and after three misfires the row is `broken_action` with no label and no search. Every VM call checks a
+per-row deadline (row cap + 10 min) and raises RowCapped, so a row ends with what it has; five failed VM calls in a
+row raise SandboxLost and the row restarts on a new sandbox; the sandbox is rotated between rows as soon as the next
+row could not finish inside the lifetime. After a generic reset the keyboard is given to the window the task's setup
+left active, and a mismatch is recorded in the fresh-start note. The void probe-0007 record is set aside
+(void_misfire_20oct.jsonl, probe-0007_misfire/) and the row reruns; its known answer (REVERSIBLE) is still untested.

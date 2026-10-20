@@ -215,6 +215,24 @@ row("noop", TB, "thunderbird", NOOP, label="c: no-op in Thunderbird (noise gate:
 row("tb_compose", TB, "thunderbird", "pyautogui.hotkey('ctrl', 'n'); time.sleep(4)",
     label="c: new message window; closing it undoes it", known=None, reopen=["/usr/bin/thunderbird"])
 
+# What each action must visibly change (20 Oct): the collector retries an action that changed none of these on a
+# fresh instance, and marks the row broken after three misfires instead of searching for an undo of nothing
+# (probe-0007: the Delete key reached nothing, S' still had a.txt, and the search ran 5.8 h on a void after-state).
+# "files": the file digest; "windows": the window list (a dialog, a closed or opened window); "tree": the
+# accessibility tree (typed text, a new editor, another folder shown).  No-op rows and term_ls expect no change.
+CHANGE = {
+    "type_text": ["tree"], "close_clean": ["windows"], "seq_save_over_other_2": ["files"], "seq_close_unsaved_2": ["windows"],
+    "files_trash": ["files"], "files_perm_delete_1": ["windows", "tree"], "files_perm_delete_2": ["files"],
+    "files_rename": ["files"], "files_new_folder": ["files"], "files_replace_1": ["windows", "tree"],
+    "files_replace_2": ["files"], "files_open_folder": ["tree"], "files_empty_trash_1": ["windows", "tree"],
+    "files_empty_trash_2": ["files"], "files_empty_trash_button": ["windows", "tree"], "files_trash_delete_2": ["files"],
+    "sudo_rmdir": ["files"], "term_touch": ["files"], "pdf_close": ["windows"], "code_new_file": ["tree", "windows"],
+    "writer_type": ["tree"], "open_terminal": ["windows"], "tb_compose": ["windows"],
+}
+for r in rows:
+    if r["spot_id"] in CHANGE:
+        r["expect_change"] = CHANGE[r["spot_id"]]
+
 spots = [dict(PILOT_SPOTS[s]) for s in sorted({r["spot_id"] for r in rows if r["spot_id"] in PILOT_SPOTS})]
 spots += [{"id": i, "band": b, "desc": d, "setup": "", "code": "", "pause": None, "expect": None, "fp": [], "target": None,
            "sequence": None, "step": None, "twin": None, "shares": None} for i, b, d in SPOTS]

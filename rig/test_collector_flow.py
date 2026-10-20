@@ -126,6 +126,7 @@ assert all(x.get("result", "").startswith("match not confirmed") for x in r["und
 import rig.snapshot as _snap, rig.vm as _vm
 digests = []
 _snap._digest = lambda env: (digests.pop(0), "")
+_real_vm_shell = _vm.vm_shell
 _vm.vm_shell = lambda env, script, timeout=110: {"output": S1_REC.windows}
 
 
@@ -149,5 +150,49 @@ if True:
         raise AssertionError("a reset that never reproduces S' must not be judged")
     except cp.ResetFailed:
         pass
+
+# An action that must change the files and changes nothing (probe-0007, 20 Oct: Delete reached nothing) is retried
+# on a fresh instance twice and the row is broken, not searched; an action that changes the named thing proceeds
+class Misfire(Fake):
+    acted = 0
+
+    def act(self, row):
+        Misfire.acted += 1
+        self.state = S_REC
+
+
+teacher.guess_b = lambda *a, **k: {"reversible": True, "shortest_undo": ["key:ctrl+z"], "model": "fake"}
+m = Misfire(argparse.Namespace(**{**vars(args), "out": tempfile.mkdtemp(), "spots": str(HERE / "clickspots_pilot.json"), "budget": 3}))
+row = dict(next(x for x in m.rows_all if x["row_id"] == "pilot-0003"), open_path="/home/user/x.xlsx", expect_change=["files"])
+r = m.run_row(row)
+assert Misfire.acted == 3 and r["status"] == "broken_action" and r["executed_label"] is None and r["labels_by_k"] is None, (Misfire.acted, r["status"])
+assert len(r["action_misfires"]) == 3 and r["undo_search"] == [] and r["guess_b_zero_shot"]["executed"] is False
+assert (m.out / "pilot-0003" / "S1_misfire_1").exists()
+Fake.good = ["key:ctrl+z"]
+m2 = Fake(argparse.Namespace(**{**vars(args), "out": tempfile.mkdtemp(), "spots": str(HERE / "clickspots_pilot.json"), "budget": 3}))
+r = m2.run_row(dict(next(x for x in m2.rows_all if x["row_id"] == "pilot-0003"), open_path="/home/user/x.xlsx", expect_change=["tree"]))
+assert r["status"] == "ok" and r["action_misfires"] == [] and r["executed_label"] == "REVERSIBLE", r["status"]
+
+# The VM guards (rig.vm, 20 Oct): a call past the row deadline raises RowCapped; five failed calls raise SandboxLost
+import time
+from rig import vm as VM
+VM.vm_shell = _real_vm_shell
+VM.ROW_DEADLINE = time.time() - 1
+try:
+    VM.vm_shell(None, "true")
+    raise AssertionError("a call past the row deadline must raise")
+except VM.RowCapped:
+    pass
+VM.ROW_DEADLINE = None
+dead = type("E", (), {"controller": type("C", (), {"http_server": "http://127.0.0.1:9"})()})()
+n = 0
+try:
+    for _ in range(6):
+        VM.vm_shell(dead, "true", timeout=1)
+        n += 1
+    raise AssertionError("a dead VM must raise after five failed calls")
+except VM.SandboxLost:
+    assert n == 4, n
+assert cp.rotate_seconds(40) == 10800 - 40 * 60 - 10 * 60 - 5 * 60
 
 print("COLLECTOR FLOW CHECKS PASSED")

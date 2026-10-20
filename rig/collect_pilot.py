@@ -25,6 +25,7 @@ import os
 import pathlib
 import random
 import re
+import shutil
 import sys
 import threading
 import time
@@ -35,10 +36,18 @@ BASE = HERE.parent
 OSWORLD = BASE / "OSWorld"
 sys.path.insert(0, str(BASE))
 sys.path.insert(0, str(OSWORLD))
-# Sandbox lifetime 3 h, and the run swaps in a fresh sandbox between rows after ROTATE_SECONDS.  It was 10 h until
-# 20 Oct: the Mac went into clamshell sleep at 01:22 mid-probe, the collector froze, and the sandbox billed ~4 h idle.
+# Sandbox lifetime 3 h, and the run swaps in a fresh sandbox between rows once the next row could not finish inside
+# the lifetime (rotate_seconds below).  It was 10 h until 20 Oct: the Mac went into clamshell sleep at 01:22
+# mid-probe, the collector froze, and the sandbox billed ~4 h idle.  A fixed 2.5 h then let probe-0007 start at
+# 2.4 h and lose its sandbox mid-row.
 os.environ.setdefault("MODAL_SANDBOX_TIMEOUT", "10800")
-ROTATE_SECONDS = 2.5 * 3600
+SANDBOX_LIFETIME = int(os.environ["MODAL_SANDBOX_TIMEOUT"])
+ROW_GRACE_SECONDS = 10 * 60    # past the row cap, every VM call raises RowCapped (rig.vm) and the row ends with what it has
+
+
+def rotate_seconds(row_minutes: float) -> float:
+    """Sandbox age after which the next row starts on a fresh sandbox: lifetime minus the worst row, minus 5 min."""
+    return max(1800.0, SANDBOX_LIFETIME - row_minutes * 60 - ROW_GRACE_SECONDS - 5 * 60)
 # Modal ends a sandbox with no exec, no stdin and no open tunnel connection for this long.  The longest quiet stretch
 # in a row is the wait for the teacher's guesses (at most 900 s), so 20 min never cuts a live row.
 SANDBOX_IDLE_SECONDS = int(os.environ.get("RIG_SANDBOX_IDLE_SECONDS", "1200"))
@@ -65,6 +74,8 @@ from rig.mask import apply_file_mask, file_sig, states_equal    # noqa: E402
 from rig.snapshot import load_snapshot, take_snapshot           # noqa: E402
 from rig.treediff import summarize                              # noqa: E402
 from rig import undo as U                                       # noqa: E402
+from rig import vm as VM                                        # noqa: E402
+from rig.vm import RowCapped, SandboxLost                       # noqa: E402
 
 SANDBOX_USD_PER_HOUR = 0.76
 WATCHDOG_SECONDS = 900        # no single candidate, snapshot or reset may take longer; a dead tunnel otherwise hangs forever
@@ -487,29 +498,53 @@ class Collector:
         # LibreOffice's accessibility tree, closing a document in the same instance made LibreOffice vanish
         # (probe-0005, 20 Oct: Don't Save left a bare desktop three times; resets that walked nothing showed the
         # Start Center).  S is the same state either way: every reset is checked against it below.
-        signal.alarm(WATCHDOG_SECONDS)
-        rec["action_instance"] = self.reset_to_before(row)
-        rec["action_executed_at"] = time.time()
-        self.act(row)
-        S1 = self.snapshot(rdir / "S1", {"row": rid, "kind": "after"}, expect_kind=row.get("expect", "calc"))
-        for wait in (3, 10):
-            if S1.ok:
-                break
-            time.sleep(wait)
-            S1 = self.snapshot(rdir / "S1", {"row": rid, "kind": "after", "retake": True}, expect_kind=row.get("expect", "calc"))
-        if S1.meta.get("window_error"):
-            # an after-state recorded without the application it must show would misjudge every candidate: the row
-            # is retried from a fresh sandbox instead (probe-0005, 20 Oct)
+        # The action must do what the row says (20 Oct, probe-0007: the Delete key reached nothing on the action's
+        # instance, S' showed a.txt still in place, and the search then measured nothing for 5.8 h).  A probe row
+        # names the classes of change its action must produce in `expect_change` ("files", "windows", "tree"); the
+        # action is retried on a fresh instance up to twice, and a row whose action never takes effect is broken,
+        # not data.  Pilot rows name none and keep the old rule: any change counts, none is a broken key route.
+        want_change = set(row.get("expect_change") or [])
+        misfires = []
+        for action_try in range(3):
+            signal.alarm(WATCHDOG_SECONDS)
+            rec["action_instance"] = self.reset_to_before(row)
+            rec["action_executed_at"] = time.time()
+            self.act(row)
+            S1 = self.snapshot(rdir / "S1", {"row": rid, "kind": "after"}, expect_kind=row.get("expect", "calc"))
+            for wait in (3, 10):
+                if S1.ok:
+                    break
+                time.sleep(wait)
+                S1 = self.snapshot(rdir / "S1", {"row": rid, "kind": "after", "retake": True}, expect_kind=row.get("expect", "calc"))
+            if S1.meta.get("window_error"):
+                # an after-state recorded without the application it must show would misjudge every candidate: the row
+                # is retried from a fresh sandbox instead (probe-0005, 20 Oct)
+                signal.alarm(0)
+                raise RuntimeError(f"after-state not recorded: {S1.meta['window_error']}")
             signal.alarm(0)
-            raise RuntimeError(f"after-state not recorded: {S1.meta['window_error']}")
-        signal.alarm(0)
+            eq, tdiffs, fdiffs = states_equal(S.canon, S.digest, S1.canon, S1.digest, self.mask)
+            changed = set()
+            if fdiffs:
+                changed.add("files")
+            if titles(S1.windows) != titles(S.windows):
+                changed.add("windows")
+            if tdiffs:
+                changed.add("tree")
+            if not want_change or changed & want_change:
+                break
+            misfires.append({"try": action_try + 1, "changed": sorted(changed), "instance": rec["action_instance"]})
+            print(f"  [{rid}] the action changed {sorted(changed) or 'nothing'}, not {sorted(want_change)}: again on a fresh instance", flush=True)
+            kept = rdir / f"S1_misfire_{action_try}"
+            shutil.rmtree(kept, ignore_errors=True)
+            (rdir / "S1").rename(kept)
+        rec["action_misfires"] = misfires
+        rec["action_misfired"] = bool(want_change) and not (changed & want_change)
         rec["snapshot_after"] = str(S1.path.relative_to(self.out))
         rec["after_ok"] = S1.ok
         rec["tree_after"] = str((S1.path / "tree.xml").relative_to(self.out))
         after_text = render(S1.canon, S1.digest, S1.windows, files=files_scope)
         rec["state_after_compact"] = after_text
         rec["file_diff"] = file_diff(S.digest, S1.digest, self.mask)
-        eq, tdiffs, fdiffs = states_equal(S.canon, S.digest, S1.canon, S1.digest, self.mask)
         rec["action_changed_state"] = not eq
         rec["action_diff_summary"] = {"tree_diffs": len(tdiffs), "file_diffs": len(fdiffs), "classes": classify_diffs(tdiffs, fdiffs),
                                       "sample": summarize(tdiffs, limit=8)}
@@ -622,6 +657,11 @@ class Collector:
             except Watchdog:
                 signal.alarm(0)
                 raise                      # the row ends with an error and the environment is restarted
+            except SandboxLost:
+                signal.alarm(0)
+                raise                      # the VM is gone: the row is retried on a new sandbox
+            except RowCapped as e:
+                r.update({"result": f"not judged: {str(e)[:200]}", "error": True, "capped": True})
             except ResetFailed as e:
                 r.update({"result": f"not judged: {str(e)[:200]}", "error": True, "reset_failed": True})
             except Exception as e:
@@ -635,7 +675,14 @@ class Collector:
             print(f"  [{rid}] c{idx:02d} t{tier} {U.describe(cand)[:60]:60s} -> {r['result'][:70]} ({r['seconds']}s)", flush=True)
             return bool(r.get("match"))
 
-        if eq:
+        if rec["action_misfired"]:
+            # three instances, no effect of the named kind: nothing to undo and nothing to label
+            rec["executed_label"] = None
+            rec["shortest_undo"] = None
+            rec["undo_length"] = None
+            rec["found_tier"] = None
+            rec["broken_action"] = True
+        elif eq:
             rec["executed_label"] = "REVERSIBLE"
             rec["shortest_undo"] = []
             rec["undo_length"] = 0
@@ -759,7 +806,9 @@ class Collector:
                     rec["replay_diff_sample"] = summarize(td, limit=5)
                 elif eq_r:
                     rec["flicker_class"] = "none"
-            except (Exception, Watchdog) as e:
+            except SandboxLost:
+                raise
+            except (Exception, Watchdog, RowCapped) as e:
                 rec["replay_error"] = repr(e)[:300]
             finally:
                 signal.alarm(0)
@@ -772,7 +821,7 @@ class Collector:
         gb = guesses.get("B") or {}
         zs = {"claimed_reversible": gb.get("reversible"), "steps": gb.get("shortest_undo"), "candidate": None,
               "parse": None, "executed": False, "matched": None, "source": None}
-        if gb.get("reversible") is True and not eq:
+        if gb.get("reversible") is True and not eq and not rec["action_misfired"]:
             cand, how = U.guess_parse(gb.get("shortest_undo"))
             zs.update(candidate=cand, parse=how)
             if cand is not None:
@@ -799,7 +848,8 @@ class Collector:
         # undo found, the label is NO-UNDO-FOUND as far as the search went (shorter_search says how far).
         n = 0 if eq else (U.action_count(rec["shortest_undo"]) if rec["executed_label"] == "REVERSIBLE" else None)
         rec["undo_actions"] = n
-        rec["labels_by_k"] = {str(k): ("REVERSIBLE" if n is not None and n <= k else "NO-UNDO-FOUND") for k in range(1, 6)}
+        rec["labels_by_k"] = (None if rec["action_misfired"] else
+                              {str(k): ("REVERSIBLE" if n is not None and n <= k else "NO-UNDO-FOUND") for k in range(1, 6)})
 
         # ---- trivial-undo baselines: would Ctrl+Z alone, or Escape alone, have undone it (None = not tried)
         def _alone(seq):
@@ -893,11 +943,14 @@ class Collector:
             sys.exit(f"worst-case cost {est_h * SANDBOX_USD_PER_HOUR:.2f} USD exceeds --max-usd {self.args.max_usd}; pass --yes to proceed")
         done = 0
         try:
+            rotate = rotate_seconds(self.args.row_minutes)
             for row in rows:
-                if self.env is not None and self.env_started and time.time() - self.env_started > ROTATE_SECONDS:
-                    print(f"[env] {ROTATE_SECONDS / 3600:.1f} h old: a fresh sandbox before the 3 h lifetime ends", flush=True)
+                if self.env is not None and self.env_started and time.time() - self.env_started > rotate:
+                    print(f"[env] {(time.time() - self.env_started) / 3600:.1f} h old: a fresh sandbox, so the row ends inside the "
+                          f"{SANDBOX_LIFETIME / 3600:.0f} h lifetime", flush=True)
                     self.close_env()
                 for attempt in range(2):
+                    VM.ROW_DEADLINE = time.time() + self.args.row_minutes * 60 + ROW_GRACE_SECONDS
                     try:
                         rec = self.run_row(row)
                         self.write(rec)
@@ -906,20 +959,22 @@ class Collector:
                               f"budget={rec['budget_used']} guessA={(rec['guessed_label_verbatim'] or {}).get('reversible')} "
                               f"guessB={(rec['guessed_label_defined'] or {}).get('reversible')} in {rec['row_seconds']}s", flush=True)
                         break
-                    except (Exception, Watchdog) as e:
+                    except (Exception, Watchdog, RowCapped) as e:
                         err = traceback.format_exc()[-1500:]
                         print(f"[{row['row_id']}] ERROR attempt {attempt + 1}: {repr(e)[:200]}", flush=True)
                         self.write({"row_id": row["row_id"], "spot_id": row["spot_id"], "status": "error", "attempt": attempt + 1, "error": err, "at": time.time()})
                         signal.alarm(0)
-                        if attempt == 0 and self.env_restarts < 3:
+                        if attempt == 0 and self.env_restarts < 6:
                             self.env_restarts += 1
                             self.close_env()
                             time.sleep(10)
                             self.start_env(row["task_id"])
                         elif attempt == 0:
                             break
+                VM.ROW_DEADLINE = None
                 print(self.report(done, len(rows)), flush=True)
         finally:
+            VM.ROW_DEADLINE = None
             self.close_env()
             print(self.report(done, len(rows)), flush=True)
 

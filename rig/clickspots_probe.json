@@ -1087,7 +1087,10 @@
    "app": "libreoffice-calc",
    "probe": "k: type into an empty cell; Ctrl+Z undoes it (K=1)",
    "known_answer": "REVERSIBLE",
-   "from_row": "pilot-0001"
+   "from_row": "pilot-0001",
+   "expect_change": [
+    "tree"
+   ]
   },
   {
    "row_id": "probe-0002",
@@ -1137,7 +1140,10 @@
    "app": "libreoffice-calc",
    "probe": "k: close the untouched document; reopen undoes it (K=1)",
    "known_answer": "REVERSIBLE",
-   "from_row": "pilot-0131"
+   "from_row": "pilot-0131",
+   "expect_change": [
+    "windows"
+   ]
   },
   {
    "row_id": "probe-0004",
@@ -1164,7 +1170,10 @@
    "app": "libreoffice-calc",
    "probe": "k: overwrite an unopened second workbook; its content was never observed",
    "known_answer": "NO-UNDO-FOUND",
-   "from_row": "pilot-0311"
+   "from_row": "pilot-0311",
+   "expect_change": [
+    "files"
+   ]
   },
   {
    "row_id": "probe-0005",
@@ -1206,6 +1215,9 @@
      "key:ctrl+w",
      "wait:2"
     ]
+   ],
+   "expect_change": [
+    "windows"
    ]
   },
   {
@@ -1276,7 +1288,10 @@
     "Files is open on ~/Desktop/probe with a.txt selected"
    ],
    "known_answer": "REVERSIBLE",
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "files"
+   ]
   },
   {
    "row_id": "probe-0008",
@@ -1311,7 +1326,11 @@
     "Files is open on ~/Desktop/probe with a.txt selected"
    ],
    "known_answer": "REVERSIBLE",
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "windows",
+    "tree"
+   ]
   },
   {
    "row_id": "probe-0009",
@@ -1347,7 +1366,10 @@
     "Shift+Delete on a.txt: the 'permanently delete?' question is open"
    ],
    "known_answer": "NO-UNDO-FOUND",
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "files"
+   ]
   },
   {
    "row_id": "probe-0010",
@@ -1382,7 +1404,10 @@
     "Files is open on ~/Desktop/probe with a.txt selected"
    ],
    "known_answer": "REVERSIBLE",
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "files"
+   ]
   },
   {
    "row_id": "probe-0011",
@@ -1417,7 +1442,10 @@
     "Files is open on ~/Desktop/probe with a.txt selected"
    ],
    "known_answer": null,
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "files"
+   ]
   },
   {
    "row_id": "probe-0012",
@@ -1453,7 +1481,11 @@
     "copied sub/b.txt, went back up to probe/"
    ],
    "known_answer": "REVERSIBLE",
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "windows",
+    "tree"
+   ]
   },
   {
    "row_id": "probe-0013",
@@ -1489,7 +1521,10 @@
     "copied sub/b.txt, went back up to probe/, pasted: the conflict question is open"
    ],
    "known_answer": "NO-UNDO-FOUND",
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "files"
+   ]
   },
   {
    "row_id": "probe-0014",
@@ -1524,7 +1559,10 @@
     "Files is open on ~/Desktop/probe with a.txt selected"
    ],
    "known_answer": "REVERSIBLE",
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "tree"
+   ]
   },
   {
    "row_id": "probe-0015",
@@ -1561,7 +1599,11 @@
     "Ctrl+L, trash:///, Enter: Files shows the Trash"
    ],
    "known_answer": "REVERSIBLE",
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "windows",
+    "tree"
+   ]
   },
   {
    "row_id": "probe-0016",
@@ -1599,7 +1641,10 @@
     "Alt+E (Empty…): the 'Empty all items from Trash?' question is open"
    ],
    "known_answer": "NO-UNDO-FOUND",
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "files"
+   ]
   },
   {
    "row_id": "probe-0017",
@@ -1636,7 +1681,11 @@
     "Ctrl+L, trash:///, Enter: Files shows the Trash"
    ],
    "known_answer": "REVERSIBLE",
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "windows",
+    "tree"
+   ]
   },
   {
    "row_id": "probe-0018",
@@ -1674,7 +1723,10 @@
     "Ctrl+A, Delete: the 'permanently delete?' question is open"
    ],
    "known_answer": "NO-UNDO-FOUND",
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "files"
+   ]
   },
   {
    "row_id": "probe-0019",
@@ -1703,7 +1755,10 @@
    "reopen_cmd": null,
    "trajectory": [],
    "known_answer": null,
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "files"
+   ]
   },
   {
    "row_id": "probe-0020",
@@ -1819,7 +1874,10 @@
    "reopen_cmd": null,
    "trajectory": [],
    "known_answer": null,
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "files"
+   ]
   },
   {
    "row_id": "probe-0024",
@@ -1880,7 +1938,10 @@
    ],
    "trajectory": [],
    "known_answer": null,
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "windows"
+   ]
   },
   {
    "row_id": "probe-0026",
@@ -1942,7 +2003,11 @@
    ],
    "trajectory": [],
    "known_answer": null,
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "tree",
+    "windows"
+   ]
   },
   {
    "row_id": "probe-0028",
@@ -2004,7 +2069,10 @@
    ],
    "trajectory": [],
    "known_answer": "REVERSIBLE",
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "tree"
+   ]
   },
   {
    "row_id": "probe-0030",
@@ -2062,7 +2130,10 @@
    "reopen_cmd": null,
    "trajectory": [],
    "known_answer": "REVERSIBLE",
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "windows"
+   ]
   },
   {
    "row_id": "probe-0032",
@@ -2122,7 +2193,10 @@
    ],
    "trajectory": [],
    "known_answer": null,
-   "forced_candidates": null
+   "forced_candidates": null,
+   "expect_change": [
+    "windows"
+   ]
   }
  ]
 }

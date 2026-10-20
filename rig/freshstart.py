@@ -158,6 +158,7 @@ HOME_ROOTS = ("Desktop", "Documents", "Downloads", "Pictures", "Music", "Videos"
 BASELINE_TAR = CACHE_DIR + "/home_baseline.tar"
 BASELINE_TOP = CACHE_DIR + "/home_top.txt"
 BASELINE_WINDOWS = CACHE_DIR + "/windows.txt"
+BASELINE_ACTIVE = CACHE_DIR + "/active.txt"     # the window that had the keyboard after the task's setup
 
 
 def is_calc_task(task: dict) -> bool:
@@ -200,7 +201,8 @@ tar -cpf {tar} $ROOTS $TOPFILES 2>/dev/null; echo "tar=$?"; chown -R user:user {
 """
 # window titles as the user: root has no access to the user's X display
 PRIME_WINDOWS = r"""(wmctrl -l 2>/dev/null | awk '{{ $1=$2=$3=""; sub(/^ +/, ""); print }}' | grep -v '^@!' | sort) > {windows}
-echo PRIMED; cat {windows}
+(xdotool getactivewindow getwindowname 2>/dev/null) > {active}
+echo PRIMED; cat {windows}; echo "active: $(cat {active})"
 """
 
 RESTORE_GENERIC = r"""
@@ -227,7 +229,8 @@ def as_root(env, script: str) -> str:
 def prime_generic(env, task: dict) -> str:
     script = PRIME_GENERIC.format(cache=CACHE_DIR, top=BASELINE_TOP, tar=BASELINE_TAR, windows=BASELINE_WINDOWS,
                                   roots=" ".join(_shlex.quote(r) for r in HOME_ROOTS))
-    return vm_out(env, as_root(env, script), timeout=110) + "\n" + vm_out(env, PRIME_WINDOWS.format(windows=BASELINE_WINDOWS), timeout=20)
+    return (vm_out(env, as_root(env, script), timeout=110) + "\n"
+            + vm_out(env, PRIME_WINDOWS.format(windows=BASELINE_WINDOWS, active=BASELINE_ACTIVE), timeout=20))
 
 
 def _windows_now(env) -> list:
@@ -278,5 +281,18 @@ def generic_fresh_start(env, task: dict, wait_s: int = 90) -> str:
         time.sleep(3)
     vm_shell(env, "for w in $(wmctrl -l | awk '$2 != \"-1\" {print $1}'); do wmctrl -i -r $w -b add,maximized_vert,maximized_horz; done; true",
              timeout=20)
+    # the keyboard goes to the window that had it after the task's setup, and the result is checked: on
+    # probe-0007 (20 Oct) the Delete key reached nothing on a freshly relaunched Files window
+    want_active = vm_out(env, f"cat {BASELINE_ACTIVE} 2>/dev/null", timeout=15).strip()
+    active = ""
+    if want_active:
+        for _ in range(2):
+            active = vm_out(env, f"wmctrl -a {_shlex.quote(want_active)} 2>/dev/null; sleep 1.5; xdotool getactivewindow getwindowname 2>/dev/null",
+                            timeout=20).strip()
+            if active == want_active:
+                break
     time.sleep(SETTLE_SECONDS)
-    return "generic" if not missing else "generic-incomplete:" + _json.dumps(missing)[:200]
+    how = "generic" if not missing else "generic-incomplete:" + _json.dumps(missing)[:200]
+    if want_active and active != want_active:
+        how += f";active={active or '?'}!={want_active}"
+    return how
