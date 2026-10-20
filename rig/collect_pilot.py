@@ -369,6 +369,13 @@ class Collector:
             app_may_be_closed = expect_kind == "app_closed"
             snap = take_snapshot(self.env, path, meta, expect=None if app_may_be_closed else "LibreOffice",
                                  require_office=not app_may_be_closed)
+        if expect_kind in ("calc", "dialog", "start_center", "second_window") and snap.ok \
+                and not any("LibreOffice" in x for x in titles(snap.windows)):
+            # the tree can catch LibreOffice while its window is still being replaced: probe-0005 S1 (20 Oct) was
+            # recorded with an empty window list after Don't Save, and every correct reset to the Start Center then
+            # failed the window check against it.  Not ok, so the caller retakes it.
+            snap.meta["ok"] = False
+            snap.meta["window_error"] = "window list lacks a LibreOffice window"
         self.timings["snapshot"].append(time.time() - t)
         return snap
 
@@ -458,8 +465,10 @@ class Collector:
         signal.alarm(WATCHDOG_SECONDS)
         self.act(row)
         S1 = self.snapshot(rdir / "S1", {"row": rid, "kind": "after"}, expect_kind=row.get("expect", "calc"))
-        if not S1.ok:
-            time.sleep(3)
+        for wait in (3, 10):
+            if S1.ok:
+                break
+            time.sleep(wait)
             S1 = self.snapshot(rdir / "S1", {"row": rid, "kind": "after", "retake": True}, expect_kind=row.get("expect", "calc"))
         signal.alarm(0)
         rec["snapshot_after"] = str(S1.path.relative_to(self.out))
@@ -540,6 +549,11 @@ class Collector:
                 r["code"] = code
                 self.step(code, pause=1.5)
                 windows, digest, derr = self.quick_state()
+                if titles(windows) != titles(S.windows):
+                    # a dialog or window the undo opens can take seconds on this VM: read once more before rejecting
+                    # (probe-0005 c00, 20 Oct: the retype undo's Save Document? dialog came after the first read)
+                    time.sleep(4)
+                    windows, digest, derr = self.quick_state()
                 cdir = rdir / f"c{idx:02d}"
                 cdir.mkdir(exist_ok=True)
                 (cdir / "windows.txt").write_text(windows)
