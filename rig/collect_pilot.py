@@ -491,24 +491,27 @@ class Collector:
         def confirm_match(cand, cdir):
             """A match counts only if it repeats from a reset whose FULL state (tree and files) is S': a reset whose
             action silently failed hands the search a state already equal to S, and any candidate then "matches"
-            (probe-0007, 20 Oct: Escape twice "restored" a trashed file that had never left).  Two tries at S'."""
-            signal.alarm(WATCHDOG_SECONDS)
-            diffs = ""
-            for attempt in range(2):
+            (probe-0007, 20 Oct: Escape twice "restored" a trashed file that had never left).  Up to two tries, each
+            from a fresh reset verified against S'; the first success confirms (one success from a verified S'
+            proves the undo exists; a flaky reopen once left no window, probe-0003 c07)."""
+            notes = []
+            for t in range(2):
+                signal.alarm(WATCHDOG_SECONDS)
                 self.reset_to_after(row, expect_windows=S1.windows, expect_digest=S1.digest)
-                s1b = self.snapshot(cdir / f"confirm_S1_{attempt}", {"row": rid, "kind": "confirm-after", "seq": cand},
+                s1b = self.snapshot(cdir / f"confirm_S1_{t}", {"row": rid, "kind": "confirm-after", "seq": cand},
                                     expect_kind="any", office_expected=office_running)
                 eq1, td1, fd1 = states_equal(S1.canon, S1.digest, s1b.canon, s1b.digest, self.mask)
-                if eq1:
-                    break
-                diffs = f"tree {len(td1)}, files {len(fd1)}; {summarize(td1, limit=2)[:160]}"
-            else:
-                return False, f"reset did not reproduce S' ({diffs})"
-            self.step(U.candidate_code(cand, ctx), pause=1.5)
-            s2 = self.snapshot(cdir / "confirm", {"row": rid, "kind": "confirm", "seq": cand}, expect_kind="any",
-                               office_expected=office_after(cand))
-            eq2, td2, fd2 = states_equal(S.canon, S.digest, s2.canon, s2.digest, self.mask)
-            return (True, "confirmed") if eq2 else (False, f"second run differs (tree {len(td2)}, files {len(fd2)})")
+                if not eq1:
+                    notes.append(f"try {t + 1}: reset not S' (tree {len(td1)}, files {len(fd1)})")
+                    continue
+                self.step(U.candidate_code(cand, ctx), pause=1.5)
+                s2 = self.snapshot(cdir / f"confirm_{t}", {"row": rid, "kind": "confirm", "seq": cand}, expect_kind="any",
+                                   office_expected=office_after(cand))
+                eq2, td2, fd2 = states_equal(S.canon, S.digest, s2.canon, s2.digest, self.mask)
+                if eq2:
+                    return True, "confirmed" + (f" on try 2 ({notes[0]})" if notes else "")
+                notes.append(f"try {t + 1}: differs from S (tree {len(td2)}, files {len(fd2)})")
+            return False, "; ".join(notes)
 
         def try_candidate(cand, tier, idx, note=""):
             nonlocal closest, budget_used
