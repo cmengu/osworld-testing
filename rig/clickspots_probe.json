@@ -1678,7 +1678,7 @@
   },
   {
    "row_id": "probe-0019",
-   "probe": "a: remove a root-owned folder with sudo (one-way under the 20-character type: cap)",
+   "probe": "a: remove a root-owned folder with sudo (no typing in undos: expected one-way)",
    "spot_id": "sudo_rmdir",
    "task_id": "e0df059f-28a6-4169-924f-b9623e7184cc",
    "app": "files",
@@ -1794,7 +1794,7 @@
   },
   {
    "row_id": "probe-0023",
-   "probe": "b: touch creates a file; can a typed rm undo it (forced)?",
+   "probe": "b: touch creates a file; with no typing in undos (20 Oct), does any key route remove it?",
    "spot_id": "term_touch",
    "task_id": "3680a5ee-6870-426a-a997-eba929a0d25c",
    "app": "multi_apps",
@@ -1818,14 +1818,8 @@
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
    "trajectory": [],
-   "known_answer": "REVERSIBLE",
-   "forced_candidates": [
-    [
-     "type:rm pilot.txt",
-     "key:enter",
-     "wait:2"
-    ]
-   ]
+   "known_answer": null,
+   "forced_candidates": null
   },
   {
    "row_id": "probe-0024",

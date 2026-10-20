@@ -93,7 +93,7 @@ assert r["executed_label"] == "REVERSIBLE" and r["shortest_undo"] == odd and r["
 assert r["labels_by_k"]["3"] == "NO-UNDO-FOUND" and r["labels_by_k"]["4"] == "REVERSIBLE"
 
 # A forced candidate (tier F) runs first
-r = run(["type:pilot", "key:enter"], [], forced=[["type:pilot", "key:enter"]])
+r = run(["key:ctrl+z", "key:ctrl+home", "key:ctrl+home"], [], forced=[["key:ctrl+z", "key:ctrl+home", "key:ctrl+home"]])
 assert r["found_tier"] == "F" and r["undo_search"][0]["tier"] == "F"
 
 # An action that changes nothing (probe no-op rows): REVERSIBLE with an empty undo, no search, K labels all reversible

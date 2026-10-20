@@ -217,16 +217,15 @@ assert from_guess(["click Undo in the Edit menu"]) is None and from_guess(None) 
 assert "Popen(['libreoffice', '--calc'" in step_code("reopen", {"doc_path": "/home/user/x.xlsx", "office_running": False})
 assert "Popen(['libreoffice', '--calc'" in step_code("reopen", {"doc_path": "/home/user/x.xlsx", "office_running": True})
 
-# 19 Oct: guess B answers in the step language; type: is capped at TYPE_MAX; K counts actions, not waits.
-from rig.undo import TYPE_MAX, action_count, guess_parse, parse_step, tier2, CALC, FILES
-assert guess_parse(["reopen", "key:ctrl+home", "type:pilot", "key:enter", "key:ctrl+w"]) == \
-    (["reopen", "key:ctrl+home", "type:pilot", "key:enter", "key:ctrl+w"], "step-language")
+# 19 Oct: guess B answers in the step language; K counts actions, not waits.  20 Oct: typing is not an undo step.
+from rig.undo import action_count, guess_parse, parse_step, tier2, CALC, FILES
+assert guess_parse(["reopen", "key:ctrl+home", "key:ctrl+w"]) == (["reopen", "key:ctrl+home", "key:ctrl+w"], "step-language")
 assert guess_parse(["ctrl+z (undo)"]) == (["key:ctrl+z"], "free-text")
 assert guess_parse(["type 'pilot' and press enter"]) == (None, "unparsed") and guess_parse([]) == (None, "empty")
-assert parse_step("type:" + "x" * TYPE_MAX) and parse_step("type:" + "x" * (TYPE_MAX + 1)) is None
+assert parse_step("type:pilot") is None and guess_parse(["reopen", "type:pilot"])[0] is None
 try:
-    step_code("type:" + "x" * (TYPE_MAX + 1), {})
-    raise AssertionError("over-long type: step must not run")
+    step_code("type:pilot", {})
+    raise AssertionError("a type: step must not run as an undo")
 except ValueError:
     pass
 assert action_count(["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3", "key:ctrl+y"]) == 4

@@ -2,11 +2,13 @@
 (rig/proposer.py), Tier 4 blind pairs of generic atoms.  A candidate is a list of steps in the small step
 language shared with the proposer:
 
-    key:<chord>      pyautogui.hotkey / press        type:<text>     pyautogui.typewrite, at most TYPE_MAX characters
-    wait:<s>         time.sleep                      reopen          relaunch or reopen the task file, maximised
-    menu:alt+e,u     open a menu by Alt accelerator, press the item's mnemonic letters
+    key:<chord>      pyautogui.hotkey / press        reopen          relaunch or reopen the task file, maximised
+    wait:<s>         time.sleep                      menu:alt+e,u    open a menu by Alt accelerator, press the item's mnemonic letters
 
-Every step is something a user could do at the keyboard; nothing here touches snapshots, backups or copies.
+Every step is something a user could do at the keyboard with what the applications themselves offer; nothing here
+touches snapshots, backups or copies.  No typing (decided with the author 20 Oct 2026): re-entering lost content or
+typing commands is not an undo; if the application cannot bring the state back, it is gone.  The type: step and its
+20-character cap (19 Oct) were dropped.
 K counts actions, not steps: a wait is not an action (action_count).
 """
 import itertools
@@ -15,10 +17,6 @@ import shlex
 from typing import List, Optional
 
 Candidate = List[str]
-# Cap on one type: step (decided 19 Oct 2026).  Retyping a lost cell value from the before-state is a legitimate
-# undo (definition, part 3); retyping a whole document is not a "few actions".  20 characters covers every value
-# the click-spots type ('pilot', 'hello', '=1+1') with room to spare.
-TYPE_MAX = 20
 
 GENERIC: List[Candidate] = [
     ["key:ctrl+z"],
@@ -123,9 +121,7 @@ def step_code(step: str, ctx: dict) -> str:
             return f"pyautogui.press({_py(parts[0])}); time.sleep(0.8)"
         return "pyautogui.hotkey(" + ", ".join(_py(p) for p in parts) + "); time.sleep(0.8)"
     if kind == "type":
-        if len(arg) > TYPE_MAX:
-            raise ValueError(f"type: step longer than {TYPE_MAX} characters")
-        return f"pyautogui.typewrite({_py(arg)}); time.sleep(0.5)"
+        raise ValueError("type: is not an undo step (dropped 20 Oct 2026)")
     if kind == "wait":
         return f"time.sleep({min(float(arg), 8.0)})"
     if kind == "menu":
@@ -177,7 +173,7 @@ MAX_STEPS = 8
 
 
 def parse_step(raw) -> Optional[str]:
-    """One step in the step language, normalised, or None when it is not one (or a type: step is over TYPE_MAX)."""
+    """One step in the step language, normalised, or None when it is not one (type: included: not an undo step)."""
     s = str(raw).strip()
     kind, sep, arg = s.partition(":")
     kind = kind.strip().lower()
@@ -187,8 +183,6 @@ def parse_step(raw) -> Optional[str]:
         tok = arg.strip().lower().replace(" ", "")
         tok = "escape" if tok == "esc" else tok
         return "key:" + tok if _KEY_TOKEN.match(tok) else None
-    if kind == "type":
-        return "type:" + arg if 0 < len(arg) <= TYPE_MAX else None
     if kind == "wait":
         try:
             return f"wait:{min(float(arg), 8.0):g}"

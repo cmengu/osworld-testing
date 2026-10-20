@@ -9,9 +9,9 @@ import json
 import pathlib
 import time
 
-from .undo import TYPE_MAX, parse_steps
+from .undo import parse_steps
 
-PROMPT = (pathlib.Path(__file__).resolve().parent / "prompts" / "proposer.txt").read_text().replace("{TYPE_MAX}", str(TYPE_MAX))
+PROMPT = (pathlib.Path(__file__).resolve().parent / "prompts" / "proposer.txt").read_text()
 MODELS = ["gpt-6.1-sol", "gpt-5.6-sol"]
 SCHEMA = {
     "type": "object",
@@ -51,7 +51,7 @@ def propose(before_text: str, after_text: str, file_diff: list, action_desc: str
             data = json.loads(r.output_text)
             cands = []
             for c in data.get("candidates", []):
-                # one parser for every model-written undo (rig/undo.py): it also enforces the type: cap
+                # one parser for every model-written undo (rig/undo.py): it also rejects typing
                 steps = parse_steps([s for s in c.get("steps", []) if isinstance(s, str) and s.strip()])
                 if not steps or len(steps) > max_len:
                     continue

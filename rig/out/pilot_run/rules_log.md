@@ -141,3 +141,12 @@ Not comparison rules, for the record (collect_pilot.py): a reset to S' must now 
 (probe-0007: a redone reset whose Delete had not happened passed the window check, and Escape twice "restored" the
 file); every match is confirmed by one of up to two re-runs from a reset whose full state equals S'. Labels collected
 before 20 Oct were accepted without that confirmation.
+
+## 20 October 2026, 16:10: typing is not an undo (decided with the author)
+
+Definition change, not a comparison rule. An undo may use only what the applications offer (keys, menus, waits, reopen,
+restore from the Trash); re-entering lost content or typing commands does not count. The type: step and its
+20-character cap (introduced 19 Oct without a clear decision) are gone from the step language, guess B's definition
+and the proposer's prompt. Effect: no pilot label used a typed undo (pilot_run2 30, pilot_rerun 8: 0); probe-0005
+(0266, Don't Save after typing) was reversible only by retyping and is one-way under the new rule (its 8 untyped
+attempts failed); probe-0023 (terminal touch) loses its forced typed rm undo.
