@@ -371,7 +371,7 @@ class Collector:
             app_may_be_closed = expect_kind == "app_closed"
             snap = take_snapshot(self.env, path, meta, expect=None if app_may_be_closed else "LibreOffice",
                                  require_office=not app_may_be_closed)
-        if expect_kind in ("calc", "dialog", "start_center", "second_window") and snap.ok \
+        if expect_kind in ("calc", "dialog", "start_center", "second_window") \
                 and not any("LibreOffice" in x for x in titles(snap.windows)):
             # the tree can catch LibreOffice while its window is still being replaced: probe-0005 S1 (20 Oct) was
             # recorded with an empty window list after Don't Save, and every correct reset to the Start Center then
@@ -478,9 +478,13 @@ class Collector:
             th = threading.Thread(target=ask, daemon=True)
             th.start()
 
-        # ---- action and S'
-        rec["action_executed_at"] = time.time()
+        # ---- action and S'.  The action runs on a fresh instance that nobody has walked: after the S snapshot read
+        # LibreOffice's accessibility tree, closing a document in the same instance made LibreOffice vanish
+        # (probe-0005, 20 Oct: Don't Save left a bare desktop three times; resets that walked nothing showed the
+        # Start Center).  S is the same state either way: every reset is checked against it below.
         signal.alarm(WATCHDOG_SECONDS)
+        rec["action_instance"] = self.reset_to_before(row)
+        rec["action_executed_at"] = time.time()
         self.act(row)
         S1 = self.snapshot(rdir / "S1", {"row": rid, "kind": "after"}, expect_kind=row.get("expect", "calc"))
         for wait in (3, 10):
