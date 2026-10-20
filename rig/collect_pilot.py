@@ -488,6 +488,8 @@ class Collector:
             return office_running or ("reopen" in (cand or []) and reopens_office)
         deadline = t_row + self.args.row_minutes * 60
 
+        light_check = not any(" - LibreOffice " in t or not t.startswith("LibreOffice") for t in titles(S1.windows))
+
         def confirm_match(cand, cdir):
             """A match counts only if it repeats from a reset whose FULL state (tree and files) is S': a reset whose
             action silently failed hands the search a state already equal to S, and any candidate then "matches"
@@ -498,12 +500,24 @@ class Collector:
             for t in range(2):
                 signal.alarm(WATCHDOG_SECONDS)
                 self.reset_to_after(row, expect_windows=S1.windows, expect_digest=S1.digest)
-                s1b = self.snapshot(cdir / f"confirm_S1_{t}", {"row": rid, "kind": "confirm-after", "seq": cand},
-                                    expect_kind="any", office_expected=office_running)
-                eq1, td1, fd1 = states_equal(S1.canon, S1.digest, s1b.canon, s1b.digest, self.mask)
-                if not eq1:
-                    notes.append(f"try {t + 1}: reset not S' (tree {len(td1)}, files {len(fd1)})")
-                    continue
+                if light_check:
+                    # no document open in S' (Start Center, or LibreOffice closed): the action's effect is in the
+                    # window list and the files, checked here; the accessibility tree is NOT read, because walking
+                    # the Start Center's tree and then opening a file made LibreOffice vanish (probe-0003 c07
+                    # confirm_0, confirm_1, 20 Oct: bare desktop both times, while the same reopen straight after
+                    # a reset worked)
+                    w1, d1, _ = self.quick_state()
+                    eq1, reasons1, _ = self.quick_matches(S1, w1, d1)
+                    if not eq1:
+                        notes.append(f"try {t + 1}: reset not S' ({'; '.join(reasons1)[:120]})")
+                        continue
+                else:
+                    s1b = self.snapshot(cdir / f"confirm_S1_{t}", {"row": rid, "kind": "confirm-after", "seq": cand},
+                                        expect_kind="any", office_expected=office_running)
+                    eq1, td1, fd1 = states_equal(S1.canon, S1.digest, s1b.canon, s1b.digest, self.mask)
+                    if not eq1:
+                        notes.append(f"try {t + 1}: reset not S' (tree {len(td1)}, files {len(fd1)})")
+                        continue
                 self.step(U.candidate_code(cand, ctx), pause=1.5)
                 s2 = self.snapshot(cdir / f"confirm_{t}", {"row": rid, "kind": "confirm", "seq": cand}, expect_kind="any",
                                    office_expected=office_after(cand))
