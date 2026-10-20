@@ -200,10 +200,50 @@ TOPFILES=$(find . -maxdepth 1 -type f ! -name '.*' -printf '%P\n')
 tar -cpf {tar} $ROOTS $TOPFILES 2>/dev/null; echo "tar=$?"; chown -R user:user {cache} 2>/dev/null
 """
 # window titles as the user: root has no access to the user's X display
+# the title of the window that has the keyboard (xprop; xdotool is not on the image)
+ACTIVE_NAME_SH = r"""id=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | awk '{print $NF}'); [ -n "$id" ] && [ "$id" != "0x0" ] && xprop -id "$id" _NET_WM_NAME WM_NAME 2>/dev/null | sed -n 's/^[^=]*= "\(.*\)"$/\1/p' | head -1"""
 PRIME_WINDOWS = r"""(wmctrl -l 2>/dev/null | awk '{{ $1=$2=$3=""; sub(/^ +/, ""); print }}' | grep -v '^@!' | sort) > {windows}
-(xdotool getactivewindow getwindowname 2>/dev/null) > {active}
+({active_name}) > {active}
+cat > {select_sh} <<'SH'
+#!/bin/sh
+# Relaunch Files on "$1" selected, and return only when a Files window is drawn and owned by a live process.
+# After a kill the window manager keeps listing the dead window for a while (20 Oct, probe-0007), so a title
+# alone proves nothing: the key sent next reached a window that no longer existed.
+nautilus -q 2>/dev/null; i=0; while pgrep -x nautilus >/dev/null && [ $i -lt 20 ]; do sleep 0.5; i=$((i+1)); done; pkill -9 -x nautilus 2>/dev/null
+(nautilus --select "$1" >/dev/null 2>&1 &)
+i=0; while [ $i -lt 80 ]; do
+  for id in $(wmctrl -l 2>/dev/null | awk '$2 != "-1" {{print $1}}'); do
+    p=$(xprop -id "$id" _NET_WM_PID 2>/dev/null | awk '{{print $NF}}')
+    [ -n "$p" ] && kill -0 "$p" 2>/dev/null || continue
+    xprop -id "$id" WM_CLASS 2>/dev/null | grep -qi nautilus || continue
+    xwininfo -id "$id" 2>/dev/null | grep -q "Map State: IsViewable" || continue
+    wmctrl -i -a "$id" 2>/dev/null; wmctrl -i -r "$id" -b add,maximized_vert,maximized_horz 2>/dev/null; sleep 2; echo "ready $id"; exit 0
+  done
+  sleep 0.5; i=$((i+1))
+done
+echo "files window not ready"; exit 1
+SH
+chmod +x {select_sh}
 echo PRIMED; cat {windows}; echo "active: $(cat {active})"
 """
+FILES_SELECT_SH = CACHE_DIR + "/files_select.sh"
+
+# Every recorded window must be listed, drawn (viewable) and owned by a live process: a stale entry for a killed
+# window fails the last two checks
+WINDOWS_READY_SH = r"""ok=1
+while IFS= read -r t; do
+  [ -z "$t" ] && continue
+  w=$(wmctrl -l 2>/dev/null | awk -v t="$t" '{{id=$1; d=$2; $1=$2=$3=""; sub(/^ +/, ""); if ($0 == t && d != "-1") print id}}' | tail -1)
+  if [ -z "$w" ]; then echo "missing: $t"; ok=0; continue; fi
+  if ! xwininfo -id "$w" 2>/dev/null | grep -q "Map State: IsViewable"; then echo "not viewable: $t"; ok=0; continue; fi
+  p=$(xprop -id "$w" _NET_WM_PID 2>/dev/null | awk '{{print $NF}}')
+  if [ -z "$p" ] || ! kill -0 "$p" 2>/dev/null; then echo "no live owner: $t"; ok=0; fi
+done < {windows}
+[ "$ok" = 1 ] && echo READY"""
+ACTIVATE_SH = r"""t={title}
+w=$(wmctrl -l 2>/dev/null | awk -v t="$t" '{{id=$1; d=$2; $1=$2=$3=""; sub(/^ +/, ""); if ($0 == t && d != "-1") print id}}' | tail -1)
+[ -n "$w" ] && wmctrl -i -a "$w" 2>/dev/null; sleep 1.5
+{active_name}"""
 
 RESTORE_GENERIC = r"""
 [ -s {tar} ] || {{ echo "no baseline tar: nothing removed"; exit 1; }}
@@ -230,7 +270,8 @@ def prime_generic(env, task: dict) -> str:
     script = PRIME_GENERIC.format(cache=CACHE_DIR, top=BASELINE_TOP, tar=BASELINE_TAR, windows=BASELINE_WINDOWS,
                                   roots=" ".join(_shlex.quote(r) for r in HOME_ROOTS))
     return (vm_out(env, as_root(env, script), timeout=110) + "\n"
-            + vm_out(env, PRIME_WINDOWS.format(windows=BASELINE_WINDOWS, active=BASELINE_ACTIVE), timeout=20))
+            + vm_out(env, PRIME_WINDOWS.format(windows=BASELINE_WINDOWS, active=BASELINE_ACTIVE, select_sh=FILES_SELECT_SH,
+                                               active_name=ACTIVE_NAME_SH), timeout=20))
 
 
 def _windows_now(env) -> list:
@@ -271,24 +312,26 @@ def generic_fresh_start(env, task: dict, wait_s: int = 90) -> str:
     for s in gui_steps(task):
         _replay_step(env, s)
     want = [l for l in vm_out(env, f"cat {BASELINE_WINDOWS} 2>/dev/null", timeout=15).splitlines() if l.strip()]
+    # every recorded window must be drawn and owned by a live process, not merely listed: after the kill the window
+    # manager kept listing the dead Files window, the title check passed at once, and the action's key went to a
+    # window that no longer existed (probe-0007, 20 Oct: Delete reached nothing in about half of the resets)
     deadline = time.time() + wait_s
-    missing = want
+    missing = ["(not checked)"]
     while time.time() < deadline:
-        have = _windows_now(env)
-        missing = [w for w in want if w not in have]
-        if not missing:
+        out = vm_out(env, WINDOWS_READY_SH.format(windows=BASELINE_WINDOWS), timeout=20)
+        missing = [l for l in out.splitlines() if l.strip() and l.strip() != "READY"]
+        if "READY" in out.splitlines():
+            missing = []
             break
         time.sleep(3)
     vm_shell(env, "for w in $(wmctrl -l | awk '$2 != \"-1\" {print $1}'); do wmctrl -i -r $w -b add,maximized_vert,maximized_horz; done; true",
              timeout=20)
-    # the keyboard goes to the window that had it after the task's setup, and the result is checked: on
-    # probe-0007 (20 Oct) the Delete key reached nothing on a freshly relaunched Files window
-    want_active = vm_out(env, f"cat {BASELINE_ACTIVE} 2>/dev/null", timeout=15).strip()
+    # the keyboard goes to the window that had it after the task's setup (or the last recorded one), checked
+    want_active = vm_out(env, f"cat {BASELINE_ACTIVE} 2>/dev/null", timeout=15).strip() or (want[-1] if want else "")
     active = ""
     if want_active:
         for _ in range(2):
-            active = vm_out(env, f"wmctrl -a {_shlex.quote(want_active)} 2>/dev/null; sleep 1.5; xdotool getactivewindow getwindowname 2>/dev/null",
-                            timeout=20).strip()
+            active = vm_out(env, ACTIVATE_SH.format(title=_shlex.quote(want_active), active_name=ACTIVE_NAME_SH), timeout=20).strip()
             if active == want_active:
                 break
     time.sleep(SETTLE_SECONDS)

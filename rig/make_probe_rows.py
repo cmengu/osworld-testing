@@ -30,6 +30,7 @@ PILOT_SPOTS = {s["id"]: s for s in PILOT["spots"]}
 PILOT_ROWS = {r["row_id"]: r for r in PILOT["rows"]}
 
 EX = HERE.parent / "OSWorld" / "evaluation_examples" / "examples"
+FILES_SELECT_SH = "/home/user/.rig_cache/files_select.sh"     # written by the prime (freshstart.FILES_SELECT_SH)
 
 
 def task_id(domain: str, prefix: str) -> str:
@@ -42,9 +43,10 @@ PROBE = "/home/user/Desktop/probe"
 
 
 def nautilus_select(path: str) -> str:
-    """Setup: restart Files on `path` selected (the reset's window is replaced, the same way every time)."""
-    return ("__import__('subprocess').run(['sh', '-c', 'nautilus -q; sleep 1; (nautilus --select " + path +
-            " >/dev/null 2>&1 &); sleep 5; wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz'], timeout=40); time.sleep(2)")
+    """Setup: restart Files on `path` selected (the reset's window is replaced, the same way every time), through
+    the script the prime wrote (freshstart.FILES_SELECT_SH): it returns only when the new window is drawn and
+    owned by a live process, never on the window manager's stale entry for the killed one (20 Oct)."""
+    return f"__import__('subprocess').run(['sh', '{FILES_SELECT_SH}', '{path}'], timeout=70); time.sleep(1)"
 
 
 SPOTS = [

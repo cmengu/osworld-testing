@@ -165,3 +165,12 @@ row raise SandboxLost and the row restarts on a new sandbox; the sandbox is rota
 row could not finish inside the lifetime. After a generic reset the keyboard is given to the window the task's setup
 left active, and a mismatch is recorded in the fresh-start note. The void probe-0007 record is set aside
 (void_misfire_20oct.jsonl, probe-0007_misfire/) and the row reruns; its known answer (REVERSIBLE) is still untested.
+
+## 20 October 2026, 22:50: a relaunched window counts only when it is drawn and owned by a live process
+
+Not a comparison rule. Live query of the sandbox during row 7's second run: right after a reset's kill, the window
+manager still listed the dead Files window (xprop on it: BadWindow; no nautilus process), the title wait passed on
+that stale entry, and the Delete key went to a window that no longer existed. About half of the resets failed that
+way; the reset check caught every one, at ~50 s each. Now every recorded window must be viewable (xwininfo) and its
+_NET_WM_PID alive before the reset returns; the Files setup script (files_select.sh, written at prime time) waits
+the same way; the active window is set and read back with xprop (xdotool is not on the image).
