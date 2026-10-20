@@ -142,15 +142,21 @@ def step_code(step: str, ctx: dict) -> str:
                     "stdout=__import__('subprocess').DEVNULL, stderr=__import__('subprocess').DEVNULL); time.sleep(10); "
                     "pyautogui.hotkey('super', 'up'); time.sleep(3)")
         path = ctx.get("doc_path") or ""
+        # wait for the document's own window, up to 90 s, not a fixed 8 s: on this software-rendered VM loading takes
+        # longer, and the window list read while "Load document" was still running said "no window" (probe-0003 c07,
+        # 20 Oct, screenshot shows the Start Center's load progress bar)
+        name = path.rsplit("/", 1)[-1]
+        wait_doc = ("next((1 for _ in range(90) if (time.sleep(1) or " + _py(name) + " in __import__('subprocess').run("
+                    "['wmctrl', '-l'], capture_output=True, text=True).stdout)), 0); time.sleep(3)")
         if ctx.get("office_running"):
             # Start Center or another window: open the file through the Open dialog
             return ("pyautogui.hotkey('ctrl', 'o'); time.sleep(3); pyautogui.typewrite(" + _py(path) + "); time.sleep(1); "
-                    "pyautogui.press('enter'); time.sleep(8); pyautogui.hotkey('super', 'up'); time.sleep(3)")
+                    "pyautogui.press('enter'); " + wait_doc + "; pyautogui.hotkey('super', 'up'); time.sleep(3)")
         # no LibreOffice at all: start it on the file, as a double-click in the file manager would.  The GNOME run
         # dialog (Alt+F2) used before never opened anything on this image (pilot2 0141: every reopen after Ctrl+Q
         # left no window).
         return ("__import__('subprocess').Popen(['libreoffice', '--calc', " + _py(path) + "], start_new_session=True, "
-                "stdout=__import__('subprocess').DEVNULL, stderr=__import__('subprocess').DEVNULL); time.sleep(15); "
+                "stdout=__import__('subprocess').DEVNULL, stderr=__import__('subprocess').DEVNULL); " + wait_doc + "; "
                 "pyautogui.hotkey('super', 'up'); time.sleep(3)")
     raise ValueError(f"unknown step {step!r}")
 
