@@ -35,7 +35,28 @@ BASE = HERE.parent
 OSWORLD = BASE / "OSWorld"
 sys.path.insert(0, str(BASE))
 sys.path.insert(0, str(OSWORLD))
-os.environ.setdefault("MODAL_SANDBOX_TIMEOUT", "36000")   # 10 h: a serial run outlives the provider's 2 h default
+# Sandbox lifetime 3 h, and the run swaps in a fresh sandbox between rows after ROTATE_SECONDS.  It was 10 h until
+# 20 Oct: the Mac went into clamshell sleep at 01:22 mid-probe, the collector froze, and the sandbox billed ~4 h idle.
+os.environ.setdefault("MODAL_SANDBOX_TIMEOUT", "10800")
+ROTATE_SECONDS = 2.5 * 3600
+# Modal ends a sandbox with no exec, no stdin and no open tunnel connection for this long.  The longest quiet stretch
+# in a row is the wait for the teacher's guesses (at most 900 s), so 20 min never cuts a live row.
+SANDBOX_IDLE_SECONDS = int(os.environ.get("RIG_SANDBOX_IDLE_SECONDS", "1200"))
+
+
+def guard_modal_sandbox():
+    """Give every Modal sandbox the rig creates an idle timeout: OSWorld's provider passes only a lifetime.  The
+    guard lives in the cloud, so it works while the laptop sleeps, which no local watchdog can."""
+    import modal
+    orig = modal.Sandbox.create
+    if getattr(orig, "_rig_guarded", False):
+        return
+
+    def create(*a, **k):
+        k.setdefault("idle_timeout", SANDBOX_IDLE_SECONDS)
+        return orig(*a, **k)
+    create._rig_guarded = True
+    modal.Sandbox.create = create
 os.chdir(OSWORLD)
 
 from rig.compact import file_diff, render                      # noqa: E402
@@ -222,6 +243,8 @@ class Collector:
     def start_env(self, task_id):
         from desktop_env.desktop_env import DesktopEnv
         from rig.vmprep import prepare_vm
+        if self.args.provider == "modal":
+            guard_modal_sandbox()
         t0 = time.time()
         self.env = DesktopEnv(provider_name=self.args.provider, action_space="pyautogui", headless=True,
                               require_a11y_tree=False, os_type="Ubuntu")
@@ -749,6 +772,9 @@ class Collector:
         done = 0
         try:
             for row in rows:
+                if self.env is not None and self.env_started and time.time() - self.env_started > ROTATE_SECONDS:
+                    print(f"[env] {ROTATE_SECONDS / 3600:.1f} h old: a fresh sandbox before the 3 h lifetime ends", flush=True)
+                    self.close_env()
                 for attempt in range(2):
                     try:
                         rec = self.run_row(row)
