@@ -356,6 +356,8 @@ class Collector:
         (waiting for a LibreOffice window only when one is expected) and completeness is not a gate;
         'apps:<bus name>,...' for rows outside LibreOffice: those applications must be in the tree with a window."""
         t = time.time()
+        if expect_kind in ("calc", "dialog", "start_center", "second_window"):
+            self.settle_windows()
         if expect_kind == "none":                     # no readiness gate: an application whose bus name is not known yet
             snap = take_snapshot(self.env, path, meta, expect=None, require_office=False)
         elif expect_kind.startswith("apps:"):
@@ -378,6 +380,22 @@ class Collector:
             snap.meta["window_error"] = "window list lacks a LibreOffice window"
         self.timings["snapshot"].append(time.time() - t)
         return snap
+
+    def settle_windows(self, timeout: float = 45) -> list:
+        """Wait until a LibreOffice window is listed and the window list is the same on two reads 3 s apart, before
+        the accessibility tree is walked.  Walking LibreOffice's tree while it swaps a closing document for the Start
+        Center made it vanish (probe-0005 S1, 20 Oct, after Don't Save: the S1 snapshot and both retakes found no
+        LibreOffice window, while every reset that read only the window list found the Start Center)."""
+        from rig.snapshot import WINDOWS_SCRIPT
+        from rig.vm import vm_shell
+        deadline, prev = time.time() + timeout, None
+        while time.time() < deadline:
+            cur = titles(vm_shell(self.env, WINDOWS_SCRIPT, timeout=20).get("output") or "")
+            if cur == prev and any("LibreOffice" in x for x in cur):
+                return cur
+            prev = cur
+            time.sleep(3)
+        return prev or []
 
     def quick_state(self):
         """Window titles and file digest only (about 6 s): enough to reject most failed undos without a tree."""
@@ -470,6 +488,11 @@ class Collector:
                 break
             time.sleep(wait)
             S1 = self.snapshot(rdir / "S1", {"row": rid, "kind": "after", "retake": True}, expect_kind=row.get("expect", "calc"))
+        if S1.meta.get("window_error"):
+            # an after-state recorded without the application it must show would misjudge every candidate: the row
+            # is retried from a fresh sandbox instead (probe-0005, 20 Oct)
+            signal.alarm(0)
+            raise RuntimeError(f"after-state not recorded: {S1.meta['window_error']}")
         signal.alarm(0)
         rec["snapshot_after"] = str(S1.path.relative_to(self.out))
         rec["after_ok"] = S1.ok
