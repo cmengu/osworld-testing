@@ -307,23 +307,48 @@ class Collector:
     def act(self, row):
         self.step(row["code"], pause=row.get("pause", 2))
 
-    def reset_to_after(self, row, expect_windows: str = "") -> dict:
+    def reset_to_after(self, row, expect_windows: str = "", expect_digest=None) -> dict:
         """Fresh start plus the action.  With expect_windows (the recorded S' window list), the reset is checked
         against it and redone up to twice: a reset that comes back without the document (pilot2 0079 c01: only a
-        file-manager "Home" window) otherwise rejects a correct undo."""
-        from rig.snapshot import WINDOWS_SCRIPT
+        file-manager "Home" window) otherwise rejects a correct undo.  With expect_digest (S' file digest), the
+        files must match S' too (20 Oct, probe-0007: a redone reset passed the window check although its Delete had
+        not trashed a.txt, and Escape twice then "restored" a file that had never left).  A mismatch saves a
+        screenshot under <out>/reset_mismatch/."""
+        from rig.mask import _fsig
+        from rig.snapshot import WINDOWS_SCRIPT, _digest
         from rig.vm import vm_shell
         want = sorted(titles(expect_windows)) if expect_windows else None
+        want_files = apply_file_mask(expect_digest, self.mask) if expect_digest else None
+        why = ""
         for attempt in range(3):
             info = self.reset_to_before(row)
             self.act(row)
-            if want is None:
+            if want is None and want_files is None:
                 return info
-            got = sorted(titles(vm_shell(self.env, WINDOWS_SCRIPT, timeout=20).get("output") or ""))
-            if got == want:
-                return {**info, "reset_attempts": attempt + 1}
-            print(f"  reset did not reproduce the after-state windows: {got} vs {want}; again", flush=True)
-        raise ResetFailed(f"after-state windows not reproduced in 3 resets: {got} vs {want}")
+            if want is not None:
+                got = sorted(titles(vm_shell(self.env, WINDOWS_SCRIPT, timeout=20).get("output") or ""))
+                if got != want:
+                    why = f"windows {got} vs {want}"
+            if want_files is not None and not why:
+                d, _ = _digest(self.env)
+                have = apply_file_mask(d, self.mask)
+                bad = sorted(p for p in set(have) | set(want_files) if _fsig(p, have.get(p)) != _fsig(p, want_files.get(p)))
+                if bad:
+                    why = f"files differ from S': {len(bad)} ({bad[0]})"
+            if not why:
+                return {**info, "reset_attempts": attempt + 1, "reset_checked": "windows+files" if want_files is not None else "windows"}
+            print(f"  reset did not reproduce the after-state: {why}; again", flush=True)
+            last_why = why
+            try:
+                shot = self.env.controller.get_screenshot()
+                if shot:
+                    d = self.out / "reset_mismatch"
+                    d.mkdir(exist_ok=True)
+                    (d / f"{row['row_id']}_{int(time.time())}.png").write_bytes(shot)
+            except Exception:
+                pass
+            why = ""
+        raise ResetFailed(f"after-state not reproduced in 3 resets: {last_why}")
 
     def snapshot(self, path, meta, expect_kind="calc", office_expected=True):
         """expect_kind: the spot's declared outcome for S' ('calc', 'dialog', 'start_center', 'second_window',
@@ -463,6 +488,28 @@ class Collector:
             return office_running or ("reopen" in (cand or []) and reopens_office)
         deadline = t_row + self.args.row_minutes * 60
 
+        def confirm_match(cand, cdir):
+            """A match counts only if it repeats from a reset whose FULL state (tree and files) is S': a reset whose
+            action silently failed hands the search a state already equal to S, and any candidate then "matches"
+            (probe-0007, 20 Oct: Escape twice "restored" a trashed file that had never left).  Two tries at S'."""
+            signal.alarm(WATCHDOG_SECONDS)
+            diffs = ""
+            for attempt in range(2):
+                self.reset_to_after(row, expect_windows=S1.windows, expect_digest=S1.digest)
+                s1b = self.snapshot(cdir / f"confirm_S1_{attempt}", {"row": rid, "kind": "confirm-after", "seq": cand},
+                                    expect_kind="any", office_expected=office_running)
+                eq1, td1, fd1 = states_equal(S1.canon, S1.digest, s1b.canon, s1b.digest, self.mask)
+                if eq1:
+                    break
+                diffs = f"tree {len(td1)}, files {len(fd1)}; {summarize(td1, limit=2)[:160]}"
+            else:
+                return False, f"reset did not reproduce S' ({diffs})"
+            self.step(U.candidate_code(cand, ctx), pause=1.5)
+            s2 = self.snapshot(cdir / "confirm", {"row": rid, "kind": "confirm", "seq": cand}, expect_kind="any",
+                               office_expected=office_after(cand))
+            eq2, td2, fd2 = states_equal(S.canon, S.digest, s2.canon, s2.digest, self.mask)
+            return (True, "confirmed") if eq2 else (False, f"second run differs (tree {len(td2)}, files {len(fd2)})")
+
         def try_candidate(cand, tier, idx, note=""):
             nonlocal closest, budget_used
             t_c = time.time()
@@ -471,7 +518,7 @@ class Collector:
                 r["note"] = note
             signal.alarm(WATCHDOG_SECONDS)
             try:
-                rinfo = self.reset_to_after(row, expect_windows=S1.windows)
+                rinfo = self.reset_to_after(row, expect_windows=S1.windows, expect_digest=S1.digest)
                 code = U.candidate_code(cand, ctx)
                 r["code"] = code
                 self.step(code, pause=1.5)
@@ -493,6 +540,12 @@ class Collector:
                               "tree_taken": True, "tree_diffs": len(td), "file_diffs": len(fd), "snapshot_ok": snap.ok,
                               "diff_sample": summarize(td, limit=5) if not eq_c else ""})
                     score = content_score(td, fd) if snap.ok else (9_000, 9_000)
+                    if eq_c and not self.args.no_confirm_matches:
+                        ok_c, note = confirm_match(cand, cdir)
+                        r["confirm"] = note
+                        if not ok_c:
+                            eq_c = False
+                            r["result"] = "match not confirmed: " + note
                     if eq_c:
                         r["match"] = True
                 if closest is None or score < closest[0]:
@@ -616,7 +669,7 @@ class Collector:
         if replay_cand is not None and not self.args.no_replay:
             signal.alarm(WATCHDOG_SECONDS)
             try:
-                rinfo = self.reset_to_after(row, expect_windows=S1.windows)
+                rinfo = self.reset_to_after(row, expect_windows=S1.windows, expect_digest=S1.digest)
                 if replay_cand:
                     self.step(U.candidate_code(replay_cand, ctx), pause=1.5)
                 snap = self.snapshot(rdir / "replay", {"row": rid, "kind": "replay", "seq": replay_cand, **rinfo}, expect_kind="any",
@@ -864,6 +917,7 @@ def main():
     ap.add_argument("--no-teacher", action="store_true")
     ap.add_argument("--no-proposer", action="store_true")
     ap.add_argument("--no-replay", action="store_true")
+    ap.add_argument("--no-confirm-matches", action="store_true", help="accept a match without re-running it from a verified S'")
     ap.add_argument("--no-zero-shot", action="store_true", help="do not execute guess B's undo when the search did not try it")
     ap.add_argument("--shorter-tries", type=int, default=8, help="after a match, tries spent on strictly shorter candidates (labels at every K)")
     ap.add_argument("--dry", action="store_true", help="print the plan and the worst-case cost, no VM")

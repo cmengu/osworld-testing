@@ -35,7 +35,7 @@ class Fake(cp.Collector):
     def act(self, row):
         self.state = S_REC if row.get("code") == "noop" else S1_REC
 
-    def reset_to_after(self, row, expect_windows=""):
+    def reset_to_after(self, row, expect_windows="", expect_digest=None):
         self.state = S1_REC
         return {"fresh_start": "fake"}
 
@@ -60,7 +60,7 @@ def run(good, guess_steps, forced=None, budget=55):
     out = tempfile.mkdtemp()
     args = argparse.Namespace(out=out, mask=str(HERE / "out" / "mask_run" / "mask.json"), spots=str(HERE / "clickspots_pilot.json"),
                               mnemonics="", rows="", spots_filter="", limit=0, budget=budget, blind=4, row_minutes=60,
-                              no_teacher=False, no_proposer=True, no_replay=True, no_zero_shot=False, shorter_tries=8)
+                              no_teacher=False, no_proposer=True, no_replay=True, no_zero_shot=False, shorter_tries=8, no_confirm_matches=False)
     c = Fake(args)
     Fake.good = good
     row = dict(next(r for r in c.rows_all if r["row_id"] == "pilot-0003"), open_path="/home/user/x.xlsx")
@@ -75,6 +75,7 @@ assert r["executed_label"] == "REVERSIBLE" and r["shortest_undo"] == ["key:ctrl+
 assert r["labels_by_k"] == {str(k): "REVERSIBLE" for k in range(1, 6)}
 assert r["baseline"] == {"ctrl+z": True, "escape": None}
 assert r["guess_b_zero_shot"]["source"] == "search" and r["guess_b_zero_shot"]["matched"] is True
+assert r["undo_search"][0]["confirm"] == "confirmed"
 
 # Only a 2-action undo works: found in tier 1, the shorter search finds nothing shorter, labels split at K=2
 r = run(["key:ctrl+z", "key:ctrl+home"], ["key:escape"])
@@ -99,10 +100,54 @@ assert r["found_tier"] == "F" and r["undo_search"][0]["tier"] == "F"
 teacher.guess_b = lambda *a, **k: {"reversible": True, "shortest_undo": [], "model": "fake"}
 args = argparse.Namespace(out=tempfile.mkdtemp(), mask=str(HERE / "out" / "mask_run" / "mask.json"), spots=str(HERE / "clickspots_probe.json"),
                           mnemonics="", rows="", spots_filter="", limit=0, budget=12, blind=0, row_minutes=20,
-                          no_teacher=False, no_proposer=True, no_replay=True, no_zero_shot=False, shorter_tries=8)
+                          no_teacher=False, no_proposer=True, no_replay=True, no_zero_shot=False, shorter_tries=8, no_confirm_matches=False)
 c = Fake(args)
 r = c.run_row(dict(next(x for x in c.rows_all if x["spot_id"] == "noop"), code="noop"))
 assert r["executed_label"] == "REVERSIBLE" and r["undo_actions"] == 0 and not r.get("broken_action") and r["budget_used"] == 0
 assert r["labels_by_k"]["1"] == "REVERSIBLE" and r["guess_b_zero_shot"]["source"] == "no change"
+
+# probe-0007's failure: resets whose action silently failed leave S on screen, so every candidate "matches".
+# Confirmation re-reads the full state after the reset; it is never S', so no match survives and the label is no-undo.
+class Broken(Fake):
+    def reset_to_after(self, row, expect_windows="", expect_digest=None):
+        self.state = S_REC
+        return {"fresh_start": "fake"}
+
+
+Broken.good = ["key:ctrl+z"]
+teacher.guess_b = lambda *a, **k: {"reversible": False, "shortest_undo": [], "model": "fake"}
+b = Broken(argparse.Namespace(**{**vars(args), "out": tempfile.mkdtemp(), "spots": str(HERE / "clickspots_pilot.json"), "budget": 3}))
+r = b.run_row(dict(next(x for x in b.rows_all if x["row_id"] == "pilot-0003"), open_path="/home/user/x.xlsx"))
+assert r["executed_label"] == "NO-UNDO-FOUND", r["executed_label"]
+assert all(x.get("result", "").startswith("match not confirmed") for x in r["undo_search"] if x.get("tier") != "-")
+
+# The real reset_to_after: a reset whose action left the files as in S (the Delete did not happen) is redone, and three
+# such resets make the candidate "not judged" instead of judged against the wrong state (probe-0007, 20 Oct)
+import rig.snapshot as _snap, rig.vm as _vm
+digests = []
+_snap._digest = lambda env: (digests.pop(0), "")
+_vm.vm_shell = lambda env, script, timeout=110: {"output": S1_REC.windows}
+
+
+class Real(Fake):
+    reset_to_after = cp.Collector.reset_to_after
+    env = type("E", (), {"controller": type("C", (), {"get_screenshot": staticmethod(lambda: None)})()})()
+
+
+c = Real(args)
+row = c.rows_all[0]
+wrong = {k: dict(v) for k, v in S1_REC.digest.items()}
+victim = next(p for p in wrong if p.endswith(".xlsx") and "/.~lock" not in p)
+wrong[victim]["k"] = "not-the-after-state"                  # a reset whose action did not take effect on disk
+digests[:] = [wrong, S1_REC.digest]
+info = c.reset_to_after(row, expect_windows=S1_REC.windows, expect_digest=S1_REC.digest)
+assert info["reset_attempts"] == 2 and info["reset_checked"] == "windows+files", info
+if True:
+    digests[:] = [wrong] * 3
+    try:
+        c.reset_to_after(row, expect_windows=S1_REC.windows, expect_digest=S1_REC.digest)
+        raise AssertionError("a reset that never reproduces S' must not be judged")
+    except cp.ResetFailed:
+        pass
 
 print("COLLECTOR FLOW CHECKS PASSED")
