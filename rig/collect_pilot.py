@@ -532,6 +532,12 @@ class Collector:
                 (cdir / "digest.json").write_text(json.dumps(digest, sort_keys=True))
                 okq, reasons, qf = self.quick_matches(S, windows, digest)
                 if not okq:
+                    try:                       # cheap, and the only picture of a failed reopen (probe-0003, 20 Oct)
+                        shot = self.env.controller.get_screenshot()
+                        if shot:
+                            (cdir / "screenshot.png").write_bytes(shot)
+                    except Exception:
+                        pass
                     r.update({"result": "; ".join(reasons)[:300], "tree_taken": False, "file_diffs": len(qf), "quick_reject": True})
                     (cdir / "meta.json").write_text(json.dumps({"quick_reject": reasons, "fresh": rinfo}))
                     score = (len(qf) + (100 if any(x.startswith("windows") for x in reasons) else 0), 10_000 + len(qf))

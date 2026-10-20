@@ -75,10 +75,10 @@ XLSX = "/home/user/Desktop/hours.xlsx"
 def digest(i):
     d = {
         XLSX: {"s": 9000, "m": 1, "h": "bytes-v1", "c": "content-v1"},
-        "/home/user/.config/libreoffice/4/user/registrymodifications.xcu": {"s": 100 + i, "m": i, "h": f"x{i}"},
+        "/home/user/.config/dconf/user": {"s": 100 + i, "m": i, "h": f"x{i}"},
     }
     for j in range(3):
-        d[f"/home/user/.config/libreoffice/4/user/uno_packages/cache/f{j}"] = {"s": j, "m": i, "h": f"c{i}{j}"}
+        d[f"/home/user/.config/pulse/cache/f{j}"] = {"s": j, "m": i, "h": f"c{i}{j}"}
     return d
 
 
@@ -87,8 +87,8 @@ mask = build_mask(noise, digests)
 print(describe(mask))
 assert "expanded" in mask["tree_attr_by_tag"].get("table-cell", []), mask["tree_attr_by_tag"]
 assert mask["tree_churn_sites"], "the renamed label must become a churn site"
-assert "/home/user/.config/libreoffice/4/user/registrymodifications.xcu" in mask["file_paths"]
-assert "/home/user/.config/libreoffice/4/user/uno_packages/cache" in mask["file_dirs"]
+assert "/home/user/.config/dconf/user" in mask["file_paths"]
+assert "/home/user/.config/pulse/cache" in mask["file_dirs"]
 assert XLSX not in mask["file_paths"]
 
 # Pure noise must compare equal after masking: a never-seen flagged cell, a never-seen clock

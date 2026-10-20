@@ -30,8 +30,11 @@ GENERALISE_AT = 3
 # file-metadata journal (rewritten across VM boots).  Ignored on both sides of every comparison.  19 Oct: the
 # file manager's tag database (nautilus/tags/meta.db*, .meta.isrunning), created when LibreOffice is started on a
 # file after a full quit (rerun 0141 c07, c11: windows equal, these three files the only difference).
+# 20 Oct: LibreOffice's whole user profile folder (registry, template-folder cache store/.templdir.cache, extension
+# caches): configuration, never document state (Paper draft 3.1 exclusions); the stricter reset check of 20 Oct met
+# .templdir.cache changing between two resets of probe-0003, a file the noise mask had never seen change.
 IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/share/gvfs-metadata/",
-                         "/home/user/.local/share/nautilus/")
+                         "/home/user/.local/share/nautilus/", "/home/user/.config/libreoffice/")
 
 
 # Tree attributes that are never state.  19 Oct, provisional until the Files/multi_apps probe: the text of a

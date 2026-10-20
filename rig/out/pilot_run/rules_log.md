@@ -130,3 +130,14 @@ and typing (Ctrl+Z).
 Re-asked on the 30 pilot rows with the app-neutral prompt (rig/out/reask_b2): 28 of 28 undos parse, labels agree on 29
 of 30 (0251 now right: undo, save, redo; 0266 still says retype works, the one open case), 10 undos identical to the
 executed one (8 before). One sample each, so a one-row difference is within run-to-run variation.
+
+## 20 October 2026: LibreOffice's profile folder ignored; resets and matches verified
+
+| date | file | rule | class | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-20 | mask.py | ignored files | everything under ~/.config/libreoffice/ (registry, template-folder cache, extension caches): configuration, never document state (Paper draft 3.1 exclusions) | probe-0003: store/.templdir.cache changed between two resets, met by the new file check on resets | pilot_run2 30, pilot_recheck 2, pilot_rerun 8 | 0 against the previous re-compare (rules c38e793320d9) |
+
+Not comparison rules, for the record (collect_pilot.py): a reset to S' must now reproduce S' files as well as windows
+(probe-0007: a redone reset whose Delete had not happened passed the window check, and Escape twice "restored" the
+file); every match is confirmed by one of up to two re-runs from a reset whose full state equals S'. Labels collected
+before 20 Oct were accepted without that confirmation.
