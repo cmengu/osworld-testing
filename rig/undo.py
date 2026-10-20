@@ -148,13 +148,11 @@ def step_code(step: str, ctx: dict) -> str:
         name = path.rsplit("/", 1)[-1]
         wait_doc = ("next((1 for _ in range(90) if (time.sleep(1) or " + _py(name) + " in __import__('subprocess').run("
                     "['wmctrl', '-l'], capture_output=True, text=True).stdout)), 0); time.sleep(3)")
-        if ctx.get("office_running"):
-            # Start Center or another window: open the file through the Open dialog
-            return ("pyautogui.hotkey('ctrl', 'o'); time.sleep(3); pyautogui.typewrite(" + _py(path) + "); time.sleep(1); "
-                    "pyautogui.press('enter'); " + wait_doc + "; pyautogui.hotkey('super', 'up'); time.sleep(3)")
-        # no LibreOffice at all: start it on the file, as a double-click in the file manager would.  The GNOME run
-        # dialog (Alt+F2) used before never opened anything on this image (pilot2 0141: every reopen after Ctrl+Q
-        # left no window).
+        # Open the file as a double-click in the file manager would: `libreoffice --calc <file>` hands it to the
+        # running instance (replacing the Start Center) or starts one.  Until 20 Oct a running instance got Ctrl+O
+        # and the path typed into GTK's Open dialog, which on this slow VM sometimes left the dialog open beside the
+        # document (probe-0005 c00).  The GNOME run dialog (Alt+F2), used before that, never opened anything on this
+        # image (pilot2 0141).
         return ("__import__('subprocess').Popen(['libreoffice', '--calc', " + _py(path) + "], start_new_session=True, "
                 "stdout=__import__('subprocess').DEVNULL, stderr=__import__('subprocess').DEVNULL); " + wait_doc + "; "
                 "pyautogui.hotkey('super', 'up'); time.sleep(3)")

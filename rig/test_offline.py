@@ -215,7 +215,7 @@ assert from_guess(["Esc"]) == ["key:escape"] and from_guess(["reopen the file"])
 assert from_guess(["click Undo in the Edit menu"]) is None and from_guess(None) is None and from_guess([]) is None
 # reopen after a full quit starts LibreOffice on the file instead of typing into the GNOME run dialog
 assert "Popen(['libreoffice', '--calc'" in step_code("reopen", {"doc_path": "/home/user/x.xlsx", "office_running": False})
-assert "ctrl', 'o'" in step_code("reopen", {"doc_path": "/home/user/x.xlsx", "office_running": True})
+assert "Popen(['libreoffice', '--calc'" in step_code("reopen", {"doc_path": "/home/user/x.xlsx", "office_running": True})
 
 # 19 Oct: guess B answers in the step language; type: is capped at TYPE_MAX; K counts actions, not waits.
 from rig.undo import TYPE_MAX, action_count, guess_parse, parse_step, tier2, CALC, FILES

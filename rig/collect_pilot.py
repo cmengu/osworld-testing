@@ -326,7 +326,12 @@ class Collector:
             if want is None and want_files is None:
                 return info
             if want is not None:
-                got = sorted(titles(vm_shell(self.env, WINDOWS_SCRIPT, timeout=20).get("output") or ""))
+                # poll up to 20 s: right after Don't Save the list is empty until the Start Center is drawn
+                for _ in range(8):
+                    got = sorted(titles(vm_shell(self.env, WINDOWS_SCRIPT, timeout=20).get("output") or ""))
+                    if got == want:
+                        break
+                    time.sleep(2.5)
                 if got != want:
                     why = f"windows {got} vs {want}"
             if want_files is not None and not why:
