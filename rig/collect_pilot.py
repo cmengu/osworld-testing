@@ -192,6 +192,10 @@ class Collector:
             from rig import treediff
             treediff.DROP_HIDDEN = True
             self.rules_version += "+hidden"
+        if getattr(args, "ignore_layout", False):
+            from rig import mask as _mask
+            _mask.IGNORE_LAYOUT = True
+            self.rules_version += "+layout"
         data = json.load(open(args.spots))
         self.spots = {s["id"]: s for s in data["spots"]}
         self.rows_all = data["rows"]
@@ -1059,6 +1063,7 @@ def main():
     ap.add_argument("--yes", action="store_true")
     ap.add_argument("--recompare", action="store_true", help="re-judge the rows on disk with the current mask and rules")
     ap.add_argument("--drop-hidden", action="store_true", help="proposed rule (21 Oct, undecided): widgets not showing on screen are not state")
+    ap.add_argument("--ignore-layout", action="store_true", help="proposed rule (21 Oct, undecided): scroll-bar and split-pane readouts are not state")
     args = ap.parse_args()
     # the module chdirs into OSWorld at import, so a relative path would resolve under OSWorld/ (pilot_run2's --out did)
     for k in ("out", "spots", "mask"):
