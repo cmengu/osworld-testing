@@ -150,7 +150,8 @@ import shlex as _shlex
 
 SPREADSHEET_EXT = (".xlsx", ".xlsm", ".xls", ".ods", ".csv")
 GUI_PROCS = ("soffice.bin", "oosplash", "nautilus", "gnome-terminal-server", "code", "evince", "eog", "gedit",
-             "gnome-text-editor", "thunderbird", "thunderbird-bin", "totem", "file-roller")
+             "gnome-text-editor", "thunderbird", "thunderbird-bin", "totem", "file-roller",
+             "gvfsd-trash")   # the Trash backend: it kept showing "Trash is Empty" after the restore recreated the Trash folder (21 Oct, row 15)
 GUI_LAUNCHERS = ("gnome-terminal", "nautilus", "code", "xdg-open", "libreoffice", "soffice", "evince", "eog", "gedit",
                  "thunderbird")
 HOME_ROOTS = ("Desktop", "Documents", "Downloads", "Pictures", "Music", "Videos", "Templates", "Public",
