@@ -273,6 +273,26 @@ class Collector:
         print(f"[env] task {task_id[:8]} ready after {time.time() - t0:.0f}s; prep: {prepare_vm(self.env)}; cache: {prime_cache(self.env, task)}", flush=True)
         self.current_task_id = task_id
 
+    def wait_for_network(self, max_s: float = 1800) -> bool:
+        """Block until Modal's API answers (up to max_s).  A network drop at 11:40 on 21 Oct lost the sandbox on
+        row 13, and the run then ran through rows 14-33 in seconds, each an error, while the close of the lost
+        sandbox failed and left it billing.  Waiting here keeps the rows for later and lets the close succeed."""
+        import socket
+        t0 = time.time()
+        said = False
+        while time.time() - t0 < max_s:
+            try:
+                socket.create_connection(("api.modal.com", 443), timeout=5).close()
+                if said:
+                    print(f"[env] network back after {time.time() - t0:.0f}s", flush=True)
+                return True
+            except OSError:
+                if not said:
+                    print("[env] network down: waiting (up to 30 min)", flush=True)
+                    said = True
+                time.sleep(20)
+        return False
+
     def close_env(self):
         if self.env is None:
             return
@@ -974,6 +994,7 @@ class Collector:
                         signal.alarm(0)
                         if attempt == 0 and self.env_restarts < 6:
                             self.env_restarts += 1
+                            self.wait_for_network()
                             self.close_env()
                             time.sleep(10)
                             try:
@@ -982,6 +1003,7 @@ class Collector:
                                 # a sandbox that cannot start (the Mac asleep, the network gone: 21 Oct 04:48, the
                                 # run died here) must not end the run: the next row starts one again
                                 print(f"[env] start failed: {repr(e2)[:200]}; the row is left as an error", flush=True)
+                                self.wait_for_network()
                                 self.close_env()
                                 break
                         elif attempt == 0:
