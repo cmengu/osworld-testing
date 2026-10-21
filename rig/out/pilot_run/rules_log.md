@@ -186,3 +186,10 @@ Rows 7 (Files tier skipped by the 40-min cap), 10 and 12 are re-run under the ne
 (void_rerun_21oct.jsonl keeps the old records); the remaining rows run with a 60-min cap so the app-specific tier
 gets its turn.  Earlier today: a network drop at 11:40 lost row 13's sandbox and left it billing for an hour (closed
 by hand); the collector now waits for the network before closing or restarting.
+
+## 21 October 2026, 19:50: two refinements of the 21 Oct rules (row 12's Escape match was rejected by noise)
+
+| date | file | rule | class | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-21 | treediff.py | hidden nodes under a scroll-pane or viewport are kept (showing there only says what the viewport reaches); hidden nodes elsewhere are still dropped | scroll position is not state | probe-0012 c04 confirm: the sidebar's "Other Locations" row showing in one instance, not in the other (window heights differed) | 49 | none new (pilot-0079 as before) |
+| 2026-10-21 | mask.py | ~/.local/share/gnome-shell/ ignored (the shell's notification log) | application cache/log, not state | probe-0012 c05: a notification changed the file | 49 | none |

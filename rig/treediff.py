@@ -86,6 +86,11 @@ def _empty_cell(el: ET.Element) -> bool:
 # REVERSIBLE (Ctrl+Z); every Calc cell carries the showing state, so no cell content is affected.
 DROP_HIDDEN = True
 NEVER_HIDDEN = frozenset({"application", "desktop-frame"})
+# Inside a scrolling list the showing state only says what the viewport reaches: the Files sidebar's "Other
+# Locations" row was showing in one instance and not in another of the same folder (probe-0012 c04 confirm, 21 Oct:
+# the window heights differed), and scroll position is not state.  Content under a scroll pane is kept whether or
+# not it is scrolled into view; a closed popover's widgets sit outside any scroll pane and are still dropped.
+SCROLLED = ("scroll-pane", "viewport")
 
 
 def _showing(el: ET.Element) -> bool:
@@ -139,7 +144,7 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
                 continue                # empty unnamed panel: Start Center leftovers sit in front of content
             if tag == "table-cell" and _empty_cell(child):
                 continue                # viewport placeholder: no content, no formatting
-            if DROP_HIDDEN and tag not in NEVER_HIDDEN and not _showing(child):
+            if DROP_HIDDEN and tag not in NEVER_HIDDEN and not _showing(child) and not any(f"/{s}[" in prefix for s in SCROLLED):
                 continue                # not on screen: a closed popover's widgets, a hidden placeholder
             key = (tag, name)
             idx = counts.get(key, 0)

@@ -34,7 +34,8 @@ GENERALISE_AT = 3
 # caches): configuration, never document state (Paper draft 3.1 exclusions); the stricter reset check of 20 Oct met
 # .templdir.cache changing between two resets of probe-0003, a file the noise mask had never seen change.
 IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/share/gvfs-metadata/",
-                         "/home/user/.local/share/nautilus/", "/home/user/.config/libreoffice/")
+                         "/home/user/.local/share/nautilus/", "/home/user/.config/libreoffice/",
+                         "/home/user/.local/share/gnome-shell/")   # the shell's notification log (21 Oct, probe-0012 c05)
 
 
 # Tree attributes that are never state.  19 Oct, provisional until the Files/multi_apps probe: the text of a
