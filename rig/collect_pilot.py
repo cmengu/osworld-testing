@@ -336,6 +336,9 @@ class Collector:
         how = fresh_start(self.env, self.task(row["task_id"]))
         t_fs = time.time() - t
         self.timings["fresh_start"].append(t_fs)
+        if how.startswith("generic-incomplete"):
+            # no window to act on: a key sent now goes to the desktop and the "action" changes nothing (21 Oct)
+            raise ResetFailed(f"fresh start incomplete after {t_fs:.0f}s: {how[:160]}")
         prelude = row.get("prelude", PRELUDE)
         if prelude:
             self.step(prelude, pause=1.0)
@@ -360,7 +363,13 @@ class Collector:
         want_files = apply_file_mask(expect_digest, self.mask) if expect_digest else None
         why = ""
         for attempt in range(3):
-            info = self.reset_to_before(row)
+            try:
+                info = self.reset_to_before(row)
+            except ResetFailed as e:
+                last_why = why = str(e)
+                print(f"  reset did not reproduce the after-state: {why[:120]}; again", flush=True)
+                why = ""
+                continue
             self.act(row)
             if want is None and want_files is None:
                 return info

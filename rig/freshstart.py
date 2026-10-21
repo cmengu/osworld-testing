@@ -306,24 +306,35 @@ def generic_fresh_start(env, task: dict, wait_s: int = 90) -> str:
             env.step("pyautogui.hotkey('ctrl', 'q'); time.sleep(3); " + DONT_SAVE + "; time.sleep(3)", pause=0.5)
         except Exception:
             pass
+    # Files quits gracefully first (its own -q), so the next launch does not start against a killed instance's
+    # leftovers: after a plain kill a relaunched Files sometimes took 40 s or more to show its window (21 Oct
+    # 12:40, live poll: process alive, no window), the 90 s wait ran out, and the action's key reached the desktop
+    vm_shell(env, "pgrep -x nautilus >/dev/null && { nautilus -q 2>/dev/null; sleep 1.5; }; true", timeout=20)
     vm_shell(env, CLEAN_SCRIPT, timeout=60)
     vm_shell(env, as_root(env, RESTORE_GENERIC.format(procs=" ".join(GUI_PROCS), top=BASELINE_TOP, tar=BASELINE_TAR,
                                                       roots=" ".join(_shlex.quote(r) for r in HOME_ROOTS))), timeout=110)
-    for s in gui_steps(task):
-        _replay_step(env, s)
     want = [l for l in vm_out(env, f"cat {BASELINE_WINDOWS} 2>/dev/null", timeout=15).splitlines() if l.strip()]
     # every recorded window must be drawn and owned by a live process, not merely listed: after the kill the window
     # manager kept listing the dead Files window, the title check passed at once, and the action's key went to a
-    # window that no longer existed (probe-0007, 20 Oct: Delete reached nothing in about half of the resets)
-    deadline = time.time() + wait_s
+    # window that no longer existed (probe-0007, 20 Oct: Delete reached nothing in about half of the resets).
+    # A launch whose window has not come after wait_s is repeated once.
+    t_wait = time.time()
     missing = ["(not checked)"]
-    while time.time() < deadline:
-        out = vm_out(env, WINDOWS_READY_SH.format(windows=BASELINE_WINDOWS), timeout=20)
-        missing = [l for l in out.splitlines() if l.strip() and l.strip() != "READY"]
-        if "READY" in out.splitlines():
-            missing = []
+    for launch in range(2):
+        for s in gui_steps(task):
+            _replay_step(env, s)
+        deadline = time.time() + wait_s
+        while time.time() < deadline:
+            out = vm_out(env, WINDOWS_READY_SH.format(windows=BASELINE_WINDOWS), timeout=20)
+            missing = [l for l in out.splitlines() if l.strip() and l.strip() != "READY"]
+            if "READY" in out.splitlines():
+                missing = []
+                break
+            time.sleep(3)
+        if not missing:
             break
-        time.sleep(3)
+        print(f"  fresh start: windows not ready after {wait_s}s ({'; '.join(missing)[:100]}); launching again", flush=True)
+    wait_note = f";wait={time.time() - t_wait:.0f}s" if launch or time.time() - t_wait > 45 else ""
     vm_shell(env, "for w in $(wmctrl -l | awk '$2 != \"-1\" {print $1}'); do wmctrl -i -r $w -b add,maximized_vert,maximized_horz; done; true",
              timeout=20)
     # the keyboard goes to the window that had it after the task's setup (or the last recorded one), checked
@@ -338,4 +349,4 @@ def generic_fresh_start(env, task: dict, wait_s: int = 90) -> str:
     how = "generic" if not missing else "generic-incomplete:" + _json.dumps(missing)[:200]
     if want_active and active != want_active:
         how += f";active={active or '?'}!={want_active}"
-    return how
+    return how + wait_note
