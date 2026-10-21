@@ -78,12 +78,13 @@ def _empty_cell(el: ET.Element) -> bool:
     return not any(attrs.get(a) for a in CELL_CONTENT_ATTRS[1:])
 
 
-# Proposed 21 Oct (not yet a rule; off until decided with the author): widgets that are not showing on screen are
-# not state.  GTK keeps a popover's widgets in the tree, hidden, after it closes (Files: "Rename File" after F2,
-# "Folder name" after Ctrl+Shift+N), and their presence shifted every later path, so an undo that restored the
-# files exactly (probe-0010 c00: 0 file differences) was rejected on 252 tree differences.  Application and
-# desktop nodes carry no showing state and are never dropped.
-DROP_HIDDEN = False
+# Rule since 21 Oct (decided with the author): widgets that are not showing on screen are not state.  GTK keeps a
+# popover's widgets in the tree, hidden, after it closes (Files: "Rename File" after F2, "Folder name" after
+# Ctrl+Shift+N), and their presence shifted every later path, so an undo that restored the files exactly
+# (probe-0010 c00: 0 file differences) was rejected on 252 tree differences.  Application and desktop nodes
+# carry no showing state and are never dropped.  Re-judged on 49 stored rows: probe-0010 and pilot-0079 flip to
+# REVERSIBLE (Ctrl+Z); every Calc cell carries the showing state, so no cell content is affected.
+DROP_HIDDEN = True
 NEVER_HIDDEN = frozenset({"application", "desktop-frame"})
 
 

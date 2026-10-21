@@ -42,13 +42,13 @@ IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/sha
 # undo brings old scrollback back, so comparing it would make every terminal action one-way by construction; what
 # a command does to files is in the digest.  No Calc row has a terminal node.
 IGNORED_TREE_ATTRS = {("terminal", "text")}
-# Proposed 21 Oct (off until decided with the author): the numeric readouts of scroll bars and split panes (value,
-# min, max, step) are scroll position and window geometry, not state.  Files' icon view reports them differently
-# for two instances of the same folder (probe-0012 c04: Escape closed the conflict question and left a split-pane
+# Rule since 21 Oct (decided with the author): the numeric readouts of scroll bars and split panes (value, min,
+# max, step) are scroll position and window geometry, not state.  Files' icon view reports them differently for
+# two instances of the same folder (probe-0012 c04: Escape closed the conflict question and left a split-pane
 # max 1855 vs 1803 and a scroll-bar step 105.8 vs 100.6; no cell or file ever carries them).
 LAYOUT_READOUT_ATTRS = {(tag, a) for tag in ("scroll-bar", "split-pane", "scroll-pane", "viewport")
                         for a in ("value", "min", "max", "step")}
-IGNORE_LAYOUT = False
+IGNORE_LAYOUT = True
 
 
 def file_sig(v: dict):

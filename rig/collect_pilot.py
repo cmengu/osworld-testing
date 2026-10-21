@@ -1084,8 +1084,8 @@ def main():
     ap.add_argument("--dry", action="store_true", help="print the plan and the worst-case cost, no VM")
     ap.add_argument("--yes", action="store_true")
     ap.add_argument("--recompare", action="store_true", help="re-judge the rows on disk with the current mask and rules")
-    ap.add_argument("--drop-hidden", action="store_true", help="proposed rule (21 Oct, undecided): widgets not showing on screen are not state")
-    ap.add_argument("--ignore-layout", action="store_true", help="proposed rule (21 Oct, undecided): scroll-bar and split-pane readouts are not state")
+    ap.add_argument("--drop-hidden", action="store_true", help="(on by default since 21 Oct) widgets not showing on screen are not state")
+    ap.add_argument("--ignore-layout", action="store_true", help="(on by default since 21 Oct) scroll-bar and split-pane readouts are not state")
     args = ap.parse_args()
     # the module chdirs into OSWorld at import, so a relative path would resolve under OSWorld/ (pilot_run2's --out did)
     for k in ("out", "spots", "mask"):

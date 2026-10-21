@@ -174,3 +174,15 @@ that stale entry, and the Delete key went to a window that no longer existed. Ab
 way; the reset check caught every one, at ~50 s each. Now every recorded window must be viewable (xwininfo) and its
 _NET_WM_PID alive before the reset returns; the Files setup script (files_select.sh, written at prime time) waits
 the same way; the active window is set and read back with xprop (xdotool is not on the image).
+
+## 21 October 2026, 12:05: two comparison rules decided with the author
+
+| date | file | rule | class | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-21 | treediff.py | widgets not showing on screen are dropped from the tree (application and desktop nodes kept) | hidden widgets are not state | probe-0010 (rename: Ctrl+Z restored the file, 252 tree diffs from a closed popover's widgets) | 50 (probe 12, pilot_run2 30, pilot_rerun 8) | probe-0010 → REVERSIBLE (Ctrl+Z); pilot-0079 hide column A → REVERSIBLE (Ctrl+Z) |
+| 2026-10-21 | mask.py | value/min/max/step of scroll-bar, split-pane, scroll-pane, viewport ignored | scroll position and geometry are not state | probe-0012 (paste conflict question: Escape closed it, pane max 1855 vs 1803) | same 50 | probe-0012 → REVERSIBLE (Escape) |
+
+Rows 7 (Files tier skipped by the 40-min cap), 10 and 12 are re-run under the new rules for confirmation
+(void_rerun_21oct.jsonl keeps the old records); the remaining rows run with a 60-min cap so the app-specific tier
+gets its turn.  Earlier today: a network drop at 11:40 lost row 13's sandbox and left it billing for an hour (closed
+by hand); the collector now waits for the network before closing or restarting.
