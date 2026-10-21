@@ -188,6 +188,10 @@ class Collector:
         self.mask = json.load(open(args.mask))
         self.mask_version = _sha(pathlib.Path(args.mask))
         self.rules_version = hashlib.sha256((HERE / "treediff.py").read_bytes() + (HERE / "mask.py").read_bytes() + (HERE / "xlsxsig.py").read_bytes()).hexdigest()[:12]
+        if getattr(args, "drop_hidden", False):
+            from rig import treediff
+            treediff.DROP_HIDDEN = True
+            self.rules_version += "+hidden"
         data = json.load(open(args.spots))
         self.spots = {s["id"]: s for s in data["spots"]}
         self.rows_all = data["rows"]
@@ -968,7 +972,14 @@ class Collector:
                             self.env_restarts += 1
                             self.close_env()
                             time.sleep(10)
-                            self.start_env(row["task_id"])
+                            try:
+                                self.start_env(row["task_id"])
+                            except Exception as e2:
+                                # a sandbox that cannot start (the Mac asleep, the network gone: 21 Oct 04:48, the
+                                # run died here) must not end the run: the next row starts one again
+                                print(f"[env] start failed: {repr(e2)[:200]}; the row is left as an error", flush=True)
+                                self.close_env()
+                                break
                         elif attempt == 0:
                             break
                 VM.ROW_DEADLINE = None
@@ -1047,6 +1058,7 @@ def main():
     ap.add_argument("--dry", action="store_true", help="print the plan and the worst-case cost, no VM")
     ap.add_argument("--yes", action="store_true")
     ap.add_argument("--recompare", action="store_true", help="re-judge the rows on disk with the current mask and rules")
+    ap.add_argument("--drop-hidden", action="store_true", help="proposed rule (21 Oct, undecided): widgets not showing on screen are not state")
     args = ap.parse_args()
     # the module chdirs into OSWorld at import, so a relative path would resolve under OSWorld/ (pilot_run2's --out did)
     for k in ("out", "spots", "mask"):

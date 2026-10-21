@@ -78,6 +78,19 @@ def _empty_cell(el: ET.Element) -> bool:
     return not any(attrs.get(a) for a in CELL_CONTENT_ATTRS[1:])
 
 
+# Proposed 21 Oct (not yet a rule; off until decided with the author): widgets that are not showing on screen are
+# not state.  GTK keeps a popover's widgets in the tree, hidden, after it closes (Files: "Rename File" after F2,
+# "Folder name" after Ctrl+Shift+N), and their presence shifted every later path, so an undo that restored the
+# files exactly (probe-0010 c00: 0 file differences) was rejected on 252 tree differences.  Application and
+# desktop nodes carry no showing state and are never dropped.
+DROP_HIDDEN = False
+NEVER_HIDDEN = frozenset({"application", "desktop-frame"})
+
+
+def _showing(el: ET.Element) -> bool:
+    return any(_local(k) == "showing" and v == "true" for k, v in el.attrib.items())
+
+
 def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
     root = ET.fromstring(xml_text)
     out: Canon = {}
@@ -125,6 +138,8 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
                 continue                # empty unnamed panel: Start Center leftovers sit in front of content
             if tag == "table-cell" and _empty_cell(child):
                 continue                # viewport placeholder: no content, no formatting
+            if DROP_HIDDEN and tag not in NEVER_HIDDEN and not _showing(child):
+                continue                # not on screen: a closed popover's widgets, a hidden placeholder
             key = (tag, name)
             idx = counts.get(key, 0)
             counts[key] = idx + 1
