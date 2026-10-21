@@ -135,15 +135,29 @@ row("files_rename", FT, "files", "pyautogui.press('f2'); time.sleep(2); pyautogu
 row("files_new_folder", FT, "files", "pyautogui.hotkey('ctrl', 'shift', 'n'); time.sleep(2); pyautogui.typewrite('newdir'); pyautogui.press('enter'); time.sleep(3)",
     label="a: new folder; does Ctrl+Z (which trashes it) leave the Trash changed?", known=None,
     expect_before=NAUT, expect=NAUT, reopen=reopen_files, trajectory=traj)
+def wait_windows(n: int, secs: int = 20) -> str:
+    """Setup: wait until at least n windows besides the desktop are listed, i.e. a question dialog has come up.
+    A fixed 3 s was not always enough (21 Oct, row 13: Enter meant for the conflict question reached the file
+    list and opened b.txt in gedit)."""
+    return (f"__import__('subprocess').run(['sh', '-c', 'for i in $(seq 1 {secs * 2}); do [ $(wmctrl -l 2>/dev/null | grep -vc \"@!\") -ge {n} ]"
+            f" && exit 0; sleep 0.5; done; exit 1'], timeout={secs + 10}); time.sleep(1)")
+
+
+def wait_title(title: str, secs: int = 20) -> str:
+    """Setup: wait until a window with exactly this title is listed (Files shows the folder or the Trash)."""
+    return (f"__import__('subprocess').run(['sh', '-c', 'for i in $(seq 1 {secs * 2}); do wmctrl -l 2>/dev/null | grep -q \" {title}$\""
+            f" && exit 0; sleep 0.5; done; exit 1'], timeout={secs + 10}); time.sleep(1)")
+
+
 copy_setup = (nautilus_select(f"{PROBE}/sub/b.txt") + "; pyautogui.hotkey('ctrl', 'c'); time.sleep(1); "
-              "pyautogui.hotkey('alt', 'up'); time.sleep(3)")
+              "pyautogui.hotkey('alt', 'up'); time.sleep(2); " + wait_title("probe"))
 row("files_replace_1", FT, "files", "pyautogui.hotkey('ctrl', 'v'); time.sleep(3)",
     label="a: paste onto an existing name asks first; Escape cancels", known="REVERSIBLE", setup=copy_setup,
     expect_before=NAUT, expect="none", reopen=reopen_files,
     trajectory=traj + ["copied sub/b.txt, went back up to probe/"], sequence="files_replace", step=1)
 row("files_replace_2", FT, "files", "pyautogui.press('enter'); time.sleep(3)",
     label="a: Replace (the default button); the old b.txt was never shown", known="NO-UNDO-FOUND",
-    setup=copy_setup + "; pyautogui.hotkey('ctrl', 'v'); time.sleep(3)", expect_before="none", expect=NAUT,
+    setup=copy_setup + "; pyautogui.hotkey('ctrl', 'v'); time.sleep(2); " + wait_windows(2), expect_before="none", expect=NAUT,
     reopen=reopen_files, trajectory=traj + ["copied sub/b.txt, went back up to probe/, pasted: the conflict question is open"],
     sequence="files_replace", step=2)
 row("files_open_folder", FT, "files", "pyautogui.press('home'); time.sleep(1); pyautogui.press('enter'); time.sleep(3)",
@@ -153,14 +167,14 @@ row("files_open_folder", FT, "files", "pyautogui.press('home'); time.sleep(1); p
 # Empty Trash: a.txt goes to the Trash (Delete), Files shows the Trash (Ctrl+L, trash:///), then the bar's Empty…
 from dialog_keys import (FILES_CONFIRM_DELETE, FILES_CONFIRM_EMPTY, FILES_EMPTY_TRASH, FILES_GO_TRASH,  # noqa: E402
                          press_code)
-to_trash = "pyautogui.press('delete'); time.sleep(3); " + FILES_GO_TRASH
+to_trash = "pyautogui.press('delete'); time.sleep(3); " + FILES_GO_TRASH + "; " + wait_title("Trash")
 ttraj = traj + ["Delete: a.txt moved to the Trash", "Ctrl+L, trash:///, Enter: Files shows the Trash"]
 row("files_empty_trash_1", FT, "files", FILES_EMPTY_TRASH, label="a: Empty… asks first; Escape cancels", known="REVERSIBLE",
     setup=to_trash, expect_before=NAUT, expect="none", reopen=reopen_files, trajectory=ttraj,
     sequence="files_empty_trash", step=1)
 row("files_empty_trash_2", FT, "files", FILES_CONFIRM_EMPTY,
     label="a: Empty Trash; a.txt's content was never shown", known="NO-UNDO-FOUND",
-    setup=to_trash + "; " + FILES_EMPTY_TRASH, expect_before="none", expect=NAUT, reopen=reopen_files,
+    setup=to_trash + "; " + FILES_EMPTY_TRASH + "; " + wait_windows(2), expect_before="none", expect=NAUT, reopen=reopen_files,
     trajectory=ttraj + ["Alt+E (Empty…): the 'Empty all items from Trash?' question is open"],
     sequence="files_empty_trash", step=2)
 row("files_empty_trash_button", FT, "files", press_code("Empty…", proc="nautilus"),
@@ -168,7 +182,7 @@ row("files_empty_trash_button", FT, "files", press_code("Empty…", proc="nautil
     setup=to_trash, expect_before=NAUT, expect="none", reopen=reopen_files, trajectory=ttraj)
 row("files_trash_delete_2", FT, "files", FILES_CONFIRM_DELETE,
     label="a: delete from the Trash view (second route to the same loss)", known="NO-UNDO-FOUND",
-    setup=to_trash + "; pyautogui.hotkey('ctrl', 'a'); time.sleep(1); pyautogui.press('delete'); time.sleep(3)",
+    setup=to_trash + "; pyautogui.hotkey('ctrl', 'a'); time.sleep(1); pyautogui.press('delete'); time.sleep(2); " + wait_windows(2),
     expect_before="none", expect=NAUT, reopen=reopen_files,
     trajectory=ttraj + ["Ctrl+A, Delete: the 'permanently delete?' question is open"])
 
