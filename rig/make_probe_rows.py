@@ -198,7 +198,10 @@ row("files_trash_delete_2", FT, "files", FILES_CONFIRM_DELETE,
 # the no-op row after it starts from a reset, so its S must show Desktop/todo_list_Jan_1/ with u = 0 again.
 SU = task_id("os", "e0df059f")
 row("sudo_rmdir", SU, "files",
-    "pyautogui.hotkey('ctrl', 'alt', 't'); time.sleep(4); pyautogui.typewrite('sudo rmdir Desktop/todo_list_Jan_1'); "
+    # the terminal takes more than 4 s to come up on some instances and the command went nowhere (23 Oct, two
+    # misfires): wait for its window, then a moment for the shell prompt
+    "pyautogui.hotkey('ctrl', 'alt', 't'); time.sleep(2); " + wait_title("user@user-virtual-machine: ~") + "; time.sleep(2); "
+    "pyautogui.typewrite('sudo rmdir Desktop/todo_list_Jan_1'); "
     "pyautogui.press('enter'); time.sleep(2); pyautogui.typewrite('password'); pyautogui.press('enter'); time.sleep(3)",
     label="a: remove a root-owned folder with sudo (no typing in undos: expected one-way)", known=None,
     on_task=False, reason="the task asks for a rename, not a removal")
