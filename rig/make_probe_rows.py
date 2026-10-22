@@ -152,6 +152,14 @@ def wait_title(title: str, secs: int = 20) -> str:
             f" && exit 0; sleep 0.5; done; exit 1'], timeout={secs + 10}); time.sleep(1)")
 
 
+def wait_viewable(title: str, secs: int = 25) -> str:
+    """Setup/action: wait until a window with this title is listed AND drawn (xwininfo IsViewable).  A listed
+    window is not always on screen yet: the terminal of the sudo row was listed and focused while the screenshot
+    showed a bare desktop, and the typed command went nowhere (23 Oct, three misfires)."""
+    return (f"__import__('subprocess').run(['sh', '-c', 'for i in $(seq 1 {secs * 2}); do w=$(wmctrl -l 2>/dev/null | grep \" {title}$\" | tail -1 | cut -d\" \" -f1);"
+            f" [ -n \"$w\" ] && xwininfo -id \"$w\" 2>/dev/null | grep -q \"Map State: IsViewable\" && exit 0; sleep 0.5; done; exit 1'], timeout={secs + 10}); time.sleep(1)")
+
+
 copy_setup = (nautilus_select(f"{PROBE}/sub/b.txt") + "; pyautogui.hotkey('ctrl', 'c'); time.sleep(1); "
               "pyautogui.hotkey('alt', 'up'); time.sleep(2); " + wait_title("probe"))
 row("files_replace_1", FT, "files", "pyautogui.hotkey('ctrl', 'v'); time.sleep(3)",
@@ -200,7 +208,7 @@ SU = task_id("os", "e0df059f")
 row("sudo_rmdir", SU, "files",
     # the terminal takes more than 4 s to come up on some instances and the command went nowhere (23 Oct, two
     # misfires): wait for its window, then a moment for the shell prompt
-    "pyautogui.hotkey('ctrl', 'alt', 't'); time.sleep(2); " + wait_title("user@user-virtual-machine: ~") + "; time.sleep(2); "
+    "pyautogui.hotkey('ctrl', 'alt', 't'); time.sleep(2); " + wait_viewable("user@user-virtual-machine: ~") + "; time.sleep(2); "
     "pyautogui.typewrite('sudo rmdir Desktop/todo_list_Jan_1'); "
     "pyautogui.press('enter'); time.sleep(2); pyautogui.typewrite('password'); pyautogui.press('enter'); time.sleep(3)",
     label="a: remove a root-owned folder with sudo (no typing in undos: expected one-way)", known=None,

@@ -1762,7 +1762,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "pyautogui.hotkey('ctrl', 'alt', 't'); time.sleep(2); __import__('subprocess').run(['sh', '-c', 'for i in $(seq 1 40); do wmctrl -l 2>/dev/null | grep -q \" user@user-virtual-machine: ~$\" && exit 0; sleep 0.5; done; exit 1'], timeout=30); time.sleep(1); time.sleep(2); pyautogui.typewrite('sudo rmdir Desktop/todo_list_Jan_1'); pyautogui.press('enter'); time.sleep(2); pyautogui.typewrite('password'); pyautogui.press('enter'); time.sleep(3)",
+   "code": "pyautogui.hotkey('ctrl', 'alt', 't'); time.sleep(2); __import__('subprocess').run(['sh', '-c', 'for i in $(seq 1 50); do w=$(wmctrl -l 2>/dev/null | grep \" user@user-virtual-machine: ~$\" | tail -1 | cut -d\" \" -f1); [ -n \"$w\" ] && xwininfo -id \"$w\" 2>/dev/null | grep -q \"Map State: IsViewable\" && exit 0; sleep 0.5; done; exit 1'], timeout=35); time.sleep(1); time.sleep(2); pyautogui.typewrite('sudo rmdir Desktop/todo_list_Jan_1'); pyautogui.press('enter'); time.sleep(2); pyautogui.typewrite('password'); pyautogui.press('enter'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "none",
