@@ -248,7 +248,11 @@ w=$(wmctrl -l 2>/dev/null | awk -v t="$t" '{{id=$1; d=$2; $1=$2=$3=""; sub(/^ +/
 
 RESTORE_GENERIC = r"""
 [ -s {tar} ] || {{ echo "no baseline tar: nothing removed"; exit 1; }}
-for p in {procs}; do pkill -x "$p" 2>/dev/null; done; sleep 2; for p in {procs}; do pkill -9 -x "$p" 2>/dev/null; done
+# -x matches the 15-character process name, so gnome-terminal-server and gnome-text-editor never matched (23 Oct,
+# row 19: a terminal window more after every reset).  Names longer than that are matched on the command line, with
+# the last character bracketed so the pattern does not match this script's own text (see CLEAN_SCRIPT).
+for p in {procs}; do pkill -x "$p" 2>/dev/null; [ ${{#p}} -gt 15 ] && {{ l="${{p#"${{p%?}}"}}"; pkill -f "(^|/)${{p%?}}[$l]( |$)" 2>/dev/null; }}; done; sleep 2
+for p in {procs}; do pkill -9 -x "$p" 2>/dev/null; [ ${{#p}} -gt 15 ] && {{ l="${{p#"${{p%?}}"}}"; pkill -9 -f "(^|/)${{p%?}}[$l]( |$)" 2>/dev/null; }}; done; true
 cd "$HOME" || exit 1
 for r in {roots}; do rm -rf "./$r" 2>/dev/null; done
 find . -maxdepth 1 -type f ! -name '.*' -delete 2>/dev/null
