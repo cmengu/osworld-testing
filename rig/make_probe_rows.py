@@ -119,7 +119,10 @@ reopen_files = ["nautilus", "--select", f"{PROBE}/a.txt"]
 traj = ["Files is open on ~/Desktop/probe with a.txt selected"]
 row("noop", FT, "files", NOOP, label="a: no-op in Files (noise gate)", known="REVERSIBLE", expect_before=NAUT, expect=NAUT,
     reopen=reopen_files, trajectory=traj)
-row("files_trash", FT, "files", "pyautogui.press('delete'); time.sleep(3)", label="a: Delete to Trash; Ctrl+Z restores it",
+row("files_trash", FT, "files", "pyautogui.press('delete'); time.sleep(3)",
+    label="a: Delete to Trash; 16 key routes failed (21 Oct); the menu's Undo Trash and the Trash-restore route, by click:, go first",
+    # decided with the author 22 Oct: Files' menu shows "Undo Trash" after the Delete; the Trash view has a Restore bar
+    forced=[["click:Undo Trash"], ["click:Trash", "key:ctrl+a", "click:Restore"], ["click:Trash", "key:ctrl+a", "click:Restore", "key:alt+left"]],
     known="REVERSIBLE", expect_before=NAUT, expect=NAUT, reopen=reopen_files, trajectory=traj)
 row("files_perm_delete_1", FT, "files", "pyautogui.hotkey('shift', 'delete'); time.sleep(3)",
     label="a: Shift+Delete asks first; Escape cancels", known="REVERSIBLE", expect_before=NAUT, expect="none",

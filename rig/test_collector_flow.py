@@ -195,4 +195,11 @@ except VM.SandboxLost:
     assert n == 4, n
 assert cp.rotate_seconds(40) == 10800 - 40 * 60 - 10 * 60 - 5 * 60
 
+# The click: step (22 Oct): parses with its name kept, counts as one action, compiles to an accessibility press
+assert U.parse_steps(["click:Undo Trash", "key:ctrl+a", "click: Restore "]) == ["click:Undo Trash", "key:ctrl+a", "click:Restore"]
+assert U.parse_step("click:") is None and U.action_count(["click:Trash", "wait:2", "click:Restore"]) == 2
+code = U.candidate_code(["click:Undo Trash"], {"proc": "nautilus"})
+compile(code, "<click>", "exec")
+assert "'Undo Trash'" in code and "'nautilus'" in code and "doAction" in code
+
 print("COLLECTOR FLOW CHECKS PASSED")

@@ -29,10 +29,10 @@ try:
 except Exception:
     pass
 import pyatspi
-# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise
+# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise; "*" = every application
 _proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None
-pids = set(int(x) for x in subprocess.run(["pgrep", "-x", _proc] if _proc else ["pgrep", "-f", "soffice"],
-                                          capture_output=True, text=True).stdout.split())
+pids = None if _proc == "*" else set(int(x) for x in subprocess.run(["pgrep", "-x", _proc] if _proc else ["pgrep", "-f", "soffice"],
+                                                                     capture_output=True, text=True).stdout.split())
 def norm(s):
     return (s or "").replace("’", "'").replace("~", "").replace("_", "").lower()
 def walk(n, ok, d=0):
@@ -55,7 +55,7 @@ def walk(n, ok, d=0):
 def find(ok):
     for app in pyatspi.Registry.getDesktop(0):
         try:
-            if int(app.get_process_id()) not in pids:
+            if pids is not None and int(app.get_process_id()) not in pids:
                 continue
         except Exception:
             continue
@@ -101,6 +101,35 @@ print("selected" if ok else "select failed")
 def press_code(label: str, settle: float = 3, proc: str = "") -> str:
     """proc: the process whose windows to search (pgrep -x name, e.g. 'nautilus'); LibreOffice when empty."""
     return ("__import__('subprocess').run(['python3', '-c', " + repr(PRESS_PY) + ", " + repr(label) + ", " + repr(proc) + "], timeout=30); "
+            f"time.sleep({settle})")
+
+
+# The click: undo step (decided with the author 22 Oct): a named control on screen, pressed through its
+# accessibility action, as a mouse click would.  Wider than PRESS_PY: menu entries in GTK popover menus (Files'
+# "Undo Trash"), sidebar rows (a list item whose label is the name), toggles and radios; a node without an action
+# of its own hands the press to the nearest ancestor that has one (the label inside a sidebar row).
+CLICK_PY = _A11Y_HEAD + r'''
+want = norm(sys.argv[1])
+ROLES = ("push button", "menu item", "check menu item", "radio menu item", "check box", "toggle button",
+         "radio button", "list item", "label", "link", "table cell")
+n = find(lambda n: n.getRoleName() in ROLES and norm(n.name) == want)
+if n is None:
+    print("not found"); sys.exit(0)
+node, hops = n, 0
+while node is not None and hops < 4:
+    try:
+        a = node.queryAction()
+        if a.nActions > 0:
+            a.doAction(0); print("clicked", node.getRoleName(), repr(node.name), a.getName(0)); sys.exit(0)
+    except Exception:
+        pass
+    node, hops = node.parent, hops + 1
+print("no action")
+'''
+
+
+def click_code(label: str, settle: float = 3, proc: str = "*") -> str:
+    return ("__import__('subprocess').run(['python3', '-c', " + repr(CLICK_PY) + ", " + repr(label) + ", " + repr(proc) + "], timeout=30); "
             f"time.sleep({settle})")
 
 

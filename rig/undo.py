@@ -4,6 +4,7 @@ language shared with the proposer:
 
     key:<chord>      pyautogui.hotkey / press        reopen          relaunch or reopen the task file, maximised
     wait:<s>         time.sleep                      menu:alt+e,u    open a menu by Alt accelerator, press the item's mnemonic letters
+    click:<label>    press the named button, menu entry or sidebar row through its accessibility action (22 Oct)
 
 Every step is something a user could do at the keyboard with what the applications themselves offer; nothing here
 touches snapshots, backups or copies.  No typing (decided with the author 20 Oct 2026): re-entering lost content or
@@ -122,6 +123,11 @@ def step_code(step: str, ctx: dict) -> str:
         return "pyautogui.hotkey(" + ", ".join(_py(p) for p in parts) + "); time.sleep(0.8)"
     if kind == "type":
         raise ValueError("type: is not an undo step (dropped 20 Oct 2026)")
+    if kind == "click":
+        # a named control on screen, pressed through its accessibility action (22 Oct, decided with the author):
+        # a button, a menu entry, a sidebar row.  ctx["proc"] names the application to search ("*" = all)
+        from rig.dialog_keys import click_code
+        return click_code(arg, settle=3, proc=ctx.get("proc") or "*")
     if kind == "wait":
         return f"time.sleep({min(float(arg), 8.0)})"
     if kind == "menu":
@@ -191,6 +197,9 @@ def parse_step(raw) -> Optional[str]:
     if kind == "menu":
         m = "menu:" + arg.strip().lower().replace(" ", "")
         return m if _MENU.match(m) else None
+    if kind == "click":
+        label = " ".join(arg.split())              # the control's name as shown, case kept
+        return "click:" + label if 0 < len(label) <= 60 else None
     return None
 
 

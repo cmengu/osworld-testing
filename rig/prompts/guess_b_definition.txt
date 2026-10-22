@@ -26,7 +26,8 @@ Answer in JSON with exactly these fields:
     "wait:<seconds>" waits, at most 8 (after a dialog opens or a file is saved)
     "reopen"        opens again the document or folder the task opened (relaunching its application if it is closed), maximised
     "menu:<alt-chord>,<letters>" opens a menu by its Alt accelerator and presses the item's mnemonic letters, e.g. "menu:alt+e,u"
-  A command without a known keyboard route, a mouse click or anything else not in this list cannot be executed; if the undo needs one, still answer, using the nearest keyboard route you know.
+    "click:<label>" clicks a button, menu entry or sidebar row by the name it shows, e.g. "click:Undo Trash", "click:Restore", "click:Trash"
+  Anything else not in this list cannot be executed; if the undo needs one, still answer, using the nearest route you know.
 - "length": the number of actions in shortest_undo, not counting "wait" steps, or null if not reversible
 - "confidence": a number from 0 to 1
 - "reason": one or two sentences

@@ -593,7 +593,8 @@ class Collector:
         closest = None           # (score, index, candidate, tdiffs, fdiffs)
         proposal = {"model": None}
         office_running = any("LibreOffice" in t for t in titles(S1.windows))
-        ctx = {"doc_path": row.get("open_path"), "office_running": office_running, "reopen_cmd": row.get("reopen_cmd")}
+        ctx = {"doc_path": row.get("open_path"), "office_running": office_running, "reopen_cmd": row.get("reopen_cmd"),
+               "proc": {"files": "nautilus", "thunderbird": "thunderbird", "libreoffice-calc": ""}.get(rec["app"], "*")}
         reopens_office = not row.get("reopen_cmd") or "libreoffice" in " ".join(row["reopen_cmd"])
 
         def office_after(cand):
