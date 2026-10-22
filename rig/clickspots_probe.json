@@ -870,7 +870,7 @@
   {
    "id": "files_open_folder",
    "band": "ordinary",
-   "desc": "open the folder sub (End, Enter)",
+   "desc": "open the folder sub (Ctrl+L, its path, Enter)",
    "setup": "",
    "code": "",
    "pause": null,
@@ -1528,7 +1528,7 @@
   },
   {
    "row_id": "probe-0014",
-   "probe": "a: open a folder; Alt+Left goes back",
+   "probe": "a: open a folder by its path; Alt+Left goes back",
    "spot_id": "files_open_folder",
    "task_id": "rig-files-probe",
    "app": "files",
@@ -1545,7 +1545,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "pyautogui.press('end'); time.sleep(1); pyautogui.press('enter'); time.sleep(3)",
+   "code": "pyautogui.hotkey('ctrl', 'l'); time.sleep(1); pyautogui.typewrite('/home/user/Desktop/probe/sub'); pyautogui.press('enter'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:org.gnome.Nautilus",

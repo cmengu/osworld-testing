@@ -59,7 +59,7 @@ SPOTS = [
     ("files_new_folder", "ordinary", "Ctrl+Shift+N, a new folder named newdir"),
     ("files_replace_1", "boundary", "paste sub/b.txt into probe/, where b.txt exists: conflict question"),
     ("files_replace_2", "destructive", "Replace in the conflict question: b.txt is overwritten"),
-    ("files_open_folder", "ordinary", "open the folder sub (End, Enter)"),
+    ("files_open_folder", "ordinary", "open the folder sub (Ctrl+L, its path, Enter)"),
     ("files_empty_trash_1", "boundary", "in the Trash view, Empty… (Alt+E): 'Empty all items from Trash?'"),
     ("files_empty_trash_2", "destructive", "Empty Trash (Alt+T): the trashed a.txt is gone for good"),
     ("files_empty_trash_button", "boundary", "in the Trash view, press the Empty… button (accessibility action)"),
@@ -160,8 +160,10 @@ row("files_replace_2", FT, "files", "pyautogui.press('enter'); time.sleep(3)",
     setup=copy_setup + "; pyautogui.hotkey('ctrl', 'v'); time.sleep(2); " + wait_windows(2), expect_before="none", expect=NAUT,
     reopen=reopen_files, trajectory=traj + ["copied sub/b.txt, went back up to probe/, pasted: the conflict question is open"],
     sequence="files_replace", step=2)
-row("files_open_folder", FT, "files", "pyautogui.press('end'); time.sleep(1); pyautogui.press('enter'); time.sleep(3)",   # End: sub is last (a.txt, b.txt, sub); Home opened a.txt in gedit (21 Oct)
-    label="a: open a folder; Alt+Left goes back", known="REVERSIBLE", expect_before=NAUT, expect=NAUT,
+row("files_open_folder", FT, "files",
+    # by the location bar: Home and End both left a.txt selected and Enter opened it in gedit (21-22 Oct)
+    "pyautogui.hotkey('ctrl', 'l'); time.sleep(1); pyautogui.typewrite('/home/user/Desktop/probe/sub'); pyautogui.press('enter'); time.sleep(3)",
+    label="a: open a folder by its path; Alt+Left goes back", known="REVERSIBLE", expect_before=NAUT, expect=NAUT,
     reopen=reopen_files, trajectory=traj)
 
 # Empty Trash: a.txt goes to the Trash (Delete), Files shows the Trash (Ctrl+L, trash:///), then the bar's Empty…
