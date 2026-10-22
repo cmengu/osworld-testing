@@ -193,3 +193,14 @@ by hand); the collector now waits for the network before closing or restarting.
 |---|---|---|---|---|---|---|
 | 2026-10-21 | treediff.py | hidden nodes under a scroll-pane or viewport are kept (showing there only says what the viewport reaches); hidden nodes elsewhere are still dropped | scroll position is not state | probe-0012 c04 confirm: the sidebar's "Other Locations" row showing in one instance, not in the other (window heights differed) | 49 | none new (pilot-0079 as before) |
 | 2026-10-21 | mask.py | ~/.local/share/gnome-shell/ ignored (the shell's notification log) | application cache/log, not state | probe-0012 c05: a notification changed the file | 49 | none |
+
+## 22 October 2026, 21:45: two rules the definition already states, applied to the file manager
+
+| date | file | rule | class | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-22 | mask.py | enabled/sensitive of push-button, toggle-button and menu items ignored everywhere (before: inside tool-bars only) | the enabled or disabled look of buttons is not state (definition §1) | probe-0014 c11: Alt+Left brought the folder back and enabled Forward | 51 | probe-0014 → REVERSIBLE (Alt+Left) |
+| 2026-10-22 | treediff.py | Files' selection readout labels ('“a.txt” selected', '(6 bytes)', '(containing 1 item)', 'n items selected') dropped | the selection is not state (definition §1), as the Calc status-bar readouts already were | same | 51 | none further (pilot-0079 as before) |
+
+Step language: `click:<label>` added (decided with the author 22 Oct): a named button, menu entry or sidebar row pressed
+through its accessibility action.  Row 7 re-runs with "click:Undo Trash" and the Trash-restore route forced first;
+row 14 re-runs for confirmation of Alt+Left.

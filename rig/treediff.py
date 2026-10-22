@@ -91,6 +91,9 @@ NEVER_HIDDEN = frozenset({"application", "desktop-frame"})
 # the window heights differed), and scroll position is not state.  Content under a scroll pane is kept whether or
 # not it is scrolled into view; a closed popover's widgets sit outside any scroll pane and are still dropped.
 SCROLLED = ("scroll-pane", "viewport")
+# Since 22 Oct: Files' selection readout ('“a.txt” selected', '(6 bytes)', '(containing 1 item)', '3 items selected')
+# is the selection, which the definition excludes, as the Calc status-bar readouts already are (probe-0014 c11)
+FILES_SELECTION_READOUT = re.compile(r"^(“.*” selected|\(\d+ bytes\)|\([\d.,]+ [kMG]?B\)|\(containing \d+ items?\)|\d+ items? selected.*|\(\d+ items?\))$")
 
 
 def _showing(el: ET.Element) -> bool:
@@ -144,6 +147,8 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
                 continue                # empty unnamed panel: Start Center leftovers sit in front of content
             if tag == "table-cell" and _empty_cell(child):
                 continue                # viewport placeholder: no content, no formatting
+            if tag == "label" and FILES_SELECTION_READOUT.match(name):
+                continue                # the file manager's selection readout: the selection is not state
             if DROP_HIDDEN and tag not in NEVER_HIDDEN and not _showing(child) and not any(f"/{s}[" in prefix for s in SCROLLED):
                 continue                # not on screen: a closed popover's widgets, a hidden placeholder
             key = (tag, name)

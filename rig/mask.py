@@ -43,6 +43,11 @@ IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/sha
 # undo brings old scrollback back, so comparing it would make every terminal action one-way by construction; what
 # a command does to files is in the digest.  No Calc row has a terminal node.
 IGNORED_TREE_ATTRS = {("terminal", "text")}
+# Since 22 Oct: the definition says the enabled or disabled look of buttons (Undo, Redo, Forward, Back...) is not
+# state; treediff already drops it inside tool-bars, and Files' header bar is not a tool-bar (probe-0014 c11: Alt+Left
+# brought the folder back and left the Forward button enabled)
+IGNORED_TREE_ATTRS |= {(tag, a) for tag in ("push-button", "toggle-button", "menu-item", "check-menu-item", "radio-menu-item")
+                       for a in ("enabled", "sensitive")}
 # Rule since 21 Oct (decided with the author): the numeric readouts of scroll bars and split panes (value, min,
 # max, step) are scroll position and window geometry, not state.  Files' icon view reports them differently for
 # two instances of the same folder (probe-0012 c04: Escape closed the conflict question and left a split-pane
