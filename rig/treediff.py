@@ -161,6 +161,16 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
     root_path = "/" + _local(root.tag)
     record(root, root_path, root.get("name", ""))
     walk(root, root_path)
+    # unnamed fillers and panels left childless by the drops above are containers of what was dropped (the
+    # file manager's selection readout sits in two nested fillers that exist only while something is selected:
+    # probe-0007 c00, 22 Oct, 2 tree differences after click:Undo Trash with the files already equal)
+    while True:
+        empty = [p for p, a in out.items() if tag_of(p) in ("filler", "panel") and not a.get("name") and "text" not in a
+                 and not any(q.startswith(p + "/") for q in out)]
+        if not empty:
+            break
+        for p in empty:
+            del out[p]
     return out
 
 
