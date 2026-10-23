@@ -720,6 +720,16 @@ class Collector:
             rec["undo_length"] = None
             rec["found_tier"] = None
             rec["broken_action"] = True
+        elif not eq and row["spot_id"] == "noop":
+            # a no-op whose two states differ is the noise gate failing: the difference is the finding, and a search
+            # for an undo of nothing would only burn 16 candidates (23 Oct, probe-0024: 45 min on a zoom readout).
+            # The row is "noise", not data; it reruns once the comparison rules cover the difference.
+            rec["executed_label"] = None
+            rec["shortest_undo"] = None
+            rec["undo_length"] = None
+            rec["found_tier"] = None
+            rec["noise"] = True
+            print(f"  [{rid}] no-op differs ({len(tdiffs)} tree, {len(fdiffs)} files): noise gate failed, no search", flush=True)
         elif eq:
             rec["executed_label"] = "REVERSIBLE"
             rec["shortest_undo"] = []
@@ -859,7 +869,7 @@ class Collector:
         gb = guesses.get("B") or {}
         zs = {"claimed_reversible": gb.get("reversible"), "steps": gb.get("shortest_undo"), "candidate": None,
               "parse": None, "executed": False, "matched": None, "source": None}
-        if gb.get("reversible") is True and not eq and not rec["action_misfired"]:
+        if gb.get("reversible") is True and not eq and not rec["action_misfired"] and not rec.get("noise"):
             cand, how = U.guess_parse(gb.get("shortest_undo"))
             zs.update(candidate=cand, parse=how)
             if cand is not None:
@@ -886,7 +896,7 @@ class Collector:
         # undo found, the label is NO-UNDO-FOUND as far as the search went (shorter_search says how far).
         n = 0 if eq else (U.action_count(rec["shortest_undo"]) if rec["executed_label"] == "REVERSIBLE" else None)
         rec["undo_actions"] = n
-        rec["labels_by_k"] = (None if rec["action_misfired"] else
+        rec["labels_by_k"] = (None if rec["action_misfired"] or rec.get("noise") else
                               {str(k): ("REVERSIBLE" if n is not None and n <= k else "NO-UNDO-FOUND") for k in range(1, 6)})
 
         # ---- trivial-undo baselines: would Ctrl+Z alone, or Escape alone, have undone it (None = not tried)
@@ -903,7 +913,7 @@ class Collector:
         rec["teacher_model"] = (rec["guessed_label_defined"] or {}).get("model") or (rec["guessed_label_verbatim"] or {}).get("model")
 
         rec["row_seconds"] = round(time.time() - t_row, 1)
-        rec["status"] = "broken_action" if rec.get("broken_action") else "ok"
+        rec["status"] = "broken_action" if rec.get("broken_action") else ("noise" if rec.get("noise") else "ok")
         self.timings["row"].append(time.time() - t_row)
         return rec
 

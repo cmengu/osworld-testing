@@ -47,6 +47,7 @@ NODE = "__node__"  # pseudo-attribute meaning "the node itself exists"
 # links flip it as the page renders: probe-0024, a no-op, differed in one link's showing flag).  Nodes that are not
 # showing outside scroll panes are dropped whole (DROP_HIDDEN below); the attribute itself is never compared.
 IGNORED_ATTRS = frozenset({"screencoord", "size", "focused", "active", "showing"})
+ZOOM_READOUT = re.compile(r"\[(Set zoom level|Zoom)\]")
 # Toolbar enablement is derived UI state that LibreOffice refreshes asynchronously after a command.  The
 # smoke test caught 2 of 20 click-spots differing on exactly these flags (Paste after a cut, Data Sources
 # after a row delete) with the document identical, so they are dropped on every node under a tool-bar.
@@ -131,6 +132,9 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
                 attrs.pop("text", None) # font name / size boxes: echo of the cursor cell
             for a in FORMAT_READOUT_ATTRS:
                 attrs.pop(a, None)      # Bold, Currency, ...: lit for the cursor cell
+        if ZOOM_READOUT.search(path):
+            attrs.pop("text", None)     # the zoom box (PDF viewer "Set zoom level"): view magnification, like scroll
+                                        # position, is not state (probe-0024, 23 Oct: 27% vs 100% between two instances)
         out[path] = attrs
 
     def walk(node: ET.Element, prefix: str) -> None:
