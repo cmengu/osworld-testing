@@ -219,3 +219,5 @@ row 14 re-runs for confirmation of Alt+Left.
 | 2026-10-23 | mask.py | ~/.config/Code/ ignored | VS Code's cache, storage and logs: application files, not state (definition §1) | probe-0026 (VS Code no-op): 56 files changed, tree equal | 63 | none |
 
 Collector: a no-op whose states differ is recorded as "noise" without a search (the difference is the finding).
+| 2026-10-23 | treediff.py | accessibility action descriptions and key bindings (act:*_desc, *_kb) are never compared | how a widget can be driven, not what it shows | probe-0026 (VS Code no-op, second run) | 63 | none |
+| 2026-10-23 | treediff.py | status-bar subtrees of applications other than LibreOffice are dropped | an editor's status bar is readouts (problems, ports, notifications, cursor position) | same | 63 | none |

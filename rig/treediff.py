@@ -114,6 +114,9 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
             lk = _local(k)
             if lk in ignored:
                 continue
+            if lk.endswith(("_desc", "_kb")):
+                continue                # accessibility action descriptions and key bindings (act:*): how a widget can
+                                        # be driven, not what it shows (VS Code's panels gain them as they load, 23 Oct)
             if lk in TOOLBAR_STATE_ATTRS and "/tool-bar[" in path:
                 continue
             attrs[lk] = v
@@ -156,6 +159,9 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
                 continue                # viewport placeholder: no content, no formatting
             if tag == "label" and FILES_SELECTION_READOUT.match(name):
                 continue                # the file manager's selection readout: the selection is not state
+            if tag == "status-bar" and "LibreOffice" not in prefix:
+                continue                # an editor's status bar is readouts (problems, ports, notifications, cursor
+                                        # position; VS Code, 23 Oct); LibreOffice's is masked item by item by the mask run
             if DROP_HIDDEN and tag not in NEVER_HIDDEN and not _showing(child) and not any(f"/{s}[" in prefix for s in SCROLLED):
                 continue                # not on screen: a closed popover's widgets, a hidden placeholder
             key = (tag, name)
