@@ -43,7 +43,10 @@ import xml.etree.ElementTree as ET
 
 Canon = Dict[str, Dict[str, str]]
 NODE = "__node__"  # pseudo-attribute meaning "the node itself exists"
-IGNORED_ATTRS = frozenset({"screencoord", "size", "focused", "active"})
+# "showing" since 23 Oct: whether a widget is inside the viewport is scroll position, not state (the PDF viewer's
+# links flip it as the page renders: probe-0024, a no-op, differed in one link's showing flag).  Nodes that are not
+# showing outside scroll panes are dropped whole (DROP_HIDDEN below); the attribute itself is never compared.
+IGNORED_ATTRS = frozenset({"screencoord", "size", "focused", "active", "showing"})
 # Toolbar enablement is derived UI state that LibreOffice refreshes asynchronously after a command.  The
 # smoke test caught 2 of 20 click-spots differing on exactly these flags (Paste after a cut, Data Sources
 # after a row delete) with the document identical, so they are dropped on every node under a tool-bar.

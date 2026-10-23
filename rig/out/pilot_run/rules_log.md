@@ -204,3 +204,9 @@ by hand); the collector now waits for the network before closing or restarting.
 Step language: `click:<label>` added (decided with the author 22 Oct): a named button, menu entry or sidebar row pressed
 through its accessibility action.  Row 7 re-runs with "click:Undo Trash" and the Trash-restore route forced first;
 row 14 re-runs for confirmation of Alt+Left.
+
+## 23 October 2026, 11:35: "showing" is a viewport attribute, never compared
+
+| date | file | rule | class | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-23 | treediff.py | the st:showing attribute is ignored on every node (nodes not showing outside scroll panes are still dropped whole) | scroll position / rendering is not state | probe-0024 (Files+PDF no-op): one link in the PDF viewer flipped its showing flag between two reads | 61 (probe 23, pilot_run2 30, pilot_rerun 8) | none (pilot-0079 as before) |
