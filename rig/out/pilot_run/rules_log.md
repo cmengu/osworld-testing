@@ -259,3 +259,10 @@ Consequence during the run: a Calc row whose undo leaves focus on the Input line
 moves on to the next candidate until the 30-minute cap; it is recorded UNCONFIRMED (or REVERSIBLE if the replay
 lands) and `--recompare` after the run re-judges its confirm snapshots under this rule. Cost only; the frozen rule set
 stays in force for the collectors (rules 517628816685 in every record of this run).
+
+## 24 October 2026, 00:30: relaunch after the Modal spend limit; the editable-flag rule is now in force for the run
+
+The three collectors were restarted after the workspace limit was raised; they import the current treediff.py, so the 80
+remaining rows are judged under rules c7dd467fec36 (the Input line's `editable` flag ignored) while the 7 rows of
+23 Oct carry 517628816685. The rule flips no label among the 82 recompared rows and `--recompare` of pilot150_a/b/c
+brings the 7 under the same rules, so the run stays comparable. No other rule changes until the run ends.
