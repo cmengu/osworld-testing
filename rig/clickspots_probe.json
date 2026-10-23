@@ -2018,7 +2018,11 @@
    ],
    "trajectory": [],
    "known_answer": null,
-   "forced_candidates": null,
+   "forced_candidates": [
+    [
+     "key:ctrl+w"
+    ]
+   ],
    "expect_change": [
     "tree",
     "windows"

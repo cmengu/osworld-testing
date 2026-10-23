@@ -234,7 +234,8 @@ row("pdf_close", MA["files_pdf"], "multi_apps", "pyautogui.hotkey('alt', 'f4'); 
     reopen=["xdg-open", "/home/user/Desktop/book/Spectral Graph Theory.pdf"])
 row("noop", MA["vscode"], "multi_apps", NOOP, label="b: no-op, VS Code task (noise gate; does its tree show anything?)", known="REVERSIBLE")
 row("code_new_file", MA["vscode"], "multi_apps", "pyautogui.hotkey('ctrl', 'n'); time.sleep(3)",
-    label="b: new untitled editor; Ctrl+W closes it", known=None, reopen=["code", "-g", "/home/user/Desktop/doc_proc/"])
+    label="b: new untitled editor; Ctrl+W closes it", known=None, reopen=["code", "-g", "/home/user/Desktop/doc_proc/"],
+    forced=[["key:ctrl+w"]])   # 23 Oct: Ctrl+W sat at position 17 of the tiers, past the 16-candidate budget
 row("noop", MA["writer"], "multi_apps", NOOP, label="b: no-op, Writer task (noise gate)", known="REVERSIBLE",
     expect_before="apps:soffice", expect="apps:soffice")
 row("writer_type", MA["writer"], "multi_apps", "pyautogui.typewrite('hello'); time.sleep(2)",
