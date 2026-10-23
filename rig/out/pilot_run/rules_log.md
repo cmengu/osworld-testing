@@ -221,3 +221,4 @@ row 14 re-runs for confirmation of Alt+Left.
 Collector: a no-op whose states differ is recorded as "noise" without a search (the difference is the finding).
 | 2026-10-23 | treediff.py | accessibility action descriptions and key bindings (act:*_desc, *_kb) are never compared | how a widget can be driven, not what it shows | probe-0026 (VS Code no-op, second run) | 63 | none |
 | 2026-10-23 | treediff.py | status-bar subtrees of applications other than LibreOffice are dropped | an editor's status bar is readouts (problems, ports, notifications, cursor position) | same | 63 | none |
+| 2026-10-23 | treediff.py | Writer's status-bar word/character count is not compared | a lazily refreshed echo of the document text, which is compared directly | probe-0029 c00 (Writer typing, Ctrl+Z): text back, count still +5 | 63 | none |

@@ -48,6 +48,7 @@ NODE = "__node__"  # pseudo-attribute meaning "the node itself exists"
 # showing outside scroll panes are dropped whole (DROP_HIDDEN below); the attribute itself is never compared.
 IGNORED_ATTRS = frozenset({"screencoord", "size", "focused", "active", "showing"})
 ZOOM_READOUT = re.compile(r"\[(Set zoom level|Zoom)\]")
+WRITER_COUNT_READOUT = re.compile(r"^[\d,]+ words?, [\d,]+ characters?( selected)?$")
 # Toolbar enablement is derived UI state that LibreOffice refreshes asynchronously after a command.  The
 # smoke test caught 2 of 20 click-spots differing on exactly these flags (Paste after a cut, Data Sources
 # after a row delete) with the document identical, so they are dropped on every node under a tool-bar.
@@ -130,6 +131,10 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
             attrs.pop("selected", None)     # which cells are highlighted is not document state
         if "/status-bar[" in path and SELECTION_READOUT.match(attrs.get("text", "")):
             attrs.pop("text", None)         # "Selected: 3 rows", "Sum=12": echoes of the selection
+        if "/status-bar[" in path and WRITER_COUNT_READOUT.match(attrs.get("text", "")):
+            attrs.pop("text", None)         # Writer's "218 words, 1,433 characters": a lazily refreshed echo of the
+                                            # document text, which is compared directly (probe-0029 c00, 23 Oct:
+                                            # the text was back after Ctrl+Z, the count still said +5)
         if FORMAT_READOUT_BAR in path:
             if _local(node.tag) in ("text", "paragraph"):
                 attrs.pop("text", None) # font name / size boxes: echo of the cursor cell
