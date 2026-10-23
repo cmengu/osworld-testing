@@ -274,6 +274,17 @@ def as_root(env, script: str) -> str:
 def prime_generic(env, task: dict) -> str:
     script = PRIME_GENERIC.format(cache=CACHE_DIR, top=BASELINE_TOP, tar=BASELINE_TAR, windows=BASELINE_WINDOWS,
                                   roots=" ".join(_shlex.quote(r) for r in HOME_ROOTS))
+    # the window list is recorded only once the task's windows are up and their titles have stopped changing: on
+    # 23 Oct (probe-0026) the prime ran before VS Code's window existed, the baseline was empty, every reset was
+    # "ready" at once, and the before-state was read while VS Code was still loading
+    if gui_steps(task):
+        deadline, prev = time.time() + 120, None
+        while time.time() < deadline:
+            cur = _windows_now(env)
+            if cur and cur == prev:
+                break
+            prev = cur
+            time.sleep(5)
     return (vm_out(env, as_root(env, script), timeout=110) + "\n"
             + vm_out(env, PRIME_WINDOWS.format(windows=BASELINE_WINDOWS, active=BASELINE_ACTIVE, select_sh=FILES_SELECT_SH,
                                                active_name=ACTIVE_NAME_SH), timeout=20))
@@ -333,8 +344,13 @@ def generic_fresh_start(env, task: dict, wait_s: int = 90) -> str:
             out = vm_out(env, WINDOWS_READY_SH.format(windows=BASELINE_WINDOWS), timeout=20)
             missing = [l for l in out.splitlines() if l.strip() and l.strip() != "READY"]
             if "READY" in out.splitlines():
-                missing = []
-                break
+                # ready twice, 4 s apart, with the same titles: a window still loading changes its title
+                # ("Visual Studio Code" -> "doc_proc - Visual Studio Code"; 23 Oct, probe-0026)
+                titles_a = _windows_now(env)
+                time.sleep(4)
+                if _windows_now(env) == titles_a and "READY" in vm_out(env, WINDOWS_READY_SH.format(windows=BASELINE_WINDOWS), timeout=20).splitlines():
+                    missing = []
+                    break
             time.sleep(3)
         if not missing:
             break
