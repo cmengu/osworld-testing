@@ -46,6 +46,7 @@ NODE = "__node__"  # pseudo-attribute meaning "the node itself exists"
 # "showing" since 23 Oct: whether a widget is inside the viewport is scroll position, not state (the PDF viewer's
 # links flip it as the page renders: probe-0024, a no-op, differed in one link's showing flag).  Nodes that are not
 # showing outside scroll panes are dropped whole (DROP_HIDDEN below); the attribute itself is never compared.
+GENERATED_ID = re.compile(r"[A-Za-z_-]\d{13,}$")   # name + epoch milliseconds + counter, XUL-generated
 IGNORED_ATTRS = frozenset({"screencoord", "size", "focused", "active", "showing"})
 ZOOM_READOUT = re.compile(r"\[(Set zoom level|Zoom)\]")
 WRITER_COUNT_READOUT = re.compile(r"^[\d,]+ words?, [\d,]+ characters?( selected)?$")
@@ -118,6 +119,10 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
             if lk.endswith(("_desc", "_kb")):
                 continue                # accessibility action descriptions and key bindings (act:*): how a widget can
                                         # be driven, not what it shows (VS Code's panels gain them as they load, 23 Oct)
+            if lk == "id" and GENERATED_ID.search(v):
+                continue                # a widget id with an embedded creation timestamp ("spring17927575650161"):
+                                        # Thunderbird's toolbar springs and separators are minted per window and never
+                                        # match across instances (probe-0033 confirmation, 23 Oct); identity, not state
             if lk in TOOLBAR_STATE_ATTRS and "/tool-bar[" in path:
                 continue
             attrs[lk] = v
