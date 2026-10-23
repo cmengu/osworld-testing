@@ -249,7 +249,8 @@ row("open_terminal", MA["bare"], "multi_apps", "pyautogui.hotkey('ctrl', 'alt', 
 TB = task_id("thunderbird", "dd84e895")
 row("noop", TB, "thunderbird", NOOP, label="c: no-op in Thunderbird (noise gate: its profile files and tree)", known="REVERSIBLE")
 row("tb_compose", TB, "thunderbird", "pyautogui.hotkey('ctrl', 'n'); time.sleep(4)",
-    label="c: new message window; closing it undoes it", known=None, reopen=["/usr/bin/thunderbird"])
+    label="c: new message window; closing it undoes it", known=None, reopen=["/usr/bin/thunderbird"],
+    forced=[["key:alt+f4"]])   # 23 Oct: Alt+F4 closed the window at c14 of 16 (only content-prefs.sqlite differed, now masked); confirmation rerun
 
 # What each action must visibly change (20 Oct): the collector retries an action that changed none of these on a
 # fresh instance, and marks the row broken after three misfires instead of searching for an undo of nothing

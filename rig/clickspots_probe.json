@@ -2212,7 +2212,11 @@
    ],
    "trajectory": [],
    "known_answer": null,
-   "forced_candidates": null,
+   "forced_candidates": [
+    [
+     "key:alt+f4"
+    ]
+   ],
    "expect_change": [
     "windows"
    ]

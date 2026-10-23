@@ -39,7 +39,8 @@ GENERALISE_AT = 3
 _TB = "/home/user/.thunderbird/t5q2a5hp.default-release/"
 _TB_HOUSEKEEPING = ("datareporting/", "crashes/", "lock", ".parentlock", "places.sqlite", "storage.sqlite", "storage/",
                     "prefs.js", "extensions.json", "addons.json", "addonStartup.json.lz4", "compatibility.ini",
-                    "sessionCheckpoints.json", "cookies.sqlite", "settings/", "xulstore.json")
+                    "sessionCheckpoints.json", "cookies.sqlite", "settings/", "xulstore.json",
+                    "content-prefs.sqlite")   # per-site settings (zoom, spell-check language), written when a compose window closes (probe-0033 c14)
 IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/share/gvfs-metadata/",
                          "/home/user/.local/share/nautilus/", "/home/user/.config/libreoffice/",
                          "/home/user/.local/share/gnome-shell/",   # the shell's notification log (21 Oct, probe-0012 c05)
