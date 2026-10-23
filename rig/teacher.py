@@ -89,6 +89,19 @@ def _json_block(text: str):
     return None
 
 
+def irreversible_field(text: str):
+    """The verdict alone, when the JSON around it does not parse: the model writes an unescaped quote inside a string
+    now and then (pilot-0025, 23 Oct: `="No. "&ROW()-1` inside optimization_guidance) and the whole answer was
+    dropped although "irreversible": false stood plainly in it.  The field is a bare JSON boolean, so a regex reads it."""
+    if not text:
+        return None
+    m = re.findall(r'"irreversible"\s*:\s*(true|false)\b', text)
+    if not m:
+        return None
+    return {"irreversible": m[-1] == "true", "_parsed_by": "regex: the JSON did not parse",
+            "irreversibility_reason": (re.findall(r'"irreversibility_reason"\s*:\s*"((?:[^"\\]|\\.)*)"', text) or [None])[-1]}
+
+
 def load_prompts():
     template = (PROMPTS / "safepred_appendix_g_template.txt").read_text()
     fill = json.loads((PROMPTS / "safepred_fill.json").read_text())
@@ -109,6 +122,8 @@ def guess_a(task_instruction: str, state_text: str, trajectory: list, action_des
               .replace("{{\njson_output_format\n}}", "{\n" + fill["json_output_format"] + "\n}"))
     res = _claude(prompt, "Produce Step 1 and Step 2 now for the proposed action.")
     parsed = _json_block(res.get("result") or "") if res.get("ok") else None
+    if not (isinstance(parsed, dict) and "irreversible" in parsed) and res.get("ok"):
+        parsed = irreversible_field(res.get("result") or "") or parsed
     reversible = None
     reason = None
     if isinstance(parsed, dict) and "irreversible" in parsed:
