@@ -210,3 +210,12 @@ row 14 re-runs for confirmation of Alt+Left.
 | date | file | rule | class | trigger row | rows re-compared | labels flipped |
 |---|---|---|---|---|---|---|
 | 2026-10-23 | treediff.py | the st:showing attribute is ignored on every node (nodes not showing outside scroll panes are still dropped whole) | scroll position / rendering is not state | probe-0024 (Files+PDF no-op): one link in the PDF viewer flipped its showing flag between two reads | 61 (probe 23, pilot_run2 30, pilot_rerun 8) | none (pilot-0079 as before) |
+
+## 23 October 2026, 12:50: more application files that are not state; the PDF viewer's zoom readout
+
+| date | file | rule | class | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-23 | treediff.py | the zoom box of the PDF viewer ("Set zoom level") is not compared | view magnification, like scroll position, is not state | probe-0024 (Files+PDF no-op): 27% vs 100% between two instances | 63 | none |
+| 2026-10-23 | mask.py | ~/.config/Code/ ignored | VS Code's cache, storage and logs: application files, not state (definition §1) | probe-0026 (VS Code no-op): 56 files changed, tree equal | 63 | none |
+
+Collector: a no-op whose states differ is recorded as "noise" without a search (the difference is the finding).

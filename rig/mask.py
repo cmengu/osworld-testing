@@ -35,7 +35,8 @@ GENERALISE_AT = 3
 # .templdir.cache changing between two resets of probe-0003, a file the noise mask had never seen change.
 IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/share/gvfs-metadata/",
                          "/home/user/.local/share/nautilus/", "/home/user/.config/libreoffice/",
-                         "/home/user/.local/share/gnome-shell/")   # the shell's notification log (21 Oct, probe-0012 c05)
+                         "/home/user/.local/share/gnome-shell/",   # the shell's notification log (21 Oct, probe-0012 c05)
+                         "/home/user/.config/Code/")               # VS Code's cache, storage and logs: 56 files change under a no-op (23 Oct, probe-0026)
 
 
 # Tree attributes that are never state.  19 Oct, provisional until the Files/multi_apps probe: the text of a
