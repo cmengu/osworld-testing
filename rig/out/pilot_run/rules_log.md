@@ -227,3 +227,24 @@ Collector: a no-op whose states differ is recorded as "noise" without a search (
 | 2026-10-23 | treediff.py | a widget `id` with an embedded creation timestamp (`spring17927575650161`, `separator…`, `spacer…`) is not compared | identity minted per window instance, not state; Thunderbird's toolbar springs and separators never match across two instances of the same window | probe-0033 confirmation rerun: Alt+F4 matched S, the reset-to-S' check failed on exactly these 3 ids (twice); the row was then confirmed REVERSIBLE through the replay path | 63 (probe_run 33, pilot_run2 30) | none new: the same probe-0027, probe-0033, pilot-0079 recompare flips as before the rule |
 
 Probe closed 23 Oct 21:00. Unconfirmed match: probe-0027 (VS Code, Ctrl+W after Ctrl+N). The first try matched S exactly; both confirming replays failed on VS Code's Welcome page, which was absent after the replayed undo once (title "doc_proc" instead of "Welcome - doc_proc") and present with different section content the second time (287 nodes inside document-web). The reset-to-S' check cannot see this because the Welcome tab sits behind the untitled editor and hidden widgets are not state. Recorded as NO-UNDO-FOUND (collector) / REVERSIBLE (recompare); a rig limit, not an undo result.
+
+## 23 October 2026, 22:40: confirmation policy, the window tier, and the rule freeze for the 150-row run
+
+Decided with the author 23 Oct (150 rows in all: the 30 Calc rows and 33 probe rows already recorded, plus 87 Calc rows
+from rig/clickspots_pilot.json chosen so that every spot has two rows where it can; probe rows count, marked as the
+rows the rules were tuned on).
+
+| date | file | change | class | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-23 | collect_pilot.py | label UNCONFIRMED: one instance matched S, the confirming re-run from a verified S' did not; the replay then tries the matched candidate once more and a second match makes it REVERSIBLE | labelling policy, not a comparison rule | probe-0027, probe-0033, pilot-0079: recompare, which had no confirmation step, called them REVERSIBLE while the collector said NO-UNDO-FOUND | 79 (pilot_run 8, pilot_run2 30, pilot_rerun 8, probe_run 33) + the reruns probe_row27, probe_row33 | probe-0027 and probe-0033 NO-UNDO-FOUND → UNCONFIRMED (recompare); every other recompared label and undo as before |
+| 2026-10-23 | collect_pilot.py | `--recompare` applies the same policy: a matching candidate is REVERSIBLE only with a matching confirm snapshot, a run-time "confirmed" note, or a matching replay of the same candidate; otherwise UNCONFIRMED. Rows recorded before the confirmation step existed (18-19 Oct: pilot_run, pilot_run2, pilot_rerun, no confirm snapshots) keep their single-instance matches, marked `confirmation_recompared` = "recorded before the confirmation step" | same | same | none beyond the two above; 31 legacy REVERSIBLE rows are now marked single-instance |
+| 2026-10-23 | collect_pilot.py | tier W: when the action leaves more windows than it found, Escape, Ctrl+W, Alt+F4 are tried first (after any forced candidates); a title change alone does not qualify | candidate order, not a comparison rule; cost only | probe-0031, probe-0033: 35 min each before Alt+F4 at position 15 of 16 | n/a (order does not change a recompared label) | none |
+
+**Rule freeze.** From this entry the comparison rules (treediff.py, mask.py, xlsxsig.py: rules 517628816685, mask
+9a1602b2c845) are frozen for the 150-row run. A difference a new rule would have covered is recorded as it is judged;
+new rules go in this log and are applied afterwards by `--recompare`, with every flip reported here.
+
+**Run settings for the 87 new Calc rows** (the same as the 30 recorded Calc rows): budget 55, blind 40, row cap 30 min,
+teacher and proposer on, confirmation on, replay on. Three collectors in parallel, one per tmux session (p150a, p150b,
+p150c), out dirs rig/out/pilot150_a, _b, _c, 29 rows each, grouped by workbook; the row lists are in the launch commit.
+K: labels are recorded at every K as before; the main label is K = 1.

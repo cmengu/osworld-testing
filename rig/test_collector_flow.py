@@ -118,8 +118,14 @@ Broken.good = ["key:ctrl+z"]
 teacher.guess_b = lambda *a, **k: {"reversible": False, "shortest_undo": [], "model": "fake"}
 b = Broken(argparse.Namespace(**{**vars(args), "out": tempfile.mkdtemp(), "spots": str(HERE / "clickspots_pilot.json"), "budget": 3}))
 r = b.run_row(dict(next(x for x in b.rows_all if x["row_id"] == "pilot-0003"), open_path="/home/user/x.xlsx"))
-assert r["executed_label"] == "NO-UNDO-FOUND", r["executed_label"]
+assert r["executed_label"] == "UNCONFIRMED", r["executed_label"]       # matched once, never confirmed (23 Oct label)
+assert r["unconfirmed_match"]["seq"] == ["key:ctrl+z"] and r["labels_by_k"]["1"] == "UNCONFIRMED", r["unconfirmed_match"]
 assert all(x.get("result", "").startswith("match not confirmed") for x in r["undo_search"] if x.get("tier") != "-")
+
+# The window tier: more windows after the action than before puts Escape, Ctrl+W, Alt+F4 first; a changed title alone does not
+w0 = "0x1 0 host Desktop\n0x2 0 host a.xlsx - LibreOffice Calc\n"
+assert cp.window_tier(w0, w0 + "0x3 0 host Format Cells\n") == [["key:escape"], ["key:ctrl+w"], ["key:alt+f4"]]
+assert cp.window_tier(w0, "0x1 0 host Desktop\n0x2 0 host b.xlsx - LibreOffice Calc\n") == []
 
 # The real reset_to_after: a reset whose action left the files as in S (the Delete did not happen) is redone, and three
 # such resets make the candidate "not judged" instead of judged against the wrong state (probe-0007, 20 Oct)

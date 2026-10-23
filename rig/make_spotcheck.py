@@ -222,7 +222,7 @@ dialog p { color: #fff; margin: 6px 0 0; font-size: 13px }
 <script type="application/json" id="data">__DATA__</script>
 <script>
 const ROWS = JSON.parse(document.getElementById("data").textContent);
-const LABEL = {REVERSIBLE: ["Can be undone", "ok"], "NO-UNDO-FOUND": ["No undo found", "warn"], BROKEN: ["Action did nothing", "bad"]};
+const LABEL = {REVERSIBLE: ["Can be undone", "ok"], "NO-UNDO-FOUND": ["No undo found", "warn"], UNCONFIRMED: ["Undo matched once, not confirmed", "warn"], BROKEN: ["Action did nothing", "bad"]};
 const answers = {};
 let db = null, writable = true, filter = "all";
 const saving = {};
@@ -309,7 +309,7 @@ function paint() {
     if (note && document.activeElement !== note && (a.note || "") !== note.value) note.value = a.note || "";
     if (note) note.disabled = !writable;
     const art = document.getElementById(row.id);
-    const show = filter === "all" || (filter === "open" && !(a.label && a.on_task)) || (filter === "noundo" && row.label === "NO-UNDO-FOUND");
+    const show = filter === "all" || (filter === "open" && !(a.label && a.on_task)) || (filter === "noundo" && (row.label === "NO-UNDO-FOUND" || row.label === "UNCONFIRMED"));
     art.hidden = !show;
   }
   document.getElementById("progress").textContent = db ? `${done} of ${ROWS.length} answered` : `${ROWS.length} rows`;

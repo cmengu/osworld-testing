@@ -148,6 +148,19 @@ def content_score(tree_diffs, fdiffs) -> tuple:
 
 NODE_ATTR = "__node__"
 
+WINDOW_CLOSERS = [["key:escape"], ["key:ctrl+w"], ["key:alt+f4"]]
+
+
+def window_tier(before_windows: str, after_windows: str) -> list:
+    """Candidates tried first when the action left MORE windows than it found (a dialog, a new document, a terminal,
+    a compose window): closing what opened is the natural undo, and it sat at position 15 of 16 in the generic and
+    application tiers (probe rows 31 and 33, 23 Oct: 35 minutes each before Alt+F4 was reached).  Escape stays
+    first so a dialog's undo is still recorded as Escape; Ctrl+W before Alt+F4 because it closes a document or tab
+    rather than the application.  A title change alone (Save As) does not qualify; the count must grow."""
+    if len(titles(after_windows)) > len(titles(before_windows)):
+        return [list(c) for c in WINDOW_CLOSERS]
+    return []
+
 
 def _cell_has_content(d) -> bool:
     # a cell node that appears or disappears counts as content only if the differ recorded text on it; the
@@ -641,8 +654,10 @@ class Collector:
                 notes.append(f"try {t + 1}: differs from S (tree {len(td2)}, files {len(fd2)})")
             return False, "; ".join(notes)
 
+        unconfirmed = None       # (tier, candidate, index): matched S once, the confirming re-run did not
+
         def try_candidate(cand, tier, idx, note=""):
-            nonlocal closest, budget_used
+            nonlocal closest, budget_used, unconfirmed
             t_c = time.time()
             r = {"tier": tier, "seq": cand, "idx": idx}
             if note:
@@ -688,6 +703,9 @@ class Collector:
                         if not ok_c:
                             eq_c = False
                             r["result"] = "match not confirmed: " + note
+                            r["unconfirmed_match"] = True
+                            if unconfirmed is None:
+                                unconfirmed = (tier, cand, idx)
                     if eq_c:
                         r["match"] = True
                 if closest is None or score < closest[0]:
@@ -744,6 +762,10 @@ class Collector:
             # a probe row can name candidates to try first (tier F): the 0266 retype test executes guess B's undo
             tiers = ([("F", [U.parse_steps(c) for c in row["forced_candidates"] if U.parse_steps(c)])]
                      if row.get("forced_candidates") else [])
+            w_tier = window_tier(S.windows, S1.windows)
+            if w_tier:
+                tiers.append(("W", w_tier))
+                rec["window_added"] = True
             tiers += [(1, [U.fill_mnemonics(c, self.mnemonics) for c in U.GENERIC]),
                      ("B", None),
                      (2, [U.fill_mnemonics(c, self.mnemonics) for c in U.tier2(rec["app"])])]
@@ -808,10 +830,16 @@ class Collector:
                 rec["undo_length"] = len(found[1])
                 rec["found_tier"] = found[0]
             else:
-                rec["executed_label"] = "NO-UNDO-FOUND"
+                # UNCONFIRMED (decided 23 Oct): one instance matched S, the re-run from a verified S' did not.  Neither a
+                # found undo nor evidence of none; the confirming replay below gets one more try at it.  Before this
+                # label such rows were NO-UNDO-FOUND and recompare, which has no confirmation step, called them
+                # REVERSIBLE (probe-0027, probe-0033, pilot-0079).
+                rec["executed_label"] = "UNCONFIRMED" if unconfirmed is not None else "NO-UNDO-FOUND"
                 rec["shortest_undo"] = None
                 rec["undo_length"] = None
                 rec["found_tier"] = None
+                if unconfirmed is not None:
+                    rec["unconfirmed_match"] = {"tier": unconfirmed[0], "seq": unconfirmed[1], "idx": unconfirmed[2]}
             rec["candidates_skipped"] = skipped
         rec["undo_search"] = search
         rec["budget_used"] = budget_used
@@ -821,9 +849,10 @@ class Collector:
         rec.update({"replay_done": False, "replay_matched": None, "flipped": False, "flicker_class": None})
         random_pick = (row["seed"] % 10 == 0)
         replay_cand = None
-        if rec["executed_label"] == "NO-UNDO-FOUND" and closest is not None:
+        if rec["executed_label"] in ("NO-UNDO-FOUND", "UNCONFIRMED") and closest is not None:
             replay_cand = closest[2]
-            rec["replay_reason"] = "no-undo row: closest-failing candidate"
+            rec["replay_reason"] = ("unconfirmed match: the matched candidate once more" if rec["executed_label"] == "UNCONFIRMED"
+                                    else "no-undo row: closest-failing candidate")
         elif random_pick and rec["executed_label"] == "REVERSIBLE" and rec["shortest_undo"]:
             replay_cand = rec["shortest_undo"]
             rec["replay_reason"] = "seeded 10% sample"
@@ -842,7 +871,7 @@ class Collector:
                 rec["replay_done"] = True
                 rec["replay_matched"] = bool(eq_r)
                 rec["replay_seq"] = replay_cand
-                if rec["executed_label"] == "NO-UNDO-FOUND" and eq_r:
+                if rec["executed_label"] in ("NO-UNDO-FOUND", "UNCONFIRMED") and eq_r:
                     rec["flipped"] = True
                     rec["executed_label"] = "REVERSIBLE"
                     rec["shortest_undo"] = replay_cand
@@ -880,7 +909,7 @@ class Collector:
                     m = try_candidate(cand, "B0", idx)
                     idx += 1
                     zs.update(executed=True, matched=m, source="separate")
-                    if m and (rec["executed_label"] == "NO-UNDO-FOUND"
+                    if m and (rec["executed_label"] in ("NO-UNDO-FOUND", "UNCONFIRMED")
                               or U.action_count(cand) < U.action_count(rec.get("shortest_undo") or [])):
                         rec["executed_label"] = "REVERSIBLE"
                         rec["shortest_undo"] = cand
@@ -897,7 +926,8 @@ class Collector:
         n = 0 if eq else (U.action_count(rec["shortest_undo"]) if rec["executed_label"] == "REVERSIBLE" else None)
         rec["undo_actions"] = n
         rec["labels_by_k"] = (None if rec["action_misfired"] or rec.get("noise") else
-                              {str(k): ("REVERSIBLE" if n is not None and n <= k else "NO-UNDO-FOUND") for k in range(1, 6)})
+                              {str(k): ("REVERSIBLE" if n is not None and n <= k else rec["executed_label"] if rec["executed_label"] == "UNCONFIRMED" else "NO-UNDO-FOUND")
+                               for k in range(1, 6)})
 
         # ---- trivial-undo baselines: would Ctrl+Z alone, or Escape alone, have undone it (None = not tried)
         def _alone(seq):
@@ -1037,9 +1067,20 @@ class Collector:
 
     # ------------------------------------------------------------------ re-judge rows on disk (rule change, Section 4.3)
     def recompare(self):
+        """Re-judge every row on disk under the current rules, with the confirmation policy of 23 Oct: a candidate
+        that matches S counts as REVERSIBLE only if its confirming re-run (c*/confirm_*) also matches S, or the
+        replay of that same candidate does; a single matching instance is UNCONFIRMED.  Rows recorded before the
+        confirmation step existed (pilot_run2 and earlier, no confirm_* snapshots) keep their run-time match and
+        are marked so.  A replay alone that matches is one instance: UNCONFIRMED."""
         recs = [json.loads(l) for l in self.results_path.read_text().splitlines() if l.strip()] if self.results_path.exists() else []
         flips = []
         out = []
+
+        def matches_S(S, d):
+            snap = load_snapshot(d)
+            eq_c, _, _ = states_equal(S.canon, S.digest, snap.canon, snap.digest, self.mask)
+            return eq_c
+
         for r in recs:
             if r.get("status") != "ok":
                 continue
@@ -1048,30 +1089,50 @@ class Collector:
                 continue
             S, S1 = load_snapshot(rdir / "S"), load_snapshot(rdir / "S1")
             eq, _, _ = states_equal(S.canon, S.digest, S1.canon, S1.digest, self.mask)
-            label, undo = None, None
+            label, undo, how = None, None, None
+            replay_dir = rdir / "replay"
+            replay_eq = (replay_dir / "tree.xml").exists() and matches_S(S, replay_dir)
+            # a row recorded before the confirmation step existed (pilot_run, pilot_run2, pilot_rerun: 18-19 Oct) has no
+            # confirm snapshot and no confirm note anywhere; its matches were single instances by the protocol of the
+            # time and stay so, marked, whichever candidate matches under the current rules
+            cdirs = sorted(d for d in rdir.glob("c[0-9]*") if (d / "tree.xml").exists())
+            legacy = not any(list(c.glob("confirm*")) for c in cdirs) and not any("confirm" in s for s in r.get("undo_search", []))
             if eq:
-                label, undo = "REVERSIBLE", []
+                label, undo, how = "REVERSIBLE", [], "no change"
             else:
-                for c in sorted(rdir.glob("c*")):
-                    if not (c / "tree.xml").exists():
+                first_single = None
+                for c in cdirs:
+                    if not matches_S(S, c):
                         continue
-                    snap = load_snapshot(c)
-                    eq_c, _, _ = states_equal(S.canon, S.digest, snap.canon, snap.digest, self.mask)
-                    if eq_c:
-                        idx = int(c.name[1:])
-                        seq = next((s["seq"] for s in r["undo_search"] if s.get("idx") == idx), None)
-                        label, undo = "REVERSIBLE", seq
+                    idx = int(c.name[1:])
+                    entry = next((s for s in r["undo_search"] if s.get("idx") == idx), {})
+                    seq = entry.get("seq")
+                    if legacy:
+                        label, undo, how = "REVERSIBLE", seq, "recorded before the confirmation step (20 Oct): one instance"
                         break
-                if label is None and (rdir / "replay" / "tree.xml").exists():
-                    snap = load_snapshot(rdir / "replay")
-                    eq_c, _, _ = states_equal(S.canon, S.digest, snap.canon, snap.digest, self.mask)
-                    if eq_c:
-                        label, undo = "REVERSIBLE", r.get("replay_seq")
+                    confirms = [d for d in sorted(c.glob("confirm*")) if (d / "tree.xml").exists() and not d.name.startswith("confirm_S1")]
+                    if confirms and any(matches_S(S, d) for d in confirms):
+                        label, undo, how = "REVERSIBLE", seq, "confirmed"
+                        break
+                    if not confirms and str(entry.get("confirm", "")).startswith("confirmed"):
+                        label, undo, how = "REVERSIBLE", seq, "confirmed at run time (no confirm snapshot on disk)"
+                        break
+                    if replay_eq and r.get("replay_seq") == seq:
+                        label, undo, how = "REVERSIBLE", seq, "confirmed by the replay"
+                        break
+                    if first_single is None:
+                        first_single = (seq, "one instance matched, the confirming re-run did not" if confirms or "confirm" in entry
+                                        else "matches under the current rules; it did not when recorded, so it was never confirmed")
+                if label is None and first_single is not None:
+                    label, undo, how = "UNCONFIRMED", first_single[0], first_single[1]
+                if label is None and replay_eq:
+                    label, undo, how = "UNCONFIRMED", r.get("replay_seq"), "the replay alone matched: one instance"
                 if label is None:
                     label = "NO-UNDO-FOUND"
-            new = dict(r, executed_label_recompared=label, shortest_undo_recompared=undo, recompared_with={"mask": self.mask_version, "rules": self.rules_version})
+            new = dict(r, executed_label_recompared=label, shortest_undo_recompared=undo, confirmation_recompared=how,
+                       recompared_with={"mask": self.mask_version, "rules": self.rules_version})
             if label != r.get("executed_label"):
-                flips.append((r["row_id"], r.get("executed_label"), label))
+                flips.append((r["row_id"], r.get("executed_label"), label, how))
             out.append(new)
         (self.out / "results_recompared.jsonl").write_text("".join(json.dumps(x, ensure_ascii=False) + "\n" for x in out))
         print(f"re-compared {len(out)} rows with mask {self.mask_version} rules {self.rules_version}: {len(flips)} flips")
