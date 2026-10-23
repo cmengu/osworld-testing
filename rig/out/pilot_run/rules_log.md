@@ -248,3 +248,14 @@ new rules go in this log and are applied afterwards by `--recompare`, with every
 teacher and proposer on, confirmation on, replay on. Three collectors in parallel, one per tmux session (p150a, p150b,
 p150c), out dirs rig/out/pilot150_a, _b, _c, 29 rows each, grouped by workbook; the row lists are in the launch commit.
 K: labels are recorded at every K as before; the main label is K = 1.
+
+## 23 October 2026, 23:55: first post-freeze rule (applied by recompare only; the running collectors keep rules 517628816685)
+
+| date | file | rule | class of node | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-23 | treediff.py | the `editable` flag of the Formula Tool Bar's Name Box / Input line is not compared (its text already was) | keyboard-focus flag (focused and active are ignored; editable comes and goes with them on the Input line) | pilot-0004 (type_text, pilot150_a): Ctrl+Z, then Ctrl+Z Ctrl+Home, then Ctrl+Z Ctrl+Z each matched S and each failed both confirming re-runs on this one attribute, gone again seconds later | 82 (pilot_run 8, pilot_run2 30, pilot_rerun 8, probe_run 33, pilot150 3) | none beyond the known five; the four confirm snapshots of pilot-0004 recorded so far are equal to S under the rule |
+
+Consequence during the run: a Calc row whose undo leaves focus on the Input line matches, fails confirmation, and
+moves on to the next candidate until the 30-minute cap; it is recorded UNCONFIRMED (or REVERSIBLE if the replay
+lands) and `--recompare` after the run re-judges its confirm snapshots under this rule. Cost only; the frozen rule set
+stays in force for the collectors (rules 517628816685 in every record of this run).

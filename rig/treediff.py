@@ -132,6 +132,9 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
         attrs["name"] = name
         if CURSOR_READOUT_BAR in path and _local(node.tag) in ("text", "paragraph"):
             attrs.pop("text", None)     # Name Box / Input line: echo of the cursor cell
+            attrs.pop("editable", None)  # and its editable flag, which comes and goes with keyboard focus (pilot-0004
+                                         # confirmations, 23 Oct: focused+active+editable on the Input line after Ctrl+Z,
+                                         # gone a few seconds later); focused and active are already ignored
         if _local(node.tag) in SELECTION_TAGS:
             attrs.pop("selected", None)     # which cells are highlighted is not document state
         if "/status-bar[" in path and SELECTION_READOUT.match(attrs.get("text", "")):
