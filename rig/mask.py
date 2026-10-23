@@ -33,10 +33,18 @@ GENERALISE_AT = 3
 # 20 Oct: LibreOffice's whole user profile folder (registry, template-folder cache store/.templdir.cache, extension
 # caches): configuration, never document state (Paper draft 3.1 exclusions); the stricter reset check of 20 Oct met
 # .templdir.cache changing between two resets of probe-0003, a file the noise mask had never seen change.
+# 23 Oct: Thunderbird's profile housekeeping, 8 files that change under a no-op (probe-0032): telemetry pings and
+# session state (datareporting/), the instance lock, the places/storage databases and their journals, prefs.js (run
+# timestamps), the add-on registry.  Mail itself (Mail/, ImapMail/, drafts, the address book) stays compared.
+_TB = "/home/user/.thunderbird/t5q2a5hp.default-release/"
+_TB_HOUSEKEEPING = ("datareporting/", "crashes/", "lock", ".parentlock", "places.sqlite", "storage.sqlite", "storage/",
+                    "prefs.js", "extensions.json", "addons.json", "addonStartup.json.lz4", "compatibility.ini",
+                    "sessionCheckpoints.json", "cookies.sqlite", "settings/", "xulstore.json")
 IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/share/gvfs-metadata/",
                          "/home/user/.local/share/nautilus/", "/home/user/.config/libreoffice/",
                          "/home/user/.local/share/gnome-shell/",   # the shell's notification log (21 Oct, probe-0012 c05)
-                         "/home/user/.config/Code/")               # VS Code's cache, storage and logs: 56 files change under a no-op (23 Oct, probe-0026)
+                         "/home/user/.config/Code/",               # VS Code's cache, storage and logs: 56 files change under a no-op (23 Oct, probe-0026)
+                         ) + tuple(_TB + f for f in _TB_HOUSEKEEPING)  # Thunderbird's profile housekeeping (23 Oct, probe-0032), see above
 
 
 # Tree attributes that are never state.  19 Oct, provisional until the Files/multi_apps probe: the text of a
