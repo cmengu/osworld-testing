@@ -377,3 +377,12 @@ Two outages tonight (2 and 28 minutes). The collectors wait for the network and 
 counting through the wait and fired inside the restart (prepare_vm), outside the per-row handler, so collector a died (RowCapped is
 a BaseException). The cap is now cleared before the restart and the restart catches RowCapped and Watchdog as well. All three
 collectors relaunched on the fix; done rows are kept, the rows in flight rerun. Frozen rules unchanged.
+
+## 24 October 2026, 18:50: a rig limit seen during the frozen run (v2-0009, Impress delete object)
+
+Ctrl+Z restored the deleted object (the screenshot shows the slide intact) but the view had scrolled sideways during the delete and
+undo, and Impress exposes to the accessibility bus only the shapes inside the visible part of the slide: four text shapes were absent
+from the tree after the undo, so every candidate differed by 8 nodes and the row ended NO-UNDO-FOUND at 11 candidates. The same
+action on another deck (v2-0010) was REVERSIBLE by Ctrl+Z. Recorded as a rig limit, not an undo result; no rule under the freeze.
+A candidate route that re-fits the view after the undo, or a comparison of shapes by the document signature rather than the tree,
+is the post-run fix.
