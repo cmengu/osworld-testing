@@ -111,7 +111,8 @@ def press_code(label: str, settle: float = 3, proc: str = "") -> str:
 CLICK_PY = _A11Y_HEAD + r'''
 want = norm(sys.argv[1])
 ROLES = ("push button", "menu item", "check menu item", "radio menu item", "check box", "toggle button",
-         "radio button", "list item", "label", "link", "table cell")
+         "radio button", "list item", "label", "link", "table cell",
+         "tree item", "table row", "row", "tree table")   # Thunderbird's folder pane rows (v2-0055, 24 Oct)
 n = find(lambda n: n.getRoleName() in ROLES and norm(n.name) == want)
 if n is None:
     print("not found"); sys.exit(0)

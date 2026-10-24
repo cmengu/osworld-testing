@@ -406,3 +406,5 @@ the row reached 13 candidates in 30 minutes. Candidate order only. Post-run: rer
 The question appears as the rows assume (v2-0053: Escape cancels it, REVERSIBLE), but its buttons are "Save", "Cancel" and
 "Discard changes", not "Don't Save" (tree of v2-0053's after-state). The Thunderbird undo routes and the step-2 row now press
 "Discard changes"; the running collectors keep the old definitions, so v2-0054 ends broken and reruns with v2-0052 after the run.
+Also 21:50: v2-0055 (Thunderbird mark read) misfires because the click: step searched no tree items; the folder pane's "Bills" row
+is one. The click roles now include tree item, table row, row and tree table (dialog_keys.py); the row reruns after the run.
