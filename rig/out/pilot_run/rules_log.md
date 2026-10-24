@@ -386,3 +386,11 @@ from the tree after the undo, so every candidate differed by 8 nodes and the row
 action on another deck (v2-0010) was REVERSIBLE by Ctrl+Z. Recorded as a rig limit, not an undo result; no rule under the freeze.
 A candidate route that re-fits the view after the undo, or a comparison of shapes by the document signature rather than the tree,
 is the post-run fix.
+
+## 24 October 2026, 19:35: a second rig limit during the frozen run (v2-0012, Impress delete slide)
+
+Ctrl+Z brought the slide back, but LibreOffice gives the restored shapes slightly different accessible names: "Google Shape;106;p1"
+before, "Google Shape;106;p 1" after (a space inside the page suffix), so 24 node paths differ although the content is the same.
+Identity, not state, like the timestamped widget ids of 23 Oct. Candidate post-run rule: normalise whitespace in shape names under
+a document-presentation. Recorded NO-UNDO-FOUND at 12 candidates; a recompare under the rule would make c00 a single unconfirmed
+match, so the row needs a rerun for a clean label.
