@@ -50,6 +50,9 @@ GENERATED_ID = re.compile(r"[A-Za-z_-]\d{13,}$")   # name + epoch milliseconds +
 IGNORED_ATTRS = frozenset({"screencoord", "size", "focused", "active", "showing"})
 ZOOM_READOUT = re.compile(r"\[(Set zoom level|Zoom)\]")
 WRITER_COUNT_READOUT = re.compile(r"^[\d,]+ words?, [\d,]+ characters?( selected)?$")
+# Impress and Draw status bar, 24 Oct (v2-0002, the Impress noise gate): the pointer position and the selection's size,
+# "-0.96 / -0.29 0.00 x 0.00", differ between two instances with nothing done; a readout of the mouse, not state
+POSITION_READOUT = re.compile(r"^-?\d+[.,]\d+ / -?\d+[.,]\d+ \d+[.,]\d+ x \d+[.,]\d+$")
 # Toolbar enablement is derived UI state that LibreOffice refreshes asynchronously after a command.  The
 # smoke test caught 2 of 20 click-spots differing on exactly these flags (Paste after a cut, Data Sources
 # after a row delete) with the document identical, so they are dropped on every node under a tool-bar.
@@ -139,6 +142,8 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
             attrs.pop("selected", None)     # which cells are highlighted is not document state
         if "/status-bar[" in path and SELECTION_READOUT.match(attrs.get("text", "")):
             attrs.pop("text", None)         # "Selected: 3 rows", "Sum=12": echoes of the selection
+        if "/status-bar[" in path and POSITION_READOUT.match(attrs.get("text", "")):
+            attrs.pop("text", None)         # Impress/Draw: pointer position and selection size
         if "/status-bar[" in path and WRITER_COUNT_READOUT.match(attrs.get("text", "")):
             attrs.pop("text", None)         # Writer's "218 words, 1,433 characters": a lazily refreshed echo of the
                                             # document text, which is compared directly (probe-0029 c00, 23 Oct:

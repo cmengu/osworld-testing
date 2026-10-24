@@ -280,3 +280,11 @@ Rows: rig/make_rows_v2.py → rig/clickspots_v2.json (98 data rows + 3 gate no-o
 multi_apps 44; 45 ordinary, 26 boundary, 30 destructive; on-task flags hand-written with a reason). Impress is a new application:
 its two no-op rows are the noise gate and its known-answer rows (close clean, Save As dialog, slide show) the smoke test, run first
 with one row of every new mechanism (16 rows) before the rest.
+
+## 24 October 2026, 06:40: Impress gate (the smoke batch's first result)
+
+| date | file | rule | class of node | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-24 | treediff.py | an Impress/Draw status-bar label of the form "-0.96 / -0.29 0.00 x 0.00" (pointer position and selection size) is not compared | a readout of the mouse, like Calc's Sum/Selected readouts | v2-0001 and v2-0002 (both Impress no-ops): the one tree difference between two instances with nothing done | 82 under the rule (below) | none expected: no recorded row has an Impress window |
+
+The three smoke collectors were stopped and relaunched so the Impress rows are judged under the rule; the two no-op rows rerun.
