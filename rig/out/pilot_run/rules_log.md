@@ -344,3 +344,9 @@ restarted; rows 0015, 0044 and 0034 run under the change.
 | 2026-10-24 | collect_pilot.py | the accessibility warm-up (two consecutive reads agreeing in size) runs for every row whose task has VS Code or a PDF viewer on screen | readiness, not a rule: the PDF viewer exposed 97 page nodes only after a click: step had walked the tree | v2-0084 c00 | n/a | none |
 | 2026-10-24 | collect_pilot.py | tier F2 (undo then save) only for editor rows; a Files or terminal row that changed files has no save to undo | candidate order | v2-0084 wasted two tries on it | n/a | none |
 | 2026-10-24 | collect_pilot.py | `--recompare` decides "recorded before the confirmation step" by the row's start time (before 19 Oct 2026), not by the absence of confirm snapshots: a newer row with no match at run time has none either | bookkeeping | v2-0084 passed as legacy | 88 | none |
+
+## 24 October 2026, 16:50: VS Code's screen-reader live region (smoke row v2-0044)
+
+| date | file | rule | class of node | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-24 | treediff.py | a node whose class contains "aria-container" (VS Code's monaco-aria-container) is dropped | the live region that announces to screen readers: present or absent with the accessibility mode, size 0, no children | v2-0044 c00 (VS Code save after edit; undo, save, redo): the only difference left; equal under the rule | 88 | none beyond the known three; v2-0044 re-judges as a single unconfirmed match and reruns |

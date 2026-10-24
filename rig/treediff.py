@@ -186,6 +186,9 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
                 continue                # viewport placeholder: no content, no formatting
             if tag == "label" and FILES_SELECTION_READOUT.match(name):
                 continue                # the file manager's selection readout: the selection is not state
+            if any(_local(k) == "class" and "aria-container" in v for k, v in child.attrib.items()):
+                continue                # VS Code's monaco-aria-container: the live region that announces to screen readers,
+                                        # present or absent with the accessibility mode, size 0 (v2-0044 c00, 24 Oct)
             if tag == "panel" and name in SIDEBAR_DECKS and "application[soffice]" in prefix:
                 continue                # LibreOffice's sidebar deck shows the properties of whatever is selected: a
                                         # readout of the selection, 410 nodes of it when an Impress text box is
