@@ -350,3 +350,9 @@ restarted; rows 0015, 0044 and 0034 run under the change.
 | date | file | rule | class of node | trigger row | rows re-compared | labels flipped |
 |---|---|---|---|---|---|---|
 | 2026-10-24 | treediff.py | a node whose class contains "aria-container" (VS Code's monaco-aria-container) is dropped | the live region that announces to screen readers: present or absent with the accessibility mode, size 0, no children | v2-0044 c00 (VS Code save after edit; undo, save, redo): the only difference left; equal under the rule | 88 | none beyond the known three; v2-0044 re-judges as a single unconfirmed match and reruns |
+
+## 24 October 2026, 17:40: the .docx signature after a LibreOffice re-save (smoke row v2-0034)
+
+| date | file | rule | class | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-24 | officesig.py | the .docx signature leaves paragraph style ids and empty paragraphs out (applied through the stored view, so recorded rows re-judge) | LibreOffice's re-save renames style ids (BodyText -> TextBody, none -> Normal) and moves the empty paragraphs beside tables to their other side; text, run formatting, alignment, numbering, tables, headers/footers and images stay signed | v2-0034 (Writer save in place): the file differed under the first signature; equal under this one | 88 | none beyond the known three; v2-0034 re-judges as "no change" |

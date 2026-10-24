@@ -386,9 +386,30 @@ def normalize_view(view):
         if kind == "frame" and len(sh) > 2 and isinstance(sh[2], list):      # ODF frame: inner blocks may hold frames
             sh = sh[:2] + [[shape(x) for x in sh[2]]] + sh[3:]
         return sh
+    def blocks(bs):
+        # .docx paragraphs: ["p", style, jc, numbered, runs]; the style id is dropped (LibreOffice renames them on
+        # re-save: BodyText -> TextBody, none -> Normal; v2-0034, 24 Oct); tables recurse
+        out = []
+        for b in bs or []:
+            if isinstance(b, list) and b and b[0] == "p" and len(b) == 5:
+                if not b[4] and not b[3]:
+                    continue        # an empty paragraph: LibreOffice's re-save moves the empty paragraphs that sit
+                                    # beside tables to the other side of them (v2-0034, 24 Oct); blank lines are
+                                    # not signed (the tree still shows them)
+                out.append(["p", None, b[2], b[3], b[4]])
+            elif isinstance(b, list) and b and b[0] == "tbl" and len(b) == 2:
+                out.append(["tbl", [[blocks(cell) for cell in row] for row in b[1]]])
+            else:
+                out.append(b)
+        return out
     if isinstance(view, dict) and "slides" in view:
         out = dict(view)
         out["slides"] = [dict(sl, shapes=[shape(x) for x in sl.get("shapes", [])]) for sl in view["slides"]]
+        return out
+    if isinstance(view, dict) and "body" in view:
+        out = dict(view, body=blocks(view["body"]))
+        if "headers_footers" in view:
+            out["headers_footers"] = {k: blocks(v) for k, v in view["headers_footers"].items()}
         return out
     return view
 
