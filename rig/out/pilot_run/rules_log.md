@@ -362,3 +362,11 @@ read into the view but not signed; under that the file is equal before and after
 Correction, 18:05: one more difference remained after headers and footers: Word stores the same picture under several media names and
 LibreOffice writes it once, so the signature now counts distinct image hashes (docx and pptx). Verified before this entry: v2-0034's
 .docx and v2-0013's .pptx compare equal before and after the save, and v2-0015's typed-then-saved .pptx still differs from its original.
+
+## 24 October 2026, 18:45: rule freeze for the main v2 run; VS Code folder workspaces excluded
+
+The comparison rules freeze at rules 617a65b7e72f / mask 9a1602b2c845 for the 93-row main run (rig/batches/main_v2_{a,b,c}.txt).
+Excluded: the 8 rows on VS Code folder workspaces (tasks 26150609 snake, 9219480b tetris, 5e2d93d8 project: v2-0050/0051,
+0073-0075, 0096-0098). On v2-0073 VS Code was gone when the after-state was walked ("fast-missing-app") after Ctrl+P had opened
+main.py, in two instances; a single-file VS Code window survives the same walks (v2-0040/0041/0044). Not investigated under the
+freeze; a later probe. VS Code keeps 9 single-file rows plus the terminal-opens-VS-Code row.
