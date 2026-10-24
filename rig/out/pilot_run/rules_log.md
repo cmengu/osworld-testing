@@ -310,3 +310,7 @@ Not a comparison rule: the before-state of the VS Code no-op held 50 nodes and t
 first. Chromium exposes its web content to the accessibility bus only once something reads it, and fills it over a few seconds.
 The collector now walks the tree until two consecutive reads agree in size before every snapshot of a VS Code row
 (`warm_accessibility`, collect_pilot.py). The noise row reruns; collector a was restarted.
+Also 08:55 (v2-0040, attempt 1): the generic fresh start rejected VS Code because the baseline window title had been recorded
+as "Visual Studio Code" while the file was still loading, and the relaunched window read "vscode_replace_text.txt - Visual Studio
+Code". The readiness check now also accepts a window whose title ends with the recorded one, and the prime records the baseline
+only after the titles have held for three reads and VS Code shows its document title (freshstart.py). Collector a restarted again.

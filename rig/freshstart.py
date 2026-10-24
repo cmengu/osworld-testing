@@ -234,7 +234,7 @@ FILES_SELECT_SH = CACHE_DIR + "/files_select.sh"
 WINDOWS_READY_SH = r"""ok=1
 while IFS= read -r t; do
   [ -z "$t" ] && continue
-  w=$(wmctrl -l 2>/dev/null | awk -v t="$t" '{{id=$1; d=$2; $1=$2=$3=""; sub(/^ +/, ""); if ($0 == t && d != "-1") print id}}' | tail -1)
+  w=$(wmctrl -l 2>/dev/null | awk -v t="$t" '{{id=$1; d=$2; $1=$2=$3=""; sub(/^ +/, ""); if (d != "-1" && ($0 == t || substr($0, length($0) - length(t) + 1) == t)) print id}}' | tail -1)
   if [ -z "$w" ]; then echo "missing: $t"; ok=0; continue; fi
   if ! xwininfo -id "$w" 2>/dev/null | grep -q "Map State: IsViewable"; then echo "not viewable: $t"; ok=0; continue; fi
   p=$(xprop -id "$w" _NET_WM_PID 2>/dev/null | awk '{{print $NF}}')
@@ -278,12 +278,16 @@ def prime_generic(env, task: dict) -> str:
     # 23 Oct (probe-0026) the prime ran before VS Code's window existed, the baseline was empty, every reset was
     # "ready" at once, and the before-state was read while VS Code was still loading
     if gui_steps(task):
-        deadline, prev = time.time() + 120, None
+        deadline, prev, stable = time.time() + 120, None, 0
         while time.time() < deadline:
             cur = _windows_now(env)
-            if cur and cur == prev:
-                break
+            stable = stable + 1 if (cur and cur == prev) else 0
             prev = cur
+            # VS Code titles itself "Visual Studio Code" until the file or folder is open, then "<name> - Visual
+            # Studio Code" (v2-0040, 24 Oct: the bare title was recorded and every reset then looked incomplete)
+            loading = any(t.strip() == "Visual Studio Code" for t in cur) and time.time() < deadline - 30
+            if stable >= 2 and not loading:
+                break
             time.sleep(5)
     return (vm_out(env, as_root(env, script), timeout=110) + "\n"
             + vm_out(env, PRIME_WINDOWS.format(windows=BASELINE_WINDOWS, active=BASELINE_ACTIVE, select_sh=FILES_SELECT_SH,
