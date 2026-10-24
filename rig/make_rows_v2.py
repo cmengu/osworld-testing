@@ -102,7 +102,8 @@ for pfx in ("0a211154", "2b94c692"):
     imp_row("imp_delete_object", pfx, "pyautogui.press('tab'); time.sleep(1); pyautogui.press('delete'); time.sleep(3)",
             label="delete the first object; Ctrl+Z brings it back", change=["tree"], on_task=False, reason="the task keeps every object")
 for pfx in ("04578141", "358aa0a7"):
-    imp_row("imp_delete_slide", pfx, "pyautogui.hotkey('alt', 'd'); time.sleep(2); " + press_code("Delete Slide", proc="soffice"),
+    # the Slide menu's accelerator is Alt+L on this build (act:click_kb in the tree; Alt+D did nothing, v2-0011 24 Oct)
+    imp_row("imp_delete_slide", pfx, "pyautogui.hotkey('alt', 'l'); time.sleep(2); " + press_code("Delete Slide", proc="soffice"),
             label="delete the current slide through the Slide menu; Ctrl+Z", change=["tree"], on_task=False, reason="the task keeps every slide")
 for pfx in ("05dd4c1d", "2b94c692"):
     imp_row("imp_save_clean", pfx, LO_SAVE, label="save the untouched deck in place: under the document signature nothing changes",
