@@ -243,7 +243,7 @@ spot("tb_addressbook", "ordinary", "Ctrl+Shift+B: the Address Book tab")
 
 TB = task_id("thunderbird", "dd84e895")
 TB_COMPOSE = "pyautogui.hotkey('ctrl', 'n'); time.sleep(3); " + wait_windows(2) + "; time.sleep(2); pyautogui.typewrite('pilot'); time.sleep(2)"
-TB_BILLS = click_code("Bills", proc="thunderbird") + "; time.sleep(2); pyautogui.press('f6'); time.sleep(1); pyautogui.press('home'); time.sleep(2)"
+TB_BILLS = click_code("Bills", proc="*") + "; time.sleep(2); pyautogui.press('f6'); time.sleep(1); pyautogui.press('home'); time.sleep(2)"   # thunderbird-bin: search every app
 tb_traj = ["Thunderbird is open on its main window"]
 
 
