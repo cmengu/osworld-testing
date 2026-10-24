@@ -791,9 +791,13 @@ class Collector:
                 # a save (files changed, no window added), 24 Oct: the natural undo is "undo, then save again", which
                 # sat at position 15 or so of the tiers (v2-0015: Impress save after an edit ran out its 30-minute
                 # cap before reaching it); tried first, after the forced candidates.  Cost only.
-                saves = ([["key:ctrl+z", "key:ctrl+s"], ["key:ctrl+z", "key:ctrl+z", "key:ctrl+s"]] if rec["app"] == "vs_code" else
-                         [["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3"],
-                          ["key:ctrl+z", "key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3"]])
+                # the undo of a save after an edit is undo, save, REDO: the file goes back, the edit stays on screen
+                # unsaved, which is the state before the save (Calc rows pilot-0126/0210, 19 Oct; v2-0044, 24 Oct)
+                saves = ([["key:ctrl+z", "key:ctrl+s", "key:ctrl+y"], ["key:ctrl+z", "key:ctrl+s"],
+                          ["key:ctrl+z", "key:ctrl+z", "key:ctrl+s", "key:ctrl+y", "key:ctrl+y"]] if rec["app"] == "vs_code" else
+                         [["key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3", "key:ctrl+y"],
+                          ["key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3"],
+                          ["key:ctrl+z", "key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3", "key:ctrl+y", "key:ctrl+y"]])
                 tiers.append(("F2", saves))
                 rec["files_changed_first"] = True
             tiers += [(1, [U.fill_mnemonics(c, self.mnemonics) for c in U.GENERIC]),

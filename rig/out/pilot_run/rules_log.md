@@ -324,3 +324,14 @@ only after the titles have held for three reads and VS Code shows its document t
 | 2026-10-24 | collect_pilot.py | tier F2: when the action changed files and added no window (a save), "undo then save again" (Ctrl+Z, Ctrl+S, Keep Format; VS Code: Ctrl+Z, Ctrl+S) is tried first after the forced candidates | candidate order; cost only | v2-0015 (Impress save after an edit): the route sat past the 30-minute cap | n/a | none |
 
 All three collectors restarted; the rows in flight (0041, 0052, 0015) rerun.
+
+## 24 October 2026, 15:20: saves on this image show no Keep Current Format question (smoke rows v2-0015, v2-0044)
+
+Not a comparison rule. v2-0015's after-state shows the slide title in text edit ("TextEdit: Paragraph 1, Row 1, Column 23"): LibreOffice
+saved the .pptx silently and the Enter meant for the Keep Current Format question went into the selected shape; in Writer the
+same Enter would insert a paragraph. The row actions now press Enter only when the save opened a window (rowlib.LO_SAVE), the
+undo step language gains `confirm` (Enter only if a window appeared since the candidate began; counts as no action, since the
+question never appears here), and Calc's save routes and the F2 tier use it instead of `key:enter`. The undo of a save after an
+edit is undo, save, redo (file back, edit back on screen unsaved): the F2 tier and VS Code's tier carry the redo variants
+(v2-0044: undo then save alone left the editor clean while the state before the save had the unsaved edit). Collectors a and b
+restarted; rows 0015, 0044 and 0034 run under the change.

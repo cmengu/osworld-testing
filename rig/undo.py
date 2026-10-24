@@ -4,6 +4,7 @@ language shared with the proposer:
 
     key:<chord>      pyautogui.hotkey / press        reopen          relaunch or reopen the task file, maximised
     wait:<s>         time.sleep                      menu:alt+e,u    open a menu by Alt accelerator, press the item's mnemonic letters
+    confirm          Enter, only if a window (a question) opened since the candidate began (24 Oct)
     click:<label>    press the named button, menu entry or sidebar row through its accessibility action (22 Oct)
 
 Every step is something a user could do at the keyboard with what the applications themselves offer; nothing here
@@ -42,10 +43,10 @@ CALC: List[Candidate] = [
                                                                  # is Alt+N on this image; Alt+D, used until 19 Oct, opens Data)
     ["key:alt+e", "key:enter"],                                  # Edit > Undo (first item of the Edit menu)
     ["key:ctrl+shift+l"],                                        # AutoFilter toggles back
-    ["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3"],  # undo in memory, then save the undone state back
-    ["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3", "key:ctrl+y"],  # ...then redo the edit: a save after
+    ["key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3"],  # undo in memory, then save the undone state back
+    ["key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3", "key:ctrl+y"],  # ...then redo the edit: a save after
                                                                  # an unsaved edit undone with the edit back on screen (pilot2: 0126, 0210)
-    ["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3", "key:ctrl+y", "key:ctrl+home"],  # redo leaves the redone
+    ["key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3", "key:ctrl+y", "key:ctrl+home"],  # redo leaves the redone
                                                                  # range selected (recheck 0210: 87 cells differed only in `selected`)
     ["key:ctrl+w", "wait:2", "key:alt+n", "reopen", "key:ctrl+home"],  # discard, reopen, cursor home
 ]
@@ -68,6 +69,7 @@ FILES: List[Candidate] = [
 # saved edit is Ctrl+Z then Ctrl+S; a closed editor comes back with Ctrl+Shift+T; a palette, a find widget or a
 # settings tab closes with Escape or Ctrl+W (generic tier).  Unprobed except Ctrl+W (probe-0027).
 VSCODE: List[Candidate] = [
+    ["key:ctrl+z", "key:ctrl+s", "key:ctrl+y"],                  # a save after an edit: file back, edit back on screen (v2-0044)
     ["key:ctrl+z", "key:ctrl+s"],
     ["key:ctrl+z", "key:ctrl+z", "key:ctrl+s"],
     ["key:ctrl+shift+t"],
@@ -164,6 +166,11 @@ def step_code(step: str, ctx: dict) -> str:
         return click_code(arg, settle=3, proc=ctx.get("proc") or "*")
     if kind == "wait":
         return f"time.sleep({min(float(arg), 8.0)})"
+    if kind == "confirm":
+        # Enter for a question the previous step may have opened (Keep Current Format, Save Document?), pressed only
+        # when a window appeared since the candidate began: on this image LibreOffice saves .pptx/.docx without the
+        # Keep Current Format question, and a blind Enter went into the slide (v2-0015, 24 Oct)
+        return f"(pyautogui.press('enter'), time.sleep(3)) if {WINDOW_COUNT} > _n0 else None; time.sleep(0.5)"
     if kind == "menu":
         chord, _, letters = arg.partition(",")
         parts = [p.strip().lower() for p in chord.split("+")]
@@ -195,8 +202,12 @@ def step_code(step: str, ctx: dict) -> str:
     raise ValueError(f"unknown step {step!r}")
 
 
+WINDOW_COUNT = "int(__import__('subprocess').run(['sh', '-c', 'wmctrl -l 2>/dev/null | grep -vc \"@!\"'], capture_output=True, text=True).stdout.strip() or 0)"
+
+
 def candidate_code(c: Candidate, ctx: dict) -> str:
-    return "; ".join(step_code(s, ctx) for s in c)
+    # _n0: the window count when the candidate begins, for the confirm step
+    return f"_n0 = {WINDOW_COUNT}; " + "; ".join(step_code(s, ctx) for s in c)
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -218,7 +229,7 @@ def parse_step(raw) -> Optional[str]:
     kind, sep, arg = s.partition(":")
     kind = kind.strip().lower()
     if not sep:
-        return "reopen" if kind == "reopen" else None
+        return kind if kind in ("reopen", "confirm") else None
     if kind == "key":
         tok = arg.strip().lower().replace(" ", "")
         tok = "escape" if tok == "esc" else tok
@@ -246,8 +257,9 @@ def parse_steps(steps) -> Optional[Candidate]:
 
 
 def action_count(c: Candidate) -> int:
-    """Actions in a candidate, the unit of K: waits are not actions, a reopen is one."""
-    return sum(1 for s in c or [] if not s.startswith("wait:"))
+    """Actions in a candidate, the unit of K: waits are not actions, a reopen is one; a confirm counts as none
+    (on this image the question it would answer never appears, 24 Oct)."""
+    return sum(1 for s in c or [] if not s.startswith("wait:") and s != "confirm")
 
 
 def _from_free_text(steps) -> Optional[Candidate]:

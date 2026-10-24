@@ -101,7 +101,11 @@ def nautilus_select(path: str) -> str:
     return f"__import__('subprocess').run(['sh', '{FILES_SELECT_SH}', '{path}'], timeout=70); time.sleep(1)"
 
 
-# LibreOffice: save a .docx/.pptx/.xlsx in place keeps the format through the Keep Current Format question (Enter
-# is its default button); Don't Save in the Save Document? question is Alt+N on this image (19 Oct)
-LO_SAVE = keys("ctrl+s", settle=3) + "; pyautogui.press('enter'); time.sleep(4)"
+# LibreOffice: save a .docx/.pptx/.xlsx in place.  The Keep Current Format question does NOT appear on this image
+# (v2-0015, 24 Oct: a blind Enter after Ctrl+S went into the selected slide title and opened text edit; in Writer it
+# would insert a paragraph), so Enter is pressed only when the save opened a window.  Don't Save in the Save
+# Document? question is Alt+N on this image (19 Oct).
+WINDOW_COUNT = "int(__import__('subprocess').run(['sh', '-c', 'wmctrl -l 2>/dev/null | grep -vc \"@!\"'], capture_output=True, text=True).stdout.strip() or 0)"
+LO_SAVE = (f"_n0 = {WINDOW_COUNT}; pyautogui.hotkey('ctrl', 's'); time.sleep(3); "
+           f"(pyautogui.press('enter'), time.sleep(3)) if {WINDOW_COUNT} > _n0 else None; time.sleep(2)")
 LO_DONT_SAVE = "pyautogui.hotkey('alt', 'n'); time.sleep(3)"
