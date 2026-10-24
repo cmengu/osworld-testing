@@ -425,6 +425,8 @@ class Collector:
         t = time.time()
         if expect_kind in ("calc", "dialog", "start_center", "second_window"):
             self.settle_windows()
+        if getattr(self, "_warm_code", False):
+            self.warm_accessibility()
         if expect_kind == "none":                     # no readiness gate: an application whose bus name is not known yet
             snap = take_snapshot(self.env, path, meta, expect=None, require_office=False)
         elif expect_kind.startswith("apps:"):
@@ -447,6 +449,21 @@ class Collector:
             snap.meta["window_error"] = "window list lacks a LibreOffice window"
         self.timings["snapshot"].append(time.time() - t)
         return snap
+
+    def warm_accessibility(self, reads: int = 3, tolerance: float = 0.02):
+        """VS Code (Chromium) exposes its web content to the accessibility bus only once something has asked for it,
+        and fills it in over a few seconds: v2-0040 (24 Oct, VS Code no-op) recorded 50 nodes in S and 340 in S', the
+        editor absent from the first.  Walk the tree until two consecutive reads agree in size (at most `reads`),
+        then let the real snapshot read it."""
+        from rig.fasttree import fast_tree
+        prev = None
+        for _ in range(reads):
+            xml, _stats = fast_tree(self.env)
+            n = xml.count("<")
+            if prev is not None and abs(n - prev) <= max(5, tolerance * max(n, prev)):
+                break
+            prev = n
+            time.sleep(3)
 
     def settle_windows(self, timeout: float = 45) -> list:
         """Wait until a LibreOffice window is listed and the window list is the same on two reads 3 s apart, before
@@ -492,6 +509,8 @@ class Collector:
     def run_row(self, row) -> dict:
         t_row = time.time()
         rid = row["row_id"]
+        # VS Code rows warm the accessibility tree before every snapshot (warm_accessibility); set before S is taken
+        self._warm_code = row.get("app") == "vs_code" or "code" in (str(row.get("expect_before", "")) + str(row.get("expect", "")))
         spot = self.spots[row["spot_id"]]
         rdir = self.out / rid
         rdir.mkdir(parents=True, exist_ok=True)

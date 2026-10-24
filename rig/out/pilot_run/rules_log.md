@@ -303,3 +303,10 @@ Under these rules v2-0006's Ctrl+Z state is equal to S (the typed text is the on
 equal before and after the save. The three smoke collectors were restarted so the Impress rows in flight are judged under the rules.
 Known: rig/test_offline.py fails on an older assertion ("the renamed label must become a churn site") on the committed code from before
 today as well; rig/test_collector_flow.py passes.
+
+## 24 October 2026, 08:50: VS Code readiness (smoke row v2-0040)
+
+Not a comparison rule: the before-state of the VS Code no-op held 50 nodes and the after-state 340, the editor absent from the
+first. Chromium exposes its web content to the accessibility bus only once something reads it, and fills it over a few seconds.
+The collector now walks the tree until two consecutive reads agree in size before every snapshot of a VS Code row
+(`warm_accessibility`, collect_pilot.py). The noise row reruns; collector a was restarted.
