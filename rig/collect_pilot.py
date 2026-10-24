@@ -78,6 +78,7 @@ from rig import vm as VM                                        # noqa: E402
 from rig.vm import RowCapped, SandboxLost                       # noqa: E402
 
 SANDBOX_USD_PER_HOUR = 0.76
+CONFIRMATION_SINCE = 1792800000 - 5 * 86400     # 2026-10-20 00:00 UTC-ish: rows started before it were recorded without the confirming re-run
 WATCHDOG_SECONDS = 900        # no single candidate, snapshot or reset may take longer; a dead tunnel otherwise hangs forever
 
 
@@ -450,6 +451,13 @@ class Collector:
         self.timings["snapshot"].append(time.time() - t)
         return snap
 
+    def needs_warm(self, row) -> bool:
+        if row.get("app") == "vs_code" or "code" in (str(row.get("expect_before", "")) + str(row.get("expect", ""))):
+            return True
+        task = self.task(row["task_id"])
+        text = json.dumps(task.get("config", [])).lower() + " " + json.dumps(row.get("reopen_cmd") or []).lower() + " " + str(row.get("code", "")).lower()
+        return any(k in text for k in ("vscode", "vs_code", "\"code\"", "code -g", ".pdf", "evince"))
+
     def warm_accessibility(self, reads: int = 3, tolerance: float = 0.02):
         """VS Code (Chromium) exposes its web content to the accessibility bus only once something has asked for it,
         and fills it in over a few seconds: v2-0040 (24 Oct, VS Code no-op) recorded 50 nodes in S and 340 in S', the
@@ -509,8 +517,10 @@ class Collector:
     def run_row(self, row) -> dict:
         t_row = time.time()
         rid = row["row_id"]
-        # VS Code rows warm the accessibility tree before every snapshot (warm_accessibility); set before S is taken
-        self._warm_code = row.get("app") == "vs_code" or "code" in (str(row.get("expect_before", "")) + str(row.get("expect", "")))
+        # rows with VS Code or a PDF viewer on screen warm the accessibility tree before every snapshot
+        # (warm_accessibility): both expose their content lazily (VS Code: v2-0040; evince's 97 page nodes appeared
+        # after a click: step had walked the tree, v2-0084, 24 Oct); set before S is taken
+        self._warm_code = self.needs_warm(row)
         spot = self.spots[row["spot_id"]]
         rdir = self.out / rid
         rdir.mkdir(parents=True, exist_ok=True)
@@ -787,7 +797,9 @@ class Collector:
             if w_tier:
                 tiers.append(("W", w_tier))
                 rec["window_added"] = True
-            elif fdiffs and rec["app"] in ("libreoffice-calc", "libreoffice-writer", "libreoffice-impress", "vs_code", "multi_apps"):
+            elif fdiffs and (rec["app"] in ("libreoffice-calc", "libreoffice-writer", "libreoffice-impress", "vs_code")
+                             or (rec["app"] == "multi_apps" and str(row.get("expect_before", "")) in ("apps:soffice", "apps:code"))):
+                # an editor's save only: a Files or terminal row that changed files has no save to undo (v2-0084 wasted two tries)
                 # a save (files changed, no window added), 24 Oct: the natural undo is "undo, then save again", which
                 # sat at position 15 or so of the tiers (v2-0015: Impress save after an edit ran out its 30-minute
                 # cap before reaching it); tried first, after the forced candidates.  Cost only.
@@ -1130,7 +1142,9 @@ class Collector:
             # confirm snapshot and no confirm note anywhere; its matches were single instances by the protocol of the
             # time and stay so, marked, whichever candidate matches under the current rules
             cdirs = sorted(d for d in rdir.glob("c[0-9]*") if (d / "tree.xml").exists())
-            legacy = not any(list(c.glob("confirm*")) for c in cdirs) and not any("confirm" in s for s in r.get("undo_search", []))
+            # legacy = recorded before the confirmation step existed (20 Oct 2026); a newer row with no match at run
+            # time has no confirm snapshot either, and must not pass as legacy (v2-0084, 24 Oct)
+            legacy = (r.get("started_at") or 0) < CONFIRMATION_SINCE
             if eq:
                 label, undo, how = "REVERSIBLE", [], "no change"
             else:

@@ -108,7 +108,7 @@ NEVER_HIDDEN = frozenset({"application", "desktop-frame"})
 SCROLLED = ("scroll-pane", "viewport")
 # Since 22 Oct: Files' selection readout ('“a.txt” selected', '(6 bytes)', '(containing 1 item)', '3 items selected')
 # is the selection, which the definition excludes, as the Calc status-bar readouts already are (probe-0014 c11)
-FILES_SELECTION_READOUT = re.compile(r"^(“.*” selected|\(\d+ bytes\)|\([\d.,]+ [kMG]?B\)|\(containing \d+ items?\)|\d+ items? selected.*|\(\d+ items?\))$")
+FILES_SELECTION_READOUT = re.compile(r"^(“.*” selected|\(\d+[ \u00a0]bytes\)|\([\d.,]+[ \u00a0][kMG]?B\)|\(containing \d+[ \u00a0]items?\)|\d+[ \u00a0]items? selected.*|\(\d+[ \u00a0]items?\))$")   # GNOME writes a no-break space before the unit ("(788.8\u00a0kB)", v2-0084 24 Oct)
 
 
 def _showing(el: ET.Element) -> bool:

@@ -335,3 +335,12 @@ question never appears here), and Calc's save routes and the F2 tier use it inst
 edit is undo, save, redo (file back, edit back on screen unsaved): the F2 tier and VS Code's tier carry the redo variants
 (v2-0044: undo then save alone left the editor clean while the state before the save had the unsaved edit). Collectors a and b
 restarted; rows 0015, 0044 and 0034 run under the change.
+
+## 24 October 2026, 16:10: Files readouts with a no-break space; lazy accessibility trees (smoke row v2-0084)
+
+| date | file | change | class | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-24 | treediff.py | Files' selection readouts are matched with a no-break space before the unit ("(788.8 kB)") as well as a space | the same readout rule as 22 Oct; GNOME writes U+00A0 | v2-0084 (Files trash, multi_apps): Ctrl+Z had restored the file and the three differences left were this label and its emptied containers | 88 | none beyond the known three; v2-0084 itself re-judges REVERSIBLE (and reruns for a clean K=1 record) |
+| 2026-10-24 | collect_pilot.py | the accessibility warm-up (two consecutive reads agreeing in size) runs for every row whose task has VS Code or a PDF viewer on screen | readiness, not a rule: the PDF viewer exposed 97 page nodes only after a click: step had walked the tree | v2-0084 c00 | n/a | none |
+| 2026-10-24 | collect_pilot.py | tier F2 (undo then save) only for editor rows; a Files or terminal row that changed files has no save to undo | candidate order | v2-0084 wasted two tries on it | n/a | none |
+| 2026-10-24 | collect_pilot.py | `--recompare` decides "recorded before the confirmation step" by the row's start time (before 19 Oct 2026), not by the absence of confirm snapshots: a newer row with no match at run time has none either | bookkeeping | v2-0084 passed as legacy | 88 | none |
