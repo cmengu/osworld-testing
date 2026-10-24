@@ -370,3 +370,10 @@ Excluded: the 8 rows on VS Code folder workspaces (tasks 26150609 snake, 9219480
 0073-0075, 0096-0098). On v2-0073 VS Code was gone when the after-state was walked ("fast-missing-app") after Ctrl+P had opened
 main.py, in two instances; a single-file VS Code window survives the same walks (v2-0040/0041/0044). Not investigated under the
 freeze; a later probe. VS Code keeps 9 single-file rows plus the terminal-opens-VS-Code row.
+
+## 24 October 2026, 18:20: collector robustness under network outages (not a rule)
+
+Two outages tonight (2 and 28 minutes). The collectors wait for the network and restart their sandbox, but the row's time cap kept
+counting through the wait and fired inside the restart (prepare_vm), outside the per-row handler, so collector a died (RowCapped is
+a BaseException). The cap is now cleared before the restart and the restart catches RowCapped and Watchdog as well. All three
+collectors relaunched on the fix; done rows are kept, the rows in flight rerun. Frozen rules unchanged.

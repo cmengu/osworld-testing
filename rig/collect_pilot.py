@@ -1090,12 +1090,15 @@ class Collector:
                         signal.alarm(0)
                         if attempt == 0 and self.env_restarts < 6:
                             self.env_restarts += 1
+                            VM.ROW_DEADLINE = None       # the row's cap must not fire inside the restart: after a 28-minute
+                                                         # network wait it did, in prepare_vm, outside this handler, and the
+                                                         # run died (24 Oct 18:12, collector a)
                             self.wait_for_network()
                             self.close_env()
                             time.sleep(10)
                             try:
                                 self.start_env(row["task_id"])
-                            except Exception as e2:
+                            except (Exception, RowCapped, Watchdog) as e2:
                                 # a sandbox that cannot start (the Mac asleep, the network gone: 21 Oct 04:48, the
                                 # run died here) must not end the run: the next row starts one again
                                 print(f"[env] start failed: {repr(e2)[:200]}; the row is left as an error", flush=True)
