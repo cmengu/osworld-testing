@@ -83,7 +83,7 @@ WATCHDOG_SECONDS = 900        # no single candidate, snapshot or reset may take 
 
 # spots whose action may legitimately leave no trace (saving an unchanged file); every other "no change" is a
 # broken key route
-NO_CHANGE_EXPECTED = frozenset({"save_clean", "select_all",   # select_all: the selection is not state (19 Oct)
+NO_CHANGE_EXPECTED = frozenset({"save_clean", "imp_save_clean", "wr_save_clean", "ma_wr_save_clean", "ma_calc_save_clean", "select_all",   # select_all: the selection is not state (19 Oct)
                                 "noop", "term_ls"})           # probe rows: a bare Shift press; a command that writes nothing
 
 
@@ -200,7 +200,8 @@ class Collector:
         self.out.mkdir(parents=True, exist_ok=True)
         self.mask = json.load(open(args.mask))
         self.mask_version = _sha(pathlib.Path(args.mask))
-        self.rules_version = hashlib.sha256((HERE / "treediff.py").read_bytes() + (HERE / "mask.py").read_bytes() + (HERE / "xlsxsig.py").read_bytes()).hexdigest()[:12]
+        self.rules_version = hashlib.sha256((HERE / "treediff.py").read_bytes() + (HERE / "mask.py").read_bytes() + (HERE / "xlsxsig.py").read_bytes()
+                                            + (HERE / "officesig.py").read_bytes()).hexdigest()[:12]   # officesig since 24 Oct
         if getattr(args, "drop_hidden", False):
             from rig import treediff
             treediff.DROP_HIDDEN = True
@@ -240,10 +241,10 @@ class Collector:
             wanted = set()
             for part in self.args.rows.split(","):
                 part = part.strip()
-                if "-" in part and not part.startswith("pilot"):
+                if re.fullmatch(r"\d+-\d+", part):
                     a, b = part.split("-")
                     wanted.update(range(int(a), int(b) + 1))
-                elif part.startswith("pilot-"):
+                elif re.fullmatch(r"[a-z0-9]+-\d+", part):      # pilot-0300, probe-0012, v2-0045
                     wanted.add(int(part.split("-")[1]))
                 elif part:
                     wanted.add(int(part))
@@ -607,7 +608,8 @@ class Collector:
         proposal = {"model": None}
         office_running = any("LibreOffice" in t for t in titles(S1.windows))
         ctx = {"doc_path": row.get("open_path"), "office_running": office_running, "reopen_cmd": row.get("reopen_cmd"),
-               "proc": {"files": "nautilus", "thunderbird": "thunderbird", "libreoffice-calc": ""}.get(rec["app"], "*")}
+               "proc": {"files": "nautilus", "thunderbird": "thunderbird", "libreoffice-calc": "", "libreoffice-writer": "",
+                        "libreoffice-impress": "", "vs_code": "code"}.get(rec["app"], "*")}
         reopens_office = not row.get("reopen_cmd") or "libreoffice" in " ".join(row["reopen_cmd"])
 
         def office_after(cand):

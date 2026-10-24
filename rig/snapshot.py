@@ -7,8 +7,8 @@ Everything is written to a directory so a run can be audited and re-compared lat
 The tree comes from rig.fasttree (scoped, parallel, errors reported) with the server's own
 walk as a fallback.  File digest fields per path: s = size, m = mtime (recorded, never
 compared), h = sha256 of the bytes, c = content hash for zip-based office files with the
-metadata parts left out, mode = permission bits, u = owner uid, k = cell-level signature for .xlsx/.xlsm (rig/xlsxsig.py: what a user sees, not
-how the writer stored it), v = the readable workbook view behind k.  Directories are entries ending in "/" with d = 1
+metadata parts left out, mode = permission bits, u = owner uid, k = content signature for .xlsx/.xlsm (rig/xlsxsig.py) and, since 24 Oct, for .docx/.odt/.pptx/.odp (rig/officesig.py): what a user sees, not
+how the writer stored it, v = the readable workbook view behind k.  Directories are entries ending in "/" with d = 1
 and their mode; symbolic links carry l = the target.  Equality in mask.py uses k when present,
 otherwise (s, c or h).
 """
@@ -26,8 +26,14 @@ from .vm import vm_shell
 # offline tests check.  For .xlsx/.xlsm it adds k = cell signature and v = the readable workbook view (kept when
 # under VIEW_CAP bytes) so a later criteria change can be re-applied to recorded rows without a new run.
 _XLSXSIG_SRC = (pathlib.Path(__file__).resolve().parent / "xlsxsig.py").read_text()
+# 24 Oct: rig/officesig.py (what a .docx/.odt/.pptx/.odp says) rides along the same way, executed in its own
+# namespace because both modules define small helpers of the same names
+_OFFICESIG_SRC = (pathlib.Path(__file__).resolve().parent / "officesig.py").read_text()
 DIGEST_SCRIPT = r"""python3 - <<'PY'
 """ + _XLSXSIG_SRC + r"""
+_OFF = {}
+exec(compile(""" + repr(_OFFICESIG_SRC) + r""", "officesig", "exec"), _OFF)
+doc_view = _OFF["doc_view"]
 import os, hashlib, json, zipfile
 VIEW_CAP = 3 * 1024 * 1024   # 18 Oct: raised from 400 KB so big workbooks (pilot-0231, 105 KB xlsx) keep a readable view
 home = os.path.expanduser("~")
@@ -94,6 +100,15 @@ for root, dirs, files in os.walk(home):
         if p.lower().endswith((".xlsx", ".xlsm")) and st.st_size <= cap and "/.~lock." not in p:
             try:
                 view = workbook_view(p)
+                row["k"] = hashlib.sha256(json.dumps(view, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+                vtext = json.dumps(view, ensure_ascii=False)
+                if len(vtext) <= VIEW_CAP:
+                    row["v"] = view
+            except Exception as exc:
+                row["k_error"] = str(exc)[:200]
+        if p.lower().endswith((".docx", ".odt", ".pptx", ".odp")) and st.st_size <= cap and "/.~lock." not in p:
+            try:
+                view = doc_view(p)
                 row["k"] = hashlib.sha256(json.dumps(view, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
                 vtext = json.dumps(view, ensure_ascii=False)
                 if len(vtext) <= VIEW_CAP:

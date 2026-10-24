@@ -64,12 +64,44 @@ FILES: List[Candidate] = [
 ]
 
 
+# VS Code (24 Oct): a save has no dialog, so Calc's "Ctrl+S, Enter" route would type a newline; the undo of a
+# saved edit is Ctrl+Z then Ctrl+S; a closed editor comes back with Ctrl+Shift+T; a palette, a find widget or a
+# settings tab closes with Escape or Ctrl+W (generic tier).  Unprobed except Ctrl+W (probe-0027).
+VSCODE: List[Candidate] = [
+    ["key:ctrl+z", "key:ctrl+s"],
+    ["key:ctrl+z", "key:ctrl+z", "key:ctrl+s"],
+    ["key:ctrl+shift+t"],
+    ["key:ctrl+shift+k"],                                        # delete the line the action added
+    ["key:ctrl+w", "wait:2", "reopen"],
+    ["key:alt+f4"],
+]
+
+# Thunderbird (24 Oct): a compose window with content asks "Save message?" on close (Don't Save is Alt+N as in
+# LibreOffice's dialog on this image, to be confirmed by the smoke rows); a moved or deleted message comes back
+# with Ctrl+Z; a tab (address book, settings) closes with Ctrl+W; a toggled flag toggles back with the same key.
+THUNDERBIRD: List[Candidate] = [
+    ["key:alt+f4"],
+    ["key:alt+f4", "wait:2", "key:alt+n"],
+    ["key:ctrl+w"],
+    ["key:ctrl+z"],
+    ["key:m"],                                                   # mark read/unread toggles back
+    ["key:s"],                                                   # star toggles back
+    ["key:ctrl+z", "key:ctrl+z"],
+]
+
+
 def tier2(app: str) -> List[Candidate]:
-    """The application-specific tier: Calc's for Calc rows, Files' for Files rows, both for multi_apps rows."""
+    """The application-specific tier: Calc's for the LibreOffice applications (Writer and Impress share its
+    dialogs and key routes), Files' for Files rows, VS Code's and Thunderbird's for theirs, Files' + Calc's for
+    multi_apps rows."""
     if app == "files":
         return FILES
-    if app == "libreoffice-calc":
+    if app in ("libreoffice-calc", "libreoffice-writer", "libreoffice-impress"):
         return CALC
+    if app == "vs_code":
+        return VSCODE + [c for c in FILES if c not in VSCODE]
+    if app == "thunderbird":
+        return THUNDERBIRD + [c for c in FILES if c not in THUNDERBIRD]
     return FILES + [c for c in CALC if c not in FILES]   # multi_apps: the cheap generic window moves first
 
 

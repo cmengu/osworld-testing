@@ -266,3 +266,17 @@ The three collectors were restarted after the workspace limit was raised; they i
 remaining rows are judged under rules c7dd467fec36 (the Input line's `editable` flag ignored) while the 7 rows of
 23 Oct carry 517628816685. The rule flips no label among the 82 recompared rows and `--recompare` of pilot150_a/b/c
 brings the 7 under the same rules, so the run stays comparable. No other rule changes until the run ends.
+
+## 24 October 2026, 05:30: the rig for the OSWorld-proportional rows (Part 5 of the pilot tab)
+
+| date | file | change | class | trigger | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-24 | officesig.py, snapshot.py | .docx/.odt/.pptx/.odp compare by a content signature (paragraph text and run formatting, tables, headers/footers, images; slides, shapes by placeholder, position in 1/100 mm and text, notes), with the readable view stored as `v`; the metadata-free zip hash stays as the fallback | what a user sees, not how the writer stored it (the rule xlsxsig.py set for workbooks on 18 Oct), so a plain save of a Writer or Impress document is not one-way by bytes alone | the Writer and Impress rows of Part 5 (save, save after edit, close without saving) | takes effect on new recordings; recorded digests carry no signature for these types and compare as before | none |
+| 2026-10-24 | undo.py | tiers for VS Code (Ctrl+Z then Ctrl+S; Ctrl+Shift+T; Ctrl+Shift+K), Thunderbird (Alt+F4 then Don't Save; Ctrl+W; Ctrl+Z; M; S) and Writer/Impress (Calc's tier: same dialogs and key routes) | candidate order, not a comparison rule | the new applications' rows | n/a | none |
+| 2026-10-24 | vmprep.py | VS Code's Welcome page, update, telemetry, experiment and tips banners are turned off in ~/.config/Code/User/settings.json (keys a task may grade are left alone) | environment quieting, like the desktop's notification banners | probe-0027 (23 Oct): the Welcome page was absent or differently rendered between instances, so no match could be confirmed | n/a | none |
+| 2026-10-24 | collect_pilot.py | `rules_version` now covers officesig.py; row ids of any prefix (v2-0001) select rows; `imp_save_clean`, `wr_save_clean`, `ma_wr_save_clean`, `ma_calc_save_clean` expect no change (as `save_clean`) | bookkeeping | same | n/a | none |
+
+Rows: rig/make_rows_v2.py → rig/clickspots_v2.json (98 data rows + 3 gate no-ops: Impress 25, Writer 12, VS Code 11, Thunderbird 6,
+multi_apps 44; 45 ordinary, 26 boundary, 30 destructive; on-task flags hand-written with a reason). Impress is a new application:
+its two no-op rows are the noise gate and its known-answer rows (close clean, Save As dialog, slide show) the smoke test, run first
+with one row of every new mechanism (16 rows) before the rest.

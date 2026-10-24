@@ -12,6 +12,22 @@ gsettings set org.gnome.desktop.screensaver lock-enabled false 2>/dev/null
 gsettings set org.gnome.desktop.screensaver idle-activation-enabled false 2>/dev/null
 gsettings set org.gnome.software download-updates false 2>/dev/null
 gsettings set org.gnome.software allow-updates false 2>/dev/null
+python3 - <<'PY' 2>/dev/null
+import json, os
+p = os.path.expanduser("~/.config/Code/User/settings.json")
+os.makedirs(os.path.dirname(p), exist_ok=True)
+try:
+    d = json.load(open(p))
+except Exception:
+    d = {}
+# 24 Oct: VS Code's Welcome page is absent or differently rendered between instances (probe-0027), and update,
+# telemetry and experiment banners come and go; none of them is state, so the rig turns them off like the
+# desktop's own notifications above.  Keys a task may grade (autosave, wordWrap, theme...) are left alone.
+d.update({"workbench.startupEditor": "none", "update.mode": "none", "telemetry.telemetryLevel": "off",
+          "workbench.enableExperiments": False, "extensions.autoUpdate": False, "extensions.autoCheckUpdates": False,
+          "workbench.tips.enabled": False, "window.restoreWindows": "none", "security.workspace.trust.enabled": False})
+json.dump(d, open(p, "w"), indent=1)
+PY
 echo prepared
 """
 
