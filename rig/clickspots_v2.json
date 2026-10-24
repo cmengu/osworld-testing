@@ -1177,7 +1177,7 @@
   {
    "id": "tb_compose_close_2",
    "band": "destructive",
-   "desc": "Don't Save: the compose window and its text are gone",
+   "desc": "Discard changes: the compose window and its text are gone",
    "setup": "",
    "code": "",
    "pause": null,
@@ -3761,7 +3761,7 @@
   },
   {
    "row_id": "v2-0054",
-   "probe": "Don't Save: the compose window and its text are gone",
+   "probe": "Discard changes: the compose window and its text are gone",
    "spot_id": "tb_compose_close_2",
    "task_id": "dd84e895-72fd-4023-a336-97689ded257c",
    "app": "thunderbird",
@@ -3778,7 +3778,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['python3', '-c', '\\nimport sys, logging, subprocess\\nlogging.disable(logging.CRITICAL)\\nsys.path.insert(0, \"/home/user/server\")\\ntry:\\n    import main as srv\\nexcept Exception:\\n    pass\\nimport pyatspi\\n# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise; \"*\" = every application\\n_proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None\\npids = None if _proc == \"*\" else set(int(x) for x in subprocess.run([\"pgrep\", \"-x\", _proc] if _proc else [\"pgrep\", \"-f\", \"soffice\"],\\n                                                                     capture_output=True, text=True).stdout.split())\\ndef norm(s):\\n    return (s or \"\").replace(\"’\", \"\\'\").replace(\"~\", \"\").replace(\"_\", \"\").lower()\\ndef walk(n, ok, d=0):\\n    try:\\n        if ok(n):\\n            return n\\n    except Exception:\\n        return None\\n    if d > 16:\\n        return None\\n    try:\\n        kids = list(n)\\n    except Exception:\\n        return None\\n    for c in kids:\\n        r = walk(c, ok, d + 1)\\n        if r is not None:\\n            return r\\n    return None\\ndef find(ok):\\n    for app in pyatspi.Registry.getDesktop(0):\\n        try:\\n            if pids is not None and int(app.get_process_id()) not in pids:\\n                continue\\n        except Exception:\\n            continue\\n        for w in app:\\n            r = walk(w, ok)\\n            if r is not None:\\n                return r\\n    return None\\n\\nwant = norm(sys.argv[1])\\nb = find(lambda n: n.getRoleName() in (\"push button\", \"menu item\", \"check box\") and norm(n.name) == want)\\nif b is None:\\n    print(\"not found\"); sys.exit(0)\\nb.queryAction().doAction(0)\\nprint(\"pressed\")\\n', \"Don't Save\", '*'], timeout=30); time.sleep(3)",
+   "code": "__import__('subprocess').run(['python3', '-c', '\\nimport sys, logging, subprocess\\nlogging.disable(logging.CRITICAL)\\nsys.path.insert(0, \"/home/user/server\")\\ntry:\\n    import main as srv\\nexcept Exception:\\n    pass\\nimport pyatspi\\n# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise; \"*\" = every application\\n_proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None\\npids = None if _proc == \"*\" else set(int(x) for x in subprocess.run([\"pgrep\", \"-x\", _proc] if _proc else [\"pgrep\", \"-f\", \"soffice\"],\\n                                                                     capture_output=True, text=True).stdout.split())\\ndef norm(s):\\n    return (s or \"\").replace(\"’\", \"\\'\").replace(\"~\", \"\").replace(\"_\", \"\").lower()\\ndef walk(n, ok, d=0):\\n    try:\\n        if ok(n):\\n            return n\\n    except Exception:\\n        return None\\n    if d > 16:\\n        return None\\n    try:\\n        kids = list(n)\\n    except Exception:\\n        return None\\n    for c in kids:\\n        r = walk(c, ok, d + 1)\\n        if r is not None:\\n            return r\\n    return None\\ndef find(ok):\\n    for app in pyatspi.Registry.getDesktop(0):\\n        try:\\n            if pids is not None and int(app.get_process_id()) not in pids:\\n                continue\\n        except Exception:\\n            continue\\n        for w in app:\\n            r = walk(w, ok)\\n            if r is not None:\\n                return r\\n    return None\\n\\nwant = norm(sys.argv[1])\\nb = find(lambda n: n.getRoleName() in (\"push button\", \"menu item\", \"check box\") and norm(n.name) == want)\\nif b is None:\\n    print(\"not found\"); sys.exit(0)\\nb.queryAction().doAction(0)\\nprint(\"pressed\")\\n', 'Discard changes', '*'], timeout=30); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:Thunderbird",

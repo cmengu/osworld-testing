@@ -400,3 +400,9 @@ match, so the row needs a rerun for a clean label.
 The Thunderbird tier (Alt+F4 then click:Don't Save) sits after the window tier and the ten generic routes, at position 14 or so;
 the row reached 13 candidates in 30 minutes. Candidate order only. Post-run: rerun v2-0052 with the Don't Save routes forced first
 (forced_candidates), as the probe did for rows 27 and 33.
+
+## 24 October 2026, 21:30: Thunderbird's Save Message question (v2-0053, v2-0054)
+
+The question appears as the rows assume (v2-0053: Escape cancels it, REVERSIBLE), but its buttons are "Save", "Cancel" and
+"Discard changes", not "Don't Save" (tree of v2-0053's after-state). The Thunderbird undo routes and the step-2 row now press
+"Discard changes"; the running collectors keep the old definitions, so v2-0054 ends broken and reruns with v2-0052 after the run.

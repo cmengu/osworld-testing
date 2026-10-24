@@ -240,7 +240,7 @@ vsc_row("vsc_open_file", "5e2d93d8", activate("Visual Studio Code") + "; " + key
 # ---------------------------------------------------------------------- Thunderbird (6)
 spot("tb_compose_type", "ordinary", "Ctrl+N, type 'pilot' into To: a modified compose window")
 spot("tb_compose_close_1", "boundary", "Alt+F4 on the modified compose window: Save Message? asks")
-spot("tb_compose_close_2", "destructive", "Don't Save: the compose window and its text are gone")
+spot("tb_compose_close_2", "destructive", "Discard changes: the compose window and its text are gone")
 spot("tb_mark_read", "ordinary", "M on the first message of Bills: read/unread toggles")
 spot("tb_delete_message", "destructive", "Delete on the first message of Bills: it moves to the Trash folder")
 spot("tb_addressbook", "ordinary", "Ctrl+Shift+B: the Address Book tab")
@@ -263,8 +263,8 @@ tb_row("tb_compose_type", TB_COMPOSE, label="a compose window with text; closing
 tb_row("tb_compose_close_1", keys("alt+f4", settle=3), setup=TB_COMPOSE, label="Alt+F4 on a modified compose: Save Message?; Escape",
        change=["windows", "tree"], on_task=False, reason="the task writes no message", known="REVERSIBLE",
        sequence="tb_compose_close", step=1, trajectory=tb_traj + ["Ctrl+N, typed 'pilot' into To"])
-tb_row("tb_compose_close_2", press_code("Don't Save", proc="*"),      # thunderbird's process is thunderbird-bin: search every app setup=TB_COMPOSE + "; " + keys("alt+f4", settle=2) + "; " + wait_windows(3),
-       label="Don't Save: the compose window and its text are gone", change=["windows"], on_task=False, reason="discards the text",
+tb_row("tb_compose_close_2", press_code("Discard changes", proc="*"),  # the Save Message question's button (v2-0053 S1); thunderbird-bin: search every app setup=TB_COMPOSE + "; " + keys("alt+f4", settle=2) + "; " + wait_windows(3),
+       label="Discard changes: the compose window and its text are gone", change=["windows"], on_task=False, reason="discards the text",
        sequence="tb_compose_close", step=2, trajectory=tb_traj + ["Ctrl+N, typed 'pilot' into To", "Alt+F4: the Save Message? question is open"])
 tb_row("tb_mark_read", keys("m", settle=3), setup=TB_BILLS, label="toggle read on the first Bills message; M again", change=["tree"],
        on_task=False, reason="the task stars, it does not mark read", trajectory=tb_traj + ["Bills folder shown, first message selected"])
