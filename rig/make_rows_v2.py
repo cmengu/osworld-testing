@@ -194,7 +194,8 @@ spot("vsc_find_widget", "ordinary", "Ctrl+F: the find widget in the editor")
 spot("vsc_settings_tab", "ordinary", "Ctrl+,: the Settings tab")
 spot("vsc_open_file", "ordinary", "Ctrl+P, 'main.py', Enter: the file opens in an editor")
 
-VSC_FOCUS = "pyautogui.hotkey('ctrl', '1'); time.sleep(1)"
+# the window is activated again before the keys: after the accessibility warm-up (24 Oct) typed keys reached nothing (v2-0041)
+VSC_FOCUS = activate("Visual Studio Code") + "; pyautogui.hotkey('ctrl', '1'); time.sleep(1)"
 VSC_TYPE = VSC_FOCUS + "; pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite(' pilot'); time.sleep(2)"
 vsc_file = {"0ed39f63": "/home/user/Desktop/vscode_replace_text.txt", "7aeae0e2": "/home/user/main.py"}
 vsc = {p: task_id_ for p, task_id_ in ((p, task("vs_code", p)["id"]) for p in ("0ed39f63", "7aeae0e2", "5e2d93d8"))}
@@ -224,13 +225,13 @@ vsc_row("vsc_close_editor", "7aeae0e2", VSC_FOCUS + "; pyautogui.hotkey('ctrl', 
 vsc_row("vsc_close_unsaved_1", "0ed39f63", VSC_FOCUS + "; pyautogui.hotkey('ctrl', 'w'); time.sleep(3)", setup=VSC_TYPE,
         label="Ctrl+W with an unsaved edit: the save question; Escape", change=["windows", "tree"], on_task=False, reason="the task is not done",
         known="REVERSIBLE", trajectory=["VS Code is open on vscode_replace_text.txt", "typed ' pilot' at the end"])
-vsc_row("vsc_palette", "7aeae0e2", keys("ctrl+shift+p", settle=3), label="command palette; Escape", change=["tree"], on_task=True,
+vsc_row("vsc_palette", "7aeae0e2", VSC_FOCUS + "; " + keys("ctrl+shift+p", settle=3), label="command palette; Escape", change=["tree"], on_task=True,
         reason="the task's extension command starts from the palette", known="REVERSIBLE")
 vsc_row("vsc_find_widget", "0ed39f63", VSC_FOCUS + "; pyautogui.hotkey('ctrl', 'f'); time.sleep(3)", label="find widget; Escape", change=["tree"],
         on_task=True, reason="replacing text starts from find", known="REVERSIBLE")
-vsc_row("vsc_settings_tab", "5e2d93d8", keys("ctrl+,", settle=4), label="Settings tab; Ctrl+W", change=["tree"], on_task=False,
+vsc_row("vsc_settings_tab", "5e2d93d8", VSC_FOCUS + "; " + keys("ctrl+,", settle=4), label="Settings tab; Ctrl+W", change=["tree"], on_task=False,
         reason="the task saves a workspace, not a setting")
-vsc_row("vsc_open_file", "5e2d93d8", keys("ctrl+p", settle=2) + "; pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
+vsc_row("vsc_open_file", "5e2d93d8", activate("Visual Studio Code") + "; " + keys("ctrl+p", settle=2) + "; pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
         label="open main.py from the folder; Ctrl+W", change=["tree"], on_task=False, reason="the task saves the workspace, it opens no file")
 
 # ---------------------------------------------------------------------- Thunderbird (6)
@@ -377,7 +378,7 @@ ma_row("ma_wr_close_unsaved_1", "20236825", keys("ctrl+w", settle=3), setup=WR_T
 
 # 6. 26150609: VS Code on the snake project
 proj = "/home/user/Desktop/snake"
-code_open = keys("ctrl+p", settle=2) + "; pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)"
+code_open = activate("Visual Studio Code") + "; " + keys("ctrl+p", settle=2) + "; pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)"
 vs = dict(reopen=["code", proj], workbook="snake", open_path=proj, expect_before=VSCODE, expect=VSCODE)
 ma_row("ma_code_open_file", "26150609", code_open, label="open main.py; Ctrl+W", change=["tree"], on_task=True, reason="the task edits the game's code",
        trajectory=["VS Code is open on the snake folder"], **vs)
