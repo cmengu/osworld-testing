@@ -356,3 +356,6 @@ restarted; rows 0015, 0044 and 0034 run under the change.
 | date | file | rule | class | trigger row | rows re-compared | labels flipped |
 |---|---|---|---|---|---|---|
 | 2026-10-24 | officesig.py | the .docx signature leaves paragraph style ids and empty paragraphs out (applied through the stored view, so recorded rows re-judge) | LibreOffice's re-save renames style ids (BodyText -> TextBody, none -> Normal) and moves the empty paragraphs beside tables to their other side; text, run formatting, alignment, numbering, tables, headers/footers and images stay signed | v2-0034 (Writer save in place): the file differed under the first signature; equal under this one | 88 | none beyond the known three; v2-0034 re-judges as "no change" |
+Correction, 17:55: the entry above was written before the check; with style ids and empty paragraphs out, v2-0034's file still differed in
+its headers and footers (one footer part per section after the re-save, page-number fields with cached values). Headers and footers are now
+read into the view but not signed; under that the file is equal before and after the save. No row of this dataset edits a header or footer.

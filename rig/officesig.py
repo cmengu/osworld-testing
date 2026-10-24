@@ -407,9 +407,11 @@ def normalize_view(view):
         out["slides"] = [dict(sl, shapes=[shape(x) for x in sl.get("shapes", [])]) for sl in view["slides"]]
         return out
     if isinstance(view, dict) and "body" in view:
-        out = dict(view, body=blocks(view["body"]))
-        if "headers_footers" in view:
-            out["headers_footers"] = {k: blocks(v) for k, v in view["headers_footers"].items()}
+        # headers and footers are read into the view but not signed: LibreOffice's re-save writes one footer part per
+        # section (footer1..footer12 for a six-section document) and page-number fields carry cached results that
+        # change with the save (v2-0034, 24 Oct); no row of this dataset edits a header or footer
+        out = {k: v for k, v in view.items() if k != "headers_footers"}
+        out["body"] = blocks(view["body"])
         return out
     return view
 
