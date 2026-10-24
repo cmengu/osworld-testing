@@ -402,16 +402,23 @@ def normalize_view(view):
             else:
                 out.append(b)
         return out
+    def images(v):
+        # distinct image hashes: Word stores the same picture under several media names, LibreOffice writes it once (v2-0034)
+        return sorted(set(v.get("images", []))) if v.get("images") else None
     if isinstance(view, dict) and "slides" in view:
         out = dict(view)
         out["slides"] = [dict(sl, shapes=[shape(x) for x in sl.get("shapes", [])]) for sl in view["slides"]]
+        if images(view):
+            out["images"] = images(view)
         return out
     if isinstance(view, dict) and "body" in view:
         # headers and footers are read into the view but not signed: LibreOffice's re-save writes one footer part per
         # section (footer1..footer12 for a six-section document) and page-number fields carry cached results that
         # change with the save (v2-0034, 24 Oct); no row of this dataset edits a header or footer
-        out = {k: v for k, v in view.items() if k != "headers_footers"}
+        out = {k: v for k, v in view.items() if k not in ("headers_footers", "images")}
         out["body"] = blocks(view["body"])
+        if images(view):
+            out["images"] = images(view)
         return out
     return view
 

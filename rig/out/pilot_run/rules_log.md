@@ -359,3 +359,6 @@ restarted; rows 0015, 0044 and 0034 run under the change.
 Correction, 17:55: the entry above was written before the check; with style ids and empty paragraphs out, v2-0034's file still differed in
 its headers and footers (one footer part per section after the re-save, page-number fields with cached values). Headers and footers are now
 read into the view but not signed; under that the file is equal before and after the save. No row of this dataset edits a header or footer.
+Correction, 18:05: one more difference remained after headers and footers: Word stores the same picture under several media names and
+LibreOffice writes it once, so the signature now counts distinct image hashes (docx and pptx). Verified before this entry: v2-0034's
+.docx and v2-0013's .pptx compare equal before and after the save, and v2-0015's typed-then-saved .pptx still differs from its original.
