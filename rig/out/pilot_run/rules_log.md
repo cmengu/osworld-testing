@@ -394,3 +394,9 @@ before, "Google Shape;106;p 1" after (a space inside the page suffix), so 24 nod
 Identity, not state, like the timestamped widget ids of 23 Oct. Candidate post-run rule: normalise whitespace in shape names under
 a document-presentation. Recorded NO-UNDO-FOUND at 12 candidates; a recompare under the rule would make c00 a single unconfirmed
 match, so the row needs a rerun for a clean label.
+
+## 24 October 2026, 20:40: v2-0052 (Thunderbird compose with text) hit the cap before its route
+
+The Thunderbird tier (Alt+F4 then click:Don't Save) sits after the window tier and the ten generic routes, at position 14 or so;
+the row reached 13 candidates in 30 minutes. Candidate order only. Post-run: rerun v2-0052 with the Don't Save routes forced first
+(forced_candidates), as the probe did for rows 27 and 33.
