@@ -314,3 +314,13 @@ Also 08:55 (v2-0040, attempt 1): the generic fresh start rejected VS Code becaus
 as "Visual Studio Code" while the file was still loading, and the relaunched window read "vscode_replace_text.txt - Visual Studio
 Code". The readiness check now also accepts a window whose title ends with the recorded one, and the prime records the baseline
 only after the titles have held for three reads and VS Code shows its document title (freshstart.py). Collector a restarted again.
+
+## 24 October 2026, 14:40: VS Code, Thunderbird and the save rows (smoke rows v2-0041, v2-0052, v2-0015)
+
+| date | file | change | class | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-24 | treediff.py | the `explicit-name` attribute is never compared | ARIA bookkeeping (whether a name came from a label), flickering on VS Code's activity-bar tabs | v2-0041 c00/c01 (VS Code type, Ctrl+Z): the only differences left; equal under the rule | 87 | none beyond the known three |
+| 2026-10-24 | collect_pilot.py, undo.py, make_rows_v2.py | click: and press steps in Thunderbird search every application (its process is thunderbird-bin, so a lookup by the name thunderbird found nothing); the Thunderbird tier tries Alt+F4 then click:Don't Save, and Ctrl+W then click:Don't Save, before the Alt+N guess | candidate routes, not comparison rules | v2-0052 (compose with text): guess B's click:Don't Save and the tier's Alt+N both left the Save Message? question open | n/a | none |
+| 2026-10-24 | collect_pilot.py | tier F2: when the action changed files and added no window (a save), "undo then save again" (Ctrl+Z, Ctrl+S, Keep Format; VS Code: Ctrl+Z, Ctrl+S) is tried first after the forced candidates | candidate order; cost only | v2-0015 (Impress save after an edit): the route sat past the 30-minute cap | n/a | none |
+
+All three collectors restarted; the rows in flight (0041, 0052, 0015) rerun.

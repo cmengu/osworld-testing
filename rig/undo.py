@@ -81,6 +81,8 @@ VSCODE: List[Candidate] = [
 # with Ctrl+Z; a tab (address book, settings) closes with Ctrl+W; a toggled flag toggles back with the same key.
 THUNDERBIRD: List[Candidate] = [
     ["key:alt+f4"],
+    ["key:alt+f4", "wait:2", "click:Don't Save"],                  # the Save Message? question's button (v2-0052, 24 Oct)
+    ["key:ctrl+w", "wait:2", "click:Don't Save"],
     ["key:alt+f4", "wait:2", "key:alt+n"],
     ["key:ctrl+w"],
     ["key:ctrl+z"],

@@ -627,7 +627,7 @@ class Collector:
         proposal = {"model": None}
         office_running = any("LibreOffice" in t for t in titles(S1.windows))
         ctx = {"doc_path": row.get("open_path"), "office_running": office_running, "reopen_cmd": row.get("reopen_cmd"),
-               "proc": {"files": "nautilus", "thunderbird": "thunderbird", "libreoffice-calc": "", "libreoffice-writer": "",
+               "proc": {"files": "nautilus", "thunderbird": "*", "libreoffice-calc": "", "libreoffice-writer": "",   # thunderbird's process is thunderbird-bin (24 Oct): search every app
                         "libreoffice-impress": "", "vs_code": "code"}.get(rec["app"], "*")}
         reopens_office = not row.get("reopen_cmd") or "libreoffice" in " ".join(row["reopen_cmd"])
 
@@ -787,6 +787,15 @@ class Collector:
             if w_tier:
                 tiers.append(("W", w_tier))
                 rec["window_added"] = True
+            elif fdiffs and rec["app"] in ("libreoffice-calc", "libreoffice-writer", "libreoffice-impress", "vs_code", "multi_apps"):
+                # a save (files changed, no window added), 24 Oct: the natural undo is "undo, then save again", which
+                # sat at position 15 or so of the tiers (v2-0015: Impress save after an edit ran out its 30-minute
+                # cap before reaching it); tried first, after the forced candidates.  Cost only.
+                saves = ([["key:ctrl+z", "key:ctrl+s"], ["key:ctrl+z", "key:ctrl+z", "key:ctrl+s"]] if rec["app"] == "vs_code" else
+                         [["key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3"],
+                          ["key:ctrl+z", "key:ctrl+z", "key:ctrl+s", "wait:4", "key:enter", "wait:3"]])
+                tiers.append(("F2", saves))
+                rec["files_changed_first"] = True
             tiers += [(1, [U.fill_mnemonics(c, self.mnemonics) for c in U.GENERIC]),
                      ("B", None),
                      (2, [U.fill_mnemonics(c, self.mnemonics) for c in U.tier2(rec["app"])])]

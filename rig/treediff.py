@@ -47,7 +47,9 @@ NODE = "__node__"  # pseudo-attribute meaning "the node itself exists"
 # links flip it as the page renders: probe-0024, a no-op, differed in one link's showing flag).  Nodes that are not
 # showing outside scroll panes are dropped whole (DROP_HIDDEN below); the attribute itself is never compared.
 GENERATED_ID = re.compile(r"[A-Za-z_-]\d{13,}$")   # name + epoch milliseconds + counter, XUL-generated
-IGNORED_ATTRS = frozenset({"screencoord", "size", "focused", "active", "showing"})
+IGNORED_ATTRS = frozenset({"screencoord", "size", "focused", "active", "showing",
+                           "explicit-name"})   # ARIA bookkeeping (whether the name came from a label); flickers on VS Code's
+                                               # activity-bar tabs after an undo (v2-0041 c00/c01, 24 Oct)
 ZOOM_READOUT = re.compile(r"\[(Set zoom level|Zoom)\]")
 WRITER_COUNT_READOUT = re.compile(r"^[\d,]+ words?, [\d,]+ characters?( selected)?$")
 # Impress and Draw status bar, 24 Oct (v2-0002, the Impress noise gate): the pointer position and the selection's size,
