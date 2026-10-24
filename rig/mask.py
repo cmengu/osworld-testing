@@ -79,6 +79,9 @@ def file_sig(v: dict):
         return ("dir", v.get("mode"), v.get("u"))
     if "l" in v:
         return ("link", v["l"])
+    if isinstance(v.get("v"), dict) and ("slides" in v["v"] or "body" in v["v"]):
+        from .officesig import view_signature        # a document view: signed under the current normaliser (24 Oct)
+        return ("doc", view_signature(v["v"]), v.get("mode"), v.get("u"))
     if v.get("k"):
         return ("cells", v["k"], v.get("mode"), v.get("u"))
     return (v.get("s"), v.get("c") or v.get("h"), v.get("mode"), v.get("u"))

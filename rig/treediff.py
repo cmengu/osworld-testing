@@ -53,6 +53,8 @@ WRITER_COUNT_READOUT = re.compile(r"^[\d,]+ words?, [\d,]+ characters?( selected
 # Impress and Draw status bar, 24 Oct (v2-0002, the Impress noise gate): the pointer position and the selection's size,
 # "-0.96 / -0.29 0.00 x 0.00", differ between two instances with nothing done; a readout of the mouse, not state
 POSITION_READOUT = re.compile(r"^-?\d+[.,]\d+ / -?\d+[.,]\d+ \d+[.,]\d+ x \d+[.,]\d+$")
+# Impress/Draw status bar, 24 Oct (v2-0006 c00): "Title text 'Weekday in school'" names what is selected, a readout
+OBJECT_READOUT = re.compile(r"^(Title text|Outline text|Subtitle text|Text (Frame|Box)|Image|Shape|Group object|Table|Line|Rectangle|Ellipse|Connector|Custom Shape|Picture|OLE object|\d+ objects? selected|Slide \d+ of \d+)\b")
 # Toolbar enablement is derived UI state that LibreOffice refreshes asynchronously after a command.  The
 # smoke test caught 2 of 20 click-spots differing on exactly these flags (Paste after a cut, Data Sources
 # after a row delete) with the document identical, so they are dropped on every node under a tool-bar.
@@ -64,6 +66,8 @@ FORMAT_READOUT_BAR = "/tool-bar[Formatting]"
 FORMAT_READOUT_ATTRS = ("checked", "value", "pressed", "indeterminate")
 # The definition (rig/prompts/guess_b_definition.txt) excludes the cursor position and the selection from the state.
 SELECTION_TAGS = ("table", "table-cell")          # their `selected` flag is the spreadsheet selection
+SIDEBAR_DECKS = frozenset({"Properties", "Styles", "Gallery", "Navigator", "Functions", "Slide Transition", "Animation",
+                           "Master Slides", "Shapes", "Page", "Manage Changes", "Design"})   # LibreOffice sidebar decks (24 Oct)
 SELECTION_READOUT = re.compile(r"^(Selected:|Sum\b|Average\b|Count\b|Min\b|Max\b)")   # status-bar echoes of it
 
 
@@ -138,17 +142,20 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
             attrs.pop("editable", None)  # and its editable flag, which comes and goes with keyboard focus (pilot-0004
                                          # confirmations, 23 Oct: focused+active+editable on the Input line after Ctrl+Z,
                                          # gone a few seconds later); focused and active are already ignored
-        if _local(node.tag) in SELECTION_TAGS:
-            attrs.pop("selected", None)     # which cells are highlighted is not document state
+        if _local(node.tag) in SELECTION_TAGS or "/document-presentation[" in path:
+            attrs.pop("selected", None)     # which cells, or which shapes of a slide, are highlighted is not document state
         if "/status-bar[" in path and SELECTION_READOUT.match(attrs.get("text", "")):
             attrs.pop("text", None)         # "Selected: 3 rows", "Sum=12": echoes of the selection
+        if "/status-bar[" in path and "application[soffice]" in path and OBJECT_READOUT.match(attrs.get("text", "")):
+            attrs.pop("text", None)         # Impress/Draw: what is selected, which slide is shown
         if "/status-bar[" in path and POSITION_READOUT.match(attrs.get("text", "")):
             attrs.pop("text", None)         # Impress/Draw: pointer position and selection size
         if "/status-bar[" in path and WRITER_COUNT_READOUT.match(attrs.get("text", "")):
             attrs.pop("text", None)         # Writer's "218 words, 1,433 characters": a lazily refreshed echo of the
                                             # document text, which is compared directly (probe-0029 c00, 23 Oct:
                                             # the text was back after Ctrl+Z, the count still said +5)
-        if FORMAT_READOUT_BAR in path:
+        if FORMAT_READOUT_BAR in path or ("/tool-bar[" in path and "application[soffice]" in path):
+            # every LibreOffice toolbar since 24 Oct: Impress's Select and Text Box buttons light up for the mode (v2-0006 c00)
             if _local(node.tag) in ("text", "paragraph"):
                 attrs.pop("text", None) # font name / size boxes: echo of the cursor cell
             for a in FORMAT_READOUT_ATTRS:
@@ -177,6 +184,10 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
                 continue                # viewport placeholder: no content, no formatting
             if tag == "label" and FILES_SELECTION_READOUT.match(name):
                 continue                # the file manager's selection readout: the selection is not state
+            if tag == "panel" and name in SIDEBAR_DECKS and "application[soffice]" in prefix:
+                continue                # LibreOffice's sidebar deck shows the properties of whatever is selected: a
+                                        # readout of the selection, 410 nodes of it when an Impress text box is
+                                        # selected (v2-0006, 24 Oct); the document itself is compared directly
             if tag == "status-bar" and "LibreOffice" not in prefix:
                 continue                # an editor's status bar is readouts (problems, ports, notifications, cursor
                                         # position; VS Code, 23 Oct); LibreOffice's is masked item by item by the mask run

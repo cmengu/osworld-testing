@@ -288,3 +288,18 @@ with one row of every new mechanism (16 rows) before the rest.
 | 2026-10-24 | treediff.py | an Impress/Draw status-bar label of the form "-0.96 / -0.29 0.00 x 0.00" (pointer position and selection size) is not compared | a readout of the mouse, like Calc's Sum/Selected readouts | v2-0001 and v2-0002 (both Impress no-ops): the one tree difference between two instances with nothing done | 82 under the rule (below) | none expected: no recorded row has an Impress window |
 
 The three smoke collectors were stopped and relaunched so the Impress rows are judged under the rule; the two no-op rows rerun.
+
+## 24 October 2026, 08:10: Impress gate, second round (smoke rows v2-0006, v2-0013)
+
+| date | file | rule | class of node | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-24 | treediff.py | LibreOffice sidebar decks (Properties, Styles, Gallery, Navigator, Functions, Slide Transition, Animation, Master Slides, Shapes, Page, Manage Changes, Design) are dropped whole | the deck shows the properties of whatever is selected: a readout of the selection | v2-0006 c00 (Impress, type then Ctrl+Z): 410 of 415 differences were the Properties deck redrawn for the selected text box | 86 (pilot_run 8, pilot_run2 30, pilot_rerun 8, probe_run 33, pilot150 6, v2 4 so far) | none |
+| 2026-10-24 | treediff.py | the `selected` flag of any node under a document-presentation is not compared | which shape is highlighted is the selection, as for sheet cells | v2-0006 c00: PlaceHolder 1 selected after the undo | same | none |
+| 2026-10-24 | treediff.py | the formatting-toolbar readout rule (checked, value, pressed, indeterminate; font boxes) applies to every LibreOffice toolbar | Impress's Select and Text Box buttons light up for the editing mode, like Bold for the cursor cell | v2-0006 c00: Drawing > Select value, Standard > Text Box checked | same | none |
+| 2026-10-24 | treediff.py | Impress/Draw status-bar labels naming the selection or the slide shown ("Title text 'Weekday in school'", "Slide 1 of 22") are not compared | readouts of the selection and the view | v2-0006 c00 | same | none |
+| 2026-10-24 | officesig.py, mask.py, snapshot.py | the .pptx signature leaves shape geometry out (positions and extents are read into the view `v` but not signed); a recorded document digest that carries its view is compared through the current normaliser, so a later change to the signature re-judges recorded rows without a rerun | LibreOffice's re-save moves geometry by one unit of 1/100 mm here and there (v2-0013: all extents one less, one x one less), so any signed geometry makes a plain save one-way | v2-0013 (Impress save in place): file differed under the first signature; equal under this one | same | none |
+
+Under these rules v2-0006's Ctrl+Z state is equal to S (the typed text is the only difference after the action), and v2-0013's deck is
+equal before and after the save. The three smoke collectors were restarted so the Impress rows in flight are judged under the rules.
+Known: rig/test_offline.py fails on an older assertion ("the renamed label must become a churn site") on the committed code from before
+today as well; rig/test_collector_flow.py passes.

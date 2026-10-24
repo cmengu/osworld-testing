@@ -34,6 +34,7 @@ DIGEST_SCRIPT = r"""python3 - <<'PY'
 _OFF = {}
 exec(compile(""" + repr(_OFFICESIG_SRC) + r""", "officesig", "exec"), _OFF)
 doc_view = _OFF["doc_view"]
+view_signature = _OFF["view_signature"]
 import os, hashlib, json, zipfile
 VIEW_CAP = 3 * 1024 * 1024   # 18 Oct: raised from 400 KB so big workbooks (pilot-0231, 105 KB xlsx) keep a readable view
 home = os.path.expanduser("~")
@@ -109,7 +110,7 @@ for root, dirs, files in os.walk(home):
         if p.lower().endswith((".docx", ".odt", ".pptx", ".odp")) and st.st_size <= cap and "/.~lock." not in p:
             try:
                 view = doc_view(p)
-                row["k"] = hashlib.sha256(json.dumps(view, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+                row["k"] = view_signature(view)
                 vtext = json.dumps(view, ensure_ascii=False)
                 if len(vtext) <= VIEW_CAP:
                     row["v"] = view

@@ -9,7 +9,8 @@ Writer and Impress files what xlsxsig does for workbooks.
   * .docx: body paragraphs in order (style id, alignment, text split into runs by bold/italic/underline/
     strike-through), tables as rows of cells of paragraphs, headers and footers, and the hashes of embedded
     images;
-  * .pptx: slides in order (hidden flag), each shape's placeholder type, position and size in 1/100 mm, its
+  * .pptx: slides in order (hidden flag), each shape's placeholder type (geometry is read into the view but
+    left out of the signature, see normalize_view), its
     paragraphs (text with bold/italic/underline), pictures by image hash, tables by cell text, and the slide's
     speaker notes;
   * .odt / .odp: the same from content.xml (paragraphs and headings with spans flattened, tables, frames by
@@ -363,9 +364,42 @@ def doc_view(path):
     raise ValueError(path)
 
 
+def normalize_view(view):
+    """The comparable part of a view.  Shape and picture geometry (position and extent) is dropped for .pptx:
+    LibreOffice's re-save of a PowerPoint deck moves values by one unit of 1/100 mm here and there (v2-0013,
+    24 Oct: every extent one less, one x one less), so any signature that carries geometry makes a plain save
+    one-way, and no rounding step avoids a boundary.  The geometry is still read and stored in the view (`v`) for
+    a person to look at; shape order, placeholder types, text, pictures, tables and notes remain compared.  ODF
+    frames keep their positions (LibreOffice writes its own files consistently).  Works on views read back from
+    a digest as well as fresh ones."""
+    def shape(sh):
+        if not isinstance(sh, list) or not sh:
+            return sh
+        kind = sh[0]
+        if kind in ("sp", "pic", "cxn", "frame") and len(sh) > 1 and isinstance(sh[1] if kind != "sp" else sh[2], list):
+            idx = 2 if kind == "sp" else 1
+            xf = sh[idx]
+            if isinstance(xf, list) and len(xf) == 4 and all(isinstance(v, (int, float)) or v is None for v in xf):
+                sh = sh[:idx] + [None] + sh[idx + 1:]
+        if kind == "grp" and len(sh) > 1:
+            sh = [kind, [shape(x) for x in sh[1]]]
+        if kind == "frame" and len(sh) > 2 and isinstance(sh[2], list):      # ODF frame: inner blocks may hold frames
+            sh = sh[:2] + [[shape(x) for x in sh[2]]] + sh[3:]
+        return sh
+    if isinstance(view, dict) and "slides" in view:
+        out = dict(view)
+        out["slides"] = [dict(sl, shapes=[shape(x) for x in sl.get("shapes", [])]) for sl in view["slides"]]
+        return out
+    return view
+
+
+def view_signature(view):
+    return hashlib.sha256(json.dumps(normalize_view(view), sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
 def doc_signature(path):
     try:
         view = doc_view(path)
     except Exception:
         return None
-    return hashlib.sha256(json.dumps(view, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+    return view_signature(view)
