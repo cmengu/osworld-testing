@@ -448,3 +448,8 @@ overlay, came fifth and was cut by the 30-minute cap ("not judged: row time cap 
 overlay itself (239 and 25 tree nodes), not noise. Like v2-0052: candidate order, not an undo result. Post-run: rerun both
 with Escape forced first (forced_candidates). v2-0055 (Thunderbird mark read) also ended NO-UNDO-FOUND: the replay check
 kept failing on Bills.msf (the folder summary file differs between instances), a candidate mask rule after the run.
+Also 14:55: v2-0062 (multi-app Writer, Ctrl+A Delete, task 02ce9a50) ended NO-UNDO-FOUND, but every candidate including
+`reopen` and plain Escape leaves a floor of 23 differing tree nodes (other+statusbar), and Ctrl+Z ; Ctrl+Home leaves 24.
+A difference that survives reopening the untouched file is a noise floor in this document's view, not the delete; the same
+action on another document (v2-0031) is REVERSIBLE by Ctrl+Z ; Ctrl+Home. Post-run: diff c07 (reopen) against S to name
+the 23 nodes, then a rule and a recompare.
