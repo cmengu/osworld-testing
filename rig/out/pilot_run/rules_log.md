@@ -430,3 +430,12 @@ v2-0065 (multi-app, type into the workbook after `wmctrl -a "LibreOffice Calc"` 
 the first instance raised Calc but the keys did not reach it (cursor still on A9, nothing typed); the second
 instance worked and the row is REVERSIBLE by Ctrl+Z. Intermittent focus after wmctrl -a; v2-0066 shares the step.
 Candidate fix after the run: wait until the active window is the target before typing.
+
+## 25 October 2026, 13:30: v2-0054 misfires with its setup fixed (press step, not a rule)
+
+With the setup restored (0308d81) the before-state is right: compose window plus the Save Message dialog, whose tree
+has push-button 'Discard changes' with a press action. The action (PRESS_PY, proc "*") still changed nothing: the
+dialog is still open afterwards. Not yet confirmed why. Leading hypothesis: find() walks every application's windows
+depth-first in order, so Thunderbird's large main window is walked before the dialog, and the 30 s subprocess timeout
+can expire first. Candidate fix after the run: search active and dialog windows first, then test it on a sandbox
+before the Thunderbird reruns. The click: undo routes share find(), so Thunderbird click routes may fail the same way.
