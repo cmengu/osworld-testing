@@ -474,3 +474,7 @@ Shift+Delete, Delete), which fails because no file manager is open. So every ter
 one-way action. Rows affected so far: v2-0069; likely v2-0078 (mv renames), v2-0079 (convert-to). Decision for the author
 (like the click: step on 22 Oct): add a `type:` step (typed text + Enter) to the undo language and the proposer prompt,
 then rerun those rows; or keep them and report the labels as lower bounds. rm/mv-over/cp-over rows stay one-way either way.
+Also 17:15: v2-0079 (terminal convert-to, task 3680a5ee) misfired: the task's terminal opens in ~/Desktop, and the
+row's commands used paths relative to ~ (Desktop/file1.xlsx), so nothing was converted. Same for v2-0080 (rm) and
+v2-0081 (cp over) on that task. The three rows now use absolute paths (make_rows_v2.py, rows file regenerated; diffed:
+only these three rows' code changes). Collector a restarted on the fixed file; b and c keep running.

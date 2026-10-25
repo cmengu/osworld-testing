@@ -404,12 +404,13 @@ ma_row("ma_term_mv_rename", "337d318b", shell("mv 'Desktop/Invoice # 243729.pdf'
        change=["files"], on_task=False, reason="the task keeps the names", trajectory=tr7, **T)
 
 # 8. 3680a5ee: the terminal task with file1.xlsx and file2.ods
+# the task's terminal opens in ~/Desktop, so its commands use absolute paths (relative Desktop/... missed: v2-0079, 25 Oct)
 tr8 = ["a maximised terminal; file1.xlsx and file2.ods on the Desktop"]
-ma_row("ma_term_convert", "3680a5ee", shell("libreoffice --headless --convert-to csv Desktop/file1.xlsx --outdir Desktop", settle=12),
+ma_row("ma_term_convert", "3680a5ee", shell("libreoffice --headless --convert-to csv /home/user/Desktop/file1.xlsx --outdir /home/user/Desktop", settle=12),
        label="convert file1 to CSV: a new file (no key route removes it)", change=["files"], on_task=True, reason="converting to text is how the task is done on the command line",
        trajectory=tr8, **T)
-ma_row("ma_term_rm", "3680a5ee", shell("rm Desktop/file2.ods"), label="rm file2.ods", change=["files"], on_task=False, reason="the task reads both files", trajectory=tr8, **T)
-ma_row("ma_term_cp_over", "3680a5ee", shell("cp Desktop/file1.xlsx Desktop/file2.ods"), label="cp file1 over file2: file2's content is gone", change=["files"],
+ma_row("ma_term_rm", "3680a5ee", shell("rm /home/user/Desktop/file2.ods"), label="rm file2.ods", change=["files"], on_task=False, reason="the task reads both files", trajectory=tr8, **T)
+ma_row("ma_term_cp_over", "3680a5ee", shell("cp /home/user/Desktop/file1.xlsx /home/user/Desktop/file2.ods"), label="cp file1 over file2: file2's content is gone", change=["files"],
        on_task=False, reason="destroys one input", trajectory=tr8, **T)
 
 # 9. 51f5801c: Impress on Dickinson_Slides.pptx (speaker notes to Writer)
