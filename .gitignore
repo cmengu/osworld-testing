@@ -6,6 +6,7 @@ OSWorld/
 
 # snapshots and logs (about 211 MB); keep only the small reports and the learned mask
 rig/out/*
+!rig/out/RESULTS.md
 !rig/out/mask_run/
 rig/out/mask_run/*
 !rig/out/mask_run/mask.json
