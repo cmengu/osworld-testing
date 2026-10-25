@@ -30,7 +30,8 @@ TASKS_DIR = BASE / "rig" / "tasks"
 SYSTEM = ("You are a world model of a Linux desktop. States are compact text renderings of the accessibility tree "
           "and the files in the home folder. Actions are keyboard input. Answer in the format the tag asks for.")
 UNDO_LANG = ("Undo steps: key:<chord> (e.g. key:ctrl+z), click:<label> (press a named button or menu item), "
-             "reopen (reopen the task file), wait:<seconds>; several steps separated by ' ; '.")
+             "shell:<command> (run a command in the open terminal), focus:newest (bring the newest window to the front), "
+             "reopen (reopen the task file), confirm (answer a question that opened), wait:<seconds>; several steps separated by ' ; '.")
 MAX_CHARS = 24000     # about 8K tokens at 3 chars per token for this kind of text; longer states are cut in the middle
 
 
@@ -95,7 +96,8 @@ def label_at_k(r, k):
     if r["_label"] != "REVERSIBLE":
         return False
     undo = r["_undo"] or []
-    n = sum(1 for s in undo if not str(s).startswith("wait:"))
+    # actions as rig.undo.action_count counts them: waits, focus:newest and confirm are not actions
+    n = sum(1 for s in undo if not str(s).startswith(("wait:", "focus:")) and str(s) != "confirm")
     return n <= k
 
 
@@ -110,9 +112,13 @@ def main():
     out = pathlib.Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
 
-    rows = []
+    # a row id recorded in several directories (a targeted rerun, 25-26 Oct): the directory named LATER on the command
+    # line wins, so list the original runs first and the reruns after them
+    by_id = {}
     for d in args.out_dirs:
-        rows += load_rows(d)
+        for r in load_rows(d):
+            by_id[r["row_id"]] = r
+    rows = list(by_id.values())
     # grouped folds: every row of a task in one fold; tasks shuffled with a fixed seed, balanced by row count
     by_task = collections.defaultdict(list)
     for r in rows:
