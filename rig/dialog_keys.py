@@ -59,7 +59,22 @@ def find(ok):
                 continue
         except Exception:
             continue
-        for w in app:
+        # the active window and any dialog first: Thunderbird's main window is walked node by node over D-Bus and
+        # used up the 30 s limit before the Save Message dialog was reached (v2-0054, 25 Oct)
+        try:
+            wins = list(app)
+        except Exception:
+            continue
+        def first(w):
+            try:
+                if w.getState().contains(pyatspi.STATE_ACTIVE):
+                    return 0
+                if w.getRoleName() in ("dialog", "alert", "file chooser"):
+                    return 1
+            except Exception:
+                pass
+            return 2
+        for w in sorted(wins, key=first):
             r = walk(w, ok)
             if r is not None:
                 return r
