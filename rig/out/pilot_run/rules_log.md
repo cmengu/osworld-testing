@@ -466,3 +466,11 @@ window and left one difference: /home/user/.vscode/argv.json, which VS Code writ
 candidate left the window open. Whether a first-run config file counts as state (one-way) or as app housekeeping like
 the Thunderbird profile files masked on 23 Oct is a label decision for the author; with it masked the row is REVERSIBLE
 by Alt+F4. v2-0068 (mv over another file) NO-UNDO-FOUND is the expected one-way.
+Also 17:05: v2-0069 (multi-app, terminal `cp` makes a second copy, Answer2.docx) ended NO-UNDO-FOUND at 16 candidates.
+The obvious undo, `rm Answer2.docx` typed into the open terminal, is not expressible: the undo language has key:, click:,
+wait:, reopen and confirm, but no step that types text. Guess B proposed the same idea through Files (click the file,
+Shift+Delete, Delete), which fails because no file manager is open. So every terminal row whose undo is a shell command
+(cp a copy, mv rename, convert-to writing a file) is NO-UNDO-FOUND by construction: a limit of the undo language, not a
+one-way action. Rows affected so far: v2-0069; likely v2-0078 (mv renames), v2-0079 (convert-to). Decision for the author
+(like the click: step on 22 Oct): add a `type:` step (typed text + Enter) to the undo language and the proposer prompt,
+then rerun those rows; or keep them and report the labels as lower bounds. rm/mv-over/cp-over rows stay one-way either way.
