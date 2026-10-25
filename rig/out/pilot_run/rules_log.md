@@ -439,3 +439,12 @@ dialog is still open afterwards. Not yet confirmed why. Leading hypothesis: find
 depth-first in order, so Thunderbird's large main window is walked before the dialog, and the 30 s subprocess timeout
 can expire first. Candidate fix after the run: search active and dialog windows first, then test it on a sandbox
 before the Thunderbird reruns. The click: undo routes share find(), so Thunderbird click routes may fail the same way.
+
+## 25 October 2026, 14:45: v2-0048 and v2-0049 capped before Escape (candidate order, not a rule)
+
+VS Code command palette (v2-0048) and find widget (v2-0049) ended NO-UNDO-FOUND at 5-6 candidates. In both rows tier 1
+tries four Ctrl+Z variants first (about 4-4.5 min each, VS Code snapshots are slow), and Escape, the expected undo for an
+overlay, came fifth and was cut by the 30-minute cap ("not judged: row time cap passed"). The Ctrl+Z diffs are the open
+overlay itself (239 and 25 tree nodes), not noise. Like v2-0052: candidate order, not an undo result. Post-run: rerun both
+with Escape forced first (forced_candidates). v2-0055 (Thunderbird mark read) also ended NO-UNDO-FOUND: the replay check
+kept failing on Bills.msf (the folder summary file differs between instances), a candidate mask rule after the run.
