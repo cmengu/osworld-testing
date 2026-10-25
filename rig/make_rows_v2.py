@@ -263,7 +263,9 @@ tb_row("tb_compose_type", TB_COMPOSE, label="a compose window with text; closing
 tb_row("tb_compose_close_1", keys("alt+f4", settle=3), setup=TB_COMPOSE, label="Alt+F4 on a modified compose: Save Message?; Escape",
        change=["windows", "tree"], on_task=False, reason="the task writes no message", known="REVERSIBLE",
        sequence="tb_compose_close", step=1, trajectory=tb_traj + ["Ctrl+N, typed 'pilot' into To"])
-tb_row("tb_compose_close_2", press_code("Discard changes", proc="*"),  # the Save Message question's button (v2-0053 S1); thunderbird-bin: search every app setup=TB_COMPOSE + "; " + keys("alt+f4", settle=2) + "; " + wait_windows(3),
+# the Save Message question's button is 'Discard changes' (v2-0053 S1); thunderbird-bin: search every app.  The setup sat inside this
+# comment until 25 Oct, so the row ran with no setup and broke (v2-0054, twice).
+tb_row("tb_compose_close_2", press_code("Discard changes", proc="*"), setup=TB_COMPOSE + "; " + keys("alt+f4", settle=2) + "; " + wait_windows(3),
        label="Discard changes: the compose window and its text are gone", change=["windows"], on_task=False, reason="discards the text",
        sequence="tb_compose_close", step=2, trajectory=tb_traj + ["Ctrl+N, typed 'pilot' into To", "Alt+F4: the Save Message? question is open"])
 tb_row("tb_mark_read", keys("m", settle=3), setup=TB_BILLS, label="toggle read on the first Bills message; M again", change=["tree"],

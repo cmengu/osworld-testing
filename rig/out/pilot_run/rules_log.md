@@ -408,3 +408,13 @@ The question appears as the rows assume (v2-0053: Escape cancels it, REVERSIBLE)
 "Discard changes"; the running collectors keep the old definitions, so v2-0054 ends broken and reruns with v2-0052 after the run.
 Also 21:50: v2-0055 (Thunderbird mark read) misfires because the click: step searched no tree items; the folder pane's "Bills" row
 is one. The click roles now include tree item, table row, row and tree table (dialog_keys.py); the row reruns after the run.
+
+## 25 October 2026, 12:05: v2-0054 never had a setup; v2-0055/0056 missed the click fix (row file, not a rule)
+
+v2-0054 (Thunderbird Discard changes) broke again in the rerun: its before-state is the bare main window and setup took 0 s.
+In rig/make_rows_v2.py the row's `setup=` argument sat inside the trailing comment since the rows were written, so the row
+was generated with an empty setup; both breaks (24 and 25 Oct) come from this, not from the button's name. Fixed, and
+rig/clickspots_v2.json regenerated. The regeneration also changes v2-0055 and v2-0056: their setups embed the click code, and
+the file had not been regenerated after the click-role fix of 24 Oct 21:02 (3c7d6e5), so the rerun launched at 11:30 runs them
+with the old roles and they are expected to break again. Diffed against the previous file: only these three rows' setups
+change. The collectors read the file at start; all three Thunderbird rows rerun after the run with the fixed file.
