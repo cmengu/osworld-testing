@@ -544,3 +544,10 @@ v2-0055 (rerun): the .msf rule removed the old blocker, but every reset to S' no
 window next to Thunderbird (the reset kills Thunderbird; its next start reports the crash), so the after-state is never
 reproduced and no candidate is judged.  Candidate fix: disable the crash reporter in the VM prep (MOZ_CRASHREPORTER_DISABLE=1
 for the Thunderbird launch, or the reporter's pref), then rerun v2-0055 and v2-0056.
+
+## 26 October 2026, 03:55: focus:newest raises but does not focus (rig, open)
+
+v2-0090 rerun: focus:newest picked the right window (the new Writer window, last in wmctrl's list) but `wmctrl -i -a`
+only raised it; the keys still reached the terminal (Ctrl+W no effect, Alt+F4 closed the terminal).  Same window-manager
+behaviour as activate() before the focus wait (v2-0065/0066).  To test: click the target window's title bar (geometry
+from `wmctrl -lG`) or `xdotool windowactivate --sync` if the VM has it.  v2-0090 remains a rig issue, not a label.
