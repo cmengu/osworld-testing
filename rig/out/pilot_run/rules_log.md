@@ -478,3 +478,8 @@ Also 17:15: v2-0079 (terminal convert-to, task 3680a5ee) misfired: the task's te
 row's commands used paths relative to ~ (Desktop/file1.xlsx), so nothing was converted. Same for v2-0080 (rm) and
 v2-0081 (cp over) on that task. The three rows now use absolute paths (make_rows_v2.py, rows file regenerated; diffed:
 only these three rows' code changes). Collector a restarted on the fixed file; b and c keep running.
+Also 19:50: v2-0089 (multi-app Calc, Ctrl+Space then Ctrl+- deletes the active column) ended NO-UNDO-FOUND, but Ctrl+Z
+cut the difference from 264 tree nodes to 23, all of class `cells`: the column came back and 23 cells still read
+differently, possibly the restored column's selection or a format readout rather than content. Post-run: diff c00
+against S to name the 23 cells; a rule plus recompare if they are a readout. v2-0084 (Files Delete to Trash) is
+REVERSIBLE by click:Undo Trash, as in the Files probe.
