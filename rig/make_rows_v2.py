@@ -492,6 +492,17 @@ ma_row("ma_files_perm_delete_2", "b5062e3e", "pyautogui.hotkey('alt', 'd'); time
 spots = [{"id": i, "band": b, "desc": d, "setup": "", "code": "", "pause": None, "expect": None, "fp": [], "target": None,
           "sequence": None, "step": None, "twin": None, "shares": None} for i, (b, d) in SPOTS.items()]
 meta = dict(PILOT["meta"], generated_by="rig/make_rows_v2.py", recipe=__doc__.strip().splitlines()[0])
+# Forced first candidates for the targeted rerun of 25-26 Oct (plan approved by the author): the natural undo was cut
+# by the row cap before the tiers reached it (VS Code overlays: four Ctrl+Z variants at ~4 min each came first;
+# Thunderbird compose: the Discard route sat at position 14).
+RERUN_FORCED = {
+    "v2-0048": [["key:escape"], ["key:escape", "key:escape"]],
+    "v2-0049": [["key:escape"], ["key:escape", "key:escape"]],
+    "v2-0052": [["focus:newest", "key:alt+f4", "wait:2", "click:Discard changes"], ["focus:newest", "key:ctrl+w", "wait:2", "click:Discard changes"]],
+}
+for r in rows:
+    if r["row_id"] in RERUN_FORCED:
+        r["forced_candidates"] = RERUN_FORCED[r["row_id"]]
 OUT.write_text(json.dumps({"meta": meta, "spots": spots, "rows": rows}, indent=1, ensure_ascii=False) + "\n")
 from collections import Counter
 by_app = Counter(r["app"] for r in rows if r["spot_id"] != "noop")

@@ -6,6 +6,8 @@ Steps may only be things a user could do with the keyboard, using what the appli
 - "reopen" opens again the document or folder the task opened, relaunching its application if it is closed, maximised
 - "menu:<alt-chord>,<letters>" opens a menu by its Alt accelerator and presses the item's mnemonic letters, e.g. menu:alt+e,u for Edit > Undo
 - "click:<label>" clicks a button, menu entry or sidebar row by the name it shows, e.g. click:Undo Trash, click:Restore, click:Trash
+- "shell:<command>" types a command into the open terminal and runs it, e.g. shell:rm Desktop/copy.docx, shell:mv Desktop/b.pdf Desktop/a.pdf (paths as the terminal sees them)
+- "focus:newest" brings the most recently opened window to the front before the next key
 Not allowed: typing of any kind (re-entering lost content or typing commands is not an undo: if the applications cannot bring the state back, it is gone), snapshots, backups, copies made in advance, anything run outside the visible desktop, or anything an agent would not have at deployment. Do not propose sequences that merely repeat Ctrl+Z once, twice or three times, or Escape, or Ctrl+Home: those are tried already. Think about what the action changed and what restores exactly that; if nothing can, say so with an empty list and explain why.
 
 Answer in JSON: {"candidates": [{"steps": ["key:ctrl+z", "key:ctrl+home"], "why": "..."}], "note": "..."}

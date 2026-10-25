@@ -149,7 +149,10 @@ def content_score(tree_diffs, fdiffs) -> tuple:
 
 NODE_ATTR = "__node__"
 
-WINDOW_CLOSERS = [["key:escape"], ["key:ctrl+w"], ["key:alt+f4"]]
+WINDOW_CLOSERS = [["key:escape"], ["focus:newest", "key:ctrl+w"], ["focus:newest", "key:alt+f4"]]
+# focus:newest since 25 Oct: the window the action opened may not have the keyboard focus (v2-0090: Writer opened
+# from a terminal kept none; Ctrl+W went to the terminal and Alt+F4 closed it).  Escape stays unfocused: a dialog
+# the action opened has the focus by construction.
 
 
 def window_tier(before_windows: str, after_windows: str) -> list:
@@ -809,9 +812,20 @@ class Collector:
                           ["key:ctrl+z", "key:ctrl+z", "key:ctrl+s", "key:ctrl+y", "key:ctrl+y"]] if rec["app"] == "vs_code" else
                          [["key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3", "key:ctrl+y"],
                           ["key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3"],
-                          ["key:ctrl+z", "key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3", "key:ctrl+y", "key:ctrl+y"]])
+                          ["key:ctrl+z", "key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3", "key:ctrl+y", "key:ctrl+y"],
+                          # deeper (25 Oct): typing "pilot " is three undo steps in Writer (v2-0028); in v2-0035/0036/0059 and
+                          # the Impress rows the re-saved file still held "pilot" after one or two undos
+                          ["key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3",
+                           "key:ctrl+y", "key:ctrl+y", "key:ctrl+y"],
+                          ["key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3",
+                           "key:ctrl+y", "key:ctrl+y", "key:ctrl+y", "key:ctrl+y"]])
                 tiers.append(("F2", saves))
                 rec["files_changed_first"] = True
+            inverses = U.shell_inverses(row.get("code", "")) if fdiffs else []
+            if inverses:
+                # a terminal command that changed files (25 Oct): its inverse as a shell: step (cp -> rm the copy,
+                # mv -> mv back, convert-to -> rm the output), tried before the generic keys
+                tiers.append(("T", inverses))
             tiers += [(1, [U.fill_mnemonics(c, self.mnemonics) for c in U.GENERIC]),
                      ("B", None),
                      (2, [U.fill_mnemonics(c, self.mnemonics) for c in U.tier2(rec["app"])])]

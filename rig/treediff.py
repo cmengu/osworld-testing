@@ -182,6 +182,15 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
             name = child.get("name", "")
             if tag == "application" and not name and _office_app(child):
                 name = "soffice"        # the accessibility bus reports no name right after launch
+            if "/document-presentation[" in prefix and name:
+                name = re.sub(r"\s+", "", name)   # since 25 Oct (v2-0012): a shape restored by Ctrl+Z is renamed
+                                                   # "Google Shape;106;p1" -> "Google Shape;106;p 1"; identity, not state
+                if re.match(r"^PlaceHolder\d+$", name):
+                    # and its placeholders renumbered (PlaceHolder1, 2 -> PlaceHolder5, 6): a placeholder is known by its
+                    # role (style Title, Outliner, ...), not its number; collapsing the number alone swapped the Title
+                    # and Text placeholders of v2-0010, whose restored shape comes back last in the tree
+                    style = next((v for k, v in child.attrib.items() if _local(k) == "style"), "")
+                    name = f"PlaceHolder:{style}"
             if _defunct(child) and len(child) == 0:
                 continue                # dead, childless registration of a killed process, gone a little later
             if tag == "application" and len(child) == 0:

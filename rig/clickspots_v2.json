@@ -3292,7 +3292,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite(' pilot'); time.sleep(2)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite(' pilot'); time.sleep(2)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:code",
@@ -3329,7 +3329,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite(' pilot'); time.sleep(2)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite(' pilot'); time.sleep(2)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:code",
@@ -3366,7 +3366,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); time.sleep(1); pyautogui.hotkey('ctrl', 'shift', 'k'); time.sleep(2)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); time.sleep(1); pyautogui.hotkey('ctrl', 'shift', 'k'); time.sleep(2)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:code",
@@ -3402,7 +3402,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite(' pilot'); time.sleep(2)",
+   "setup": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite(' pilot'); time.sleep(2)",
    "code": "pyautogui.hotkey('ctrl', 's'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
@@ -3440,7 +3440,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite(' pilot'); time.sleep(2)",
+   "setup": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite(' pilot'); time.sleep(2)",
    "code": "pyautogui.hotkey('ctrl', 's'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
@@ -3479,7 +3479,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'w'); time.sleep(3)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'w'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:code",
@@ -3515,8 +3515,8 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite(' pilot'); time.sleep(2)",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'w'); time.sleep(3)",
+   "setup": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite(' pilot'); time.sleep(2)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'w'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:code",
@@ -3555,7 +3555,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'shift', 'p'); time.sleep(3)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'shift', 'p'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:code",
@@ -3568,7 +3568,15 @@
     "VS Code is open on main.py"
    ],
    "known_answer": "REVERSIBLE",
-   "forced_candidates": null,
+   "forced_candidates": [
+    [
+     "key:escape"
+    ],
+    [
+     "key:escape",
+     "key:escape"
+    ]
+   ],
    "expect_change": [
     "tree"
    ]
@@ -3592,7 +3600,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'f'); time.sleep(3)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', 'f'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:code",
@@ -3605,7 +3613,15 @@
     "VS Code is open on vscode_replace_text.txt"
    ],
    "known_answer": "REVERSIBLE",
-   "forced_candidates": null,
+   "forced_candidates": [
+    [
+     "key:escape"
+    ],
+    [
+     "key:escape",
+     "key:escape"
+    ]
+   ],
    "expect_change": [
     "tree"
    ]
@@ -3629,7 +3645,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', ','); time.sleep(4)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', '1'); time.sleep(1); pyautogui.hotkey('ctrl', ','); time.sleep(4)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:code",
@@ -3666,7 +3682,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:code",
@@ -3715,7 +3731,20 @@
     "Thunderbird is open on its main window"
    ],
    "known_answer": null,
-   "forced_candidates": null,
+   "forced_candidates": [
+    [
+     "focus:newest",
+     "key:alt+f4",
+     "wait:2",
+     "click:Discard changes"
+    ],
+    [
+     "focus:newest",
+     "key:ctrl+w",
+     "wait:2",
+     "click:Discard changes"
+    ]
+   ],
    "expect_change": [
     "windows",
     "tree"
@@ -3778,7 +3807,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "pyautogui.hotkey('ctrl', 'n'); time.sleep(3); __import__('subprocess').run(['sh', '-c', 'for i in $(seq 1 40); do [ $(wmctrl -l 2>/dev/null | grep -vc \"@!\") -ge 2 ] && exit 0; sleep 0.5; done; exit 1'], timeout=30); time.sleep(1); time.sleep(2); pyautogui.typewrite('pilot'); time.sleep(2); pyautogui.hotkey('alt', 'f4'); time.sleep(2); __import__('subprocess').run(['sh', '-c', 'for i in $(seq 1 40); do [ $(wmctrl -l 2>/dev/null | grep -vc \"@!\") -ge 3 ] && exit 0; sleep 0.5; done; exit 1'], timeout=30); time.sleep(1)",
-   "code": "__import__('subprocess').run(['python3', '-c', '\\nimport sys, logging, subprocess\\nlogging.disable(logging.CRITICAL)\\nsys.path.insert(0, \"/home/user/server\")\\ntry:\\n    import main as srv\\nexcept Exception:\\n    pass\\nimport pyatspi\\n# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise; \"*\" = every application\\n_proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None\\npids = None if _proc == \"*\" else set(int(x) for x in subprocess.run([\"pgrep\", \"-x\", _proc] if _proc else [\"pgrep\", \"-f\", \"soffice\"],\\n                                                                     capture_output=True, text=True).stdout.split())\\ndef norm(s):\\n    return (s or \"\").replace(\"’\", \"\\'\").replace(\"~\", \"\").replace(\"_\", \"\").lower()\\ndef walk(n, ok, d=0):\\n    try:\\n        if ok(n):\\n            return n\\n    except Exception:\\n        return None\\n    if d > 16:\\n        return None\\n    try:\\n        kids = list(n)\\n    except Exception:\\n        return None\\n    for c in kids:\\n        r = walk(c, ok, d + 1)\\n        if r is not None:\\n            return r\\n    return None\\ndef find(ok):\\n    for app in pyatspi.Registry.getDesktop(0):\\n        try:\\n            if pids is not None and int(app.get_process_id()) not in pids:\\n                continue\\n        except Exception:\\n            continue\\n        for w in app:\\n            r = walk(w, ok)\\n            if r is not None:\\n                return r\\n    return None\\n\\nwant = norm(sys.argv[1])\\nb = find(lambda n: n.getRoleName() in (\"push button\", \"menu item\", \"check box\") and norm(n.name) == want)\\nif b is None:\\n    print(\"not found\"); sys.exit(0)\\nb.queryAction().doAction(0)\\nprint(\"pressed\")\\n', 'Discard changes', '*'], timeout=30); time.sleep(3)",
+   "code": "__import__('subprocess').run(['python3', '-c', '\\nimport sys, logging, subprocess\\nlogging.disable(logging.CRITICAL)\\nsys.path.insert(0, \"/home/user/server\")\\ntry:\\n    import main as srv\\nexcept Exception:\\n    pass\\nimport pyatspi\\n# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise; \"*\" = every application\\n_proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None\\npids = None if _proc == \"*\" else set(int(x) for x in subprocess.run([\"pgrep\", \"-x\", _proc] if _proc else [\"pgrep\", \"-f\", \"soffice\"],\\n                                                                     capture_output=True, text=True).stdout.split())\\ndef norm(s):\\n    return (s or \"\").replace(\"’\", \"\\'\").replace(\"~\", \"\").replace(\"_\", \"\").lower()\\ndef walk(n, ok, d=0):\\n    try:\\n        if ok(n):\\n            return n\\n    except Exception:\\n        return None\\n    if d > 16:\\n        return None\\n    try:\\n        kids = list(n)\\n    except Exception:\\n        return None\\n    for c in kids:\\n        r = walk(c, ok, d + 1)\\n        if r is not None:\\n            return r\\n    return None\\ndef find(ok):\\n    for app in pyatspi.Registry.getDesktop(0):\\n        try:\\n            if pids is not None and int(app.get_process_id()) not in pids:\\n                continue\\n        except Exception:\\n            continue\\n        # the active window and any dialog first: Thunderbird\\'s main window is walked node by node over D-Bus and\\n        # used up the 30 s limit before the Save Message dialog was reached (v2-0054, 25 Oct)\\n        try:\\n            wins = list(app)\\n        except Exception:\\n            continue\\n        def first(w):\\n            try:\\n                if w.getState().contains(pyatspi.STATE_ACTIVE):\\n                    return 0\\n                if w.getRoleName() in (\"dialog\", \"alert\", \"file chooser\"):\\n                    return 1\\n            except Exception:\\n                pass\\n            return 2\\n        for w in sorted(wins, key=first):\\n            r = walk(w, ok)\\n            if r is not None:\\n                return r\\n    return None\\n\\nwant = norm(sys.argv[1])\\nb = find(lambda n: n.getRoleName() in (\"push button\", \"menu item\", \"check box\") and norm(n.name) == want)\\nif b is None:\\n    print(\"not found\"); sys.exit(0)\\nb.queryAction().doAction(0)\\nprint(\"pressed\")\\n', 'Discard changes', '*'], timeout=30); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:Thunderbird",
@@ -3815,7 +3844,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "__import__('subprocess').run(['python3', '-c', '\\nimport sys, logging, subprocess\\nlogging.disable(logging.CRITICAL)\\nsys.path.insert(0, \"/home/user/server\")\\ntry:\\n    import main as srv\\nexcept Exception:\\n    pass\\nimport pyatspi\\n# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise; \"*\" = every application\\n_proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None\\npids = None if _proc == \"*\" else set(int(x) for x in subprocess.run([\"pgrep\", \"-x\", _proc] if _proc else [\"pgrep\", \"-f\", \"soffice\"],\\n                                                                     capture_output=True, text=True).stdout.split())\\ndef norm(s):\\n    return (s or \"\").replace(\"’\", \"\\'\").replace(\"~\", \"\").replace(\"_\", \"\").lower()\\ndef walk(n, ok, d=0):\\n    try:\\n        if ok(n):\\n            return n\\n    except Exception:\\n        return None\\n    if d > 16:\\n        return None\\n    try:\\n        kids = list(n)\\n    except Exception:\\n        return None\\n    for c in kids:\\n        r = walk(c, ok, d + 1)\\n        if r is not None:\\n            return r\\n    return None\\ndef find(ok):\\n    for app in pyatspi.Registry.getDesktop(0):\\n        try:\\n            if pids is not None and int(app.get_process_id()) not in pids:\\n                continue\\n        except Exception:\\n            continue\\n        for w in app:\\n            r = walk(w, ok)\\n            if r is not None:\\n                return r\\n    return None\\n\\nwant = norm(sys.argv[1])\\nROLES = (\"push button\", \"menu item\", \"check menu item\", \"radio menu item\", \"check box\", \"toggle button\",\\n         \"radio button\", \"list item\", \"label\", \"link\", \"table cell\",\\n         \"tree item\", \"table row\", \"row\", \"tree table\")   # Thunderbird\\'s folder pane rows (v2-0055, 24 Oct)\\nn = find(lambda n: n.getRoleName() in ROLES and norm(n.name) == want)\\nif n is None:\\n    print(\"not found\"); sys.exit(0)\\nnode, hops = n, 0\\nwhile node is not None and hops < 4:\\n    try:\\n        a = node.queryAction()\\n        if a.nActions > 0:\\n            a.doAction(0); print(\"clicked\", node.getRoleName(), repr(node.name), a.getName(0)); sys.exit(0)\\n    except Exception:\\n        pass\\n    node, hops = node.parent, hops + 1\\nprint(\"no action\")\\n', 'Bills', '*'], timeout=30); time.sleep(3); time.sleep(2); pyautogui.press('f6'); time.sleep(1); pyautogui.press('home'); time.sleep(2)",
+   "setup": "__import__('subprocess').run(['python3', '-c', '\\nimport sys, logging, subprocess\\nlogging.disable(logging.CRITICAL)\\nsys.path.insert(0, \"/home/user/server\")\\ntry:\\n    import main as srv\\nexcept Exception:\\n    pass\\nimport pyatspi\\n# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise; \"*\" = every application\\n_proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None\\npids = None if _proc == \"*\" else set(int(x) for x in subprocess.run([\"pgrep\", \"-x\", _proc] if _proc else [\"pgrep\", \"-f\", \"soffice\"],\\n                                                                     capture_output=True, text=True).stdout.split())\\ndef norm(s):\\n    return (s or \"\").replace(\"’\", \"\\'\").replace(\"~\", \"\").replace(\"_\", \"\").lower()\\ndef walk(n, ok, d=0):\\n    try:\\n        if ok(n):\\n            return n\\n    except Exception:\\n        return None\\n    if d > 16:\\n        return None\\n    try:\\n        kids = list(n)\\n    except Exception:\\n        return None\\n    for c in kids:\\n        r = walk(c, ok, d + 1)\\n        if r is not None:\\n            return r\\n    return None\\ndef find(ok):\\n    for app in pyatspi.Registry.getDesktop(0):\\n        try:\\n            if pids is not None and int(app.get_process_id()) not in pids:\\n                continue\\n        except Exception:\\n            continue\\n        # the active window and any dialog first: Thunderbird\\'s main window is walked node by node over D-Bus and\\n        # used up the 30 s limit before the Save Message dialog was reached (v2-0054, 25 Oct)\\n        try:\\n            wins = list(app)\\n        except Exception:\\n            continue\\n        def first(w):\\n            try:\\n                if w.getState().contains(pyatspi.STATE_ACTIVE):\\n                    return 0\\n                if w.getRoleName() in (\"dialog\", \"alert\", \"file chooser\"):\\n                    return 1\\n            except Exception:\\n                pass\\n            return 2\\n        for w in sorted(wins, key=first):\\n            r = walk(w, ok)\\n            if r is not None:\\n                return r\\n    return None\\n\\nwant = norm(sys.argv[1])\\nROLES = (\"push button\", \"menu item\", \"check menu item\", \"radio menu item\", \"check box\", \"toggle button\",\\n         \"radio button\", \"list item\", \"label\", \"link\", \"table cell\",\\n         \"tree item\", \"table row\", \"row\", \"tree table\")   # Thunderbird\\'s folder pane rows (v2-0055, 24 Oct)\\nn = find(lambda n: n.getRoleName() in ROLES and norm(n.name) == want)\\nif n is None:\\n    print(\"not found\"); sys.exit(0)\\nnode, hops = n, 0\\nwhile node is not None and hops < 4:\\n    try:\\n        a = node.queryAction()\\n        if a.nActions > 0:\\n            a.doAction(0); print(\"clicked\", node.getRoleName(), repr(node.name), a.getName(0)); sys.exit(0)\\n    except Exception:\\n        pass\\n    node, hops = node.parent, hops + 1\\nprint(\"no action\")\\n', 'Bills', '*'], timeout=30); time.sleep(3); time.sleep(2); pyautogui.press('f6'); time.sleep(1); pyautogui.press('home'); time.sleep(2)",
    "code": "pyautogui.press('m'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
@@ -3852,7 +3881,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "__import__('subprocess').run(['python3', '-c', '\\nimport sys, logging, subprocess\\nlogging.disable(logging.CRITICAL)\\nsys.path.insert(0, \"/home/user/server\")\\ntry:\\n    import main as srv\\nexcept Exception:\\n    pass\\nimport pyatspi\\n# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise; \"*\" = every application\\n_proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None\\npids = None if _proc == \"*\" else set(int(x) for x in subprocess.run([\"pgrep\", \"-x\", _proc] if _proc else [\"pgrep\", \"-f\", \"soffice\"],\\n                                                                     capture_output=True, text=True).stdout.split())\\ndef norm(s):\\n    return (s or \"\").replace(\"’\", \"\\'\").replace(\"~\", \"\").replace(\"_\", \"\").lower()\\ndef walk(n, ok, d=0):\\n    try:\\n        if ok(n):\\n            return n\\n    except Exception:\\n        return None\\n    if d > 16:\\n        return None\\n    try:\\n        kids = list(n)\\n    except Exception:\\n        return None\\n    for c in kids:\\n        r = walk(c, ok, d + 1)\\n        if r is not None:\\n            return r\\n    return None\\ndef find(ok):\\n    for app in pyatspi.Registry.getDesktop(0):\\n        try:\\n            if pids is not None and int(app.get_process_id()) not in pids:\\n                continue\\n        except Exception:\\n            continue\\n        for w in app:\\n            r = walk(w, ok)\\n            if r is not None:\\n                return r\\n    return None\\n\\nwant = norm(sys.argv[1])\\nROLES = (\"push button\", \"menu item\", \"check menu item\", \"radio menu item\", \"check box\", \"toggle button\",\\n         \"radio button\", \"list item\", \"label\", \"link\", \"table cell\",\\n         \"tree item\", \"table row\", \"row\", \"tree table\")   # Thunderbird\\'s folder pane rows (v2-0055, 24 Oct)\\nn = find(lambda n: n.getRoleName() in ROLES and norm(n.name) == want)\\nif n is None:\\n    print(\"not found\"); sys.exit(0)\\nnode, hops = n, 0\\nwhile node is not None and hops < 4:\\n    try:\\n        a = node.queryAction()\\n        if a.nActions > 0:\\n            a.doAction(0); print(\"clicked\", node.getRoleName(), repr(node.name), a.getName(0)); sys.exit(0)\\n    except Exception:\\n        pass\\n    node, hops = node.parent, hops + 1\\nprint(\"no action\")\\n', 'Bills', '*'], timeout=30); time.sleep(3); time.sleep(2); pyautogui.press('f6'); time.sleep(1); pyautogui.press('home'); time.sleep(2)",
+   "setup": "__import__('subprocess').run(['python3', '-c', '\\nimport sys, logging, subprocess\\nlogging.disable(logging.CRITICAL)\\nsys.path.insert(0, \"/home/user/server\")\\ntry:\\n    import main as srv\\nexcept Exception:\\n    pass\\nimport pyatspi\\n# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise; \"*\" = every application\\n_proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None\\npids = None if _proc == \"*\" else set(int(x) for x in subprocess.run([\"pgrep\", \"-x\", _proc] if _proc else [\"pgrep\", \"-f\", \"soffice\"],\\n                                                                     capture_output=True, text=True).stdout.split())\\ndef norm(s):\\n    return (s or \"\").replace(\"’\", \"\\'\").replace(\"~\", \"\").replace(\"_\", \"\").lower()\\ndef walk(n, ok, d=0):\\n    try:\\n        if ok(n):\\n            return n\\n    except Exception:\\n        return None\\n    if d > 16:\\n        return None\\n    try:\\n        kids = list(n)\\n    except Exception:\\n        return None\\n    for c in kids:\\n        r = walk(c, ok, d + 1)\\n        if r is not None:\\n            return r\\n    return None\\ndef find(ok):\\n    for app in pyatspi.Registry.getDesktop(0):\\n        try:\\n            if pids is not None and int(app.get_process_id()) not in pids:\\n                continue\\n        except Exception:\\n            continue\\n        # the active window and any dialog first: Thunderbird\\'s main window is walked node by node over D-Bus and\\n        # used up the 30 s limit before the Save Message dialog was reached (v2-0054, 25 Oct)\\n        try:\\n            wins = list(app)\\n        except Exception:\\n            continue\\n        def first(w):\\n            try:\\n                if w.getState().contains(pyatspi.STATE_ACTIVE):\\n                    return 0\\n                if w.getRoleName() in (\"dialog\", \"alert\", \"file chooser\"):\\n                    return 1\\n            except Exception:\\n                pass\\n            return 2\\n        for w in sorted(wins, key=first):\\n            r = walk(w, ok)\\n            if r is not None:\\n                return r\\n    return None\\n\\nwant = norm(sys.argv[1])\\nROLES = (\"push button\", \"menu item\", \"check menu item\", \"radio menu item\", \"check box\", \"toggle button\",\\n         \"radio button\", \"list item\", \"label\", \"link\", \"table cell\",\\n         \"tree item\", \"table row\", \"row\", \"tree table\")   # Thunderbird\\'s folder pane rows (v2-0055, 24 Oct)\\nn = find(lambda n: n.getRoleName() in ROLES and norm(n.name) == want)\\nif n is None:\\n    print(\"not found\"); sys.exit(0)\\nnode, hops = n, 0\\nwhile node is not None and hops < 4:\\n    try:\\n        a = node.queryAction()\\n        if a.nActions > 0:\\n            a.doAction(0); print(\"clicked\", node.getRoleName(), repr(node.name), a.getName(0)); sys.exit(0)\\n    except Exception:\\n        pass\\n    node, hops = node.parent, hops + 1\\nprint(\"no action\")\\n', 'Bills', '*'], timeout=30); time.sleep(3); time.sleep(2); pyautogui.press('f6'); time.sleep(1); pyautogui.press('home'); time.sleep(2)",
    "code": "pyautogui.press('delete'); time.sleep(4)",
    "pause": 2,
    "prelude": "",
@@ -4156,7 +4185,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"review_template\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('alt', 'f4'); time.sleep(3)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"review_template\"), timeout=30); time.sleep(1); pyautogui.hotkey('alt', 'f4'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "none",
@@ -4194,7 +4223,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"LibreOffice Calc\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', 'home'); time.sleep(1); pyautogui.typewrite('pilot'); pyautogui.press('enter'); time.sleep(2)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"LibreOffice Calc\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); time.sleep(1); pyautogui.typewrite('pilot'); pyautogui.press('enter'); time.sleep(2)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:soffice",
@@ -4232,7 +4261,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "__import__('subprocess').run(['wmctrl', '-a', \"LibreOffice Calc\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', 'home'); time.sleep(1); pyautogui.typewrite('pilot'); pyautogui.press('enter'); time.sleep(2)",
+   "setup": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"LibreOffice Calc\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', 'home'); time.sleep(1); pyautogui.typewrite('pilot'); pyautogui.press('enter'); time.sleep(2)",
    "code": "_n0 = int(__import__('subprocess').run(['sh', '-c', 'wmctrl -l 2>/dev/null | grep -vc \"@!\"'], capture_output=True, text=True).stdout.strip() or 0); pyautogui.hotkey('ctrl', 's'); time.sleep(3); (pyautogui.press('enter'), time.sleep(3)) if int(__import__('subprocess').run(['sh', '-c', 'wmctrl -l 2>/dev/null | grep -vc \"@!\"'], capture_output=True, text=True).stdout.strip() or 0) > _n0 else None; time.sleep(2)",
    "pause": 2,
    "prelude": "",
@@ -4487,7 +4516,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:code",
@@ -4523,7 +4552,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
+   "setup": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
    "code": "pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite('# pilot'); time.sleep(1); pyautogui.hotkey('ctrl', 's'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
@@ -4561,7 +4590,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
+   "setup": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
    "code": "pyautogui.hotkey('ctrl', 'w'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
@@ -4964,7 +4993,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"Spectral Graph Theory\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('alt', 'f4'); time.sleep(3)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Spectral Graph Theory\"), timeout=30); time.sleep(1); pyautogui.hotkey('alt', 'f4'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "none",
@@ -5346,7 +5375,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "",
-   "code": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
+   "code": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:code",
@@ -5382,7 +5411,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
+   "setup": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
    "code": "pyautogui.hotkey('ctrl', 'home'); time.sleep(1); pyautogui.hotkey('ctrl', 'shift', 'k'); time.sleep(1); pyautogui.hotkey('ctrl', 's'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
@@ -5420,7 +5449,7 @@
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
-   "setup": "__import__('subprocess').run(['wmctrl', '-a', \"Visual Studio Code\"], timeout=15); time.sleep(1.5); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
+   "setup": "__import__('subprocess').run(['sh', '-c', \"for i in 1 2 3 4 5 6 7 8; do wmctrl -a \\\"$T\\\"; sleep 1; w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o \\\"0x[0-9a-f]*\\\" | head -1); [ -n \\\"$w\\\" ] && xprop -id \\\"$w\\\" WM_NAME 2>/dev/null | grep -qF -- \\\"$T\\\" && exit 0; done; exit 0\"], env=dict(__import__('os').environ, T=\"Visual Studio Code\"), timeout=30); time.sleep(1); pyautogui.hotkey('ctrl', 'p'); time.sleep(2); pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)",
    "code": "pyautogui.hotkey('ctrl', 'w'); time.sleep(3)",
    "pause": 2,
    "prelude": "",

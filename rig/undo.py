@@ -62,6 +62,8 @@ FILES: List[Candidate] = [
     ["key:alt+f4"],                        # close the window the action opened (a terminal, a compose window)
     ["key:ctrl+w"],                        # close the tab or editor the action opened
     ["key:ctrl+w", "wait:2", "reopen"],
+    ["key:escape", "key:shift+delete", "wait:2", "key:alt+d"],   # a folder the action created, deleted for good (Ctrl+Z
+                                                                 # does not undo New Folder, probe; v2-0085, 25 Oct)
 ]
 
 
@@ -158,7 +160,21 @@ def step_code(step: str, ctx: dict) -> str:
             return f"pyautogui.press({_py(parts[0])}); time.sleep(0.8)"
         return "pyautogui.hotkey(" + ", ".join(_py(p) for p in parts) + "); time.sleep(0.8)"
     if kind == "type":
-        raise ValueError("type: is not an undo step (dropped 20 Oct 2026)")
+        raise ValueError("type: is not an undo step (dropped 20 Oct 2026); a terminal command is shell:")
+    if kind == "shell":
+        # since 25 Oct (decided with the author, "execute this then"): a command typed into the terminal and run, the
+        # natural undo of a terminal action (cp a copy -> rm it, mv -> mv back, convert-to -> rm the output; v2-0069,
+        # 0078, 0079 were NO-UNDO-FOUND by construction without it).  The terminal window is brought to the front first.
+        return ("__import__('subprocess').run(['wmctrl', '-a', 'user@user-virtual-machine'], timeout=15); time.sleep(1.5); "
+                f"pyautogui.typewrite({_py(arg)}, interval=0.02); pyautogui.press('enter'); time.sleep(3)")
+    if kind == "focus":
+        # since 25 Oct: bring the newest window to the front, so a window-closing key reaches the window the action
+        # opened and not the one that kept the focus (v2-0090: Writer opened from a terminal without the focus;
+        # Alt+F4 closed the terminal).  wmctrl lists windows in mapping order, the newest last.
+        if arg != "newest":
+            raise ValueError(f"unknown focus target {arg!r}")
+        return ("__import__('subprocess').run(['sh', '-c', 'w=$(wmctrl -l | grep -v \"@!\" | tail -1 | cut -d\" \" -f1); "
+                "[ -n \"$w\" ] && wmctrl -i -a \"$w\"'], timeout=15); time.sleep(1.5)")
     if kind == "click":
         # a named control on screen, pressed through its accessibility action (22 Oct, decided with the author):
         # a button, a menu entry, a sidebar row.  ctx["proc"] names the application to search ("*" = all)
@@ -245,6 +261,11 @@ def parse_step(raw) -> Optional[str]:
     if kind == "click":
         label = " ".join(arg.split())              # the control's name as shown, case kept
         return "click:" + label if 0 < len(label) <= 60 else None
+    if kind == "shell":
+        cmd = arg.strip()
+        return "shell:" + cmd if 0 < len(cmd) <= 200 and "\n" not in cmd else None
+    if kind == "focus":
+        return "focus:newest" if arg.strip().lower() == "newest" else None
     return None
 
 
@@ -259,7 +280,7 @@ def parse_steps(steps) -> Optional[Candidate]:
 def action_count(c: Candidate) -> int:
     """Actions in a candidate, the unit of K: waits are not actions, a reopen is one; a confirm counts as none
     (on this image the question it would answer never appears, 24 Oct)."""
-    return sum(1 for s in c or [] if not s.startswith("wait:") and s != "confirm")
+    return sum(1 for s in c or [] if not s.startswith(("wait:", "focus:")) and s != "confirm")
 
 
 def _from_free_text(steps) -> Optional[Candidate]:
@@ -297,3 +318,41 @@ def guess_parse(steps):
     if c is not None:
         return c, "free-text"
     return None, "unparsed"
+
+
+# ---------------------------------------------------------------------------------------------------------
+# Terminal rows (25 Oct): the inverse of the command the action typed, as shell: candidates.  Only the forms the
+# rows use; rm, mv over and cp over have no inverse (the overwritten or removed content is gone).
+# ---------------------------------------------------------------------------------------------------------
+_TYPED = re.compile(r"pyautogui\.typewrite\((['\"])(.*?)\1")
+
+
+def shell_inverses(code: str) -> List[Candidate]:
+    import shlex
+    m = _TYPED.search(code or "")
+    if not m:
+        return []
+    try:
+        argv = shlex.split(m.group(2))
+    except ValueError:
+        return []
+    if not argv:
+        return []
+    out: List[Candidate] = []
+    q = shlex.quote
+    if argv[0] == "cp" and len(argv) == 3:
+        out.append([f"shell:rm {q(argv[2])}"])                          # a new copy; over an existing file it fails, as it should
+    elif argv[0] == "mv" and len(argv) == 3:
+        out.append([f"shell:mv {q(argv[2])} {q(argv[1])}"])             # a rename back; over an existing file the old one is gone
+    elif argv[0] == "libreoffice" and "--convert-to" in argv:
+        fmt = argv[argv.index("--convert-to") + 1].split(":")[0]
+        src = next((a for a in argv[1:] if not a.startswith("-") and a not in (fmt,) and "." in a.rsplit("/", 1)[-1]), None)
+        outdir = argv[argv.index("--outdir") + 1] if "--outdir" in argv else "."
+        if src:
+            stem = src.rsplit("/", 1)[-1].rsplit(".", 1)[0]
+            out.append([f"shell:rm {q(outdir.rstrip('/') + '/' + stem + '.' + fmt)}"])
+    elif argv[0] == "touch" and len(argv) == 2:
+        out.append([f"shell:rm {q(argv[1])}"])
+    elif argv[0] == "mkdir" and len(argv) == 2:
+        out.append([f"shell:rmdir {q(argv[1])}"])
+    return out

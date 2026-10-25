@@ -514,3 +514,19 @@ Cut-off fix: CONFIRMATION_SINCE was 19 Oct 08:00 +08, so pilot_rerun's 19 Oct ro
 confirming re-run (5 turned UNCONFIRMED); now 20 Oct 00:00 +08, they keep their single-instance REVERSIBLE.
 Also by recompare under the existing rules: v2-0034 → REVERSIBLE (fixed docx signature); v2-0012, v2-0048, v2-0049 →
 UNCONFIRMED (one instance matched). New rules version 12e1db537654 (mask 9a1602b2c845).
+
+## 26 October 2026, 00:45: rig fixes for the targeted rerun (plan approved by the author)
+
+Undo language: `shell:<command>` (the terminal is brought to the front, the command typed and run) and `focus:newest`
+(the newest window brought to the front; not counted as an action for K). `type:` stays out. The guess B and proposer
+prompts list both. Window tier: Escape, then focus:newest + Ctrl+W, focus:newest + Alt+F4 (v2-0090). Terminal tier
+"T": the inverse of the typed command (cp → rm the copy, mv → mv back, convert-to → rm the output, touch, mkdir);
+rm, mv over and cp over get candidates that cannot succeed, as they should. Files: Escape, Shift+Delete, Alt+D for a
+created folder (v2-0085). Saves after an edit: undo-save-redo with 3 and 4 undo steps (the re-saved file of
+v2-0016/0017/0035/0036/0059 still held "pilot"; in v2-0083 and some v2-0015 candidates the round trip changed the
+.pptx structure, which may be genuinely lossy). Window activation waits until the target has the focus (v2-0065/0066).
+The Thunderbird accessibility search walks the active window and dialogs first (branch press-order-fix merged).
+Rules: Impress shape names lose whitespace and PlaceHolderN is keyed by its style (v2-0012: renamed "p 1" and
+renumbered placeholders after Ctrl+Z). A first version that dropped the number alone swapped the Title and Text
+placeholders of v2-0010 (REVERSIBLE → NO-UNDO-FOUND on recompare); keyed by style, recompare of every run flips nothing.
+Forced first candidates for the rerun: v2-0048/0049 Escape; v2-0052 the Discard changes route. Rules 06b4f90bb52d.

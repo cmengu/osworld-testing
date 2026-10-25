@@ -66,8 +66,16 @@ def wait_viewable(title: str, secs: int = 25) -> str:
 
 
 def activate(title_part: str) -> str:
-    """Bring the window whose title contains this text to the front (wmctrl -a matches a substring)."""
-    return f"__import__('subprocess').run(['wmctrl', '-a', {json.dumps(title_part)}], timeout=15); time.sleep(1.5)"
+    """Bring the window whose title contains this text to the front (wmctrl -a matches a substring), and wait until it
+    really has the keyboard focus: a single wmctrl -a raised Calc over the PDF viewer but the keys still went to the
+    viewer (v2-0065 first instance, v2-0066 three times, 25 Oct).  Up to 8 tries, 1 s apart, checked with xprop; if
+    xprop is missing the loop just repeats wmctrl -a, which is no worse than before."""
+    t = json.dumps(title_part)
+    script = ('for i in 1 2 3 4 5 6 7 8; do wmctrl -a "$T"; sleep 1; '
+              'w=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o "0x[0-9a-f]*" | head -1); '
+              '[ -n "$w" ] && xprop -id "$w" WM_NAME 2>/dev/null | grep -qF -- "$T" && exit 0; done; exit 0')
+    return (f"__import__('subprocess').run(['sh', '-c', {json.dumps(script)}], env=dict(__import__('os').environ, T={t}), "
+            "timeout=30); time.sleep(1)")
 
 
 def open_terminal() -> str:
