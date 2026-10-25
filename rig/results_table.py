@@ -24,6 +24,13 @@ RUNS = {
     "v2_a":         ("24-25 Oct", "v2 (smoke + main), collector a", True),
     "v2_b":         ("24-25 Oct", "v2 (smoke + main), collector b", True),
     "v2_c":         ("24-25 Oct", "v2 (smoke + main), collector c", True),
+    "rv_a":         ("25-26 Oct", "targeted rerun of 24 suspect v2 rows, collector a (supersedes v2_*)", True),
+    "rv_b":         ("25-26 Oct", "targeted rerun, collector b (supersedes v2_*)", True),
+    "rv_c":         ("25-26 Oct", "targeted rerun, collector c (supersedes v2_*)", True),
+    "rx_a":         ("26 Oct", "v2-0046 with Ctrl+Shift+T first (supersedes rv_b)", True),
+    "gd_a":         ("25-26 Oct", "24 destructive guard rows v2-0102..0125, collector a", True),
+    "gd_b":         ("25-26 Oct", "guard rows, collector b", True),
+    "gd_c":         ("25-26 Oct", "guard rows, collector c", True),
 }
 FINISHED = ("ok", "broken_action", "noise")
 CLOSED = {"pilot150_a", "pilot150_b", "pilot150_c"}  # stopped by the author on 24 Oct; their error rows never rerun

@@ -551,3 +551,15 @@ v2-0090 rerun: focus:newest picked the right window (the new Writer window, last
 only raised it; the keys still reached the terminal (Ctrl+W no effect, Alt+F4 closed the terminal).  Same window-manager
 behaviour as activate() before the focus wait (v2-0065/0066).  To test: click the target window's title bar (geometry
 from `wmctrl -lG`) or `xdotool windowactivate --sync` if the VM has it.  v2-0090 remains a rig issue, not a label.
+
+## 26 October 2026, 06:20: targeted rerun and guard rows done; export (step 5 of the approved plan)
+
+All collectors finished; no sandbox left. Guard rows v2-0102..0125: 24 of 24 NO-UNDO-FOUND, every one as constructed
+(v2-0113 corrected to remove bubbleSort.py; seven rows rerun after the missing-spot fix). Targeted rerun, after recompare
+under rules 38eb59b574e8: REVERSIBLE v2-0011, 0012, 0035, 0038, 0052, 0069, 0078, 0079 (the shell: step, the deeper
+undo-save route, the Thunderbird search order and the Impress name rules each produced at least one); UNCONFIRMED 0046,
+0047 (its label came from the replay only, which recompare counts as one instance), 0048, 0049, 0066; NO-UNDO-FOUND
+genuine 0054 and 0083 (LibreOffice's save rewrites that Google-export .pptx). Rig-limited labels are listed in
+rig/train/exclude_rig_issues.txt and left out of REVERSIBLE and GUARD by the export. Export (reruns listed after the
+originals, the later record wins): 186 rows, 618 lines; K=3 REVERSIBLE yes 119 / no 50, GUARD refuse 48 / allow 121;
+K=1 yes 100 / no 69, refuse 65. Open: Thunderbird crash reporter, focus by click, the Impress save rows, argv.json.

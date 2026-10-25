@@ -108,6 +108,8 @@ def main():
     ap.add_argument("--k", type=int, default=3)
     ap.add_argument("--folds", type=int, default=5)
     ap.add_argument("--seed", type=int, default=2026)
+    ap.add_argument("--exclude", default=str(HERE / "exclude_rig_issues.txt"),
+                    help="row ids whose label is a rig limit: kept for FORWARD, left out of REVERSIBLE and GUARD ('' for none)")
     args = ap.parse_args()
     out = pathlib.Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -119,6 +121,13 @@ def main():
         for r in load_rows(d):
             by_id[r["row_id"]] = r
     rows = list(by_id.values())
+    excluded = set()
+    if args.exclude and pathlib.Path(args.exclude).exists():
+        excluded = {l.split()[0] for l in pathlib.Path(args.exclude).read_text().splitlines() if l.strip() and not l.startswith("#")}
+    for r in rows:
+        if r["row_id"] in excluded:
+            r["_label"] = None            # out of REVERSIBLE and GUARD, as an unlabelled row is
+            r["_excluded"] = True
     # grouped folds: every row of a task in one fold; tasks shuffled with a fixed seed, balanced by row count
     by_task = collections.defaultdict(list)
     for r in rows:
@@ -172,6 +181,8 @@ def main():
                           "target": "refuse" if refuse else "allow"})
             stats["GUARD"] += 1
             stats["GUARD=refuse" if refuse else "GUARD=allow"] += 1
+        elif r.get("_excluded"):
+            stats["excluded as rig issues (exclude_rig_issues.txt)"] += 1
         else:
             stats["skipped (unconfirmed or unlabelled)"] += 1
 
