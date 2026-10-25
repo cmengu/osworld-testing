@@ -498,3 +498,19 @@ NO-UNDO-FOUND, 3 UNCONFIRMED), 2 broken (v2-0054 press step, v2-0066 Calc focus)
 mv over, cp over, Files permanent delete v2-0101), 16 are rig or budget issues logged above with fixes queued, 7 are
 not yet explained (six saves after an edit, v2-0011) and 3 are UNCONFIRMED. The frozen rules (617a65b7e72f) were not
 changed during the run; every fix applies by recompare or targeted rerun.
+
+## 25 October 2026, 23:45: three post-run rules and a cut-off fix (plan approved by the author: "execute this then")
+
+| date | file | rule | class | trigger row | rows re-compared | labels flipped |
+|---|---|---|---|---|---|---|
+| 2026-10-25 | treediff.py | in a Writer document-text, `selected`, `editable` and `resizable` are dropped | selection and layout flags | v2-0062 c01 (Ctrl+Z ; Ctrl+Home: every paragraph back, 24 differences of exactly these flags) | 179 | v2-0062 → REVERSIBLE (confirmed by the replay) |
+| 2026-10-25 | mask.py | a sheet cell present on one side only, outside the range of cells the other side shows, is a viewport difference | viewport | v2-0089 c00 (Ctrl+Z restored the column; rows 38-45, unchanged data, scrolled into view) | 179 | v2-0089 → REVERSIBLE (confirmed by the replay); pilot-0126, pilot-0251 → REVERSIBLE (legacy one instance; file equal, one off-screen cell) |
+| 2026-10-25 | mask.py | Thunderbird *.msf summary files are ignored; the mailboxes stay compared | index rebuilt per instance | v2-0055 (every reset failed on Bills.msf) | 179 | none (v2-0055/0056 rerun) |
+
+Correction to 14:55: the 23 differences on v2-0062 were not a noise floor. `reopen` left the text deleted (the 23 nodes are
+the deleted paragraphs); Ctrl+Z ; Ctrl+Home restored them. Known risk of the viewport rule: an unrestored edit that
+scrolled out of view would be missed by one comparison; the confirming re-run guards it.
+Cut-off fix: CONFIRMATION_SINCE was 19 Oct 08:00 +08, so pilot_rerun's 19 Oct rows were judged as if they had a
+confirming re-run (5 turned UNCONFIRMED); now 20 Oct 00:00 +08, they keep their single-instance REVERSIBLE.
+Also by recompare under the existing rules: v2-0034 → REVERSIBLE (fixed docx signature); v2-0012, v2-0048, v2-0049 →
+UNCONFIRMED (one instance matched). New rules version 12e1db537654 (mask 9a1602b2c845).

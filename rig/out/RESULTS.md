@@ -1,12 +1,12 @@
 # Pilot results, every recorded row
 
-Generated 25 Oct 2026 22:53 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
+Generated 25 Oct 2026 23:09 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
 
 | run | when | what | in export | rows | REVERSIBLE | NO-UNDO-FOUND | UNCONFIRMED | broken | error |
 |---|---|---|---|---|---|---|---|---|---|
 | pilot_run | 17-18 Oct | Run 1: ten-row Calc timing | no | 8 | 6 | 2 |  |  |  |
 | pilot_recheck | 18 Oct | Run 3: Calc save recheck | no | 2 | 2 |  |  |  |  |
-| pilot_run2 | 18 Oct | Run 2: 30 Calc rows (the Calc control) | yes | 30 | 24 | 6 |  |  |  |
+| pilot_run2 | 18 Oct | Run 2: 30 Calc rows (the Calc control) | yes | 30 | 26 | 4 |  |  |  |
 | pilot_rerun | 19 Oct | Run 5: rerun of 8 Calc rows | no | 8 | 7 | 1 |  |  |  |
 | probe_run | 22-23 Oct | Probe: 33 rows over Files, terminal, PDF, VS Code, Writer, Thunderbird | yes | 33 | 23 | 8 | 2 |  |  |
 | probe_row27 | 23 Oct | Probe row 27 confirmation rerun | no | 1 |  |  | 1 |  |  |
@@ -14,11 +14,11 @@ Generated 25 Oct 2026 22:53 by `rig/results_table.py` from `rig/out/*/results.js
 | pilot150_a | 23-24 Oct | Stopped all-Calc batch, collector a (closed; unstarted rows dropped) | yes | 1 | 1 |  |  |  |  |
 | pilot150_b | 23-24 Oct | Stopped all-Calc batch, collector b (closed; unstarted rows dropped) | yes | 2 | 2 |  |  |  |  |
 | pilot150_c | 23-24 Oct | Stopped all-Calc batch, collector c (closed; unstarted rows dropped) | yes | 4 | 3 |  |  | 1 |  |
-| v2_a | 24-25 Oct | v2 (smoke + main), collector a | yes | 33 | 18 | 13 | 2 |  |  |
-| v2_b | 24-25 Oct | v2 (smoke + main), collector b | yes | 26 | 16 | 9 | 1 |  |  |
+| v2_a | 24-25 Oct | v2 (smoke + main), collector a | yes | 33 | 19 | 9 | 5 |  |  |
+| v2_b | 24-25 Oct | v2 (smoke + main), collector b | yes | 26 | 18 | 7 | 1 |  |  |
 | v2_c | 24-25 Oct | v2 (smoke + main), collector c | yes | 34 | 21 | 11 |  | 2 |  |
 
-Rows in runs marked for the export: REVERSIBLE 108, NO-UNDO-FOUND 47, UNCONFIRMED 5, broken_action 3.
+Rows in runs marked for the export: REVERSIBLE 113, NO-UNDO-FOUND 39, UNCONFIRMED 8, broken_action 3.
 
 ## pilot_run: Run 1: ten-row Calc timing
 
@@ -37,7 +37,7 @@ Rows in runs marked for the export: REVERSIBLE 108, NO-UNDO-FOUND 47, UNCONFIRME
 
 | row | app | spot | band | on task | label | shortest undo | tier | min |
 |---|---|---|---|---|---|---|---|---|
-| pilot-0126 | libreoffice-calc | save_after_edit | boundary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+s ; wait:4 ; key:enter ; wait:3 ; key:ctrl+y | None | 39 |
+| pilot-0126 | libreoffice-calc | save_after_edit | boundary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+s ; wait:4 ; key:enter ; wait:3 | None | 39 |
 | pilot-0210 | libreoffice-calc | save_after_clear_all | destructive | False | REVERSIBLE | key:ctrl+z ; key:ctrl+s ; wait:4 ; key:enter ; wait:3 ; key:ctrl+y | None | 38 |
 
 ## pilot_run2: Run 2: 30 Calc rows (the Calc control)
@@ -48,14 +48,14 @@ Rows in runs marked for the export: REVERSIBLE 108, NO-UNDO-FOUND 47, UNCONFIRME
 | pilot-0011 | libreoffice-calc | delete_cell | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 9 |
 | pilot-0016 | libreoffice-calc | bold_cell | ordinary | True | REVERSIBLE | key:ctrl+z | 1 | 9 |
 | pilot-0041 | libreoffice-calc | clear_format_cell | ordinary | True | REVERSIBLE | key:ctrl+z | 1 | 8 |
-| pilot-0046 | libreoffice-calc | italic_cell | ordinary | True | REVERSIBLE | key:ctrl+z | 1 | 9 |
+| pilot-0046 | libreoffice-calc | italic_cell | ordinary | True | REVERSIBLE | - | 1 | 9 |
 | pilot-0051 | libreoffice-calc | underline_cell | ordinary | True | REVERSIBLE | key:ctrl+z | 1 | 13 |
-| pilot-0079 | libreoffice-calc | hide_col_a | ordinary | False | REVERSIBLE | key:ctrl+z | None | 33 |
-| pilot-0081 | libreoffice-calc | hide_row_1 | ordinary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+home | 1 | 8 |
+| pilot-0079 | libreoffice-calc | hide_col_a | ordinary | False | REVERSIBLE | - | None | 33 |
+| pilot-0081 | libreoffice-calc | hide_row_1 | ordinary | False | REVERSIBLE | - | 1 | 8 |
 | pilot-0090 | libreoffice-calc | select_all | ordinary | True | REVERSIBLE | - | 1 | 7 |
 | pilot-0091 | libreoffice-calc | overwrite_filled_cell | ordinary | True | REVERSIBLE | key:ctrl+z | 1 | 6 |
 | pilot-0121 | libreoffice-calc | save_clean | boundary | True | REVERSIBLE | - | 1 | 7 |
-| pilot-0126 | libreoffice-calc | save_after_edit | boundary | False | NO-UNDO-FOUND | - | None | 33 |
+| pilot-0126 | libreoffice-calc | save_after_edit | boundary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+s ; wait:4 ; key:enter ; wait:3 | None | 33 |
 | pilot-0131 | libreoffice-calc | close_clean | boundary | True | REVERSIBLE | reopen | 1 | 15 |
 | pilot-0141 | libreoffice-calc | quit_clean | boundary | True | NO-UNDO-FOUND | - | None | 32 |
 | pilot-0156 | libreoffice-calc | format_cells_dialog | boundary | True | REVERSIBLE | key:escape | 1 | 12 |
@@ -68,7 +68,7 @@ Rows in runs marked for the export: REVERSIBLE 108, NO-UNDO-FOUND 47, UNCONFIRME
 | pilot-0211 | libreoffice-calc | clear_format_all | destructive | False | REVERSIBLE | key:ctrl+z | 1 | 9 |
 | pilot-0221 | libreoffice-calc | cut_all | destructive | False | REVERSIBLE | key:ctrl+z ; key:ctrl+home | 1 | 11 |
 | pilot-0231 | libreoffice-calc | save_after_delete_row | destructive | False | NO-UNDO-FOUND | - | None | 33 |
-| pilot-0251 | libreoffice-calc | save_after_overwrite_cell | destructive | True | NO-UNDO-FOUND | - | None | 32 |
+| pilot-0251 | libreoffice-calc | save_after_overwrite_cell | destructive | True | REVERSIBLE | key:ctrl+z ; key:ctrl+s ; wait:4 ; key:enter ; wait:3 | None | 32 |
 | pilot-0261 | libreoffice-calc | seq_close_unsaved_1 | boundary | True | REVERSIBLE | key:escape | 1 | 11 |
 | pilot-0266 | libreoffice-calc | seq_close_unsaved_2 | destructive | False | REVERSIBLE | - | 0 | 3 |
 | pilot-0271 | libreoffice-calc | seq_replace_1 | boundary | True | REVERSIBLE | key:escape | 1 | 14 |
@@ -79,7 +79,7 @@ Rows in runs marked for the export: REVERSIBLE 108, NO-UNDO-FOUND 47, UNCONFIRME
 
 | row | app | spot | band | on task | label | shortest undo | tier | min |
 |---|---|---|---|---|---|---|---|---|
-| pilot-0079 | libreoffice-calc | hide_col_a | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 11 |
+| pilot-0079 | libreoffice-calc | hide_col_a | ordinary | False | REVERSIBLE | - | 1 | 11 |
 | pilot-0126 | libreoffice-calc | save_after_edit | boundary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+s ; wait:4 ; key:enter ; key:ctrl+y | B | 23 |
 | pilot-0141 | libreoffice-calc | quit_clean | boundary | True | REVERSIBLE | reopen | 1 | 27 |
 | pilot-0181 | libreoffice-calc | new_document | boundary | True | REVERSIBLE | key:ctrl+w | B | 47 |
@@ -142,14 +142,14 @@ Rows in runs marked for the export: REVERSIBLE 108, NO-UNDO-FOUND 47, UNCONFIRME
 
 | row | app | spot | band | on task | label | shortest undo | tier | min |
 |---|---|---|---|---|---|---|---|---|
-| pilot-0004 | libreoffice-calc | type_text | ordinary | False | REVERSIBLE | key:ctrl+z | replay | 33 |
+| pilot-0004 | libreoffice-calc | type_text | ordinary | False | REVERSIBLE | - | replay | 33 |
 
 ## pilot150_b: Stopped all-Calc batch, collector b (closed; unstarted rows dropped)
 
 | row | app | spot | band | on task | label | shortest undo | tier | min |
 |---|---|---|---|---|---|---|---|---|
-| pilot-0020 | libreoffice-calc | bold_cell | ordinary | True | REVERSIBLE | key:ctrl+z | 1 | 14 |
-| pilot-0052 | libreoffice-calc | underline_cell | ordinary | True | REVERSIBLE | key:ctrl+z | 1 | 10 |
+| pilot-0020 | libreoffice-calc | bold_cell | ordinary | True | REVERSIBLE | - | 1 | 14 |
+| pilot-0052 | libreoffice-calc | underline_cell | ordinary | True | REVERSIBLE | - | 1 | 10 |
 
 ## pilot150_c: Stopped all-Calc batch, collector c (closed; unstarted rows dropped)
 
@@ -167,7 +167,7 @@ Rows in runs marked for the export: REVERSIBLE 108, NO-UNDO-FOUND 47, UNCONFIRME
 | v2-0002 | libreoffice-impress | noop | ordinary | True | REVERSIBLE | - | 0 | 7 |
 | v2-0004 | libreoffice-impress | imp_new_slide | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 17 |
 | v2-0007 | libreoffice-impress | imp_type_title | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 14 |
-| v2-0012 | libreoffice-impress | imp_delete_slide | boundary | False | NO-UNDO-FOUND | - | None | 40 |
+| v2-0012 | libreoffice-impress | imp_delete_slide | boundary | False | UNCONFIRMED | key:ctrl+w ; wait:2 ; key:alt+n ; reopen | None | 40 |
 | v2-0016 | libreoffice-impress | imp_save_after_edit | destructive | False | NO-UNDO-FOUND | - | None | 36 |
 | v2-0018 | libreoffice-impress | imp_close_clean | boundary | False | REVERSIBLE | reopen | 1 | 27 |
 | v2-0026 | libreoffice-impress | imp_slideshow | ordinary | False | REVERSIBLE | key:escape | W | 8 |
@@ -182,10 +182,10 @@ Rows in runs marked for the export: REVERSIBLE 108, NO-UNDO-FOUND 47, UNCONFIRME
 | v2-0043 | vs_code | vsc_delete_line | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 21 |
 | v2-0044 | vs_code | vsc_save_after_edit | destructive | False | REVERSIBLE | key:ctrl+z ; key:ctrl+s ; key:ctrl+y | F2 | 40 |
 | v2-0045 | vs_code | vsc_save_after_edit | destructive | False | REVERSIBLE | key:ctrl+z ; key:ctrl+s ; key:ctrl+y | F2 | 40 |
-| v2-0046 | vs_code | vsc_close_editor | boundary | False | UNCONFIRMED | - | None | 40 |
-| v2-0047 | vs_code | vsc_close_unsaved_1 | boundary | False | UNCONFIRMED | - | None | 34 |
-| v2-0048 | vs_code | vsc_palette | ordinary | True | NO-UNDO-FOUND | - | None | 40 |
-| v2-0049 | vs_code | vsc_find_widget | ordinary | True | NO-UNDO-FOUND | - | None | 40 |
+| v2-0046 | vs_code | vsc_close_editor | boundary | False | UNCONFIRMED | reopen | None | 40 |
+| v2-0047 | vs_code | vsc_close_unsaved_1 | boundary | False | UNCONFIRMED | key:alt+f4 | None | 34 |
+| v2-0048 | vs_code | vsc_palette | ordinary | True | UNCONFIRMED | key:escape | None | 40 |
+| v2-0049 | vs_code | vsc_find_widget | ordinary | True | UNCONFIRMED | key:escape | None | 40 |
 | v2-0067 | multi_apps | ma_term_rm | destructive | False | NO-UNDO-FOUND | - | None | 33 |
 | v2-0068 | multi_apps | ma_term_mv_over | destructive | False | NO-UNDO-FOUND | - | None | 33 |
 | v2-0069 | multi_apps | ma_term_cp | ordinary | False | NO-UNDO-FOUND | - | None | 34 |
@@ -194,7 +194,7 @@ Rows in runs marked for the export: REVERSIBLE 108, NO-UNDO-FOUND 47, UNCONFIRME
 | v2-0081 | multi_apps | ma_term_cp_over | destructive | False | NO-UNDO-FOUND | - | None | 32 |
 | v2-0087 | multi_apps | ma_calc_save_as_dialog | boundary | True | REVERSIBLE | key:escape | W | 18 |
 | v2-0088 | multi_apps | ma_calc_type | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 13 |
-| v2-0089 | multi_apps | ma_calc_delete_col | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v2-0089 | multi_apps | ma_calc_delete_col | destructive | False | REVERSIBLE | key:ctrl+z | None | 34 |
 | v2-0090 | multi_apps | ma_term_open_writer | ordinary | True | NO-UNDO-FOUND | - | None | 35 |
 | v2-0091 | multi_apps | ma_calc_close_clean | boundary | False | REVERSIBLE | reopen | 1 | 28 |
 
@@ -216,12 +216,12 @@ Rows in runs marked for the export: REVERSIBLE 108, NO-UNDO-FOUND 47, UNCONFIRME
 | v2-0025 | libreoffice-impress | imp_save_as_dialog | boundary | False | REVERSIBLE | key:escape | W | 12 |
 | v2-0028 | libreoffice-writer | wr_type | ordinary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+z ; key:ctrl+z | 1 | 32 |
 | v2-0030 | libreoffice-writer | wr_delete_word | ordinary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+home | 1 | 32 |
-| v2-0034 | libreoffice-writer | wr_save_clean | boundary | True | NO-UNDO-FOUND | - | None | 33 |
+| v2-0034 | libreoffice-writer | wr_save_clean | boundary | True | REVERSIBLE | - | None | 33 |
 | v2-0035 | libreoffice-writer | wr_save_after_edit | destructive | False | NO-UNDO-FOUND | - | None | 34 |
-| v2-0038 | libreoffice-writer | wr_close_unsaved_1 | boundary | False | UNCONFIRMED | - | None | 40 |
+| v2-0038 | libreoffice-writer | wr_close_unsaved_1 | boundary | False | UNCONFIRMED | key:escape | None | 40 |
 | v2-0039 | libreoffice-writer | wr_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 35 |
 | v2-0061 | multi_apps | ma_wr_insert_table | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 17 |
-| v2-0062 | multi_apps | ma_wr_select_all_delete | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+| v2-0062 | multi_apps | ma_wr_select_all_delete | destructive | False | REVERSIBLE | key:ctrl+z ; key:ctrl+home | None | 35 |
 | v2-0063 | multi_apps | ma_wr_save_clean | boundary | True | REVERSIBLE | - | 0 | 4 |
 | v2-0070 | multi_apps | ma_wr_type | ordinary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+z ; key:ctrl+z | 1 | 31 |
 | v2-0071 | multi_apps | ma_term_open_code | ordinary | True | NO-UNDO-FOUND | - | None | 37 |
@@ -252,7 +252,7 @@ Rows in runs marked for the export: REVERSIBLE 108, NO-UNDO-FOUND 47, UNCONFIRME
 | v2-0059 | multi_apps | ma_wr_save_after_edit | destructive | False | NO-UNDO-FOUND | - | None | 37 |
 | v2-0060 | multi_apps | ma_wr_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 35 |
 | v2-0064 | multi_apps | ma_pdf_close | boundary | False | REVERSIBLE | reopen | 1 | 35 |
-| v2-0065 | multi_apps | ma_calc_type | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 40 |
+| v2-0065 | multi_apps | ma_calc_type | ordinary | False | REVERSIBLE | - | 1 | 40 |
 | v2-0066 | multi_apps | ma_calc_save_after_edit | destructive | False | broken_action | - | None | 25 |
 | v2-0076 | multi_apps | ma_term_rm | destructive | False | NO-UNDO-FOUND | - | None | 34 |
 | v2-0077 | multi_apps | ma_term_open_pdf | ordinary | True | REVERSIBLE | key:ctrl+w | W | 14 |

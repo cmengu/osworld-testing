@@ -18,6 +18,7 @@ office files the content hash leaves the embedded metadata out (see snapshot.py)
 Comparing two states = apply the mask to both, then require exact equality of the rest.
 """
 import os
+import re
 from collections import Counter, defaultdict
 from typing import Dict, List, Tuple
 
@@ -46,6 +47,12 @@ IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/sha
                          "/home/user/.local/share/gnome-shell/",   # the shell's notification log (21 Oct, probe-0012 c05)
                          "/home/user/.config/Code/",               # VS Code's cache, storage and logs: 56 files change under a no-op (23 Oct, probe-0026)
                          ) + tuple(_TB + f for f in _TB_HOUSEKEEPING)  # Thunderbird's profile housekeeping (23 Oct, probe-0032), see above
+# Since 25 Oct (v2-0055/0056, under the plan the author approved that day): Thunderbird's folder summary files
+# (*.msf, Mork) are an index rebuilt from the mailbox, rewritten with fresh internal timestamps on every instance, so
+# two replays of the same action never agree on them (v2-0055: "reset did not reproduce the after-state: Bills.msf"
+# on every candidate).  The mailbox files themselves (Mail/Local Folders/Bills, Trash, Drafts) stay compared, and the
+# read flag the summary carries shows in the message list in the tree.
+IGNORED_FILE_SUFFIXES = (".msf",)
 
 
 # Tree attributes that are never state.  19 Oct, provisional until the Files/multi_apps probe: the text of a
@@ -215,12 +222,57 @@ def apply_file_mask(digest: Digest, mask: dict) -> Digest:
     masked_paths = set(mask.get("file_paths", []))
     masked_dirs = tuple(d.rstrip("/") + "/" for d in mask.get("file_dirs", []))
     return {p: v for p, v in digest.items()
-            if p not in masked_paths and not p.startswith(masked_dirs) and not p.startswith(IGNORED_FILE_PREFIXES)}
+            if p not in masked_paths and not p.startswith(masked_dirs) and not p.startswith(IGNORED_FILE_PREFIXES)
+            and not (p.startswith(_TB) and p.endswith(IGNORED_FILE_SUFFIXES))}
+
+
+_CELL = re.compile(r"(.*/table\[[^\]]*\]#\d+)/table-cell\[([A-Z]+)(\d+)\]#\d+$")
+
+
+def _col(letters: str) -> int:
+    n = 0
+    for ch in letters:
+        n = n * 26 + ord(ch) - 64
+    return n
+
+
+def _visible_boxes(canon: Canon) -> Dict[str, Tuple[int, int, int, int]]:
+    """Per spreadsheet table, the (min row, max row, min col, max col) of the cells the tree shows."""
+    box: Dict[str, List[int]] = {}
+    for path in canon:
+        m = _CELL.match(path)
+        if not m:
+            continue
+        t, r, c = m.group(1), int(m.group(3)), _col(m.group(2))
+        b = box.setdefault(t, [r, r, c, c])
+        b[0], b[1], b[2], b[3] = min(b[0], r), max(b[1], r), min(b[2], c), max(b[3], c)
+    return {t: tuple(b) for t, b in box.items()}
+
+
+def drop_viewport_cells(tree_diffs: List[dict], a_canon: Canon, b_canon: Canon) -> List[dict]:
+    """Rule since 25 Oct (v2-0089, under the plan the author approved that day): a sheet cell present in one state
+    only, outside the range of cells the other state shows, is a viewport difference, not state.  The tree shows the
+    cells in view; after Ctrl+Z restored a deleted column the view reached row 45 instead of 37, so rows 38-45 (real
+    data, unchanged in the file) appeared as 23 new nodes.  A cell inside the other state's visible range still
+    counts, so a deleted or emptied cell in view is still caught."""
+    boxes = (_visible_boxes(a_canon), _visible_boxes(b_canon))
+    out = []
+    for d in tree_diffs:
+        m = _CELL.match(d["path"]) if d["attr"] == NODE else None
+        if m:
+            other = boxes[0] if d["old"] is None else boxes[1]      # the state that lacks the node
+            box = other.get(m.group(1))
+            r, c = int(m.group(3)), _col(m.group(2))
+            if box and not (box[0] <= r <= box[1] and box[2] <= c <= box[3]):
+                continue
+        out.append(d)
+    return out
 
 
 def states_equal(a_canon: Canon, a_digest: Digest, b_canon: Canon, b_digest: Digest, mask: dict):
     """(equal?, tree differences, file differences) after masking."""
-    tree_diffs = diff(apply_tree_mask(a_canon, mask), apply_tree_mask(b_canon, mask))
+    ma, mb = apply_tree_mask(a_canon, mask), apply_tree_mask(b_canon, mask)
+    tree_diffs = drop_viewport_cells(diff(ma, mb), ma, mb)
     fa, fb = apply_file_mask(a_digest, mask), apply_file_mask(b_digest, mask)
     file_diffs = sorted(p for p in set(fa) | set(fb) if _fsig(p, fa.get(p)) != _fsig(p, fb.get(p)))
     return (not tree_diffs and not file_diffs), tree_diffs, file_diffs

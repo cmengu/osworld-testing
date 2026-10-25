@@ -146,6 +146,14 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
                                          # gone a few seconds later); focused and active are already ignored
         if _local(node.tag) in SELECTION_TAGS or "/document-presentation[" in path:
             attrs.pop("selected", None)     # which cells, or which shapes of a slide, are highlighted is not document state
+        if "/document-text[" in path:
+            # since 25 Oct (v2-0062, under the plan the author approved that day): in a Writer document the text
+            # selection (`selected` on paragraphs and images) and the per-paragraph `editable`/`resizable` flags, which
+            # LibreOffice sets on the paragraphs it has laid out and drops on the others, are not document state.
+            # Ctrl+Z ; Ctrl+Home brought every paragraph back with its text; 24 differences of exactly these flags
+            # were left.  The text, headings, images and their order stay compared.
+            for a in ("selected", "editable", "resizable"):
+                attrs.pop(a, None)
         if "/status-bar[" in path and SELECTION_READOUT.match(attrs.get("text", "")):
             attrs.pop("text", None)         # "Selected: 3 rows", "Sum=12": echoes of the selection
         if "/status-bar[" in path and "application[soffice]" in path and OBJECT_READOUT.match(attrs.get("text", "")):

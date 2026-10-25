@@ -78,7 +78,7 @@ from rig import vm as VM                                        # noqa: E402
 from rig.vm import RowCapped, SandboxLost                       # noqa: E402
 
 SANDBOX_USD_PER_HOUR = 0.76
-CONFIRMATION_SINCE = 1792800000 - 5 * 86400     # 2026-10-20 00:00 UTC-ish: rows started before it were recorded without the confirming re-run
+CONFIRMATION_SINCE = 1792425600     # 2026-10-20 00:00 +08: rows started before it were recorded without the confirming re-run (the old value, 19 Oct 08:00 +08, left pilot_rerun's 19 Oct rows outside it; fixed 25 Oct)
 WATCHDOG_SECONDS = 900        # no single candidate, snapshot or reset may take longer; a dead tunnel otherwise hangs forever
 
 
