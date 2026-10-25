@@ -453,3 +453,11 @@ Also 14:55: v2-0062 (multi-app Writer, Ctrl+A Delete, task 02ce9a50) ended NO-UN
 A difference that survives reopening the untouched file is a noise floor in this document's view, not the delete; the same
 action on another document (v2-0031) is REVERSIBLE by Ctrl+Z ; Ctrl+Home. Post-run: diff c07 (reopen) against S to name
 the 23 nodes, then a rule and a recompare.
+
+## 25 October 2026, 15:00: rerun stopped by the battery guard at 8% (not a rule)
+
+The Mac ran on battery from 12:45; the guard stopped all three collectors at 8%. One sandbox outlived its collector and
+was stopped by hand (modal container stop); none left. The 13:17 relaunch labelled 7 rows: v2-0039 NO-UNDO-FOUND (Don't
+Save, expected), v2-0048 and v2-0049 NO-UNDO-FOUND (capped before Escape), v2-0055 NO-UNDO-FOUND (Bills.msf), v2-0061
+REVERSIBLE, v2-0062 NO-UNDO-FOUND (23-node floor), v2-0063 REVERSIBLE (save in place, no change); v2-0054 broke (press
+step). v2 now 61/93 labelled; 31 rows not yet run (30 multi_apps) plus v2-0054 and v2-0056 for the Thunderbird rerun.
