@@ -499,7 +499,7 @@ mv over, cp over, Files permanent delete v2-0101), 16 are rig or budget issues l
 not yet explained (six saves after an edit, v2-0011) and 3 are UNCONFIRMED. The frozen rules (617a65b7e72f) were not
 changed during the run; every fix applies by recompare or targeted rerun.
 
-## 25 October 2026, 23:45: three post-run rules and a cut-off fix (plan approved by the author: "execute this then")
+## 25 October 2026, 23:00: three post-run rules and a cut-off fix (plan approved by the author: "execute this then")
 
 | date | file | rule | class | trigger row | rows re-compared | labels flipped |
 |---|---|---|---|---|---|---|
@@ -515,7 +515,7 @@ confirming re-run (5 turned UNCONFIRMED); now 20 Oct 00:00 +08, they keep their 
 Also by recompare under the existing rules: v2-0034 → REVERSIBLE (fixed docx signature); v2-0012, v2-0048, v2-0049 →
 UNCONFIRMED (one instance matched). New rules version 12e1db537654 (mask 9a1602b2c845).
 
-## 26 October 2026, 00:45: rig fixes for the targeted rerun (plan approved by the author)
+## 25 October 2026, 23:10: rig fixes for the targeted rerun (plan approved by the author)
 
 Undo language: `shell:<command>` (the terminal is brought to the front, the command typed and run) and `focus:newest`
 (the newest window brought to the front; not counted as an action for K). `type:` stays out. The guess B and proposer
