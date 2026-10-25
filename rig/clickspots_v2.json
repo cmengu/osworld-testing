@@ -3552,7 +3552,15 @@
     "VS Code is open on main.py"
    ],
    "known_answer": null,
-   "forced_candidates": null,
+   "forced_candidates": [
+    [
+     "key:ctrl+shift+t"
+    ],
+    [
+     "key:ctrl+shift+t",
+     "key:ctrl+1"
+    ]
+   ],
    "expect_change": [
     "tree"
    ]
@@ -6031,7 +6039,7 @@
   },
   {
    "row_id": "v2-0113",
-   "probe": "rm the project archive",
+   "probe": "rm the project's code",
    "spot_id": "ma_term_rm",
    "task_id": "20236825-b5df-46e7-89bf-62e1d640a897",
    "app": "multi_apps",
@@ -6048,7 +6056,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "pyautogui.hotkey('ctrl', 'alt', 't'); time.sleep(2); __import__('subprocess').run(['sh', '-c', 'for i in $(seq 1 50); do w=$(wmctrl -l 2>/dev/null | grep \" user@user-virtual-machine: ~$\" | tail -1 | cut -d\" \" -f1); [ -n \"$w\" ] && xwininfo -id \"$w\" 2>/dev/null | grep -q \"Map State: IsViewable\" && exit 0; sleep 0.5; done; exit 1'], timeout=35); time.sleep(1); time.sleep(2)",
-   "code": "pyautogui.typewrite(\"rm 'Desktop/bubbleSort.zip'\", interval=0.02); pyautogui.press('enter'); time.sleep(3)",
+   "code": "pyautogui.typewrite(\"rm 'Desktop/bubbleSort.py'\", interval=0.02); pyautogui.press('enter'); time.sleep(3)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:gnome-terminal-server",
