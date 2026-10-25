@@ -537,3 +537,10 @@ v2-0011 (Impress Delete Slide, rerun): Ctrl+Z brought the slide back and LibreOf
 Shape;87;p13" → "Google Shape;87;p1"; the ";p<n>" suffix is the page number at export time.  Under document-presentation
 the suffix is dropped (the shape id stays).  The rerun's c00 now equals S; v2-0010 and v2-0012 still match; the action's
 after-state still differs (21 pages vs 22).  Applied by recompare in step 5.
+
+## 26 October 2026, 00:55: Thunderbird crash reporter on reset (rig, open)
+
+v2-0055 (rerun): the .msf rule removed the old blocker, but every reset to S' now brings up a "Mozilla Crash Reporter"
+window next to Thunderbird (the reset kills Thunderbird; its next start reports the crash), so the after-state is never
+reproduced and no candidate is judged.  Candidate fix: disable the crash reporter in the VM prep (MOZ_CRASHREPORTER_DISABLE=1
+for the Thunderbird launch, or the reporter's pref), then rerun v2-0055 and v2-0056.
