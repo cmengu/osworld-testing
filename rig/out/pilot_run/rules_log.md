@@ -461,3 +461,8 @@ was stopped by hand (modal container stop); none left. The 13:17 relaunch labell
 Save, expected), v2-0048 and v2-0049 NO-UNDO-FOUND (capped before Escape), v2-0055 NO-UNDO-FOUND (Bills.msf), v2-0061
 REVERSIBLE, v2-0062 NO-UNDO-FOUND (23-node floor), v2-0063 REVERSIBLE (save in place, no change); v2-0054 broke (press
 step). v2 now 61/93 labelled; 31 rows not yet run (30 multi_apps) plus v2-0054 and v2-0056 for the Thunderbird rerun.
+Also 16:30: v2-0071 (multi-app, terminal `code <folder>` opens VS Code) ended NO-UNDO-FOUND. Alt+F4 (c02) closed the
+window and left one difference: /home/user/.vscode/argv.json, which VS Code writes on its first launch. Every other
+candidate left the window open. Whether a first-run config file counts as state (one-way) or as app housekeeping like
+the Thunderbird profile files masked on 23 Oct is a label decision for the author; with it masked the row is REVERSIBLE
+by Alt+F4. v2-0068 (mv over another file) NO-UNDO-FOUND is the expected one-way.
