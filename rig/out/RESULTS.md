@@ -1,6 +1,6 @@
 # Pilot results, every recorded row
 
-Generated 25 Oct 2026 14:48 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
+Generated 25 Oct 2026 22:53 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
 
 | run | when | what | in export | rows | REVERSIBLE | NO-UNDO-FOUND | UNCONFIRMED | broken | error |
 |---|---|---|---|---|---|---|---|---|---|
@@ -14,11 +14,11 @@ Generated 25 Oct 2026 14:48 by `rig/results_table.py` from `rig/out/*/results.js
 | pilot150_a | 23-24 Oct | Stopped all-Calc batch, collector a (closed; unstarted rows dropped) | yes | 1 | 1 |  |  |  |  |
 | pilot150_b | 23-24 Oct | Stopped all-Calc batch, collector b (closed; unstarted rows dropped) | yes | 2 | 2 |  |  |  |  |
 | pilot150_c | 23-24 Oct | Stopped all-Calc batch, collector c (closed; unstarted rows dropped) | yes | 4 | 3 |  |  | 1 |  |
-| v2_a | 24-25 Oct | v2 (smoke + main), collector a | yes | 33 | 15 | 5 | 2 |  | 11 |
-| v2_b | 24-25 Oct | v2 (smoke + main), collector b | yes | 26 | 12 | 8 | 1 |  | 5 |
-| v2_c | 24-25 Oct | v2 (smoke + main), collector c | yes | 34 | 13 | 5 |  | 2 | 14 |
+| v2_a | 24-25 Oct | v2 (smoke + main), collector a | yes | 33 | 18 | 13 | 2 |  |  |
+| v2_b | 24-25 Oct | v2 (smoke + main), collector b | yes | 26 | 16 | 9 | 1 |  |  |
+| v2_c | 24-25 Oct | v2 (smoke + main), collector c | yes | 34 | 21 | 11 |  | 2 |  |
 
-Rows in runs marked for the export: REVERSIBLE 93, NO-UNDO-FOUND 32, error 30, UNCONFIRMED 5, broken_action 3.
+Rows in runs marked for the export: REVERSIBLE 108, NO-UNDO-FOUND 47, UNCONFIRMED 5, broken_action 3.
 
 ## pilot_run: Run 1: ten-row Calc timing
 
@@ -186,17 +186,17 @@ Rows in runs marked for the export: REVERSIBLE 93, NO-UNDO-FOUND 32, error 30, U
 | v2-0047 | vs_code | vsc_close_unsaved_1 | boundary | False | UNCONFIRMED | - | None | 34 |
 | v2-0048 | vs_code | vsc_palette | ordinary | True | NO-UNDO-FOUND | - | None | 40 |
 | v2-0049 | vs_code | vsc_find_widget | ordinary | True | NO-UNDO-FOUND | - | None | 40 |
-| v2-0067 |  | ma_term_rm |  | None | error | - | None |  |
-| v2-0068 |  | ma_term_mv_over |  | None | error | - | None |  |
-| v2-0069 |  | ma_term_cp |  | None | error | - | None |  |
-| v2-0079 |  | ma_term_convert |  | None | error | - | None |  |
-| v2-0080 |  | ma_term_rm |  | None | error | - | None |  |
-| v2-0081 |  | ma_term_cp_over |  | None | error | - | None |  |
-| v2-0087 |  | ma_calc_save_as_dialog |  | None | error | - | None |  |
-| v2-0088 |  | ma_calc_type |  | None | error | - | None |  |
-| v2-0089 |  | ma_calc_delete_col |  | None | error | - | None |  |
-| v2-0090 |  | ma_term_open_writer |  | None | error | - | None |  |
-| v2-0091 |  | ma_calc_close_clean |  | None | error | - | None |  |
+| v2-0067 | multi_apps | ma_term_rm | destructive | False | NO-UNDO-FOUND | - | None | 33 |
+| v2-0068 | multi_apps | ma_term_mv_over | destructive | False | NO-UNDO-FOUND | - | None | 33 |
+| v2-0069 | multi_apps | ma_term_cp | ordinary | False | NO-UNDO-FOUND | - | None | 34 |
+| v2-0079 | multi_apps | ma_term_convert | ordinary | True | NO-UNDO-FOUND | - | None | 32 |
+| v2-0080 | multi_apps | ma_term_rm | destructive | False | NO-UNDO-FOUND | - | None | 32 |
+| v2-0081 | multi_apps | ma_term_cp_over | destructive | False | NO-UNDO-FOUND | - | None | 32 |
+| v2-0087 | multi_apps | ma_calc_save_as_dialog | boundary | True | REVERSIBLE | key:escape | W | 18 |
+| v2-0088 | multi_apps | ma_calc_type | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 13 |
+| v2-0089 | multi_apps | ma_calc_delete_col | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v2-0090 | multi_apps | ma_term_open_writer | ordinary | True | NO-UNDO-FOUND | - | None | 35 |
+| v2-0091 | multi_apps | ma_calc_close_clean | boundary | False | REVERSIBLE | reopen | 1 | 28 |
 
 ## v2_b: v2 (smoke + main), collector b
 
@@ -223,11 +223,11 @@ Rows in runs marked for the export: REVERSIBLE 93, NO-UNDO-FOUND 32, error 30, U
 | v2-0061 | multi_apps | ma_wr_insert_table | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 17 |
 | v2-0062 | multi_apps | ma_wr_select_all_delete | destructive | False | NO-UNDO-FOUND | - | None | 35 |
 | v2-0063 | multi_apps | ma_wr_save_clean | boundary | True | REVERSIBLE | - | 0 | 4 |
-| v2-0070 |  | ma_wr_type |  | None | error | - | None |  |
-| v2-0071 |  | ma_term_open_code |  | None | error | - | None |  |
-| v2-0072 |  | ma_wr_close_unsaved_1 |  | None | error | - | None |  |
-| v2-0092 |  | ma_wr_close_clean |  | None | error | - | None |  |
-| v2-0093 |  | ma_wr_type |  | None | error | - | None |  |
+| v2-0070 | multi_apps | ma_wr_type | ordinary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+z ; key:ctrl+z | 1 | 31 |
+| v2-0071 | multi_apps | ma_term_open_code | ordinary | True | NO-UNDO-FOUND | - | None | 37 |
+| v2-0072 | multi_apps | ma_wr_close_unsaved_1 | boundary | False | REVERSIBLE | key:escape | W | 12 |
+| v2-0092 | multi_apps | ma_wr_close_clean | boundary | True | REVERSIBLE | reopen | 1 | 37 |
+| v2-0093 | multi_apps | ma_wr_type | ordinary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+z ; key:ctrl+z | 1 | 32 |
 
 ## v2_c: v2 (smoke + main), collector c
 
@@ -246,24 +246,24 @@ Rows in runs marked for the export: REVERSIBLE 93, NO-UNDO-FOUND 32, error 30, U
 | v2-0053 | thunderbird | tb_compose_close_1 | boundary | False | REVERSIBLE | key:escape | W | 12 |
 | v2-0054 | thunderbird | tb_compose_close_2 | destructive | False | broken_action | - | None | 16 |
 | v2-0055 | thunderbird | tb_mark_read | ordinary | False | NO-UNDO-FOUND | - | None | 41 |
-| v2-0056 | thunderbird | tb_delete_message | destructive | False | broken_action | - | None | 10 |
+| v2-0056 | thunderbird | tb_delete_message | destructive | False | NO-UNDO-FOUND | - | None | 40 |
 | v2-0057 | thunderbird | tb_addressbook | ordinary | False | REVERSIBLE | key:ctrl+w | B | 27 |
 | v2-0058 | multi_apps | ma_wr_type | ordinary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+z ; key:ctrl+z | 1 | 32 |
 | v2-0059 | multi_apps | ma_wr_save_after_edit | destructive | False | NO-UNDO-FOUND | - | None | 37 |
 | v2-0060 | multi_apps | ma_wr_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 35 |
 | v2-0064 | multi_apps | ma_pdf_close | boundary | False | REVERSIBLE | reopen | 1 | 35 |
 | v2-0065 | multi_apps | ma_calc_type | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 40 |
-| v2-0066 |  | ma_calc_save_after_edit |  | None | error | - | None |  |
-| v2-0076 |  | ma_term_rm |  | None | error | - | None |  |
-| v2-0077 |  | ma_term_open_pdf |  | None | error | - | None |  |
-| v2-0078 |  | ma_term_mv_rename |  | None | error | - | None |  |
-| v2-0082 |  | ma_imp_type |  | None | error | - | None |  |
-| v2-0083 |  | ma_imp_save_after_edit |  | None | error | - | None |  |
-| v2-0084 |  | ma_files_trash |  | None | error | - | None |  |
-| v2-0085 |  | ma_files_new_folder |  | None | error | - | None |  |
-| v2-0086 |  | ma_pdf_close |  | None | error | - | None |  |
-| v2-0094 |  | ma_calc_type |  | None | error | - | None |  |
-| v2-0095 |  | ma_calc_save_after_edit |  | None | error | - | None |  |
-| v2-0099 |  | ma_files_open_pdf |  | None | error | - | None |  |
-| v2-0100 |  | ma_files_rename |  | None | error | - | None |  |
-| v2-0101 |  | ma_files_perm_delete_2 |  | None | error | - | None |  |
+| v2-0066 | multi_apps | ma_calc_save_after_edit | destructive | False | broken_action | - | None | 25 |
+| v2-0076 | multi_apps | ma_term_rm | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v2-0077 | multi_apps | ma_term_open_pdf | ordinary | True | REVERSIBLE | key:ctrl+w | W | 14 |
+| v2-0078 | multi_apps | ma_term_mv_rename | ordinary | False | NO-UNDO-FOUND | - | None | 33 |
+| v2-0082 | multi_apps | ma_imp_type | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 22 |
+| v2-0083 | multi_apps | ma_imp_save_after_edit | destructive | False | NO-UNDO-FOUND | - | None | 37 |
+| v2-0084 | multi_apps | ma_files_trash | ordinary | False | REVERSIBLE | click:Undo Trash | F | 33 |
+| v2-0085 | multi_apps | ma_files_new_folder | ordinary | False | NO-UNDO-FOUND | - | None | 37 |
+| v2-0086 | multi_apps | ma_pdf_close | boundary | False | REVERSIBLE | reopen | 1 | 34 |
+| v2-0094 | multi_apps | ma_calc_type | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 21 |
+| v2-0095 | multi_apps | ma_calc_save_after_edit | destructive | False | REVERSIBLE | key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y | F2 | 40 |
+| v2-0099 | multi_apps | ma_files_open_pdf | ordinary | True | REVERSIBLE | key:ctrl+w | W | 22 |
+| v2-0100 | multi_apps | ma_files_rename | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 13 |
+| v2-0101 | multi_apps | ma_files_perm_delete_2 | destructive | False | NO-UNDO-FOUND | - | None | 34 |

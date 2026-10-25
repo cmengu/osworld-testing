@@ -489,3 +489,12 @@ the terminal (no effect) and Alt+F4 closed the terminal instead of Writer (c02 w
 gone). Rig issue, not a one-way action. Post-run fix: window-tier candidates (Escape, Ctrl+W, Alt+F4) first activate the
 window the action added (newest id not in S), then send the key; rerun v2-0090 and check v2-0071 (code opens VS Code)
 and v2-0077 (xdg-open PDF, REVERSIBLE by Ctrl+W, where the new window did take focus).
+
+## 25 October 2026, 22:53: main v2 run over (not a rule)
+
+All three collectors finished their lists and exited; no sandbox left. Final: 91/93 labelled (55 REVERSIBLE, 33
+NO-UNDO-FOUND, 3 UNCONFIRMED), 2 broken (v2-0054 press step, v2-0066 Calc focus), 8 excluded. v2 sandbox time about
+41 h, about 31 USD over 24-25 October. Of the 36 non-reversible rows, 10 are genuine one-way (Don't Save x4, rm x3,
+mv over, cp over, Files permanent delete v2-0101), 16 are rig or budget issues logged above with fixes queued, 7 are
+not yet explained (six saves after an edit, v2-0011) and 3 are UNCONFIRMED. The frozen rules (617a65b7e72f) were not
+changed during the run; every fix applies by recompare or targeted rerun.
