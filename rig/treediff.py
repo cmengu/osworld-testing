@@ -185,6 +185,9 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
             if "/document-presentation[" in prefix and name:
                 name = re.sub(r"\s+", "", name)   # since 25 Oct (v2-0012): a shape restored by Ctrl+Z is renamed
                                                    # "Google Shape;106;p1" -> "Google Shape;106;p 1"; identity, not state
+                name = re.sub(r"^(GoogleShape;\d+);p\d+$", r"\1", name)   # 26 Oct (v2-0011): the ";p<page>" suffix of a
+                                                   # Google Slides export is the page number at export time; a slide restored by
+                                                   # Ctrl+Z renames its shapes ";p13" -> ";p1".  The shape id before it stays.
                 if re.match(r"^PlaceHolder\d+$", name):
                     # and its placeholders renumbered (PlaceHolder1, 2 -> PlaceHolder5, 6): a placeholder is known by its
                     # role (style Title, Outliner, ...), not its number; collapsing the number alone swapped the Title

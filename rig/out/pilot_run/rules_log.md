@@ -530,3 +530,10 @@ Rules: Impress shape names lose whitespace and PlaceHolderN is keyed by its styl
 renumbered placeholders after Ctrl+Z). A first version that dropped the number alone swapped the Title and Text
 placeholders of v2-0010 (REVERSIBLE → NO-UNDO-FOUND on recompare); keyed by style, recompare of every run flips nothing.
 Forced first candidates for the rerun: v2-0048/0049 Escape; v2-0052 the Discard changes route. Rules 06b4f90bb52d.
+
+## 26 October 2026, 00:30: Google Slides page suffix (rule)
+
+v2-0011 (Impress Delete Slide, rerun): Ctrl+Z brought the slide back and LibreOffice renamed its shapes "Google
+Shape;87;p13" → "Google Shape;87;p1"; the ";p<n>" suffix is the page number at export time.  Under document-presentation
+the suffix is dropped (the shape id stays).  The rerun's c00 now equals S; v2-0010 and v2-0012 still match; the action's
+after-state still differs (21 pages vs 22).  Applied by recompare in step 5.
