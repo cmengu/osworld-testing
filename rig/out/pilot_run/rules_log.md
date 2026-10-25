@@ -483,3 +483,9 @@ cut the difference from 264 tree nodes to 23, all of class `cells`: the column c
 differently, possibly the restored column's selection or a format readout rather than content. Post-run: diff c00
 against S to name the 23 cells; a rule plus recompare if they are a readout. v2-0084 (Files Delete to Trash) is
 REVERSIBLE by click:Undo Trash, as in the Files probe.
+Also 20:30: v2-0090 (multi-app, terminal `libreoffice --writer` opens a new Writer window) ended NO-UNDO-FOUND at 5
+candidates, but the window tier never reached the new window: it opened without the keyboard focus, so Ctrl+W went to
+the terminal (no effect) and Alt+F4 closed the terminal instead of Writer (c02 windows: Calc + Writer left, terminal
+gone). Rig issue, not a one-way action. Post-run fix: window-tier candidates (Escape, Ctrl+W, Alt+F4) first activate the
+window the action added (newest id not in S), then send the key; rerun v2-0090 and check v2-0071 (code opens VS Code)
+and v2-0077 (xdg-open PDF, REVERSIBLE by Ctrl+W, where the new window did take focus).
