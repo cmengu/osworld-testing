@@ -1,6 +1,6 @@
 # Pilot results, every recorded row
 
-Generated 25 Oct 2026 11:41 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
+Generated 25 Oct 2026 12:56 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
 
 | run | when | what | in export | rows | REVERSIBLE | NO-UNDO-FOUND | UNCONFIRMED | broken | error |
 |---|---|---|---|---|---|---|---|---|---|
@@ -14,11 +14,11 @@ Generated 25 Oct 2026 11:41 by `rig/results_table.py` from `rig/out/*/results.js
 | pilot150_a | 23-24 Oct | Stopped all-Calc batch, collector a (closed; unstarted rows dropped) | yes | 1 | 1 |  |  |  |  |
 | pilot150_b | 23-24 Oct | Stopped all-Calc batch, collector b (closed; unstarted rows dropped) | yes | 2 | 2 |  |  |  |  |
 | pilot150_c | 23-24 Oct | Stopped all-Calc batch, collector c (closed; unstarted rows dropped) | yes | 4 | 3 |  |  | 1 |  |
-| v2_a | 24-25 Oct | v2 (smoke + main), collector a | yes | 33 | 14 | 3 | 1 |  | 15 |
-| v2_b | 24-25 Oct | v2 (smoke + main), collector b | yes | 26 | 9 | 5 | 1 |  | 11 |
-| v2_c | 24-25 Oct | v2 (smoke + main), collector c | yes | 34 | 12 | 4 |  | 3 | 15 |
+| v2_a | 24-25 Oct | v2 (smoke + main), collector a | yes | 33 | 15 | 3 | 2 |  | 13 |
+| v2_b | 24-25 Oct | v2 (smoke + main), collector b | yes | 26 | 10 | 6 | 1 |  | 9 |
+| v2_c | 24-25 Oct | v2 (smoke + main), collector c | yes | 34 | 13 | 4 |  | 3 | 14 |
 
-Rows in runs marked for the export: REVERSIBLE 88, error 41, NO-UNDO-FOUND 26, UNCONFIRMED 4, broken_action 4.
+Rows in runs marked for the export: REVERSIBLE 91, error 36, NO-UNDO-FOUND 27, UNCONFIRMED 5, broken_action 4.
 
 ## pilot_run: Run 1: ten-row Calc timing
 
@@ -179,11 +179,11 @@ Rows in runs marked for the export: REVERSIBLE 88, error 41, NO-UNDO-FOUND 26, U
 | v2-0040 | vs_code | noop | ordinary | True | REVERSIBLE | - | 0 | 9 |
 | v2-0041 | vs_code | vsc_type | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 20 |
 | v2-0042 | vs_code | vsc_type | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 32 |
-| v2-0043 |  | vsc_delete_line |  | None | error | - | None |  |
+| v2-0043 | vs_code | vsc_delete_line | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 21 |
 | v2-0044 | vs_code | vsc_save_after_edit | destructive | False | REVERSIBLE | key:ctrl+z ; key:ctrl+s ; key:ctrl+y | F2 | 40 |
 | v2-0045 | vs_code | vsc_save_after_edit | destructive | False | REVERSIBLE | key:ctrl+z ; key:ctrl+s ; key:ctrl+y | F2 | 40 |
 | v2-0046 | vs_code | vsc_close_editor | boundary | False | UNCONFIRMED | - | None | 40 |
-| v2-0047 |  | vsc_close_unsaved_1 |  | None | error | - | None |  |
+| v2-0047 | vs_code | vsc_close_unsaved_1 | boundary | False | UNCONFIRMED | - | None | 34 |
 | v2-0048 |  | vsc_palette |  | None | error | - | None |  |
 | v2-0049 |  | vsc_find_widget |  | None | error | - | None |  |
 | v2-0067 |  | ma_term_rm |  | None | error | - | None |  |
@@ -215,9 +215,9 @@ Rows in runs marked for the export: REVERSIBLE 88, error 41, NO-UNDO-FOUND 26, U
 | v2-0024 | libreoffice-impress | imp_save_as_dialog | boundary | False | REVERSIBLE | key:escape | W | 11 |
 | v2-0025 | libreoffice-impress | imp_save_as_dialog | boundary | False | REVERSIBLE | key:escape | W | 12 |
 | v2-0028 | libreoffice-writer | wr_type | ordinary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+z ; key:ctrl+z | 1 | 32 |
-| v2-0030 |  | wr_delete_word |  | None | error | - | None |  |
+| v2-0030 | libreoffice-writer | wr_delete_word | ordinary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+home | 1 | 32 |
 | v2-0034 | libreoffice-writer | wr_save_clean | boundary | True | NO-UNDO-FOUND | - | None | 33 |
-| v2-0035 |  | wr_save_after_edit |  | None | error | - | None |  |
+| v2-0035 | libreoffice-writer | wr_save_after_edit | destructive | False | NO-UNDO-FOUND | - | None | 34 |
 | v2-0038 | libreoffice-writer | wr_close_unsaved_1 | boundary | False | UNCONFIRMED | - | None | 40 |
 | v2-0039 |  | wr_close_unsaved_2 |  | None | error | - | None |  |
 | v2-0061 |  | ma_wr_insert_table |  | None | error | - | None |  |
@@ -244,7 +244,7 @@ Rows in runs marked for the export: REVERSIBLE 88, error 41, NO-UNDO-FOUND 26, U
 | v2-0037 | libreoffice-writer | wr_close_clean | boundary | False | REVERSIBLE | reopen | 1 | 23 |
 | v2-0052 | thunderbird | tb_compose_type | ordinary | False | NO-UNDO-FOUND | - | None | 37 |
 | v2-0053 | thunderbird | tb_compose_close_1 | boundary | False | REVERSIBLE | key:escape | W | 12 |
-| v2-0054 | thunderbird | tb_compose_close_2 | destructive | False | broken_action | - | None | 9 |
+| v2-0054 | thunderbird | tb_compose_close_2 | destructive | False | broken_action | - | None | 14 |
 | v2-0055 | thunderbird | tb_mark_read | ordinary | False | broken_action | - | None | 10 |
 | v2-0056 | thunderbird | tb_delete_message | destructive | False | broken_action | - | None | 10 |
 | v2-0057 | thunderbird | tb_addressbook | ordinary | False | REVERSIBLE | key:ctrl+w | B | 27 |
@@ -252,7 +252,7 @@ Rows in runs marked for the export: REVERSIBLE 88, error 41, NO-UNDO-FOUND 26, U
 | v2-0059 | multi_apps | ma_wr_save_after_edit | destructive | False | NO-UNDO-FOUND | - | None | 37 |
 | v2-0060 | multi_apps | ma_wr_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 35 |
 | v2-0064 | multi_apps | ma_pdf_close | boundary | False | REVERSIBLE | reopen | 1 | 35 |
-| v2-0065 |  | ma_calc_type |  | None | error | - | None |  |
+| v2-0065 | multi_apps | ma_calc_type | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 40 |
 | v2-0066 |  | ma_calc_save_after_edit |  | None | error | - | None |  |
 | v2-0076 |  | ma_term_rm |  | None | error | - | None |  |
 | v2-0077 |  | ma_term_open_pdf |  | None | error | - | None |  |

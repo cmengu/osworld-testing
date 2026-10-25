@@ -418,3 +418,15 @@ rig/clickspots_v2.json regenerated. The regeneration also changes v2-0055 and v2
 the file had not been regenerated after the click-role fix of 24 Oct 21:02 (3c7d6e5), so the rerun launched at 11:30 runs them
 with the old roles and they are expected to break again. Diffed against the previous file: only these three rows' setups
 change. The collectors read the file at start; all three Thunderbird rows rerun after the run with the fixed file.
+
+## 25 October 2026, 12:55: rerun stopped by the Modal spend limit; v2-0065 focus misfire (not a rule)
+
+At about 12:53 all three sandboxes dropped (SandboxLost) and every restart failed with ResourceExhaustedError (workspace
+spend limit), as on 23 October. The collectors were stopped with SIGINT on the python binary only; no sandbox left.
+The rerun labelled 5 rows (v2-0030 REVERSIBLE, v2-0035 NO-UNDO-FOUND, v2-0043 REVERSIBLE, v2-0047 UNCONFIRMED,
+v2-0065 REVERSIBLE) and re-broke the three Thunderbird rows on the old rows file (see 12:05); rows in flight
+(v2-0039, v2-0048, v2-0049, v2-0066) and those the collectors reached after the limit are left as errors and rerun.
+v2-0065 (multi-app, type into the workbook after `wmctrl -a "LibreOffice Calc"` with the PDF viewer in front):
+the first instance raised Calc but the keys did not reach it (cursor still on A9, nothing typed); the second
+instance worked and the row is REVERSIBLE by Ctrl+Z. Intermittent focus after wmctrl -a; v2-0066 shares the step.
+Candidate fix after the run: wait until the active window is the target before typing.
