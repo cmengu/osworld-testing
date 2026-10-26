@@ -203,7 +203,7 @@ def other_fetch(other_url, ext):
 # Save As, the other document's name, Enter: the dialog's Name field holds the selection, so typing replaces it; the
 # current filter keeps the document's own extension (probe-0004, 19 Oct), so pilot_other.<ext> exists and the
 # "already exists, replace?" question comes up
-SAVE_AS_OTHER = "pyautogui.hotkey('ctrl', 'shift', 's'); time.sleep(4); pyautogui.typewrite('pilot_other'); time.sleep(1); pyautogui.press('enter'); time.sleep(3); " + wait_windows(2)
+SAVE_AS_OTHER = "pyautogui.hotkey('ctrl', 'shift', 's'); time.sleep(2); " + wait_windows(2) + "; time.sleep(2); pyautogui.typewrite('pilot_other'); time.sleep(1); pyautogui.press('enter'); time.sleep(3); " + wait_windows(2)
 SAVE_OVER_YES = "pyautogui.hotkey('alt', 'y'); time.sleep(4); " + f"(pyautogui.press('enter'), time.sleep(3)) if {WINDOW_COUNT} > 1 else None; time.sleep(2)"
 
 
@@ -277,7 +277,9 @@ for pfx, proj in (("26150609", "/home/user/Desktop/snake"), ("9219480b", "/home/
 # (v3-0071 smoke, 26 Oct), so the whole field is selected first
 # ... and the overwrite question is a third window (VS Code, the chooser, the question): the step waits for it, else Alt+R lands on
 # the chooser while the question is still coming (v3-0073: the after-state was not reproduced on the replays, 26 Oct)
-SAVE_AS_1 = lambda name: keys("ctrl+shift+s", settle=4) + f"; pyautogui.hotkey('ctrl', 'a'); time.sleep(1); pyautogui.typewrite({name!r}); time.sleep(1); pyautogui.press('enter'); time.sleep(3); " + wait_windows(3)   # noqa: E731
+# ... and the chooser itself can take longer than 4 s to come up: v3-0072's screenshot (26 Oct 18:51) shows it open with
+# "main.py" untouched, every key typed before it appeared lost; so the step waits for the chooser window before typing
+SAVE_AS_1 = lambda name: "pyautogui.hotkey('ctrl', 'shift', 's'); time.sleep(2); " + wait_windows(2) + f"; time.sleep(2); pyautogui.hotkey('ctrl', 'a'); time.sleep(1); pyautogui.typewrite({name!r}); time.sleep(1); pyautogui.press('enter'); time.sleep(3); " + wait_windows(3)   # noqa: E731
 for pfx, proj, name in (("26150609", "/home/user/Desktop/snake", "settings.py"), ("9219480b", "/home/user/Desktop/tetris", "block.py")):
     vs = dict(reopen=["code", proj], workbook=base(proj), open_path=proj)
     traj = [f"VS Code is open on the {base(proj)} folder", "main.py open in the editor"]
