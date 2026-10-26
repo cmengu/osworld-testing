@@ -563,6 +563,10 @@ RERUN_FORCED = {
     "v2-0049": [["key:escape"], ["key:escape", "key:escape"]],
     "v2-0052": [["focus:newest", "key:alt+f4", "wait:2", "click:Discard changes"], ["focus:newest", "key:ctrl+w", "wait:2", "click:Discard changes"]],
     "v2-0046": [["key:ctrl+shift+t"], ["key:ctrl+shift+t", "key:ctrl+1"]],     # the editor's own reopen; the cap cut it in the rerun (26 Oct)
+    # confirmation run, 26 Oct: the candidate that matched once goes first, so the confirming replay is reached
+    "v2-0047": [["key:escape"], ["key:escape", "key:escape"]],
+    "v2-0066": [["key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3"], ["key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3", "key:ctrl+y"]],
+    "v2-0071": [["focus:newest", "key:alt+f4"], ["key:alt+f4"]],                # Alt+F4 matched on 25 Oct once argv.json is masked
 }
 for r in rows:
     if r["row_id"] in RERUN_FORCED:

@@ -5,8 +5,7 @@ v2-0016  Impress save after an edit: the re-saved file keeps the typed text afte
 v2-0017  same as v2-0016
 v2-0036  Writer save after an edit: undo removes the text; candidates failed on something else (not yet diffed)
 v2-0059  same as v2-0036 (multi-app)
-v2-0055  Thunderbird: every reset brings up the crash reporter, so no candidate was judged
+v2-0055  Thunderbird: the crash reporter and then folderCache.json broke every reset, so no candidate was judged
 v2-0056  same as v2-0055
 v2-0085  Files new folder: only keyboard routes tried; a lower bound
 v2-0090  focus:newest raises the new Writer window without focusing it; Alt+F4 closed the terminal
-v2-0071  VS Code's first-run ~/.vscode/argv.json: state or housekeeping is the author's decision

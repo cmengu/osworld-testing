@@ -18,6 +18,7 @@ CLEAN_SCRIPT = r"""
 # -x (exact process name), never -f: the VM runs this script as sh -c "<text>", so a -f pattern matches
 # that shell and kills the script on its first line, leaving every cleanup below unrun.
 pkill -x soffice.bin 2>/dev/null; pkill -x oosplash 2>/dev/null; sleep 2; pkill -9 -x soffice.bin 2>/dev/null; pkill -9 -x oosplash 2>/dev/null
+pkill -x crashreporter 2>/dev/null   # a leftover Mozilla Crash Reporter window (26 Oct, v2-0055)
 rm -f "$HOME"/.~lock.* "$HOME"/Desktop/.~lock.* "$HOME"/Documents/.~lock.* 2>/dev/null
 rm -rf "$HOME"/.config/libreoffice/4/user/backup 2>/dev/null
 # drop only the crash-recovery entries (one <item> per line) and keep the rest of the profile, so the
@@ -313,7 +314,9 @@ def _replay_step(env, s: dict) -> None:
         text = c if isinstance(c, str) else " ".join(_shlex.quote(str(x)) for x in c)
         if p.get("shell") or isinstance(c, str):
             text = "sh -c " + _shlex.quote(text)
-        vm_shell(env, f"export DISPLAY=:0; nohup {text} >/dev/null 2>&1 &", timeout=20)
+        # MOZ_CRASHREPORTER_DISABLE: a Thunderbird killed by the reset reported the crash at its next start and the
+        # "Mozilla Crash Reporter" window broke every reset (v2-0055 rerun, 26 Oct); harmless for every other program
+        vm_shell(env, f"export DISPLAY=:0 MOZ_CRASHREPORTER_DISABLE=1; nohup {text} >/dev/null 2>&1 &", timeout=20)
         time.sleep(5)
 
 

@@ -41,11 +41,13 @@ _TB = "/home/user/.thunderbird/t5q2a5hp.default-release/"
 _TB_HOUSEKEEPING = ("datareporting/", "crashes/", "lock", ".parentlock", "places.sqlite", "storage.sqlite", "storage/",
                     "prefs.js", "extensions.json", "addons.json", "addonStartup.json.lz4", "compatibility.ini",
                     "sessionCheckpoints.json", "cookies.sqlite", "settings/", "xulstore.json",
-                    "content-prefs.sqlite")   # per-site settings (zoom, spell-check language), written when a compose window closes (probe-0033 c14)
+                    "content-prefs.sqlite",   # per-site settings (zoom, spell-check language), written when a compose window closes (probe-0033 c14)
+                    "folderCache.json")       # the folder pane's cache (sizes, timestamps), rewritten at every start: v2-0055/0056 rerun, 26 Oct, every reset differed on it alone
 IGNORED_FILE_PREFIXES = ("/home/user/.local/share/xorg/", "/home/user/.local/share/gvfs-metadata/",
                          "/home/user/.local/share/nautilus/", "/home/user/.config/libreoffice/",
                          "/home/user/.local/share/gnome-shell/",   # the shell's notification log (21 Oct, probe-0012 c05)
                          "/home/user/.config/Code/",               # VS Code's cache, storage and logs: 56 files change under a no-op (23 Oct, probe-0026)
+                         "/home/user/.vscode/argv.json",           # written by VS Code's first launch (a crash-reporter id and comments), the same housekeeping as above; 26 Oct, decided for v2-0071
                          ) + tuple(_TB + f for f in _TB_HOUSEKEEPING)  # Thunderbird's profile housekeeping (23 Oct, probe-0032), see above
 # Since 25 Oct (v2-0055/0056, under the plan the author approved that day): Thunderbird's folder summary files
 # (*.msf, Mork) are an index rebuilt from the mailbox, rewritten with fresh internal timestamps on every instance, so

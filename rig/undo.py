@@ -173,8 +173,18 @@ def step_code(step: str, ctx: dict) -> str:
         # Alt+F4 closed the terminal).  wmctrl lists windows in mapping order, the newest last.
         if arg != "newest":
             raise ValueError(f"unknown focus target {arg!r}")
-        return ("__import__('subprocess').run(['sh', '-c', 'w=$(wmctrl -l | grep -v \"@!\" | tail -1 | cut -d\" \" -f1); "
-                "[ -n \"$w\" ] && wmctrl -i -a \"$w\"'], timeout=15); time.sleep(1.5)")
+        # 26 Oct (v2-0090 rerun): wmctrl -i -a only raised the window, the keyboard stayed on the terminal.  So: up to
+        # 6 tries checked with xprop, as rowlib.activate does, and if the manager still withholds the focus a click
+        # at the centre of the window's client area (geometry from wmctrl -lG; xdotool is not on the image).
+        script = ('w=$(wmctrl -l | grep -v "@!" | tail -1 | cut -d" " -f1); [ -z "$w" ] && exit 0; '
+                  'for i in 1 2 3 4 5 6; do wmctrl -i -a "$w"; sleep 1; '
+                  'a=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o "0x[0-9a-f]*" | head -1); '
+                  '[ -n "$a" ] && [ "$((a))" = "$((w))" ] && exit 0; done; '
+                  'wmctrl -lG | grep -i "^$w " | tr -s " " | cut -d" " -f3-6; exit 3')
+        return (f"_r = __import__('subprocess').run(['sh', '-c', {_py(script)}], capture_output=True, text=True, timeout=40); "
+                "_g = _r.stdout.split(); "
+                "(pyautogui.click(int(_g[0]) + int(_g[2]) // 2, int(_g[1]) + int(_g[3]) // 2), time.sleep(1)) "
+                "if _r.returncode == 3 and len(_g) == 4 else None; time.sleep(1.5)")
     if kind == "click":
         # a named control on screen, pressed through its accessibility action (22 Oct, decided with the author):
         # a button, a menu entry, a sidebar row.  ctx["proc"] names the application to search ("*" = all)

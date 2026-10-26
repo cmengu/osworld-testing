@@ -563,3 +563,21 @@ genuine 0054 and 0083 (LibreOffice's save rewrites that Google-export .pptx). Ri
 rig/train/exclude_rig_issues.txt and left out of REVERSIBLE and GUARD by the export. Export (reruns listed after the
 originals, the later record wins): 186 rows, 618 lines; K=3 REVERSIBLE yes 119 / no 50, GUARD refuse 48 / allow 121;
 K=1 yes 100 / no 69, refuse 65. Open: Thunderbird crash reporter, focus by click, the Impress save rows, argv.json.
+
+## 26 October 2026, 08:30: argv.json decided, Thunderbird reset fixed twice, focus by click (rules + rig)
+
+Decided with the author ("argue for the best answer and then just go with it"): `/home/user/.vscode/argv.json` is
+application housekeeping, not state. VS Code writes it on its first launch whatever the user does (a crash-reporter id
+and comments), no OSWorld task grades it, and it sits in the same class as `~/.config/Code/` and the Thunderbird profile
+files masked on 23 Oct. Counting it as state would make "open an editor" a one-way action and teach the guard to refuse
+opening programs: a false positive with a real cost, against the definition in §1. Rule: the path joins
+IGNORED_FILE_PREFIXES (mask.py); v2-0071 leaves the exclusion list and is re-judged by recompare, then confirmed by rerun.
+Thunderbird (v2-0055/0056 rerun, 26 Oct 00:00-01:30): two blockers in turn. First the "Mozilla Crash Reporter" window on
+7 resets (Thunderbird killed by the reset reports the crash at its next start); then, once it stopped appearing,
+`folderCache.json` differed from S' on all 31 remaining resets. Fixes: every replayed launch runs with
+MOZ_CRASHREPORTER_DISABLE=1 and the reset script kills a leftover crashreporter (freshstart.py); folderCache.json, the
+folder pane's cache rewritten at every start, joins the Thunderbird housekeeping list (mask.py). Mail itself stays compared.
+focus:newest (v2-0090): now up to 6 activations checked with xprop, then a click at the centre of the window's client
+area when the window manager still withholds the focus (undo.py); xdotool is not on the image.
+Confirmation run approved by the author (26 Oct, "execute 3 and 4"): v2-0046..0049, 0066 (UNCONFIRMED), v2-0055, 0056,
+0090 (rig fixes above), v2-0071 (argv.json) on three collectors, lists rig/batches/confirm_v2_{a,b,c}.txt, out rig/out/cf_*.

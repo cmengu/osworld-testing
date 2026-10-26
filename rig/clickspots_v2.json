@@ -3598,7 +3598,15 @@
     "typed ' pilot' at the end"
    ],
    "known_answer": "REVERSIBLE",
-   "forced_candidates": null,
+   "forced_candidates": [
+    [
+     "key:escape"
+    ],
+    [
+     "key:escape",
+     "key:escape"
+    ]
+   ],
    "expect_change": [
     "windows",
     "tree"
@@ -4345,7 +4353,23 @@
     "typed 'pilot' into A1"
    ],
    "known_answer": null,
-   "forced_candidates": null,
+   "forced_candidates": [
+    [
+     "key:ctrl+z",
+     "key:ctrl+s",
+     "wait:4",
+     "confirm",
+     "wait:3"
+    ],
+    [
+     "key:ctrl+z",
+     "key:ctrl+s",
+     "wait:4",
+     "confirm",
+     "wait:3",
+     "key:ctrl+y"
+    ]
+   ],
    "expect_change": [
     "files"
    ]
@@ -4520,7 +4544,15 @@
     "a terminal was opened"
    ],
    "known_answer": null,
-   "forced_candidates": null,
+   "forced_candidates": [
+    [
+     "focus:newest",
+     "key:alt+f4"
+    ],
+    [
+     "key:alt+f4"
+    ]
+   ],
    "expect_change": [
     "windows"
    ]
