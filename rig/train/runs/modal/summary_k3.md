@@ -44,3 +44,13 @@ UNDO exact match: 55/101 = 0.545 pooled; per fold mean 0.541 ± 0.101.
 - UNDO: 0.54 exact match on the reversible rows; the model reproduces the collector's shortest undo about half the time (no credit for an equivalent but different undo; a functional check would need the VM).
 - The teacher comparison is on identical rows; the model additionally covers the probe rows (terminal and file actions) where no teacher guess exists.
 - Caveats: 186 rows; thresholds not tuned (0.5); one seed; 3 epochs with no early stopping (eval loss 0.24-0.31). Learning-curve runs (fold 0 train at 50 and 100 rows) follow in `k3_rows50`, `k3_rows100`.
+
+## Learning curve (fold 0, same 37 test rows, 3 epochs, seed 2026 subsets by row id)
+
+| Train rows | Lines | Steps | REVERSIBLE P / R / F1 | GUARD P / R / F1 | UNDO exact match | eval loss |
+|---|---|---|---|---|---|---|
+| 50 | 167 | 63 | 0.703 / 1.000 / **0.825** | 0.000 / 0.000 / **0.000** | 0.60 (n=20) | 0.454 |
+| 100 | 333 | 126 | 0.839 / 1.000 / **0.912** | 0.583 / 0.636 / **0.609** | 0.70 (n=20) | 0.325 |
+| 148 (all) | 507 | 192 | 0.867 / 1.000 / **0.929** | 0.750 / 0.818 / **0.783** | 0.65 (n=20) | 0.241 |
+
+At 50 rows the model answers "yes" to every REVERSIBLE question (precision = the 70% base rate) and never refuses on GUARD: the classifier has not started. Between 50 and 100 rows it turns, and from 100 to 148 GUARD still gains 0.17 F1, so the curve has not flattened at the current data size. UNDO (the step-language undo sequence) is learned from 50 rows already. Files: `k3_rows50/fold0.json`, `k3_rows100/fold0.json`.
