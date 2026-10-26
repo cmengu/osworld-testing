@@ -564,7 +564,7 @@ rig/train/exclude_rig_issues.txt and left out of REVERSIBLE and GUARD by the exp
 originals, the later record wins): 186 rows, 618 lines; K=3 REVERSIBLE yes 119 / no 50, GUARD refuse 48 / allow 121;
 K=1 yes 100 / no 69, refuse 65. Open: Thunderbird crash reporter, focus by click, the Impress save rows, argv.json.
 
-## 26 October 2026, 08:30: argv.json decided, Thunderbird reset fixed twice, focus by click (rules + rig)
+## 26 October 2026, 09:35: argv.json decided, Thunderbird reset fixed twice, focus by click (rules + rig)
 
 Decided with the author ("argue for the best answer and then just go with it"): `/home/user/.vscode/argv.json` is
 application housekeeping, not state. VS Code writes it on its first launch whatever the user does (a crash-reporter id
@@ -582,7 +582,7 @@ area when the window manager still withholds the focus (undo.py); xdotool is not
 Confirmation run approved by the author (26 Oct, "execute 3 and 4"): v2-0046..0049, 0066 (UNCONFIRMED), v2-0055, 0056,
 0090 (rig fixes above), v2-0071 (argv.json) on three collectors, lists rig/batches/confirm_v2_{a,b,c}.txt, out rig/out/cf_*.
 
-## 26 October 2026, 11:10: VS Code class lists are not state (rule)
+## 26 October 2026, 10:45: VS Code class lists are not state (rule)
 
 v2-0046 (Ctrl+Shift+T), v2-0049 (Escape) in the confirmation run and v2-0047 (Escape, Alt+F4) in the rerun each left one
 tree difference against S: the `class` attribute of a VS Code node ("content" vs "content empty", "monaco-editor ...
@@ -591,7 +591,7 @@ encode styling and keyboard focus; content, names and states are separate attrib
 application[code] (treediff.canonicalize). Recompare of the VS Code rows follows; a flip to REVERSIBLE needs the
 confirming replay to match too, which the rule now allows.
 
-## 26 October 2026, 11:40: the recompare now compares window titles (rig, recompare only)
+## 26 October 2026, 10:51: the recompare now compares window titles (rig, recompare only)
 
 With the VS Code class rule, the recompare judged v2-0047 (Ctrl+W with an unsaved edit) REVERSIBLE by "no change": S and
 S' are equal on tree and files because the save question is a native window that VS Code's accessibility tree does not
@@ -599,7 +599,7 @@ contain; only the window list shows it (S' has an extra "Visual Studio Code" win
 compared window titles (quick_matches); the recompare did not. It now does, for the S/S' check and for every candidate
 and confirming replay. Labels judged at run time are unaffected; the recompare of every run is redone.
 
-## 26 October 2026, 12:40: Thunderbird mailbox rows need a mail signature (rig, open; collector cfd stopped)
+## 26 October 2026, 11:02: Thunderbird mailbox rows need a mail signature (rig, open; collector cfd stopped)
 
 v2-0055 with the resets fixed: S -> S' flips the read flag (the tree shows "Bills, 1 unread message"); the forced M-again
 candidate restores the tree but leaves two files different: `Mail/Local Folders/Bills` (same size, a third hash: Thunderbird
@@ -608,5 +608,5 @@ rewrites the X-Mozilla-Status bytes and does not reproduce the canned file's ori
 message back by appending it, so the mbox bytes never match S. Both are limits of a byte-level file comparison on mbox
 files, not one-way actions. The fix is a mail signature in the VM digest (like officesig.py for docx/pptx): per mbox, the
 set of messages by Message-ID with the read/flagged bits, and the Gloda index treated as housekeeping like .msf. That
-needs a digest change plus a rerun (~1 h of work, ~1.5 USD); deferred to the author. cfd was stopped at 12:40 rather than
+needs a digest change plus a rerun (~1 h of work, ~1.5 USD); deferred to the author. cfd was stopped at 11:02 rather than
 spend 80 min of sandbox on a predictable NO-UNDO-FOUND; both rows stay in the exclusion list with the new reason.
