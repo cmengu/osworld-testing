@@ -54,3 +54,30 @@ UNDO exact match: 55/101 = 0.545 pooled; per fold mean 0.541 ± 0.101.
 | 148 (all) | 507 | 192 | 0.867 / 1.000 / **0.929** | 0.750 / 0.818 / **0.783** | 0.65 (n=20) | 0.241 |
 
 At 50 rows the model answers "yes" to every REVERSIBLE question (precision = the 70% base rate) and never refuses on GUARD: the classifier has not started. Between 50 and 100 rows it turns, and from 100 to 148 GUARD still gains 0.17 F1, so the curve has not flattened at the current data size. UNDO (the step-language undo sequence) is learned from 50 rows already. Files: `k3_rows50/fold0.json`, `k3_rows100/fold0.json`.
+
+## Second seed (K=3, seed 7, same folds and settings)
+
+| | REVERSIBLE pooled P / R / F1 | REVERSIBLE F1 mean ± sd | GUARD pooled P / R / F1 | GUARD F1 mean ± sd | UNDO exact match |
+|---|---|---|---|---|---|
+| seed 2026 | 0.916 / 0.952 / **0.934** | 0.929 ± 0.042 | 0.786 / 0.688 / **0.733** | 0.678 ± 0.198 | 55/101 = 0.545 |
+| seed 7 | 0.891 / 0.968 / **0.928** | 0.922 ± 0.056 | 0.833 / 0.729 / **0.778** | 0.736 ± 0.158 | 62/101 = 0.614 |
+| two seeds | **0.931 ± 0.003** | | **0.756 ± 0.023** | | 0.58 ± 0.03 |
+
+Per fold (seed 7): REV F1 0.945 / 0.951 / 0.913 / 0.818 / 0.982; GUARD F1 0.600 / 0.500 / 0.815 / 0.857 / 0.909; UNDO 0.70 / 0.52 / 0.68 / 0.38 / 0.76. Seed-to-seed movement on GUARD (0.045 pooled, up to 0.18 on one fold) is of the same size as the fold spread: with 3 to 15 refuse rows per fold single-fold GUARD numbers are not stable, pooled ones are. Files `k3_seed7/fold*.json`, `compare_k3_seed7.json`.
+
+## K=1 ablation (label = an undo of at most one action; same folds, seed 2026)
+
+Targets change with K: yes 106 / no 70 (K=3: 126 / 50), refuse 66 / allow 110 (K=3: 48 / 128). The teacher is re-scored against the K=1 labels on the same covered rows.
+
+| | REVERSIBLE pooled P / R / F1 | REVERSIBLE F1 mean ± sd | GUARD pooled P / R / F1 | GUARD F1 mean ± sd | UNDO exact match |
+|---|---|---|---|---|---|
+| Model, K=1 | 0.710 / 0.877 / **0.785** | 0.783 ± 0.117 | 0.857 / 0.364 / **0.511** | 0.469 ± 0.145 | 60/101 = 0.594 |
+| Teacher A on K=1 labels | | 0.768 ± 0.106 | | 0.606 ± 0.199 | |
+| Teacher B on K=1 labels | | 0.860 ± 0.068 | | 0.651 ± 0.214 | |
+| Model, K=3 (reference) | 0.916 / 0.952 / 0.934 | 0.929 ± 0.042 | 0.786 / 0.688 / 0.733 | 0.678 ± 0.198 | 0.545 |
+
+K=1 is a harder and noisier target for the model and for both teacher prompts alike (teacher B drops from 0.96 to 0.86 on REVERSIBLE and from 0.89 to 0.65 on GUARD): whether an undo takes one action or two (Ctrl+Z then Ctrl+Home; Escape then Escape) is a property of the application's key routes, not of the action's safety. Fold 3 (13 yes of 35) collapses to REV F1 0.553. K=3 stays the main label. Files `k1/fold*.json`, `compare_k1.json`.
+
+## Decision threshold
+
+Leave-one-fold-out tuning of the first-token threshold on the K=3 seed-2026 curves (grid 0.05 to 0.95): REVERSIBLE picks 0.25 to 0.60 by fold and scores 0.919 pooled, below the 0.934 at the default 0.5; GUARD picks 0.20 to 0.35 and scores 0.755 pooled (precision 0.69, recall 0.83) against 0.733 at 0.5. The paper keeps 0.5 and footnotes the tuned GUARD number; the operating point of a deployed guard is a recall-vs-false-refusal choice that the live evaluation, not this table, should set.
