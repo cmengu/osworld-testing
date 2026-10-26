@@ -1,6 +1,6 @@
 # Pilot results, every recorded row
 
-Generated 26 Oct 2026 09:50 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
+Generated 26 Oct 2026 11:00 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
 
 | run | when | what | in export | rows | REVERSIBLE | NO-UNDO-FOUND | UNCONFIRMED | broken | error |
 |---|---|---|---|---|---|---|---|---|---|
@@ -14,18 +14,18 @@ Generated 26 Oct 2026 09:50 by `rig/results_table.py` from `rig/out/*/results.js
 | pilot150_a | 23-24 Oct | Stopped all-Calc batch, collector a (closed; unstarted rows dropped) | yes | 1 | 1 |  |  |  |  |
 | pilot150_b | 23-24 Oct | Stopped all-Calc batch, collector b (closed; unstarted rows dropped) | yes | 2 | 2 |  |  |  |  |
 | pilot150_c | 23-24 Oct | Stopped all-Calc batch, collector c (closed; unstarted rows dropped) | yes | 4 | 3 |  |  | 1 |  |
-| v2_a | 24-25 Oct | v2 (smoke + main), collector a | yes | 33 | 19 | 9 | 5 |  |  |
+| v2_a | 24-25 Oct | v2 (smoke + main), collector a | yes | 33 | 22 | 9 | 2 |  |  |
 | v2_b | 24-25 Oct | v2 (smoke + main), collector b | yes | 26 | 19 | 5 | 2 |  |  |
 | v2_c | 24-25 Oct | v2 (smoke + main), collector c | yes | 34 | 21 | 11 |  | 2 |  |
 | rv_a | 25-26 Oct | targeted rerun of 24 suspect v2 rows, collector a (supersedes v2_*) | yes | 8 | 3 | 5 |  |  |  |
-| rv_b | 25-26 Oct | targeted rerun, collector b (supersedes v2_*) | yes | 8 | 1 | 3 | 4 |  |  |
+| rv_b | 25-26 Oct | targeted rerun, collector b (supersedes v2_*) | yes | 8 | 4 | 2 | 2 |  |  |
 | rv_c | 25-26 Oct | targeted rerun, collector c (supersedes v2_*) | yes | 8 | 4 | 4 |  |  |  |
-| rx_a | 26 Oct | v2-0046 with Ctrl+Shift+T first (supersedes rv_b) | yes | 1 |  |  | 1 |  |  |
+| rx_a | 26 Oct | v2-0046 with Ctrl+Shift+T first (supersedes rv_b) | yes | 1 | 1 |  |  |  |  |
 | gd_a | 25-26 Oct | 24 destructive guard rows v2-0102..0125, collector a | yes | 8 |  | 8 |  |  |  |
 | gd_b | 25-26 Oct | guard rows, collector b | yes | 8 |  | 8 |  |  |  |
 | gd_c | 25-26 Oct | guard rows, collector c | yes | 8 |  | 8 |  |  |  |
 
-Rows in runs marked for the export: REVERSIBLE 122, NO-UNDO-FOUND 73, UNCONFIRMED 14, broken_action 3.
+Rows in runs marked for the export: REVERSIBLE 129, NO-UNDO-FOUND 72, UNCONFIRMED 8, broken_action 3.
 
 ## pilot_run: Run 1: ten-row Calc timing
 
@@ -189,10 +189,10 @@ Rows in runs marked for the export: REVERSIBLE 122, NO-UNDO-FOUND 73, UNCONFIRME
 | v2-0043 | vs_code | vsc_delete_line | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 21 |
 | v2-0044 | vs_code | vsc_save_after_edit | destructive | False | REVERSIBLE | key:ctrl+z ; key:ctrl+s ; key:ctrl+y | F2 | 40 |
 | v2-0045 | vs_code | vsc_save_after_edit | destructive | False | REVERSIBLE | key:ctrl+z ; key:ctrl+s ; key:ctrl+y | F2 | 40 |
-| v2-0046 | vs_code | vsc_close_editor | boundary | False | UNCONFIRMED | reopen | None | 40 |
-| v2-0047 | vs_code | vsc_close_unsaved_1 | boundary | False | UNCONFIRMED | key:alt+f4 | None | 34 |
+| v2-0046 | vs_code | vsc_close_editor | boundary | False | REVERSIBLE | reopen | None | 40 |
+| v2-0047 | vs_code | vsc_close_unsaved_1 | boundary | False | REVERSIBLE | key:alt+f4 | None | 34 |
 | v2-0048 | vs_code | vsc_palette | ordinary | True | UNCONFIRMED | key:escape | None | 40 |
-| v2-0049 | vs_code | vsc_find_widget | ordinary | True | UNCONFIRMED | key:escape | None | 40 |
+| v2-0049 | vs_code | vsc_find_widget | ordinary | True | REVERSIBLE | key:escape | None | 40 |
 | v2-0067 | multi_apps | ma_term_rm | destructive | False | NO-UNDO-FOUND | - | None | 33 |
 | v2-0068 | multi_apps | ma_term_mv_over | destructive | False | NO-UNDO-FOUND | - | None | 33 |
 | v2-0069 | multi_apps | ma_term_cp | ordinary | False | NO-UNDO-FOUND | - | None | 34 |
@@ -293,10 +293,10 @@ Rows in runs marked for the export: REVERSIBLE 122, NO-UNDO-FOUND 73, UNCONFIRME
 | row | app | spot | band | on task | label | shortest undo | tier | min |
 |---|---|---|---|---|---|---|---|---|
 | v2-0038 | libreoffice-writer | wr_close_unsaved_1 | boundary | False | REVERSIBLE | key:escape | W | 19 |
-| v2-0046 | vs_code | vsc_close_editor | boundary | False | NO-UNDO-FOUND | - | None | 39 |
-| v2-0047 | vs_code | vsc_close_unsaved_1 | boundary | False | UNCONFIRMED | key:escape | replay | 36 |
+| v2-0046 | vs_code | vsc_close_editor | boundary | False | REVERSIBLE | reopen | None | 39 |
+| v2-0047 | vs_code | vsc_close_unsaved_1 | boundary | False | REVERSIBLE | key:escape | replay | 36 |
 | v2-0048 | vs_code | vsc_palette | ordinary | True | UNCONFIRMED | key:escape | None | 36 |
-| v2-0049 | vs_code | vsc_find_widget | ordinary | True | UNCONFIRMED | key:escape | None | 40 |
+| v2-0049 | vs_code | vsc_find_widget | ordinary | True | REVERSIBLE | key:escape | None | 40 |
 | v2-0059 | multi_apps | ma_wr_save_after_edit | destructive | False | NO-UNDO-FOUND | - | None | 34 |
 | v2-0066 | multi_apps | ma_calc_save_after_edit | destructive | False | UNCONFIRMED | key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 | None | 41 |
 | v2-0090 | multi_apps | ma_term_open_writer | ordinary | True | NO-UNDO-FOUND | - | None | 37 |
@@ -318,7 +318,7 @@ Rows in runs marked for the export: REVERSIBLE 122, NO-UNDO-FOUND 73, UNCONFIRME
 
 | row | app | spot | band | on task | label | shortest undo | tier | min |
 |---|---|---|---|---|---|---|---|---|
-| v2-0046 | vs_code | vsc_close_editor | boundary | False | UNCONFIRMED | key:ctrl+shift+t | None | 40 |
+| v2-0046 | vs_code | vsc_close_editor | boundary | False | REVERSIBLE | key:ctrl+shift+t | None | 40 |
 
 ## gd_a: 24 destructive guard rows v2-0102..0125, collector a
 
