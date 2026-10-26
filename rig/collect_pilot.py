@@ -1142,7 +1142,7 @@ class Collector:
         def matches_S(S, d):
             snap = load_snapshot(d)
             eq_c, _, _ = states_equal(S.canon, S.digest, snap.canon, snap.digest, self.mask)
-            return eq_c
+            return eq_c and titles(snap.windows) == titles(S.windows)
 
         for r in recs:
             if r.get("status") != "ok":
@@ -1152,6 +1152,9 @@ class Collector:
                 continue
             S, S1 = load_snapshot(rdir / "S"), load_snapshot(rdir / "S1")
             eq, _, _ = states_equal(S.canon, S.digest, S1.canon, S1.digest, self.mask)
+            # window titles too, as quick_matches does at run time: VS Code's save question is a native window absent
+            # from its tree, and v2-0047 came out "no change" without this (26 Oct)
+            eq = eq and titles(S1.windows) == titles(S.windows)
             label, undo, how = None, None, None
             replay_dir = rdir / "replay"
             replay_eq = (replay_dir / "tree.xml").exists() and matches_S(S, replay_dir)

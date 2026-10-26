@@ -590,3 +590,11 @@ focused" vs without "focused", the workbench's class list). VS Code's accessibil
 encode styling and keyboard focus; content, names and states are separate attributes. Rule: `class` is dropped under
 application[code] (treediff.canonicalize). Recompare of the VS Code rows follows; a flip to REVERSIBLE needs the
 confirming replay to match too, which the rule now allows.
+
+## 26 October 2026, 11:40: the recompare now compares window titles (rig, recompare only)
+
+With the VS Code class rule, the recompare judged v2-0047 (Ctrl+W with an unsaved edit) REVERSIBLE by "no change": S and
+S' are equal on tree and files because the save question is a native window that VS Code's accessibility tree does not
+contain; only the window list shows it (S' has an extra "Visual Studio Code" window). The run-time judgement always
+compared window titles (quick_matches); the recompare did not. It now does, for the S/S' check and for every candidate
+and confirming replay. Labels judged at run time are unaffected; the recompare of every run is redone.
