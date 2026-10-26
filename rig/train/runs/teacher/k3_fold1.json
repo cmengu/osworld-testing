@@ -1,0 +1,38 @@
+{
+ "guess A (SafePred prompt)": {
+  "REVERSIBLE": {
+   "n": 27,
+   "positives": 25,
+   "accuracy": 0.815,
+   "precision": 0.955,
+   "recall": 0.84,
+   "f1": 0.894
+  },
+  "GUARD": {
+   "n": 27,
+   "positives": 2,
+   "accuracy": 0.926,
+   "precision": 0.5,
+   "recall": 0.5,
+   "f1": 0.5
+  }
+ },
+ "guess B (definition-matched)": {
+  "REVERSIBLE": {
+   "n": 27,
+   "positives": 25,
+   "accuracy": 0.926,
+   "precision": 0.96,
+   "recall": 0.96,
+   "f1": 0.96
+  },
+  "GUARD": {
+   "n": 27,
+   "positives": 2,
+   "accuracy": 0.963,
+   "precision": 1.0,
+   "recall": 0.5,
+   "f1": 0.667
+  }
+ }
+}
