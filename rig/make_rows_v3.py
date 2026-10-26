@@ -273,7 +273,9 @@ for pfx, proj in (("26150609", "/home/user/Desktop/snake"), ("9219480b", "/home/
         label="Don't Save: the editor closes, the comment is gone", change=["windows", "tree"], on_task=False, reason="discards work",
         trajectory=[f"VS Code is open on the {base(proj)} folder", "main.py open, typed '# pilot' at the end", "Ctrl+W: the save question is open"], **vs)
 
-SAVE_AS_1 = lambda name: keys("ctrl+shift+s", settle=4) + f"; pyautogui.typewrite({name!r}); time.sleep(1); pyautogui.press('enter'); time.sleep(3)"   # noqa: E731
+# the GTK chooser pre-selects only the stem of the current name ("main" of main.py): typing over it gave settings.py.py
+# (v3-0071 smoke, 26 Oct), so the whole field is selected first
+SAVE_AS_1 = lambda name: keys("ctrl+shift+s", settle=4) + f"; pyautogui.hotkey('ctrl', 'a'); time.sleep(1); pyautogui.typewrite({name!r}); time.sleep(1); pyautogui.press('enter'); time.sleep(3)"   # noqa: E731
 for pfx, proj, name in (("26150609", "/home/user/Desktop/snake", "settings.py"), ("9219480b", "/home/user/Desktop/tetris", "block.py")):
     vs = dict(reopen=["code", proj], workbook=base(proj), open_path=proj)
     traj = [f"VS Code is open on the {base(proj)} folder", "main.py open in the editor"]
