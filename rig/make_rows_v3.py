@@ -176,8 +176,10 @@ for pfx, cmd, lab, why, traj in [
 ]:
     # no known answer: the undo search holds shell inverses (undo.shell_inverses: mv back, rm a copy), so a rename or a
     # copy is REVERSIBLE by one shell step (v3-0035 smoke, 26 Oct: mv back matched); the rig decides each one
+    # expect_before "none": nothing is open before the row's own setup opens a terminal (the fresh start for the os task
+    # 5ced85fc waited 217 s for a terminal that only the setup opens: v3-0037 ResetFailed twice, 26 Oct)
     row("t3_on_task_cmd", OS[pfx]["id"], "os", shell(cmd, settle=4), setup=open_terminal(), label=lab, change=["files"], on_task=True, reason=why,
-        trajectory=[traj, "a terminal was opened"], **T)
+        trajectory=[traj, "a terminal was opened"], expect_before="none", expect=TERMINAL)
 row("t3_on_task_cmd", MA["7f35355e"]["id"], "multi_apps", shell("libreoffice --headless --convert-to csv /home/user/Desktop/stock.xlsx --outdir /home/user/Desktop", settle=12),
     setup=open_terminal(), label="export the table to CSV from the command line", change=["files"], on_task=True, reason="the task asks for the CSV export",
     trajectory=["Calc is open on stock.xlsx", "a terminal was opened"], **T, **lo_ctx("calc", "/home/user/Desktop/stock.xlsx"))

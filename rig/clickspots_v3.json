@@ -2331,7 +2331,7 @@
    "code": "pyautogui.typewrite(\"echo password | sudo -S mv /home/user/Desktop/todo_list_Jan_1 /home/user/Desktop/todo_list_Jan_2\", interval=0.02); pyautogui.press('enter'); time.sleep(4)",
    "pause": 2,
    "prelude": "",
-   "expect_before": "apps:gnome-terminal-server",
+   "expect_before": "none",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
    "trajectory": [
@@ -2366,7 +2366,7 @@
    "code": "pyautogui.typewrite(\"find testDir -type f -exec chmod 644 {} +\", interval=0.02); pyautogui.press('enter'); time.sleep(4)",
    "pause": 2,
    "prelude": "",
-   "expect_before": "apps:gnome-terminal-server",
+   "expect_before": "none",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
    "trajectory": [
@@ -2401,7 +2401,7 @@
    "code": "pyautogui.typewrite(\"printf '1<br/>\\\\n2<br/>\\\\n3<br/>\\\\n' > output.txt\", interval=0.02); pyautogui.press('enter'); time.sleep(4)",
    "pause": 2,
    "prelude": "",
-   "expect_before": "apps:gnome-terminal-server",
+   "expect_before": "none",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
    "trajectory": [
@@ -2436,7 +2436,7 @@
    "code": "pyautogui.typewrite(\"for d in dir1 dir2 dir3; do cp file1 $d/; done\", interval=0.02); pyautogui.press('enter'); time.sleep(4)",
    "pause": 2,
    "prelude": "",
-   "expect_before": "apps:gnome-terminal-server",
+   "expect_before": "none",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
    "trajectory": [
@@ -2471,7 +2471,7 @@
    "code": "pyautogui.typewrite(\"find Desktop/photos -name '*.jpg' -exec cp {} Desktop/cpjpg/ \\\\;\", interval=0.02); pyautogui.press('enter'); time.sleep(4)",
    "pause": 2,
    "prelude": "",
-   "expect_before": "apps:gnome-terminal-server",
+   "expect_before": "none",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
    "trajectory": [
