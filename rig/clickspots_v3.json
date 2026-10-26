@@ -2503,7 +2503,7 @@
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "pyautogui.hotkey('ctrl', 'alt', 't'); time.sleep(2); __import__('subprocess').run(['sh', '-c', 'for i in $(seq 1 50); do w=$(wmctrl -l 2>/dev/null | grep \" user@user-virtual-machine: ~$\" | tail -1 | cut -d\" \" -f1); [ -n \"$w\" ] && xwininfo -id \"$w\" 2>/dev/null | grep -q \"Map State: IsViewable\" && exit 0; sleep 0.5; done; exit 1'], timeout=35); time.sleep(1); time.sleep(2)",
-   "code": "pyautogui.typewrite(\"libreoffice --headless --convert-to csv /home/user/Desktop/stock.xlsx --outdir /home/user/Desktop\", interval=0.02); pyautogui.press('enter'); time.sleep(12)",
+   "code": "pyautogui.typewrite(\"libreoffice -env:UserInstallation=file:///tmp/lo_convert --headless --convert-to csv /home/user/Desktop/stock.xlsx --outdir /home/user/Desktop\", interval=0.02); pyautogui.press('enter'); time.sleep(20)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:gnome-terminal-server",

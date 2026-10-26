@@ -180,7 +180,9 @@ for pfx, cmd, lab, why, traj in [
     # 5ced85fc waited 217 s for a terminal that only the setup opens: v3-0037 ResetFailed twice, 26 Oct)
     row("t3_on_task_cmd", OS[pfx]["id"], "os", shell(cmd, settle=4), setup=open_terminal(), label=lab, change=["files"], on_task=True, reason=why,
         trajectory=[traj, "a terminal was opened"], expect_before="none", expect=TERMINAL)
-row("t3_on_task_cmd", MA["7f35355e"]["id"], "multi_apps", shell("libreoffice --headless --convert-to csv /home/user/Desktop/stock.xlsx --outdir /home/user/Desktop", settle=12),
+# a separate user profile: a headless soffice hands the job to the running Calc instance otherwise and the step hung past
+# the 900 s watchdog (v3-0040, 26 Oct 23:20)
+row("t3_on_task_cmd", MA["7f35355e"]["id"], "multi_apps", shell("libreoffice -env:UserInstallation=file:///tmp/lo_convert --headless --convert-to csv /home/user/Desktop/stock.xlsx --outdir /home/user/Desktop", settle=20),
     setup=open_terminal(), label="export the table to CSV from the command line", change=["files"], on_task=True, reason="the task asks for the CSV export",
     trajectory=["Calc is open on stock.xlsx", "a terminal was opened"], **T, **lo_ctx("calc", "/home/user/Desktop/stock.xlsx"))
 
