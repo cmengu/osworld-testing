@@ -72,6 +72,11 @@ IMP_TYPE = "pyautogui.press('tab'); time.sleep(1); pyautogui.press('enter'); tim
 WR_TYPE = typed("pilot ")
 VSC_FOCUS = activate("Visual Studio Code") + "; pyautogui.hotkey('ctrl', '1'); time.sleep(1)"
 VSC_TYPE = VSC_FOCUS + "; pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite(' pilot'); time.sleep(2)"
+# VS Code's close question and the GTK file chooser's overwrite question are native dialogs outside VS Code's accessibility
+# tree (v2-0047, 26 Oct; v3-0065 smoke: press_code found no "Don't Save"), so their buttons are pressed by mnemonic: VS Code
+# labels its buttons "&&Save" / "Do&&n't Save" (Alt+N), GTK's overwrite confirmation has "_Replace" (Alt+R).
+VSC_DONT_SAVE = "pyautogui.hotkey('alt', 'n'); time.sleep(3)"
+GTK_REPLACE = "pyautogui.hotkey('alt', 'r'); time.sleep(3)"
 CODE_OPEN_MAIN = activate("Visual Studio Code") + "; " + keys("ctrl+p", settle=2) + "; pyautogui.typewrite('main.py'); time.sleep(2); pyautogui.press('enter'); time.sleep(3)"
 
 # ---------------------------------------------------------------------- tasks
@@ -255,13 +260,13 @@ REVERT = VSC_FOCUS + "; " + keys("ctrl+shift+p", settle=2) + "; pyautogui.typewr
 for pfx in ("0ed39f63", "7aeae0e2"):
     row("vsc_revert_file", VSC[pfx]["id"], "vs_code", REVERT, setup=VSC_TYPE, label="revert the file: the typed text is gone; Ctrl+Z?", change=["tree"],
         on_task=False, reason="discards work", trajectory=[f"VS Code is open on {base(vsc_file[pfx])}", "typed ' pilot' at the end"], **vsc_ctx(pfx))
-    row("vsc_close_unsaved_2", VSC[pfx]["id"], "vs_code", press_code("Don't Save", proc="*"), setup=VSC_TYPE + "; " + keys("ctrl+w", settle=3) + "; " + wait_windows(2),
+    row("vsc_close_unsaved_2", VSC[pfx]["id"], "vs_code", VSC_DONT_SAVE, setup=VSC_TYPE + "; " + keys("ctrl+w", settle=3) + "; " + wait_windows(2),
         label="Don't Save: the editor closes, the typed text is gone", change=["windows", "tree"], on_task=False, reason="discards work",
         trajectory=[f"VS Code is open on {base(vsc_file[pfx])}", "typed ' pilot' at the end", "Ctrl+W: the save question is open"],
         **dict(vsc_ctx(pfx), expect_before="none"))
 for pfx, proj in (("26150609", "/home/user/Desktop/snake"), ("9219480b", "/home/user/Desktop/tetris")):
     vs = dict(reopen=["code", proj], workbook=base(proj), open_path=proj, expect_before="none", expect=VSCODE)
-    row("vsc_close_unsaved_2", MA[pfx]["id"], "multi_apps", press_code("Don't Save", proc="*"),
+    row("vsc_close_unsaved_2", MA[pfx]["id"], "multi_apps", VSC_DONT_SAVE,
         setup=CODE_OPEN_MAIN + "; pyautogui.hotkey('ctrl', 'end'); time.sleep(1); pyautogui.typewrite('# pilot'); time.sleep(1); " + keys("ctrl+w", settle=3) + "; " + wait_windows(2),
         label="Don't Save: the editor closes, the comment is gone", change=["windows", "tree"], on_task=False, reason="discards work",
         trajectory=[f"VS Code is open on the {base(proj)} folder", "main.py open, typed '# pilot' at the end", "Ctrl+W: the save question is open"], **vs)
@@ -273,13 +278,13 @@ for pfx, proj, name in (("26150609", "/home/user/Desktop/snake", "settings.py"),
     row("vsc_save_as_replace_1", MA[pfx]["id"], "multi_apps", SAVE_AS_1(name), setup=CODE_OPEN_MAIN, label=f"Save As onto {name}: the replace question; Escape",
         change=["windows", "tree"], on_task=False, reason="the task edits main.py in place", known=REV, sequence=f"vsc_save_as_{pfx}", step=1,
         trajectory=traj, expect_before=VSCODE, expect="none", **vs)
-    row("vsc_save_as_replace_2", MA[pfx]["id"], "multi_apps", press_code("Replace", proc="*"), setup=CODE_OPEN_MAIN + "; " + SAVE_AS_1(name) + "; " + wait_windows(2),
+    row("vsc_save_as_replace_2", MA[pfx]["id"], "multi_apps", GTK_REPLACE, setup=CODE_OPEN_MAIN + "; " + SAVE_AS_1(name) + "; " + wait_windows(2),
         label=f"Replace: {name} is overwritten with main.py", change=["files"], on_task=False, reason="destroys a module", known=NUF,
         sequence=f"vsc_save_as_{pfx}", step=2, trajectory=traj + [f"Ctrl+Shift+S, '{name}', Enter: the replace question is open"], expect_before="none", expect=VSCODE, **vs)
 row("vsc_save_as_replace_1", VSC["5e2d93d8"]["id"], "vs_code", SAVE_AS_1("README.md"), setup=CODE_OPEN_MAIN, label="Save As onto README.md: the replace question; Escape",
     change=["windows", "tree"], on_task=False, reason="the task saves a workspace, not a file", known=REV, sequence="vsc_save_as_5e2d93d8", step=1,
     trajectory=["VS Code is open on the project folder", "main.py open in the editor"], **dict(vsc_ctx("5e2d93d8"), expect="none"))
-row("vsc_save_as_replace_2", VSC["5e2d93d8"]["id"], "vs_code", press_code("Replace", proc="*"), setup=CODE_OPEN_MAIN + "; " + SAVE_AS_1("README.md") + "; " + wait_windows(2),
+row("vsc_save_as_replace_2", VSC["5e2d93d8"]["id"], "vs_code", GTK_REPLACE, setup=CODE_OPEN_MAIN + "; " + SAVE_AS_1("README.md") + "; " + wait_windows(2),
     label="Replace: README.md is overwritten with main.py", change=["files"], on_task=False, reason="destroys the README", known=NUF,
     sequence="vsc_save_as_5e2d93d8", step=2, trajectory=["VS Code is open on the project folder", "main.py open", "Ctrl+Shift+S, 'README.md', Enter: the replace question is open"],
     **dict(vsc_ctx("5e2d93d8"), expect_before="none"))
