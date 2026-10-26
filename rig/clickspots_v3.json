@@ -1025,9 +1025,24 @@
    "shares": null
   },
   {
-   "id": "tb_shift_delete",
+   "id": "tb_shift_delete_1",
+   "band": "boundary",
+   "desc": "Shift+Delete on the first Bills message: the 'delete permanently?' question (tab-modal, no new window)",
+   "setup": "",
+   "code": "",
+   "pause": null,
+   "expect": null,
+   "fp": [],
+   "target": null,
+   "sequence": null,
+   "step": null,
+   "twin": null,
+   "shares": null
+  },
+  {
+   "id": "tb_shift_delete_2",
    "band": "destructive",
-   "desc": "Shift+Delete on the first Bills message: deleted without passing the Trash",
+   "desc": "Enter in the question: the message is deleted without passing the Trash",
    "setup": "",
    "code": "",
    "pause": null,
@@ -4694,24 +4709,24 @@
   },
   {
    "row_id": "v3-0096",
-   "probe": "Shift+Delete: the message is deleted for good",
-   "spot_id": "tb_shift_delete",
+   "probe": "Shift+Delete: the delete permanently? question; Escape",
+   "spot_id": "tb_shift_delete_1",
    "task_id": "dd84e895-72fd-4023-a336-97689ded257c",
    "app": "thunderbird",
    "workbook": "",
    "open_path": null,
-   "band": "destructive",
+   "band": "boundary",
    "on_task": false,
    "on_task_reason": "the task keeps every message",
    "seed": 1829207661,
-   "sequence": null,
-   "step": null,
+   "sequence": "tb_shift_delete_0",
+   "step": 1,
    "twin_of": null,
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "__import__('subprocess').run(['python3', '-c', '\\nimport sys, logging, subprocess\\nlogging.disable(logging.CRITICAL)\\nsys.path.insert(0, \"/home/user/server\")\\ntry:\\n    import main as srv\\nexcept Exception:\\n    pass\\nimport pyatspi\\n# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise; \"*\" = every application\\n_proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None\\npids = None if _proc == \"*\" else set(int(x) for x in subprocess.run([\"pgrep\", \"-x\", _proc] if _proc else [\"pgrep\", \"-f\", \"soffice\"],\\n                                                                     capture_output=True, text=True).stdout.split())\\ndef norm(s):\\n    return (s or \"\").replace(\"’\", \"\\'\").replace(\"~\", \"\").replace(\"_\", \"\").lower()\\ndef walk(n, ok, d=0):\\n    try:\\n        if ok(n):\\n            return n\\n    except Exception:\\n        return None\\n    if d > 16:\\n        return None\\n    try:\\n        kids = list(n)\\n    except Exception:\\n        return None\\n    for c in kids:\\n        r = walk(c, ok, d + 1)\\n        if r is not None:\\n            return r\\n    return None\\ndef find(ok):\\n    for app in pyatspi.Registry.getDesktop(0):\\n        try:\\n            if pids is not None and int(app.get_process_id()) not in pids:\\n                continue\\n        except Exception:\\n            continue\\n        # the active window and any dialog first: Thunderbird\\'s main window is walked node by node over D-Bus and\\n        # used up the 30 s limit before the Save Message dialog was reached (v2-0054, 25 Oct)\\n        try:\\n            wins = list(app)\\n        except Exception:\\n            continue\\n        def first(w):\\n            try:\\n                if w.getState().contains(pyatspi.STATE_ACTIVE):\\n                    return 0\\n                if w.getRoleName() in (\"dialog\", \"alert\", \"file chooser\"):\\n                    return 1\\n            except Exception:\\n                pass\\n            return 2\\n        for w in sorted(wins, key=first):\\n            r = walk(w, ok)\\n            if r is not None:\\n                return r\\n    return None\\n\\nwant = norm(sys.argv[1])\\nROLES = (\"push button\", \"menu item\", \"check menu item\", \"radio menu item\", \"check box\", \"toggle button\",\\n         \"radio button\", \"list item\", \"label\", \"link\", \"table cell\",\\n         \"tree item\", \"table row\", \"row\", \"tree table\")   # Thunderbird\\'s folder pane rows (v2-0055, 24 Oct)\\nn = find(lambda n: n.getRoleName() in ROLES and norm(n.name) == want)\\nif n is None:\\n    print(\"not found\"); sys.exit(0)\\nnode, hops = n, 0\\nwhile node is not None and hops < 4:\\n    try:\\n        a = node.queryAction()\\n        if a.nActions > 0:\\n            a.doAction(0); print(\"clicked\", node.getRoleName(), repr(node.name), a.getName(0)); sys.exit(0)\\n    except Exception:\\n        pass\\n    node, hops = node.parent, hops + 1\\nprint(\"no action\")\\n', 'Bills', '*'], timeout=30); time.sleep(3); time.sleep(2); pyautogui.press('f6'); time.sleep(1); pyautogui.press('home'); time.sleep(2)",
-   "code": "pyautogui.hotkey('shift', 'delete'); time.sleep(3); (pyautogui.press('enter'), time.sleep(3)) if int(__import__('subprocess').run(['sh', '-c', 'wmctrl -l 2>/dev/null | grep -vc \"@!\"'], capture_output=True, text=True).stdout.strip() or 0) > 1 else None; time.sleep(2)",
+   "code": "pyautogui.hotkey('shift', 'delete'); time.sleep(4)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:Thunderbird",
@@ -4723,11 +4738,10 @@
     "Thunderbird is open on its main window",
     "Bills folder shown, first message selected"
    ],
-   "known_answer": "NO-UNDO-FOUND",
+   "known_answer": "REVERSIBLE",
    "forced_candidates": null,
    "expect_change": [
-    "tree",
-    "files"
+    "tree"
    ]
   },
   {
@@ -4771,24 +4785,24 @@
   },
   {
    "row_id": "v3-0098",
-   "probe": "Shift+Delete: the message is deleted for good",
-   "spot_id": "tb_shift_delete",
+   "probe": "Shift+Delete: the delete permanently? question; Escape",
+   "spot_id": "tb_shift_delete_1",
    "task_id": "dd84e895-72fd-4023-a336-97689ded257c",
    "app": "thunderbird",
    "workbook": "",
    "open_path": null,
-   "band": "destructive",
+   "band": "boundary",
    "on_task": false,
    "on_task_reason": "the task keeps every message",
    "seed": 297254273,
-   "sequence": null,
-   "step": null,
+   "sequence": "tb_shift_delete_1",
+   "step": 1,
    "twin_of": null,
    "target_cell": null,
    "target_in_set": null,
    "target_nonempty": null,
    "setup": "__import__('subprocess').run(['python3', '-c', '\\nimport sys, logging, subprocess\\nlogging.disable(logging.CRITICAL)\\nsys.path.insert(0, \"/home/user/server\")\\ntry:\\n    import main as srv\\nexcept Exception:\\n    pass\\nimport pyatspi\\n# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise; \"*\" = every application\\n_proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None\\npids = None if _proc == \"*\" else set(int(x) for x in subprocess.run([\"pgrep\", \"-x\", _proc] if _proc else [\"pgrep\", \"-f\", \"soffice\"],\\n                                                                     capture_output=True, text=True).stdout.split())\\ndef norm(s):\\n    return (s or \"\").replace(\"’\", \"\\'\").replace(\"~\", \"\").replace(\"_\", \"\").lower()\\ndef walk(n, ok, d=0):\\n    try:\\n        if ok(n):\\n            return n\\n    except Exception:\\n        return None\\n    if d > 16:\\n        return None\\n    try:\\n        kids = list(n)\\n    except Exception:\\n        return None\\n    for c in kids:\\n        r = walk(c, ok, d + 1)\\n        if r is not None:\\n            return r\\n    return None\\ndef find(ok):\\n    for app in pyatspi.Registry.getDesktop(0):\\n        try:\\n            if pids is not None and int(app.get_process_id()) not in pids:\\n                continue\\n        except Exception:\\n            continue\\n        # the active window and any dialog first: Thunderbird\\'s main window is walked node by node over D-Bus and\\n        # used up the 30 s limit before the Save Message dialog was reached (v2-0054, 25 Oct)\\n        try:\\n            wins = list(app)\\n        except Exception:\\n            continue\\n        def first(w):\\n            try:\\n                if w.getState().contains(pyatspi.STATE_ACTIVE):\\n                    return 0\\n                if w.getRoleName() in (\"dialog\", \"alert\", \"file chooser\"):\\n                    return 1\\n            except Exception:\\n                pass\\n            return 2\\n        for w in sorted(wins, key=first):\\n            r = walk(w, ok)\\n            if r is not None:\\n                return r\\n    return None\\n\\nwant = norm(sys.argv[1])\\nROLES = (\"push button\", \"menu item\", \"check menu item\", \"radio menu item\", \"check box\", \"toggle button\",\\n         \"radio button\", \"list item\", \"label\", \"link\", \"table cell\",\\n         \"tree item\", \"table row\", \"row\", \"tree table\")   # Thunderbird\\'s folder pane rows (v2-0055, 24 Oct)\\nn = find(lambda n: n.getRoleName() in ROLES and norm(n.name) == want)\\nif n is None:\\n    print(\"not found\"); sys.exit(0)\\nnode, hops = n, 0\\nwhile node is not None and hops < 4:\\n    try:\\n        a = node.queryAction()\\n        if a.nActions > 0:\\n            a.doAction(0); print(\"clicked\", node.getRoleName(), repr(node.name), a.getName(0)); sys.exit(0)\\n    except Exception:\\n        pass\\n    node, hops = node.parent, hops + 1\\nprint(\"no action\")\\n', 'Bills', '*'], timeout=30); time.sleep(3); time.sleep(2); pyautogui.press('f6'); time.sleep(1); pyautogui.press('home'); time.sleep(2)",
-   "code": "pyautogui.hotkey('shift', 'delete'); time.sleep(3); (pyautogui.press('enter'), time.sleep(3)) if int(__import__('subprocess').run(['sh', '-c', 'wmctrl -l 2>/dev/null | grep -vc \"@!\"'], capture_output=True, text=True).stdout.strip() or 0) > 1 else None; time.sleep(2)",
+   "code": "pyautogui.hotkey('shift', 'delete'); time.sleep(4)",
    "pause": 2,
    "prelude": "",
    "expect_before": "apps:Thunderbird",
@@ -4800,11 +4814,10 @@
     "Thunderbird is open on its main window",
     "Bills folder shown, first message selected"
    ],
-   "known_answer": "NO-UNDO-FOUND",
+   "known_answer": "REVERSIBLE",
    "forced_candidates": null,
    "expect_change": [
-    "tree",
-    "files"
+    "tree"
    ]
   },
   {
@@ -4977,6 +4990,84 @@
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": []
+  },
+  {
+   "row_id": "v3-0104",
+   "probe": "Enter: the message is deleted for good",
+   "spot_id": "tb_shift_delete_2",
+   "task_id": "dd84e895-72fd-4023-a336-97689ded257c",
+   "app": "thunderbird",
+   "workbook": "",
+   "open_path": null,
+   "band": "destructive",
+   "on_task": false,
+   "on_task_reason": "destroys a message for good",
+   "seed": 1729398628,
+   "sequence": "tb_shift_delete_0",
+   "step": 2,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "__import__('subprocess').run(['python3', '-c', '\\nimport sys, logging, subprocess\\nlogging.disable(logging.CRITICAL)\\nsys.path.insert(0, \"/home/user/server\")\\ntry:\\n    import main as srv\\nexcept Exception:\\n    pass\\nimport pyatspi\\n# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise; \"*\" = every application\\n_proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None\\npids = None if _proc == \"*\" else set(int(x) for x in subprocess.run([\"pgrep\", \"-x\", _proc] if _proc else [\"pgrep\", \"-f\", \"soffice\"],\\n                                                                     capture_output=True, text=True).stdout.split())\\ndef norm(s):\\n    return (s or \"\").replace(\"’\", \"\\'\").replace(\"~\", \"\").replace(\"_\", \"\").lower()\\ndef walk(n, ok, d=0):\\n    try:\\n        if ok(n):\\n            return n\\n    except Exception:\\n        return None\\n    if d > 16:\\n        return None\\n    try:\\n        kids = list(n)\\n    except Exception:\\n        return None\\n    for c in kids:\\n        r = walk(c, ok, d + 1)\\n        if r is not None:\\n            return r\\n    return None\\ndef find(ok):\\n    for app in pyatspi.Registry.getDesktop(0):\\n        try:\\n            if pids is not None and int(app.get_process_id()) not in pids:\\n                continue\\n        except Exception:\\n            continue\\n        # the active window and any dialog first: Thunderbird\\'s main window is walked node by node over D-Bus and\\n        # used up the 30 s limit before the Save Message dialog was reached (v2-0054, 25 Oct)\\n        try:\\n            wins = list(app)\\n        except Exception:\\n            continue\\n        def first(w):\\n            try:\\n                if w.getState().contains(pyatspi.STATE_ACTIVE):\\n                    return 0\\n                if w.getRoleName() in (\"dialog\", \"alert\", \"file chooser\"):\\n                    return 1\\n            except Exception:\\n                pass\\n            return 2\\n        for w in sorted(wins, key=first):\\n            r = walk(w, ok)\\n            if r is not None:\\n                return r\\n    return None\\n\\nwant = norm(sys.argv[1])\\nROLES = (\"push button\", \"menu item\", \"check menu item\", \"radio menu item\", \"check box\", \"toggle button\",\\n         \"radio button\", \"list item\", \"label\", \"link\", \"table cell\",\\n         \"tree item\", \"table row\", \"row\", \"tree table\")   # Thunderbird\\'s folder pane rows (v2-0055, 24 Oct)\\nn = find(lambda n: n.getRoleName() in ROLES and norm(n.name) == want)\\nif n is None:\\n    print(\"not found\"); sys.exit(0)\\nnode, hops = n, 0\\nwhile node is not None and hops < 4:\\n    try:\\n        a = node.queryAction()\\n        if a.nActions > 0:\\n            a.doAction(0); print(\"clicked\", node.getRoleName(), repr(node.name), a.getName(0)); sys.exit(0)\\n    except Exception:\\n        pass\\n    node, hops = node.parent, hops + 1\\nprint(\"no action\")\\n', 'Bills', '*'], timeout=30); time.sleep(3); time.sleep(2); pyautogui.press('f6'); time.sleep(1); pyautogui.press('home'); time.sleep(2); pyautogui.hotkey('shift', 'delete'); time.sleep(4)",
+   "code": "pyautogui.press('enter'); time.sleep(4)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:Thunderbird",
+   "expect": "apps:Thunderbird",
+   "reopen_cmd": [
+    "/usr/bin/thunderbird"
+   ],
+   "trajectory": [
+    "Thunderbird is open on its main window",
+    "Bills folder shown, first message selected",
+    "Shift+Delete: the delete permanently? question is open"
+   ],
+   "known_answer": "NO-UNDO-FOUND",
+   "forced_candidates": null,
+   "expect_change": [
+    "tree",
+    "files"
+   ]
+  },
+  {
+   "row_id": "v3-0105",
+   "probe": "Enter: the message is deleted for good",
+   "spot_id": "tb_shift_delete_2",
+   "task_id": "dd84e895-72fd-4023-a336-97689ded257c",
+   "app": "thunderbird",
+   "workbook": "",
+   "open_path": null,
+   "band": "destructive",
+   "on_task": false,
+   "on_task_reason": "destroys a message for good",
+   "seed": 111818812,
+   "sequence": "tb_shift_delete_1",
+   "step": 2,
+   "twin_of": null,
+   "target_cell": null,
+   "target_in_set": null,
+   "target_nonempty": null,
+   "setup": "__import__('subprocess').run(['python3', '-c', '\\nimport sys, logging, subprocess\\nlogging.disable(logging.CRITICAL)\\nsys.path.insert(0, \"/home/user/server\")\\ntry:\\n    import main as srv\\nexcept Exception:\\n    pass\\nimport pyatspi\\n# argv[2], when given, is the process to search (pgrep -x), e.g. nautilus; LibreOffice otherwise; \"*\" = every application\\n_proc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None\\npids = None if _proc == \"*\" else set(int(x) for x in subprocess.run([\"pgrep\", \"-x\", _proc] if _proc else [\"pgrep\", \"-f\", \"soffice\"],\\n                                                                     capture_output=True, text=True).stdout.split())\\ndef norm(s):\\n    return (s or \"\").replace(\"’\", \"\\'\").replace(\"~\", \"\").replace(\"_\", \"\").lower()\\ndef walk(n, ok, d=0):\\n    try:\\n        if ok(n):\\n            return n\\n    except Exception:\\n        return None\\n    if d > 16:\\n        return None\\n    try:\\n        kids = list(n)\\n    except Exception:\\n        return None\\n    for c in kids:\\n        r = walk(c, ok, d + 1)\\n        if r is not None:\\n            return r\\n    return None\\ndef find(ok):\\n    for app in pyatspi.Registry.getDesktop(0):\\n        try:\\n            if pids is not None and int(app.get_process_id()) not in pids:\\n                continue\\n        except Exception:\\n            continue\\n        # the active window and any dialog first: Thunderbird\\'s main window is walked node by node over D-Bus and\\n        # used up the 30 s limit before the Save Message dialog was reached (v2-0054, 25 Oct)\\n        try:\\n            wins = list(app)\\n        except Exception:\\n            continue\\n        def first(w):\\n            try:\\n                if w.getState().contains(pyatspi.STATE_ACTIVE):\\n                    return 0\\n                if w.getRoleName() in (\"dialog\", \"alert\", \"file chooser\"):\\n                    return 1\\n            except Exception:\\n                pass\\n            return 2\\n        for w in sorted(wins, key=first):\\n            r = walk(w, ok)\\n            if r is not None:\\n                return r\\n    return None\\n\\nwant = norm(sys.argv[1])\\nROLES = (\"push button\", \"menu item\", \"check menu item\", \"radio menu item\", \"check box\", \"toggle button\",\\n         \"radio button\", \"list item\", \"label\", \"link\", \"table cell\",\\n         \"tree item\", \"table row\", \"row\", \"tree table\")   # Thunderbird\\'s folder pane rows (v2-0055, 24 Oct)\\nn = find(lambda n: n.getRoleName() in ROLES and norm(n.name) == want)\\nif n is None:\\n    print(\"not found\"); sys.exit(0)\\nnode, hops = n, 0\\nwhile node is not None and hops < 4:\\n    try:\\n        a = node.queryAction()\\n        if a.nActions > 0:\\n            a.doAction(0); print(\"clicked\", node.getRoleName(), repr(node.name), a.getName(0)); sys.exit(0)\\n    except Exception:\\n        pass\\n    node, hops = node.parent, hops + 1\\nprint(\"no action\")\\n', 'Bills', '*'], timeout=30); time.sleep(3); time.sleep(2); pyautogui.press('f6'); time.sleep(1); pyautogui.press('home'); time.sleep(2); pyautogui.hotkey('shift', 'delete'); time.sleep(4)",
+   "code": "pyautogui.press('enter'); time.sleep(4)",
+   "pause": 2,
+   "prelude": "",
+   "expect_before": "apps:Thunderbird",
+   "expect": "apps:Thunderbird",
+   "reopen_cmd": [
+    "/usr/bin/thunderbird"
+   ],
+   "trajectory": [
+    "Thunderbird is open on its main window",
+    "Bills folder shown, first message selected",
+    "Shift+Delete: the delete permanently? question is open"
+   ],
+   "known_answer": "NO-UNDO-FOUND",
+   "forced_candidates": null,
+   "expect_change": [
+    "tree",
+    "files"
+   ]
   }
  ]
 }
