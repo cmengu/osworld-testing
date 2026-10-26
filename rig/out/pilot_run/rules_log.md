@@ -611,7 +611,7 @@ set of messages by Message-ID with the read/flagged bits, and the Gloda index tr
 needs a digest change plus a rerun (~1 h of work, ~1.5 USD); deferred to the author. cfd was stopped at 11:02 rather than
 spend 80 min of sandbox on a predictable NO-UNDO-FOUND; both rows stay in the exclusion list with the new reason.
 
-## 26 October 2026, 11:35: VS Code list item ids are generated (rule)
+## 26 October 2026, 11:31: VS Code list item ids are generated (rule)
 
 v2-0048 (cf_e, Escape first): the one difference left was the `id` of the recommendation toast's list item, list_id_2_0 in
 S and list_id_3_0 after Escape: a counter VS Code mints per render, identity rather than state, like the XUL ids with an
