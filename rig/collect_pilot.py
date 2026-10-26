@@ -85,7 +85,8 @@ WATCHDOG_SECONDS = 900        # no single candidate, snapshot or reset may take 
 # spots whose action may legitimately leave no trace (saving an unchanged file); every other "no change" is a
 # broken key route
 NO_CHANGE_EXPECTED = frozenset({"save_clean", "imp_save_clean", "wr_save_clean", "ma_wr_save_clean", "ma_calc_save_clean", "select_all",   # select_all: the selection is not state (19 Oct)
-                                "noop", "term_ls"})           # probe rows: a bare Shift press; a command that writes nothing
+                                "noop", "term_ls",            # probe rows: a bare Shift press; a command that writes nothing
+                                "t3_readonly"})               # v3 rows: ls / wc / head in a terminal (26 Oct; v3-0100 was marked broken without this)
 
 
 class ResetFailed(Exception):
@@ -1145,6 +1146,10 @@ class Collector:
             return eq_c and titles(snap.windows) == titles(S.windows)
 
         for r in recs:
+            if (r.get("status") == "broken_action" and r.get("no_change") and r.get("spot_id") in NO_CHANGE_EXPECTED):
+                # a no-change row whose spot joined NO_CHANGE_EXPECTED after it ran (t3_readonly, 26 Oct): it executed and
+                # was judged; only the broken flag was wrong
+                r = dict(r, status="ok", broken_action=False, status_note="broken_action lifted by recompare: spot in NO_CHANGE_EXPECTED")
             if r.get("status") != "ok":
                 continue
             rdir = self.out / r["row_id"]
