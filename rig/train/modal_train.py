@@ -30,25 +30,25 @@ image = (modal.Image.debian_slim(python_version="3.12")
 
 @app.function(image=image, gpu="A100-80GB", timeout=3 * 3600, volumes={"/vol": vol})
 def run_fold(fold: int, k: int = 3, model: str = "Qwen/Qwen3-8B", rank: int = 32, epochs: float = 3.0,
-             train_file: str = "", tag: str = "") -> dict:
+             train_file: str = "", tag: str = "", seed: int = 2026) -> dict:
     out = f"/vol/runs/k{k}{tag}/fold{fold}"
     train = train_file or f"/data/k{k}/fold{fold}_train.jsonl"
     test = f"/data/k{k}/fold{fold}_test.jsonl"
     subprocess.run(["python", "/code/train_lora.py", "--train", train, "--eval", test, "--model", model,
-                    "--rank", str(rank), "--epochs", str(epochs), "--out", out], check=True)
+                    "--rank", str(rank), "--epochs", str(epochs), "--seed", str(seed), "--out", out], check=True)
     subprocess.run(["python", "/code/evaluate.py", "--test", test, "--model", model, "--adapter", out + "/adapter",
                     "--out", out + "/scores.json"], check=True)
     vol.commit()
     scores = json.load(open(out + "/scores.json"))
-    scores["_run"] = {"fold": fold, "k": k, "model": model, "rank": rank, "epochs": epochs, "train": train, "out": out}
+    scores["_run"] = {"fold": fold, "k": k, "model": model, "rank": rank, "epochs": epochs, "train": train, "out": out, "seed": seed}
     return scores
 
 
 @app.local_entrypoint()
 def main(folds: str = "0", k: int = 3, model: str = "Qwen/Qwen3-8B", rank: int = 32, epochs: float = 3.0,
-         train_file: str = "", tag: str = "", parallel: bool = False):
+         train_file: str = "", tag: str = "", parallel: bool = False, seed: int = 2026):
     fl = [int(f) for f in folds.split(",")]
-    kw = dict(k=k, model=model, rank=rank, epochs=epochs, train_file=train_file, tag=tag)
+    kw = dict(k=k, model=model, rank=rank, epochs=epochs, train_file=train_file, tag=tag, seed=seed)
     if parallel and len(fl) > 1:
         results = list(run_fold.starmap([(f,) for f in fl], kwargs=kw))
     else:
