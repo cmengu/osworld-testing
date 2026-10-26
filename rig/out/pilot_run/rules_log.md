@@ -598,3 +598,15 @@ S' are equal on tree and files because the save question is a native window that
 contain; only the window list shows it (S' has an extra "Visual Studio Code" window). The run-time judgement always
 compared window titles (quick_matches); the recompare did not. It now does, for the S/S' check and for every candidate
 and confirming replay. Labels judged at run time are unaffected; the recompare of every run is redone.
+
+## 26 October 2026, 12:40: Thunderbird mailbox rows need a mail signature (rig, open; collector cfd stopped)
+
+v2-0055 with the resets fixed: S -> S' flips the read flag (the tree shows "Bills, 1 unread message"); the forced M-again
+candidate restores the tree but leaves two files different: `Mail/Local Folders/Bills` (same size, a third hash: Thunderbird
+rewrites the X-Mozilla-Status bytes and does not reproduce the canned file's original flags) and `global-messages-db.sqlite`
+(the Gloda search index, rewritten on every flag change). v2-0056 will fail the same way: Ctrl+Z after Delete moves the
+message back by appending it, so the mbox bytes never match S. Both are limits of a byte-level file comparison on mbox
+files, not one-way actions. The fix is a mail signature in the VM digest (like officesig.py for docx/pptx): per mbox, the
+set of messages by Message-ID with the read/flagged bits, and the Gloda index treated as housekeeping like .msf. That
+needs a digest change plus a rerun (~1 h of work, ~1.5 USD); deferred to the author. cfd was stopped at 12:40 rather than
+spend 80 min of sandbox on a predictable NO-UNDO-FOUND; both rows stay in the exclusion list with the new reason.
