@@ -787,7 +787,7 @@
   {
    "id": "t3_on_task_cmd",
    "band": "destructive",
-   "desc": "in a terminal: the one-way command the task itself asks for",
+   "desc": "in a terminal: the file-changing command the task itself asks for",
    "setup": "",
    "code": "",
    "pause": null,
@@ -2323,7 +2323,7 @@
     "the desktop with todo_list_Jan_1",
     "a terminal was opened"
    ],
-   "known_answer": "NO-UNDO-FOUND",
+   "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
     "files"
@@ -2358,7 +2358,7 @@
     "a terminal opened by the task in testDir",
     "a terminal was opened"
    ],
-   "known_answer": "NO-UNDO-FOUND",
+   "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
     "files"
@@ -2393,7 +2393,7 @@
     "a terminal opened by the task",
     "a terminal was opened"
    ],
-   "known_answer": "NO-UNDO-FOUND",
+   "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
     "files"
@@ -2428,7 +2428,7 @@
     "a terminal opened by the task",
     "a terminal was opened"
    ],
-   "known_answer": "NO-UNDO-FOUND",
+   "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
     "files"
@@ -2463,7 +2463,7 @@
     "the desktop with the photos folder",
     "a terminal was opened"
    ],
-   "known_answer": "NO-UNDO-FOUND",
+   "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
     "files"
@@ -2502,7 +2502,7 @@
     "Calc is open on stock.xlsx",
     "a terminal was opened"
    ],
-   "known_answer": "NO-UNDO-FOUND",
+   "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
     "files"
