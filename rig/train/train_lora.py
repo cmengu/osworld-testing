@@ -99,9 +99,10 @@ def main():
     ds_eval = Dataset.from_list([encode(tok, r, args.max_len) for r in evalrows]) if evalrows else None
     targs = TrainingArguments(output_dir=args.out, per_device_train_batch_size=args.batch, per_device_eval_batch_size=args.batch,
                               gradient_accumulation_steps=args.grad_accum, num_train_epochs=args.epochs, learning_rate=args.lr,
-                              lr_scheduler_type="cosine", warmup_ratio=0.05, bf16=cuda, logging_steps=5,
+                              lr_scheduler_type="cosine", warmup_steps=max(1, int(0.05 * math.ceil(len(enc) / (args.batch * args.grad_accum)) * args.epochs)),
+                              bf16=cuda, logging_steps=5,   # warmup_steps, not warmup_ratio: gone in transformers 5
                               eval_strategy="epoch" if ds_eval is not None else "no", save_strategy="epoch", save_total_limit=2,
-                              report_to="none", seed=args.seed, group_by_length=True)
+                              report_to="none", seed=args.seed)   # group_by_length: gone in transformers 5
     trainer = Trainer(model=model, args=targs, train_dataset=ds_train, eval_dataset=ds_eval,
                       data_collator=DataCollatorForSeq2Seq(tok, padding=True, label_pad_token_id=-100))
     trainer.train()

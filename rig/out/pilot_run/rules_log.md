@@ -617,3 +617,14 @@ v2-0048 (cf_e, Escape first): the one difference left was the `id` of the recomm
 S and list_id_3_0 after Escape: a counter VS Code mints per render, identity rather than state, like the XUL ids with an
 embedded timestamp already dropped. Rule: GENERATED_ID also matches `list_id_<n>_<m>`. cfe was stopped (it judges under the
 rules it started with) and v2-0048 + v2-0071 relaunched as cfg under the new rule.
+
+## 26 October 2026, 12:41: confirmation run over (not a rule)
+
+Nine rows, seven collectors over the day (three stopped during the retries of outage-errored rows, one stopped on the
+mailbox finding), about 2.9 sandbox-hours. Every row that was UNCONFIRMED this morning is REVERSIBLE and confirmed:
+v2-0046, 0047, 0049 by recompare under the VS Code class rule, v2-0048 by rerun under the list-id rule, v2-0066 by rerun
+with its route first. Both rig fixes held: v2-0090 REVERSIBLE by focus:newest, Ctrl+W (the click fallback), v2-0071
+REVERSIBLE by focus:newest, Alt+F4 with argv.json masked (confirmed by the replay). v2-0055 and v2-0056 stay excluded
+until a mail signature exists. v2 final under rules 369dbfa30887: 73 REVERSIBLE, 36 NO-UNDO-FOUND (12 main-run, 24
+guard, every one a known answer), 0 UNCONFIRMED, 8 excluded, 8 never run. Export: 186 rows, 639 lines; K=3 REVERSIBLE
+126 yes / 50 no, GUARD 48 refuse / 128 allow (sha256 1760d60ea62e); K=1 106 / 70, 66 / 110 (34d00f8813de).

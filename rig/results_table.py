@@ -31,6 +31,11 @@ RUNS = {
     "gd_a":         ("25-26 Oct", "24 destructive guard rows v2-0102..0125, collector a", True),
     "gd_b":         ("25-26 Oct", "guard rows, collector b", True),
     "gd_c":         ("25-26 Oct", "guard rows, collector c", True),
+    "cf_a":         ("26 Oct", "confirmation run, collector a: v2-0046 (errored in a network outage; settled by recompare)", True),
+    "cf_b":         ("26 Oct", "confirmation run, collector b: v2-0049 (errored in the outage; settled by recompare)", True),
+    "cf_c":         ("26 Oct", "confirmation run, collector c: v2-0055 (resets fixed; M again fails on mbox bytes), v2-0056 (errored)", True),
+    "cf_f":         ("26 Oct", "confirmation run: v2-0066 (route forced first), v2-0090 (focus by click)", True),
+    "cf_g":         ("26 Oct", "confirmation run under the list-id rule: v2-0048 (Escape first), v2-0071 (argv.json masked)", True),
 }
 FINISHED = ("ok", "broken_action", "noise")
 CLOSED = {"pilot150_a", "pilot150_b", "pilot150_c"}  # stopped by the author on 24 Oct; their error rows never rerun

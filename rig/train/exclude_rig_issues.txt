@@ -8,4 +8,3 @@ v2-0059  same as v2-0036 (multi-app)
 v2-0055  Thunderbird: M again restores the read flag but the mbox file is rewritten to a third byte pattern (and the gloda index changes); a byte-level file comparison cannot pass it
 v2-0056  same mechanism as v2-0055: an undone delete re-appends the message, so the mbox bytes never match
 v2-0085  Files new folder: only keyboard routes tried; a lower bound
-v2-0090  focus:newest raises the new Writer window without focusing it; Alt+F4 closed the terminal
