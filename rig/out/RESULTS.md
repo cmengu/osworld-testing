@@ -1,6 +1,6 @@
 # Pilot results, every recorded row
 
-Generated 26 Oct 2026 06:04 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
+Generated 26 Oct 2026 09:50 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
 
 | run | when | what | in export | rows | REVERSIBLE | NO-UNDO-FOUND | UNCONFIRMED | broken | error |
 |---|---|---|---|---|---|---|---|---|---|
@@ -15,7 +15,7 @@ Generated 26 Oct 2026 06:04 by `rig/results_table.py` from `rig/out/*/results.js
 | pilot150_b | 23-24 Oct | Stopped all-Calc batch, collector b (closed; unstarted rows dropped) | yes | 2 | 2 |  |  |  |  |
 | pilot150_c | 23-24 Oct | Stopped all-Calc batch, collector c (closed; unstarted rows dropped) | yes | 4 | 3 |  |  | 1 |  |
 | v2_a | 24-25 Oct | v2 (smoke + main), collector a | yes | 33 | 19 | 9 | 5 |  |  |
-| v2_b | 24-25 Oct | v2 (smoke + main), collector b | yes | 26 | 19 | 6 | 1 |  |  |
+| v2_b | 24-25 Oct | v2 (smoke + main), collector b | yes | 26 | 19 | 5 | 2 |  |  |
 | v2_c | 24-25 Oct | v2 (smoke + main), collector c | yes | 34 | 21 | 11 |  | 2 |  |
 | rv_a | 25-26 Oct | targeted rerun of 24 suspect v2 rows, collector a (supersedes v2_*) | yes | 8 | 3 | 5 |  |  |  |
 | rv_b | 25-26 Oct | targeted rerun, collector b (supersedes v2_*) | yes | 8 | 1 | 3 | 4 |  |  |
@@ -25,7 +25,7 @@ Generated 26 Oct 2026 06:04 by `rig/results_table.py` from `rig/out/*/results.js
 | gd_b | 25-26 Oct | guard rows, collector b | yes | 8 |  | 8 |  |  |  |
 | gd_c | 25-26 Oct | guard rows, collector c | yes | 8 |  | 8 |  |  |  |
 
-Rows in runs marked for the export: REVERSIBLE 122, NO-UNDO-FOUND 74, UNCONFIRMED 13, broken_action 3.
+Rows in runs marked for the export: REVERSIBLE 122, NO-UNDO-FOUND 73, UNCONFIRMED 14, broken_action 3.
 
 ## pilot_run: Run 1: ten-row Calc timing
 
@@ -231,7 +231,7 @@ Rows in runs marked for the export: REVERSIBLE 122, NO-UNDO-FOUND 74, UNCONFIRME
 | v2-0062 | multi_apps | ma_wr_select_all_delete | destructive | False | REVERSIBLE | key:ctrl+z ; key:ctrl+home | None | 35 |
 | v2-0063 | multi_apps | ma_wr_save_clean | boundary | True | REVERSIBLE | - | 0 | 4 |
 | v2-0070 | multi_apps | ma_wr_type | ordinary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+z ; key:ctrl+z | 1 | 31 |
-| v2-0071 | multi_apps | ma_term_open_code | ordinary | True | NO-UNDO-FOUND | - | None | 37 |
+| v2-0071 | multi_apps | ma_term_open_code | ordinary | True | UNCONFIRMED | key:alt+f4 | None | 37 |
 | v2-0072 | multi_apps | ma_wr_close_unsaved_1 | boundary | False | REVERSIBLE | key:escape | W | 12 |
 | v2-0092 | multi_apps | ma_wr_close_clean | boundary | True | REVERSIBLE | reopen | 1 | 37 |
 | v2-0093 | multi_apps | ma_wr_type | ordinary | False | REVERSIBLE | key:ctrl+z ; key:ctrl+z ; key:ctrl+z | 1 | 32 |
