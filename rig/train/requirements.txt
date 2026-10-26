@@ -1,5 +1,6 @@
-torch>=2.3
-transformers>=4.51
-peft>=0.12
-datasets>=2.19
-accelerate>=0.30
+# pinned 26 Oct 2026 to the versions the scripts were tested with (train_lora.py and evaluate.py carry the transformers 5 fixes)
+torch==2.14.1
+transformers==5.20.2
+peft==0.21.2
+datasets==5.1.0
+accelerate==1.15.0

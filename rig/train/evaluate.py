@@ -63,18 +63,22 @@ def model_scores(test, model_name, adapter, max_len):
         model = PeftModel.from_pretrained(model, adapter)
     model.eval()
 
-    def first_token_prob(prompt, options):
+    def prompt_ids(prompt):
         msgs = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": prompt}]
-        ids = tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt").to(model.device)
-        ids = ids[:, -max_len:]
+        kw = {"enable_thinking": False} if "enable_thinking" in tok.apply_chat_template.__code__.co_varnames else {}
+        enc = tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt", **kw)
+        ids = enc if torch.is_tensor(enc) else enc["input_ids"]    # transformers >= 5 returns a BatchEncoding
+        return ids.to(model.device)
+
+    def first_token_prob(prompt, options):
+        ids = prompt_ids(prompt)[:, -max_len:]
         with torch.no_grad():
             logits = model(ids).logits[0, -1]
         probs = torch.softmax(logits.float(), -1)
         return {o: float(probs[tok(o, add_special_tokens=False)["input_ids"][0]]) for o in options}
 
     def generate(prompt, n=64):
-        msgs = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": prompt}]
-        ids = tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt").to(model.device)
+        ids = prompt_ids(prompt)
         with torch.no_grad():
             out = model.generate(ids[:, -max_len:], max_new_tokens=n, do_sample=False)
         return tok.decode(out[0, ids.shape[1]:], skip_special_tokens=True).strip()
