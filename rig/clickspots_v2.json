@@ -3934,7 +3934,15 @@
     "Bills folder shown, first message selected"
    ],
    "known_answer": null,
-   "forced_candidates": null,
+   "forced_candidates": [
+    [
+     "key:m"
+    ],
+    [
+     "key:m",
+     "key:ctrl+home"
+    ]
+   ],
    "expect_change": [
     "tree"
    ]
@@ -3971,7 +3979,15 @@
     "Bills folder shown, first message selected"
    ],
    "known_answer": null,
-   "forced_candidates": null,
+   "forced_candidates": [
+    [
+     "key:ctrl+z"
+    ],
+    [
+     "key:ctrl+z",
+     "key:ctrl+home"
+    ]
+   ],
    "expect_change": [
     "tree",
     "files"

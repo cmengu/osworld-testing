@@ -139,6 +139,10 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
         if text:
             attrs["text"] = text
         attrs["name"] = name
+        if "/application[code]" in path:
+            attrs.pop("class", None)    # VS Code exposes its HTML class lists (styling, "focused", "empty"): the only
+                                        # difference left on the confirming replays of v2-0046/0047/0049 (26 Oct);
+                                        # content, names and states are separate attributes
         if CURSOR_READOUT_BAR in path and _local(node.tag) in ("text", "paragraph"):
             attrs.pop("text", None)     # Name Box / Input line: echo of the cursor cell
             attrs.pop("editable", None)  # and its editable flag, which comes and goes with keyboard focus (pilot-0004

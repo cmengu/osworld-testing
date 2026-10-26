@@ -567,6 +567,8 @@ RERUN_FORCED = {
     "v2-0047": [["key:escape"], ["key:escape", "key:escape"]],
     "v2-0066": [["key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3"], ["key:ctrl+z", "key:ctrl+s", "wait:4", "confirm", "wait:3", "key:ctrl+y"]],
     "v2-0071": [["focus:newest", "key:alt+f4"], ["key:alt+f4"]],                # Alt+F4 matched on 25 Oct once argv.json is masked
+    "v2-0055": [["key:m"], ["key:m", "key:ctrl+home"]],                         # M toggles back; guess B had it but the cap came first (26 Oct cf_c)
+    "v2-0056": [["key:ctrl+z"], ["key:ctrl+z", "key:ctrl+home"]],
 }
 for r in rows:
     if r["row_id"] in RERUN_FORCED:

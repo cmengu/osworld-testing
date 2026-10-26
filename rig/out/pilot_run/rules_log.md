@@ -581,3 +581,12 @@ focus:newest (v2-0090): now up to 6 activations checked with xprop, then a click
 area when the window manager still withholds the focus (undo.py); xdotool is not on the image.
 Confirmation run approved by the author (26 Oct, "execute 3 and 4"): v2-0046..0049, 0066 (UNCONFIRMED), v2-0055, 0056,
 0090 (rig fixes above), v2-0071 (argv.json) on three collectors, lists rig/batches/confirm_v2_{a,b,c}.txt, out rig/out/cf_*.
+
+## 26 October 2026, 11:10: VS Code class lists are not state (rule)
+
+v2-0046 (Ctrl+Shift+T), v2-0049 (Escape) in the confirmation run and v2-0047 (Escape, Alt+F4) in the rerun each left one
+tree difference against S: the `class` attribute of a VS Code node ("content" vs "content empty", "monaco-editor ...
+focused" vs without "focused", the workbench's class list). VS Code's accessibility tree carries HTML class lists, which
+encode styling and keyboard focus; content, names and states are separate attributes. Rule: `class` is dropped under
+application[code] (treediff.canonicalize). Recompare of the VS Code rows follows; a flip to REVERSIBLE needs the
+confirming replay to match too, which the rule now allows.
