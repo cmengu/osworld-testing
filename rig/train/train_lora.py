@@ -30,6 +30,8 @@ def encode(tok, row, max_len):
     prompt_ids = tok.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True, enable_thinking=False) \
         if "enable_thinking" in tok.apply_chat_template.__code__.co_varnames else \
         tok.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True)
+    if not isinstance(prompt_ids, list):             # transformers >= 5 returns a BatchEncoding here
+        prompt_ids = list(prompt_ids["input_ids"])
     target_ids = tok(row["target"] + tok.eos_token, add_special_tokens=False)["input_ids"]
     if len(prompt_ids) + len(target_ids) > max_len:          # keep the whole target, cut the prompt's middle
         keep = max_len - len(target_ids)
@@ -79,7 +81,14 @@ def main():
     from peft import LoraConfig, get_peft_model
     from transformers import AutoModelForCausalLM, DataCollatorForSeq2Seq, Trainer, TrainingArguments
     from datasets import Dataset
-    model = AutoModelForCausalLM.from_pretrained(args.model, torch_dtype=torch.bfloat16, device_map="auto")
+    # a CUDA box trains in bf16 as the paper fixes; a Mac (MPS) or a CPU loads float32 and trains without autocast,
+    # for the pipeline smoke test with Qwen3-1.7B on the author's 16 GB M2 (26 Oct)
+    cuda = torch.cuda.is_available()
+    mps = (not cuda) and torch.backends.mps.is_available()
+    model = AutoModelForCausalLM.from_pretrained(args.model, torch_dtype=torch.bfloat16 if cuda else torch.float32,
+                                                 device_map="auto" if cuda else None)
+    if mps:
+        model.to("mps")
     model.gradient_checkpointing_enable()
     model.enable_input_require_grads()
     lora = LoraConfig(r=args.rank, lora_alpha=args.alpha, lora_dropout=args.dropout, bias="none", task_type="CAUSAL_LM",
@@ -90,7 +99,7 @@ def main():
     ds_eval = Dataset.from_list([encode(tok, r, args.max_len) for r in evalrows]) if evalrows else None
     targs = TrainingArguments(output_dir=args.out, per_device_train_batch_size=args.batch, per_device_eval_batch_size=args.batch,
                               gradient_accumulation_steps=args.grad_accum, num_train_epochs=args.epochs, learning_rate=args.lr,
-                              lr_scheduler_type="cosine", warmup_ratio=0.05, bf16=True, logging_steps=5,
+                              lr_scheduler_type="cosine", warmup_ratio=0.05, bf16=cuda, logging_steps=5,
                               eval_strategy="epoch" if ds_eval is not None else "no", save_strategy="epoch", save_total_limit=2,
                               report_to="none", seed=args.seed, group_by_length=True)
     trainer = Trainer(model=model, args=targs, train_dataset=ds_train, eval_dataset=ds_eval,

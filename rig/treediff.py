@@ -46,7 +46,9 @@ NODE = "__node__"  # pseudo-attribute meaning "the node itself exists"
 # "showing" since 23 Oct: whether a widget is inside the viewport is scroll position, not state (the PDF viewer's
 # links flip it as the page renders: probe-0024, a no-op, differed in one link's showing flag).  Nodes that are not
 # showing outside scroll panes are dropped whole (DROP_HIDDEN below); the attribute itself is never compared.
-GENERATED_ID = re.compile(r"[A-Za-z_-]\d{13,}$")   # name + epoch milliseconds + counter, XUL-generated
+GENERATED_ID = re.compile(r"[A-Za-z_-]\d{13,}$|^list_id_\d+_\d+$")   # name + epoch milliseconds + counter, XUL-generated;
+                                                                      # VS Code's list item ids (list_id_2_0 -> list_id_3_0 on the
+                                                                      # same notification after Escape, v2-0048 cf_e, 26 Oct)
 IGNORED_ATTRS = frozenset({"screencoord", "size", "focused", "active", "showing",
                            "explicit-name"})   # ARIA bookkeeping (whether the name came from a label); flickers on VS Code's
                                                # activity-bar tabs after an undo (v2-0041 c00/c01, 24 Oct)
