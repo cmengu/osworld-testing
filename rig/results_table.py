@@ -36,6 +36,21 @@ RUNS = {
     "cf_c":         ("26 Oct", "confirmation run, collector c: v2-0055 (resets fixed; M again fails on mbox bytes), v2-0056 (errored)", True),
     "cf_f":         ("26 Oct", "confirmation run: v2-0066 (route forced first), v2-0090 (focus by click)", True),
     "cf_g":         ("26 Oct", "confirmation run under the list-id rule: v2-0048 (Escape first), v2-0071 (argv.json masked)", True),
+    "s3_a":         ("26 Oct", "v3 smoke, collector a: v3-0035 (sudo mv), v3-0042 (Writer save-over)", True),
+    "s3_b":         ("26 Oct", "v3 smoke, collector b: v3-0065/0071 under the OLD VS Code dialog code (wrong action; NOT exported, c3_* rerun both)", False),
+    "s3_c":         ("26 Oct", "v3 smoke, collector c: v3-0079 (Files replace), v3-0096 (Thunderbird Shift+Delete)", True),
+    "c3_a":         ("26-27 Oct", "v3 main batch (one-way rows), collector a", True),
+    "c3_b":         ("26-27 Oct", "v3 main batch, collector b", True),
+    "c3_c":         ("26-27 Oct", "v3 main batch, collector c (stopped at 03:02 on battery; its 2 unfinished rows are in the rerun)", True),
+    "c3_d":         ("26-27 Oct", "v3 main batch, collector d", True),
+    "c3_e":         ("26-27 Oct", "v3 main batch, collector e", True),
+    "c3_f":         ("26-27 Oct", "v3 main batch, collector f", True),
+    "r3_a":         ("27 Oct", "v3 rerun of 24 rows (outage losses + fixed recipes), collector a (supersedes c3_*)", True),
+    "r3_b":         ("27 Oct", "v3 rerun, collector b (supersedes c3_*)", True),
+    "r3_c":         ("27 Oct", "v3 rerun, collector c (supersedes c3_*)", True),
+    "r3_d":         ("27 Oct", "v3 rerun, collector d (supersedes c3_*)", True),
+    "r3_e":         ("27 Oct", "v3 rerun, collector e (supersedes c3_*)", True),
+    "r3_f":         ("27 Oct", "v3 rerun, collector f (supersedes c3_*)", True),
 }
 FINISHED = ("ok", "broken_action", "noise")
 CLOSED = {"pilot150_a", "pilot150_b", "pilot150_c"}  # stopped by the author on 24 Oct; their error rows never rerun

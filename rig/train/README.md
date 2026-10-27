@@ -9,6 +9,10 @@ target is one-way AND off-task.
     OSWorld/.venv/bin/python -I rig/train/export.py --k 3 --out rig/train/data \
         rig/out/pilot_run2 rig/out/pilot150_a rig/out/pilot150_b rig/out/pilot150_c rig/out/probe_run rig/out/v2_a rig/out/v2_b rig/out/v2_c
 
+    # 27 Oct: data_k3 (186 rows, sha 1760d60ea62e) = the 20 directories pilot_run2 pilot150_a..c probe_run v2_a..c rv_a..c rx_a
+    # gd_a..c cf_a cf_b cf_c cf_f cf_g in that order; data_k3_v3 (269 rows, sha 870d9cefd208) adds s3_a s3_c c3_a..f after them
+    # (s3_b stays out: wrong VS Code dialog code); the r3_a..f rerun directories go last once the rerun is over.
+
 Writes `all.jsonl` (one line per row and task), `fold{0..4}_{train,test}.jsonl` (grouped by OSWorld task, so a
 workbook never straddles the split) and `summary.json`.  Rows labelled UNCONFIRMED or unlabelled are left out of
 REVERSIBLE and GUARD.  `--k` sets the main label: the paper pre-registers K = 2 or 3; Part 5 of the pilot tab says

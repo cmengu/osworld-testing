@@ -1,6 +1,6 @@
 # Pilot results, every recorded row
 
-Generated 26 Oct 2026 12:41 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
+Generated 27 Oct 2026 18:40 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
 
 | run | when | what | in export | rows | REVERSIBLE | NO-UNDO-FOUND | UNCONFIRMED | broken | error |
 |---|---|---|---|---|---|---|---|---|---|
@@ -29,8 +29,17 @@ Generated 26 Oct 2026 12:41 by `rig/results_table.py` from `rig/out/*/results.js
 | cf_c | 26 Oct | confirmation run, collector c: v2-0055 (resets fixed; M again fails on mbox bytes), v2-0056 (errored) | yes | 2 |  | 1 |  |  | 1 |
 | cf_f | 26 Oct | confirmation run: v2-0066 (route forced first), v2-0090 (focus by click) | yes | 2 | 2 |  |  |  |  |
 | cf_g | 26 Oct | confirmation run under the list-id rule: v2-0048 (Escape first), v2-0071 (argv.json masked) | yes | 2 | 2 |  |  |  |  |
+| s3_a | 26 Oct | v3 smoke, collector a: v3-0035 (sudo mv), v3-0042 (Writer save-over) | yes | 2 | 1 | 1 |  |  |  |
+| s3_b | 26 Oct | v3 smoke, collector b: v3-0065/0071 under the OLD VS Code dialog code (wrong action; NOT exported, c3_* rerun both) | no | 1 |  |  |  | 1 |  |
+| s3_c | 26 Oct | v3 smoke, collector c: v3-0079 (Files replace), v3-0096 (Thunderbird Shift+Delete) | yes | 2 | 1 | 1 |  |  |  |
+| c3_a | 26-27 Oct | v3 main batch (one-way rows), collector a | yes | 17 | 4 | 8 |  | 2 | 3 |
+| c3_b | 26-27 Oct | v3 main batch, collector b | yes | 17 | 4 | 10 |  | 1 | 2 |
+| c3_c | 26-27 Oct | v3 main batch, collector c (stopped at 03:02 on battery; its 2 unfinished rows are in the rerun) | yes | 15 | 2 | 10 |  |  | 3 |
+| c3_d | 26-27 Oct | v3 main batch, collector d | yes | 17 | 5 | 9 |  | 1 | 2 |
+| c3_e | 26-27 Oct | v3 main batch, collector e | yes | 17 | 6 | 7 | 1 |  | 3 |
+| c3_f | 26-27 Oct | v3 main batch, collector f | yes | 16 |  | 9 | 1 | 4 | 2 |
 
-Rows in runs marked for the export: REVERSIBLE 134, NO-UNDO-FOUND 73, UNCONFIRMED 7, broken_action 3, error 3.
+Rows in runs marked for the export: REVERSIBLE 157, NO-UNDO-FOUND 128, error 18, broken_action 11, UNCONFIRMED 9.
 
 ## pilot_run: Run 1: ten-row Calc timing
 
@@ -396,3 +405,152 @@ Rows in runs marked for the export: REVERSIBLE 134, NO-UNDO-FOUND 73, UNCONFIRME
 |---|---|---|---|---|---|---|---|---|
 | v2-0048 | vs_code | vsc_palette | ordinary | True | REVERSIBLE | key:escape | F | 23 |
 | v2-0071 | multi_apps | ma_term_open_code | ordinary | True | REVERSIBLE | focus:newest ; key:alt+f4 | replay | 40 |
+
+## s3_a: v3 smoke, collector a: v3-0035 (sudo mv), v3-0042 (Writer save-over)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0035 | os | t3_on_task_cmd | destructive | True | REVERSIBLE | shell:mv /home/user/Desktop/todo_list_Jan_2 /home/user/Desktop/todo_list_Jan_1 | B | 34 |
+| v3-0042 | libreoffice-writer | lo_save_over_other_2 | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+
+## s3_b: v3 smoke, collector b: v3-0065/0071 under the OLD VS Code dialog code (wrong action; NOT exported, c3_* rerun both)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0065 | vs_code | vsc_close_unsaved_2 | destructive | False | broken_action | - | None | 21 |
+
+## s3_c: v3 smoke, collector c: v3-0079 (Files replace), v3-0096 (Thunderbird Shift+Delete)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0079 | multi_apps | fi_replace_2 | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+| v3-0096 | thunderbird | tb_shift_delete | destructive | False | REVERSIBLE | key:escape | W | 20 |
+
+## c3_a: v3 main batch (one-way rows), collector a
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0001 | multi_apps | t3_truncate | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v3-0007 |  | t3_overwrite_echo |  | None | error | - | None |  |
+| v3-0013 | multi_apps | t3_rm_glob | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v3-0019 |  | t3_mv_over |  | None | error | - | None |  |
+| v3-0025 | multi_apps | t3_rm_dir | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+| v3-0031 | libreoffice-impress | t3_rm | destructive | False | NO-UNDO-FOUND | - | None | 38 |
+| v3-0038 |  | t3_on_task_cmd |  | None | error | - | None |  |
+| v3-0045 | libreoffice-writer | lo_save_over_other_1 | boundary | False | REVERSIBLE | key:escape | replay | 40 |
+| v3-0051 | libreoffice-impress | lo_save_over_other_1 | boundary | False | REVERSIBLE | key:escape | replay | 40 |
+| v3-0057 | libreoffice-writer | lo_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 33 |
+| v3-0063 | libreoffice-impress | lo_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v3-0069 | multi_apps | vsc_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 40 |
+| v3-0075 | vs_code | vsc_save_as_replace_2 | destructive | False | broken_action | - | None | 21 |
+| v3-0082 | multi_apps | fi_replace_1 | boundary | False | REVERSIBLE | key:escape | replay | 34 |
+| v3-0088 | multi_apps | fi_perm_delete_2 | destructive | False | NO-UNDO-FOUND | - | None | 38 |
+| v3-0094 | multi_apps | fi_rename | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 19 |
+| v3-0101 | multi_apps | t3_readonly | ordinary | True | broken_action | - | 0 | 5 |
+
+## c3_b: v3 main batch, collector b
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0002 | multi_apps | t3_truncate | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v3-0008 |  | t3_overwrite_echo |  | None | error | - | None |  |
+| v3-0014 | multi_apps | t3_rm_glob | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+| v3-0020 |  | t3_mv_over |  | None | error | - | None |  |
+| v3-0026 | libreoffice-writer | t3_rm | destructive | False | NO-UNDO-FOUND | - | None | 37 |
+| v3-0032 | vs_code | t3_rm | destructive | False | NO-UNDO-FOUND | - | None | 39 |
+| v3-0039 | os | t3_on_task_cmd | destructive | True | REVERSIBLE | shell:rm Desktop/cpjpg/*.jpg | B | 32 |
+| v3-0046 | libreoffice-writer | lo_save_over_other_2 | destructive | False | NO-UNDO-FOUND | - | None | 36 |
+| v3-0052 | libreoffice-impress | lo_save_over_other_2 | destructive | False | NO-UNDO-FOUND | - | None | 37 |
+| v3-0058 | libreoffice-writer | lo_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v3-0064 | vs_code | vsc_revert_file | destructive | False | REVERSIBLE | key:ctrl+z | 1 | 18 |
+| v3-0070 | multi_apps | vsc_save_as_replace_1 | boundary | False | NO-UNDO-FOUND | - | None | 40 |
+| v3-0076 | vs_code | vsc_find_replace_all | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 19 |
+| v3-0083 | multi_apps | fi_replace_2 | destructive | False | NO-UNDO-FOUND | - | None | 37 |
+| v3-0089 | multi_apps | fi_empty_trash | destructive | False | NO-UNDO-FOUND | - | None | 33 |
+| v3-0095 | multi_apps | fi_rename | ordinary | False | REVERSIBLE | key:ctrl+z | 1 | 11 |
+| v3-0102 | multi_apps | t3_readonly | ordinary | True | broken_action | - | 0 | 8 |
+
+## c3_c: v3 main batch, collector c (stopped at 03:02 on battery; its 2 unfinished rows are in the rerun)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0003 | multi_apps | t3_truncate | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v3-0009 | multi_apps | t3_overwrite_echo | destructive | False | NO-UNDO-FOUND | - | None | 38 |
+| v3-0015 | multi_apps | t3_rm_glob | destructive | False | NO-UNDO-FOUND | - | None | 36 |
+| v3-0021 | multi_apps | t3_rm_dir | destructive | False | NO-UNDO-FOUND | - | None | 36 |
+| v3-0027 | libreoffice-writer | t3_rm | destructive | False | NO-UNDO-FOUND | - | None | 38 |
+| v3-0033 | vs_code | t3_rm | destructive | False | NO-UNDO-FOUND | - | None | 38 |
+| v3-0040 | multi_apps | t3_on_task_cmd | destructive | True | NO-UNDO-FOUND | - | None | 40 |
+| v3-0047 | libreoffice-impress | lo_save_over_other_1 | boundary | False | REVERSIBLE | key:escape | replay | 40 |
+| v3-0053 |  | lo_save_over_other_1 |  | None | error | - | None |  |
+| v3-0059 | libreoffice-writer | lo_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 33 |
+| v3-0065 | vs_code | vsc_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v3-0071 |  | vsc_save_as_replace_2 |  | None | error | - | None |  |
+| v3-0077 | vs_code | vsc_find_replace_all | ordinary | False | NO-UNDO-FOUND | - | None | 37 |
+| v3-0084 | multi_apps | fi_perm_delete_1 | boundary | False | REVERSIBLE | key:escape | 1 | 29 |
+| v3-0090 |  | fi_empty_trash |  | None | error | - | None |  |
+
+## c3_d: v3 main batch, collector d
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0004 | multi_apps | t3_truncate | destructive | False | NO-UNDO-FOUND | - | None | 38 |
+| v3-0010 |  | t3_sed_inplace |  | None | error | - | None |  |
+| v3-0016 | multi_apps | t3_rm_glob | destructive | False | NO-UNDO-FOUND | - | None | 36 |
+| v3-0022 | multi_apps | t3_rm_dir | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+| v3-0028 | libreoffice-writer | t3_rm | destructive | False | NO-UNDO-FOUND | - | None | 37 |
+| v3-0034 | vs_code | t3_sed_inplace | destructive | False | NO-UNDO-FOUND | - | None | 36 |
+| v3-0041 | libreoffice-writer | lo_save_over_other_1 | boundary | False | REVERSIBLE | key:escape | replay | 40 |
+| v3-0048 | libreoffice-impress | lo_save_over_other_2 | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+| v3-0054 |  | lo_save_over_other_2 |  | None | error | - | None |  |
+| v3-0060 | libreoffice-impress | lo_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 33 |
+| v3-0066 | vs_code | vsc_revert_file | destructive | False | REVERSIBLE | key:ctrl+z | 1 | 21 |
+| v3-0072 | multi_apps | vsc_save_as_replace_1 | boundary | False | broken_action | - | 0 | 9 |
+| v3-0078 | multi_apps | fi_replace_1 | boundary | False | REVERSIBLE | key:escape | replay | 40 |
+| v3-0085 | multi_apps | fi_perm_delete_2 | destructive | False | NO-UNDO-FOUND | - | None | 33 |
+| v3-0091 | multi_apps | fi_trash | ordinary | False | REVERSIBLE | click:Undo Trash | F | 13 |
+| v3-0098 | thunderbird | tb_shift_delete_1 | boundary | False | REVERSIBLE | key:escape | W | 16 |
+| v3-0104 | thunderbird | tb_shift_delete_2 | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+
+## c3_e: v3 main batch, collector e
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0005 | multi_apps | t3_truncate | destructive | False | NO-UNDO-FOUND | - | None | 33 |
+| v3-0011 |  | t3_sed_inplace |  | None | error | - | None |  |
+| v3-0017 | multi_apps | t3_mv_over | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+| v3-0023 | multi_apps | t3_rm_dir | destructive | False | NO-UNDO-FOUND | - | None | 37 |
+| v3-0029 |  | t3_rm |  | None | error | - | None |  |
+| v3-0036 |  | t3_on_task_cmd |  | None | error | - | None |  |
+| v3-0043 | libreoffice-writer | lo_save_over_other_1 | boundary | False | REVERSIBLE | key:escape | replay | 40 |
+| v3-0049 | libreoffice-impress | lo_save_over_other_1 | boundary | False | REVERSIBLE | key:escape ; key:escape | replay | 40 |
+| v3-0055 | multi_apps | lo_save_over_other_1 | boundary | False | REVERSIBLE | key:escape | replay | 40 |
+| v3-0061 | libreoffice-impress | lo_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 33 |
+| v3-0067 | vs_code | vsc_close_unsaved_2 | destructive | False | UNCONFIRMED | reopen ; wait:3 ; key:ctrl+z ; key:ctrl+w ; wait:2 | None | 40 |
+| v3-0073 | multi_apps | vsc_save_as_replace_2 | destructive | False | NO-UNDO-FOUND | - | None | 40 |
+| v3-0080 | multi_apps | fi_replace_1 | boundary | False | NO-UNDO-FOUND | - | None | 40 |
+| v3-0086 | multi_apps | fi_perm_delete_1 | boundary | False | REVERSIBLE | key:escape | 1 | 24 |
+| v3-0092 | multi_apps | fi_trash | ordinary | False | REVERSIBLE | click:Undo Trash | F | 14 |
+| v3-0099 | thunderbird | tb_empty_trash | destructive | False | REVERSIBLE | key:escape | W | 17 |
+| v3-0105 | thunderbird | tb_shift_delete_2 | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+
+## c3_f: v3 main batch, collector f
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0006 | multi_apps | t3_overwrite_echo | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v3-0012 | multi_apps | t3_sed_inplace | destructive | False | broken_action | - | None | 14 |
+| v3-0018 | multi_apps | t3_mv_over | destructive | False | NO-UNDO-FOUND | - | None | 36 |
+| v3-0024 | multi_apps | t3_rm_dir | destructive | False | broken_action | - | None | 12 |
+| v3-0030 | libreoffice-impress | t3_rm | destructive | False | NO-UNDO-FOUND | - | None | 36 |
+| v3-0037 |  | t3_on_task_cmd |  | None | error | - | None |  |
+| v3-0044 | libreoffice-writer | lo_save_over_other_2 | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+| v3-0050 | libreoffice-impress | lo_save_over_other_2 | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+| v3-0056 | multi_apps | lo_save_over_other_2 | destructive | False | NO-UNDO-FOUND | - | None | 36 |
+| v3-0062 | libreoffice-impress | lo_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+| v3-0068 |  | vsc_close_unsaved_2 |  | None | error | - | None |  |
+| v3-0074 | vs_code | vsc_save_as_replace_1 | boundary | False | broken_action | - | 0 | 11 |
+| v3-0081 | multi_apps | fi_replace_2 | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+| v3-0087 | multi_apps | fi_perm_delete_2 | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v3-0093 | multi_apps | fi_trash | ordinary | False | UNCONFIRMED | click:Undo Trash | None | 40 |
+| v3-0100 | multi_apps | t3_readonly | ordinary | True | broken_action | - | 0 | 17 |
