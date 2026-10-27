@@ -106,3 +106,26 @@ Pooled, and split by whether a row was already in the 26 Oct export (`compare_su
 Means over folds: REVERSIBLE 0.935 ± 0.020, GUARD 0.887 ± 0.037, UNDO 0.639 ± 0.076 (pooled 79/124 = 0.637). Against the teacher on the covered rows (`compare_k3_v3pre.json`): model GUARD 0.893 ± 0.043, teacher B 0.896 ± 0.020, teacher A 0.771 ± 0.088; model REVERSIBLE 0.929 ± 0.025, teacher B 0.922 ± 0.017, teacher A 0.793 ± 0.053.
 
 Reading: doubling the refuse rows lifted GUARD from 0.733 to 0.863 on the very rows it was scored on before (+0.13; the two-seed reference was 0.756 ± 0.023), and to 0.888 pooled over the larger set, with REVERSIBLE unchanged; the 8B student now matches the Claude teacher (guess B) on both questions. GUARD was limited by the number of one-way examples, as the learning curve suggested, which is the case for the 3,000-row collection. One seed so far; the post-rerun export gets a second seed. Files `k3_v3pre/fold*.json`, `subsets_k3_v3pre.json`, `compare_k3_v3pre.json`.
+
+## Final v3 export, two seeds (28 October; K=3, five folds, seeds 2026 and 7)
+
+After the reruns of 27 October the export holds 289 rows (960 lines), refuse rows 114 against 48 on 26 October (`data_k3_v3`, sha 95591ebf038e; 12 rows excluded as rig limits, among them the three VS Code Save As question rows whose chooser no key closes once the replace question is dismissed, and the Files paste conflict whose window vanishes). The task-grouped folds are drawn afresh, so the test sets differ from the 26 October ones; the like-for-like line scores the 176 rows of that export.
+
+| Fold | Rows | REVERSIBLE P / R / F1 (seed 2026) | Refuse | GUARD P / R / F1 (seed 2026) | GUARD F1 (seed 7) | UNDO EM (2026 / 7) |
+|---|---|---|---|---|---|---|
+| 0 | 54 | 0.968 / 0.968 / 0.968 | 22 | 0.880 / 1.000 / 0.936 | 0.978 | 0.48 / 0.52 (n=23) |
+| 1 | 57 | 0.970 / 0.941 / 0.955 | 22 | 0.952 / 0.909 / 0.930 | 0.913 | 0.58 / 0.58 (n=26) |
+| 2 | 51 | 0.923 / 0.923 / 0.923 | 24 | 0.917 / 0.917 / 0.917 | 0.939 | 0.57 / 0.52 (n=23) |
+| 3 | 58 | 0.881 / 0.974 / 0.925 | 19 | 0.625 / 0.789 / 0.698 | 0.789 | 0.67 / 0.67 (n=33) |
+| 4 | 53 | 0.923 / 0.960 / 0.941 | 27 | 1.000 / 0.889 / 0.941 | 0.800 | 0.70 / 0.45 (n=20) |
+
+| Rows scored | n | REVERSIBLE F1 seed 2026 / seed 7 | Refuse | GUARD P / R / F1 seed 2026 | GUARD P / R / F1 seed 7 |
+|---|---|---|---|---|---|
+| all (new folds) | 273 | 0.942 / 0.915 | 114 | 0.873 / 0.904 / **0.888** | 0.908 / 0.868 / **0.888** |
+| the 176 rows of the 26 Oct export (like for like) | 176 | 0.953 / 0.937 | 48 | 0.820 / 0.854 / **0.837** | 0.872 / 0.854 / **0.863** |
+| the 97 new rows | 97 | 0.889 / 0.815 | 66 | 0.912 / 0.939 / 0.925 | 0.935 / 0.879 / 0.906 |
+| 26 Oct model on the same 176 rows (reference, two seeds) | 176 | 0.934 / 0.928 | 48 | 0.786 / 0.688 / 0.733 | 0.833 / 0.729 / 0.778 |
+
+Two seeds, pooled: REVERSIBLE **0.929 ± 0.019**, GUARD **0.888 ± 0.000**, UNDO exact match 0.58 ± 0.03 (75/125 and 70/125); like for like on the 176 old rows GUARD **0.850 ± 0.018** against 0.756 ± 0.023 on 26 October. Fold means: REVERSIBLE 0.942 ± 0.017 and 0.915 ± 0.023, GUARD 0.884 ± 0.094 and 0.884 ± 0.076 (fold 3 is the weak fold under both seeds). Against the teacher on the covered rows (`compare_k3_v3.json`, `compare_k3_v3_seed7.json`): model GUARD 0.882 ± 0.084 and 0.889 ± 0.074, teacher B 0.908 ± 0.049, teacher A 0.790 ± 0.052; model REVERSIBLE 0.941 and 0.909, teacher B 0.919 ± 0.035.
+
+Reading: with the refuse rows more than doubled the student's GUARD rises by 0.09 on the very rows it was scored on before and by 0.13 pooled, while REVERSIBLE holds; the seed-to-seed spread on GUARD, 0.045 pooled on 26 October, is gone. The student sits within one standard deviation of the definition-prompt teacher on both questions. GUARD was limited by one-way examples, which is the case for the 3,000-row collection. Files `k3_v3/fold*.json`, `k3_v3_seed7/fold*.json`, `subsets_k3_v3.json`, `subsets_k3_v3_seed7.json`.

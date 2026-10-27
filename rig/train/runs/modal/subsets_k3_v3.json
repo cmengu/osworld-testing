@@ -1,0 +1,51 @@
+{
+ "run": "k3_v3",
+ "folds": 5,
+ "old_data": "/Users/ngchenmeng/ai-research/osworld-testing/rig/train/data_k3",
+ "REVERSIBLE": {
+  "all": {
+   "n": 273,
+   "positives": 154,
+   "precision": 0.93,
+   "recall": 0.955,
+   "f1": 0.942
+  },
+  "old rows": {
+   "n": 176,
+   "positives": 126,
+   "precision": 0.932,
+   "recall": 0.976,
+   "f1": 0.953
+  },
+  "new rows": {
+   "n": 97,
+   "positives": 28,
+   "precision": 0.923,
+   "recall": 0.857,
+   "f1": 0.889
+  }
+ },
+ "GUARD": {
+  "all": {
+   "n": 273,
+   "positives": 114,
+   "precision": 0.873,
+   "recall": 0.904,
+   "f1": 0.888
+  },
+  "old rows": {
+   "n": 176,
+   "positives": 48,
+   "precision": 0.82,
+   "recall": 0.854,
+   "f1": 0.837
+  },
+  "new rows": {
+   "n": 97,
+   "positives": 66,
+   "precision": 0.912,
+   "recall": 0.939,
+   "f1": 0.925
+  }
+ }
+}
