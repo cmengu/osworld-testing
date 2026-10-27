@@ -16,7 +16,7 @@ import statistics
 HERE = pathlib.Path(__file__).resolve().parent
 OUT = HERE.parent / "out"
 DIRS = ("pilot_run2 pilot150_a pilot150_b pilot150_c probe_run v2_a v2_b v2_c rv_a rv_b rv_c rx_a gd_a gd_b gd_c cf_a cf_b cf_c cf_f cf_g "
-        "s3_a s3_c c3_a c3_b c3_c c3_d c3_e c3_f r3_a r3_b r3_c r3_d r3_e r3_f r4_a r4_b r4_c r4_d r4_e r4_f").split()   # s3_b out (wrong VS Code dialog code)
+        "s3_a s3_c c3_a c3_b c3_c c3_d c3_e c3_f r3_a r3_b r3_c r3_d r3_e r3_f r4_a r4_b r4_c r4_d r4_e r4_f r5_a r5_b r5_c").split()   # s3_b out (wrong VS Code dialog code)
 
 
 def prf(pairs):

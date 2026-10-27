@@ -57,6 +57,9 @@ RUNS = {
     "r4_d":         ("27 Oct", "v3 second rerun pass, collector d (supersedes r3_*)", True),
     "r4_e":         ("27 Oct", "v3 second rerun pass, collector e (supersedes r3_*)", True),
     "r4_f":         ("27 Oct", "v3 second rerun pass, collector f (supersedes r3_*)", True),
+    "r5_a":         ("27 Oct", "v3 third pass: v3-0070 with the chooser route second in the window tier (supersedes r4_*)", True),
+    "r5_b":         ("27 Oct", "v3 third pass: v3-0072 (supersedes r4_*)", True),
+    "r5_c":         ("27 Oct", "v3 third pass: v3-0074 (supersedes r4_*)", True),
 }
 FINISHED = ("ok", "broken_action", "noise")
 CLOSED = {"pilot150_a", "pilot150_b", "pilot150_c"}  # stopped by the author on 24 Oct; their error rows never rerun

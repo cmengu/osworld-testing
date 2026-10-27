@@ -150,10 +150,13 @@ def content_score(tree_diffs, fdiffs) -> tuple:
 
 NODE_ATTR = "__node__"
 
-WINDOW_CLOSERS = [["key:escape"], ["focus:newest", "key:ctrl+w"], ["focus:newest", "key:alt+f4"],
+WINDOW_CLOSERS = [["key:escape"],
                   # a question on top of a chooser (VS Code Save As over a sibling, v3-0070/0074, 27 Oct): Escape closes
-                  # the question and the keyboard falls back to the main window, so the chooser needs the focus first
-                  ["key:escape", "wait:1", "focus:newest", "key:escape"]]
+                  # the question and the keyboard falls back to the main window, so the chooser needs the focus first.
+                  # Second, not fourth: on that task every candidate costs 5-6 min (screenshot timeouts) and the fourth
+                  # was never reached inside the 30-min row cap (r4f, 22:50)
+                  ["key:escape", "wait:1", "focus:newest", "key:escape"],
+                  ["focus:newest", "key:ctrl+w"], ["focus:newest", "key:alt+f4"]]
 # focus:newest since 25 Oct: the window the action opened may not have the keyboard focus (v2-0090: Writer opened
 # from a terminal kept none; Ctrl+W went to the terminal and Alt+F4 closed it).  Escape stays unfocused: a dialog
 # the action opened has the focus by construction.
