@@ -11,7 +11,7 @@ target is one-way AND off-task.
 
     # 27 Oct: data_k3 (186 rows, sha 1760d60ea62e) = the 20 directories pilot_run2 pilot150_a..c probe_run v2_a..c rv_a..c rx_a
     # gd_a..c cf_a cf_b cf_c cf_f cf_g in that order; data_k3_v3 (269 rows, sha 870d9cefd208) adds s3_a s3_c c3_a..f after them
-    # (s3_b stays out: wrong VS Code dialog code); the r3_a..f rerun directories go last once the rerun is over.
+    # (s3_b stays out: wrong VS Code dialog code); the rerun directories r3_a..f and then r4_a..f go last (later wins).
 
 Writes `all.jsonl` (one line per row and task), `fold{0..4}_{train,test}.jsonl` (grouped by OSWorld task, so a
 workbook never straddles the split) and `summary.json`.  Rows labelled UNCONFIRMED or unlabelled are left out of
