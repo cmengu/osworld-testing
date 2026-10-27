@@ -8,3 +8,4 @@ v2-0059  same as v2-0036 (multi-app)
 v2-0055  Thunderbird: M again restores the read flag but the mbox file is rewritten to a third byte pattern (and the gloda index changes); a byte-level file comparison cannot pass it
 v2-0056  same mechanism as v2-0055: an undone delete re-appends the message, so the mbox bytes never match
 v2-0085  Files new folder: only keyboard routes tried; a lower bound
+v3-0080  Files paste over a same-named file in ~/Documents/Papers: the Files window is gone at S1 (bare desktop, twice, 27 Oct), so no reset reproduces the after-state; the conflict question itself was never judged

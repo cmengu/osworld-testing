@@ -189,7 +189,9 @@ def gui_steps(task: dict) -> list:
         t, p = s.get("type"), s.get("parameters", {})
         if t in ("open", "launch", "sleep", "activate_window"):
             out.append(s)
-        elif t in ("execute", "command") and _GUI_RE.search(_cmd_text(p)):
+        elif t in ("execute", "command") and (_GUI_RE.search(_cmd_text(p)) or "pyautogui" in _cmd_text(p)):
+            # a pyautogui step acts on the screen (the os tasks open their terminal with Ctrl+Alt+T this way and type
+            # into it; v3-0036..0038, 27 Oct: without the replay the recorded terminal never came back)
             out.append(s)
     return out
 
@@ -312,6 +314,8 @@ def _replay_step(env, s: dict) -> None:
     else:   # launch, or execute/command that starts a GUI program
         c = p.get("command")
         text = c if isinstance(c, str) else " ".join(_shlex.quote(str(x)) for x in c)
+        # the task configs carry these placeholders; desktop_env fills them at setup time, the replay must too (1920x1080)
+        text = text.replace("{SCREEN_WIDTH_HALF}", "960").replace("{SCREEN_HEIGHT_HALF}", "540")
         if p.get("shell") or isinstance(c, str):
             text = "sh -c " + _shlex.quote(text)
         # MOZ_CRASHREPORTER_DISABLE: a Thunderbird killed by the reset reported the crash at its next start and the

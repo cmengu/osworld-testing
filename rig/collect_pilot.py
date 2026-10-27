@@ -150,7 +150,10 @@ def content_score(tree_diffs, fdiffs) -> tuple:
 
 NODE_ATTR = "__node__"
 
-WINDOW_CLOSERS = [["key:escape"], ["focus:newest", "key:ctrl+w"], ["focus:newest", "key:alt+f4"]]
+WINDOW_CLOSERS = [["key:escape"], ["focus:newest", "key:ctrl+w"], ["focus:newest", "key:alt+f4"],
+                  # a question on top of a chooser (VS Code Save As over a sibling, v3-0070/0074, 27 Oct): Escape closes
+                  # the question and the keyboard falls back to the main window, so the chooser needs the focus first
+                  ["key:escape", "wait:1", "focus:newest", "key:escape"]]
 # focus:newest since 25 Oct: the window the action opened may not have the keyboard focus (v2-0090: Writer opened
 # from a terminal kept none; Ctrl+W went to the terminal and Alt+F4 closed it).  Escape stays unfocused: a dialog
 # the action opened has the focus by construction.
@@ -284,12 +287,18 @@ class Collector:
         if self.args.provider == "modal":
             guard_modal_sandbox()
         t0 = time.time()
-        self.env = DesktopEnv(provider_name=self.args.provider, action_space="pyautogui", headless=True,
-                              require_a11y_tree=False, os_type="Ubuntu")
-        self.env_started = time.time()
-        task = self.task(task_id)
-        self.env.reset(task_config=task)
-        print(f"[env] task {task_id[:8]} ready after {time.time() - t0:.0f}s; prep: {prepare_vm(self.env)}; cache: {prime_cache(self.env, task)}", flush=True)
+        # the watchdog covers the sandbox start too: r3e hung from 19:15 to 22:05 on 27 Oct in a socket read while
+        # opening a sandbox during a network outage, with no alarm armed (the row's alarm is set later, in run_row)
+        prev = signal.alarm(WATCHDOG_SECONDS)
+        try:
+            self.env = DesktopEnv(provider_name=self.args.provider, action_space="pyautogui", headless=True,
+                                  require_a11y_tree=False, os_type="Ubuntu")
+            self.env_started = time.time()
+            task = self.task(task_id)
+            self.env.reset(task_config=task)
+            print(f"[env] task {task_id[:8]} ready after {time.time() - t0:.0f}s; prep: {prepare_vm(self.env)}; cache: {prime_cache(self.env, task)}", flush=True)
+        finally:
+            signal.alarm(prev if prev else 0)
         self.current_task_id = task_id
 
     def wait_for_network(self, max_s: float = 1800) -> bool:
@@ -607,6 +616,9 @@ class Collector:
                 raise RuntimeError(f"after-state not recorded: {S1.meta['window_error']}")
             signal.alarm(0)
             eq, tdiffs, fdiffs = states_equal(S.canon, S.digest, S1.canon, S1.digest, self.mask)
+            # a window the tree does not show (VS Code's GTK chooser and its replace question, v3-0072 on 27 Oct) is a
+            # change too, as the candidate judge and the recompare already count it
+            eq = eq and titles(S1.windows) == titles(S.windows)
             changed = set()
             if fdiffs:
                 changed.add("files")
