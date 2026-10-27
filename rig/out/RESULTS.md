@@ -1,6 +1,6 @@
 # Pilot results, every recorded row
 
-Generated 27 Oct 2026 18:40 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
+Generated 27 Oct 2026 23:34 by `rig/results_table.py` from `rig/out/*/results.jsonl`. Labels are recompared where a recompare exists; `error` rows rerun on relaunch.
 
 | run | when | what | in export | rows | REVERSIBLE | NO-UNDO-FOUND | UNCONFIRMED | broken | error |
 |---|---|---|---|---|---|---|---|---|---|
@@ -38,8 +38,23 @@ Generated 27 Oct 2026 18:40 by `rig/results_table.py` from `rig/out/*/results.js
 | c3_d | 26-27 Oct | v3 main batch, collector d | yes | 17 | 5 | 9 |  | 1 | 2 |
 | c3_e | 26-27 Oct | v3 main batch, collector e | yes | 17 | 6 | 7 | 1 |  | 3 |
 | c3_f | 26-27 Oct | v3 main batch, collector f | yes | 16 |  | 9 | 1 | 4 | 2 |
+| r3_a | 27 Oct | v3 rerun of 24 rows (outage losses + fixed recipes), collector a (supersedes c3_*) | yes | 4 |  | 3 |  |  | 1 |
+| r3_b | 27 Oct | v3 rerun, collector b (supersedes c3_*) | yes | 4 |  | 3 |  |  | 1 |
+| r3_c | 27 Oct | v3 rerun, collector c (supersedes c3_*) | yes | 4 |  | 3 |  |  | 1 |
+| r3_d | 27 Oct | v3 rerun, collector d (supersedes c3_*) | yes | 4 | 1 | 1 |  | 1 | 1 |
+| r3_e | 27 Oct | v3 rerun, collector e (supersedes c3_*) | yes | 2 |  | 1 |  |  | 1 |
+| r3_f | 27 Oct | v3 rerun, collector f (supersedes c3_*) | yes | 4 | 1 | 2 |  |  | 1 |
+| r4_a | 27 Oct | v3 second rerun pass (os replay, chooser route, window-aware no-change), collector a (supersedes r3_*) | yes | 2 |  | 2 |  |  |  |
+| r4_b | 27 Oct | v3 second rerun pass, collector b (supersedes r3_*) | yes | 1 |  | 1 |  |  |  |
+| r4_c | 27 Oct | v3 second rerun pass, collector c (supersedes r3_*) | yes | 2 |  | 2 |  |  |  |
+| r4_d | 27 Oct | v3 second rerun pass, collector d (supersedes r3_*) | yes | 1 | 1 |  |  |  |  |
+| r4_e | 27 Oct | v3 second rerun pass, collector e (supersedes r3_*) | yes | 2 |  | 2 |  |  |  |
+| r4_f | 27 Oct | v3 second rerun pass, collector f (supersedes r3_*) | yes | 1 |  | 1 |  |  |  |
+| r5_a | 27 Oct | v3 third pass: v3-0070 with the chooser route second in the window tier (supersedes r4_*) | yes | 1 |  | 1 |  |  |  |
+| r5_b | 27 Oct | v3 third pass: v3-0072 (supersedes r4_*) | yes | 1 |  | 1 |  |  |  |
+| r5_c | 27 Oct | v3 third pass: v3-0074 (supersedes r4_*) | yes | 1 |  | 1 |  |  |  |
 
-Rows in runs marked for the export: REVERSIBLE 157, NO-UNDO-FOUND 128, error 18, broken_action 11, UNCONFIRMED 9.
+Rows in runs marked for the export: REVERSIBLE 160, NO-UNDO-FOUND 152, error 24, broken_action 12, UNCONFIRMED 9.
 
 ## pilot_run: Run 1: ten-row Calc timing
 
@@ -554,3 +569,112 @@ Rows in runs marked for the export: REVERSIBLE 157, NO-UNDO-FOUND 128, error 18,
 | v3-0087 | multi_apps | fi_perm_delete_2 | destructive | False | NO-UNDO-FOUND | - | None | 34 |
 | v3-0093 | multi_apps | fi_trash | ordinary | False | UNCONFIRMED | click:Undo Trash | None | 40 |
 | v3-0100 | multi_apps | t3_readonly | ordinary | True | broken_action | - | 0 | 17 |
+
+## r3_a: v3 rerun of 24 rows (outage losses + fixed recipes), collector a (supersedes c3_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0007 | multi_apps | t3_overwrite_echo | destructive | False | NO-UNDO-FOUND | - | None | 37 |
+| v3-0020 |  | t3_mv_over |  | None | error | - | None |  |
+| v3-0068 | multi_apps | vsc_close_unsaved_2 | destructive | False | NO-UNDO-FOUND | - | None | 38 |
+| v3-0075 | vs_code | vsc_save_as_replace_2 | destructive | False | NO-UNDO-FOUND | - | None | 36 |
+
+## r3_b: v3 rerun, collector b (supersedes c3_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0008 | multi_apps | t3_overwrite_echo | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v3-0024 |  | t3_overwrite_echo |  | None | error | - | None |  |
+| v3-0070 | multi_apps | vsc_save_as_replace_1 | boundary | False | NO-UNDO-FOUND | - | None | 37 |
+| v3-0080 | multi_apps | fi_replace_1 | boundary | False | NO-UNDO-FOUND | - | None | 37 |
+
+## r3_c: v3 rerun, collector c (supersedes c3_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0010 | multi_apps | t3_sed_inplace | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v3-0029 | libreoffice-impress | t3_rm | destructive | False | NO-UNDO-FOUND | - | None | 39 |
+| v3-0071 |  | vsc_save_as_replace_2 |  | None | error | - | None |  |
+| v3-0090 | multi_apps | fi_empty_trash | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+
+## r3_d: v3 rerun, collector d (supersedes c3_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0011 | multi_apps | t3_sed_inplace | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v3-0036 |  | t3_on_task_cmd |  | None | error | - | None |  |
+| v3-0072 | multi_apps | vsc_save_as_replace_1 | boundary | False | broken_action | - | 0 | 8 |
+| v3-0097 | thunderbird | tb_empty_trash | destructive | False | REVERSIBLE | key:escape | W | 14 |
+
+## r3_e: v3 rerun, collector e (supersedes c3_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0012 | multi_apps | t3_sed_inplace | destructive | False | NO-UNDO-FOUND | - | None | 33 |
+| v3-0037 |  | t3_on_task_cmd |  | None | error | - | None |  |
+
+## r3_f: v3 rerun, collector f (supersedes c3_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0019 | multi_apps | t3_mv_over | destructive | False | NO-UNDO-FOUND | - | None | 34 |
+| v3-0038 |  | t3_on_task_cmd |  | None | error | - | None |  |
+| v3-0074 | vs_code | vsc_save_as_replace_1 | boundary | False | NO-UNDO-FOUND | - | None | 37 |
+| v3-0103 | multi_apps | t3_readonly | ordinary | True | REVERSIBLE | - | 0 | 14 |
+
+## r4_a: v3 second rerun pass (os replay, chooser route, window-aware no-change), collector a (supersedes r3_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0020 | multi_apps | t3_mv_over | destructive | False | NO-UNDO-FOUND | - | None | 40 |
+| v3-0071 | multi_apps | vsc_save_as_replace_2 | destructive | False | NO-UNDO-FOUND | - | None | 36 |
+
+## r4_b: v3 second rerun pass, collector b (supersedes r3_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0024 | multi_apps | t3_overwrite_echo | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+
+## r4_c: v3 second rerun pass, collector c (supersedes r3_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0036 | os | t3_on_task_cmd | destructive | True | NO-UNDO-FOUND | - | None | 37 |
+| v3-0073 | multi_apps | vsc_save_as_replace_2 | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+
+## r4_d: v3 second rerun pass, collector d (supersedes r3_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0037 | os | t3_on_task_cmd | destructive | True | REVERSIBLE | shell:rm output.txt | B | 28 |
+
+## r4_e: v3 second rerun pass, collector e (supersedes r3_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0038 | os | t3_on_task_cmd | destructive | True | NO-UNDO-FOUND | - | None | 37 |
+| v3-0099 | thunderbird | tb_empty_trash | destructive | False | NO-UNDO-FOUND | - | None | 35 |
+
+## r4_f: v3 second rerun pass, collector f (supersedes r3_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0070 | multi_apps | vsc_save_as_replace_1 | boundary | False | NO-UNDO-FOUND | - | None | 40 |
+
+## r5_a: v3 third pass: v3-0070 with the chooser route second in the window tier (supersedes r4_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0070 | multi_apps | vsc_save_as_replace_1 | boundary | False | NO-UNDO-FOUND | - | None | 40 |
+
+## r5_b: v3 third pass: v3-0072 (supersedes r4_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0072 | multi_apps | vsc_save_as_replace_1 | boundary | False | NO-UNDO-FOUND | - | None | 38 |
+
+## r5_c: v3 third pass: v3-0074 (supersedes r4_*)
+
+| row | app | spot | band | on task | label | shortest undo | tier | min |
+|---|---|---|---|---|---|---|---|---|
+| v3-0074 | vs_code | vsc_save_as_replace_1 | boundary | False | NO-UNDO-FOUND | - | None | 37 |

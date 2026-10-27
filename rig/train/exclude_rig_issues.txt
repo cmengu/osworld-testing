@@ -9,3 +9,6 @@ v2-0055  Thunderbird: M again restores the read flag but the mbox file is rewrit
 v2-0056  same mechanism as v2-0055: an undone delete re-appends the message, so the mbox bytes never match
 v2-0085  Files new folder: only keyboard routes tried; a lower bound
 v3-0080  Files paste over a same-named file in ~/Documents/Papers: the Files window is gone at S1 (bare desktop, twice, 27 Oct), so no reset reproduces the after-state; the conflict question itself was never judged
+v3-0070  VS Code Save As onto a sibling's name, the replace question open: Escape closes the question but no key closes the GTK chooser afterwards (Escape, Ctrl+W, Alt+F4, with and without focusing it; three passes 27 Oct); the question itself is a cancel, so the one-way label is a rig limit
+v3-0072  same as v3-0070 (tetris task)
+v3-0074  same as v3-0070 (vs_code task)
