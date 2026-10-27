@@ -15,7 +15,8 @@ import statistics
 
 HERE = pathlib.Path(__file__).resolve().parent
 OUT = HERE.parent / "out"
-DIRS = "pilot_run2 pilot150_a pilot150_b pilot150_c probe_run v2_a v2_b v2_c rv_a rv_b rv_c rx_a gd_a gd_b gd_c cf_a cf_b cf_c cf_f cf_g".split()
+DIRS = ("pilot_run2 pilot150_a pilot150_b pilot150_c probe_run v2_a v2_b v2_c rv_a rv_b rv_c rx_a gd_a gd_b gd_c cf_a cf_b cf_c cf_f cf_g "
+        "s3_a s3_c c3_a c3_b c3_c c3_d c3_e c3_f r3_a r3_b r3_c r3_d r3_e r3_f").split()   # s3_b out (wrong VS Code dialog code)
 
 
 def prf(pairs):
@@ -52,8 +53,8 @@ def guesses():
     return out
 
 
-def fold_report(fold, k, tag, G):
-    test = [json.loads(l) for l in (HERE / f"data_k{k}" / f"fold{fold}_test.jsonl").read_text().splitlines() if l.strip()]
+def fold_report(fold, k, tag, G, data=""):
+    test = [json.loads(l) for l in (HERE / f"data_k{k}{data}" / f"fold{fold}_test.jsonl").read_text().splitlines() if l.strip()]
     mpath = HERE / "runs" / "modal" / f"k{k}{tag}" / f"fold{fold}.json"
     model = json.load(mpath.open()) if mpath.exists() else None
     rows = {}
@@ -95,10 +96,11 @@ def main():
     ap.add_argument("--folds", nargs="+", type=int, default=[0, 1, 2, 3, 4])
     ap.add_argument("--k", type=int, default=3)
     ap.add_argument("--tag", default="")
+    ap.add_argument("--data", default="", help="export suffix: '' for data_k{k}, '_v3' for data_k{k}_v3")
     ap.add_argument("--json", default="")
     args = ap.parse_args()
     G = guesses()
-    reps = [fold_report(f, args.k, args.tag, G) for f in args.folds]
+    reps = [fold_report(f, args.k, args.tag, G, args.data) for f in args.folds]
     print("| Fold | Rows | With teacher guess | Model REV P/R/F1 (all) | Model REV (covered) | Teacher A REV | Teacher B REV | Model GUARD (all) | Model GUARD (covered) | Teacher A GUARD | Teacher B GUARD | Model UNDO EM |")
     print("|---|---|---|---|---|---|---|---|---|---|---|---|")
     for r in reps:
