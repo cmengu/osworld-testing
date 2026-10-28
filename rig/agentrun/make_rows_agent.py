@@ -68,7 +68,7 @@ def main():
     a = ap.parse_args()
     rows, seen = [], set()
     for rd in a.result_dirs:
-        for traj in sorted(pathlib.Path(rd).glob("*/*/*/*/*/traj.jsonl")):
+        for traj in sorted(pathlib.Path(rd).resolve().glob("*/*/*/*/*/traj.jsonl")):
             d = traj.parent
             domain, task_id = d.parent.name, d.name
             task = json.loads((TASKS / domain / f"{task_id}.json").read_text())
