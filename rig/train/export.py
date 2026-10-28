@@ -108,6 +108,10 @@ def main():
     ap.add_argument("--k", type=int, default=3)
     ap.add_argument("--folds", type=int, default=5)
     ap.add_argument("--seed", type=int, default=2026)
+    ap.add_argument("--teacher-labels", action="store_true",
+                    help="Model-G (paper 5.3): REVERSIBLE, GUARD and UNDO targets from the teacher's definition-matched guess "
+                         "(guess B, earliest recorded per row) instead of the executed label; FORWARD, rows and folds unchanged. "
+                         "Train on these files, test on the executed-label export's test files.")
     ap.add_argument("--exclude", default=str(HERE / "exclude_rig_issues.txt"),
                     help="row ids whose label is a rig limit: kept for FORWARD, left out of REVERSIBLE and GUARD ('' for none)")
     args = ap.parse_args()
@@ -128,6 +132,32 @@ def main():
         if r["row_id"] in excluded:
             r["_label"] = None            # out of REVERSIBLE and GUARD, as an unlabelled row is
             r["_excluded"] = True
+    if args.teacher_labels:
+        # the earliest ok record of a row that carries a guess wins: the guess sees only the before-state, the task and
+        # the action, so a rerun's later guess is not better informed (as in compare_teacher.guesses)
+        guess = {}
+        for d in args.out_dirs:
+            src = pathlib.Path(d) / "results.jsonl"
+            for line in src.read_text().splitlines():
+                if not line.strip():
+                    continue
+                rec = json.loads(line)
+                g = rec.get("guessed_label_defined") or {}
+                if rec.get("status") == "ok" and g.get("reversible") is not None and rec["row_id"] not in guess:
+                    guess[rec["row_id"]] = g
+        for r in rows:
+            g = guess.get(r["row_id"])
+            r["_executed"] = r["_label"]
+            if r.get("_excluded"):
+                continue
+            if g is None:
+                r["_label"] = None            # no guess: out of REVERSIBLE, GUARD and UNDO, as an unlabelled row is
+                continue
+            undo = [str(x) for x in (g.get("shortest_undo") or [])]
+            r["_label"] = "REVERSIBLE" if g["reversible"] else "NO-UNDO-FOUND"
+            r["_undo"] = undo
+            r["_teacher_length"] = g.get("length")
+
     # grouped folds: every row of a task in one fold; tasks shuffled with a fixed seed, balanced by row count
     by_task = collections.defaultdict(list)
     for r in rows:
