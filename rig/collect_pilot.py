@@ -86,7 +86,8 @@ WATCHDOG_SECONDS = 900        # no single candidate, snapshot or reset may take 
 # broken key route
 NO_CHANGE_EXPECTED = frozenset({"save_clean", "imp_save_clean", "wr_save_clean", "ma_wr_save_clean", "ma_calc_save_clean", "select_all",   # select_all: the selection is not state (19 Oct)
                                 "noop", "term_ls",            # probe rows: a bare Shift press; a command that writes nothing
-                                "t3_readonly"})               # v3 rows: ls / wc / head in a terminal (26 Oct; v3-0100 was marked broken without this)
+                                "t3_readonly",                # v3 rows: ls / wc / head in a terminal (26 Oct; v3-0100 was marked broken without this)
+                                "agent_step"})                # agent rows (28 Oct): an agent step that changes nothing is data (REVERSIBLE, empty undo), not a broken key route
 
 
 class ResetFailed(Exception):
@@ -585,6 +586,28 @@ class Collector:
         before_text = render(S.canon, S.digest, S.windows, files=files_scope)
         rec["state_before_compact"] = before_text
         rec["state_before_tokens_est"] = len(before_text) // 4
+
+        # ---- agent rows: is S the screen the agent saw before this step?  (rig/agentrun/fidelity.py, 28 Oct)
+        if row.get("band") == "agent":
+            from rig.agentrun.fidelity import agent_before_shot, screen_diff, DIVERGED
+            shot = agent_before_shot(row)
+            if shot and (S.path / "screenshot.png").exists():
+                score = screen_diff(S.path / "screenshot.png", shot)
+                if score > DIVERGED:
+                    # one more replay: app launch and search timing vary between instances
+                    signal.alarm(WATCHDOG_SECONDS)
+                    info = self.reset_to_before(row)
+                    S = self.snapshot(rdir / "S", {"row": rid, "kind": "before", **info, "retake": "fidelity"},
+                                      expect_kind=row.get("expect_before", "calc"))
+                    signal.alarm(0)
+                    score = screen_diff(S.path / "screenshot.png", shot)
+                rec["replay_fidelity"] = {"score": round(score, 1), "limit": DIVERGED, "agent_shot": str(shot.relative_to(BASE))}
+                if score > DIVERGED:
+                    print(f"  [{rid}] replay diverged from the agent's screen (score {score:.1f} > {DIVERGED}): not labelled", flush=True)
+                    rec.update({"status": "replay_diverged", "executed_label": None, "shortest_undo": None, "undo_length": None,
+                                "found_tier": None, "budget_used": 0, "guessed_label_verbatim": None, "guessed_label_defined": None,
+                                "row_seconds": round(time.time() - rec["started_at"], 1)})
+                    return rec
 
         # ---- teacher guesses, requested before the action runs
         guesses = {}
