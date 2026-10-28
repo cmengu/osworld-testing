@@ -1,7 +1,7 @@
 """Turn recorded agent trajectories into rig rows (28 Oct 2026; see README.md beside this file).
 
-Step n of a trajectory becomes one row: the setup replays the agent's steps 1..n-1 from the task's fresh start, with
-a pause between them as the agent had, and the action is step n.  The collector then records S and S', runs the
+Step n of a trajectory becomes one row: the setup replays the agent's steps 1..n-1 from the task's fresh start, one
+VM call per step with a pause between them, and the action is step n.  The collector then records S and S', runs the
 usual undo search and labels the step.  A replay that does not reproduce the agent's screen shows up in the
 collector's own reset check ("after-state not reproduced"), so a nondeterministic step is flagged, not mislabelled.
 
@@ -22,7 +22,6 @@ import re
 HERE = pathlib.Path(__file__).resolve().parent
 BASE = HERE.parent.parent
 TASKS = HERE / "tasks" / "examples"
-STEP_PAUSE = 3.0          # seconds between replayed steps; the agent took far longer per step (one model call each)
 
 # a step "can change something" if it types, presses or clicks; moves, scrolls and waits cannot change files or
 # confirm a dialog on their own
@@ -49,15 +48,15 @@ def code_of(action) -> str:
 
 
 def replay(codes):
-    parts = []
+    """The agent's earlier steps as a list, one VM call each (the collector pauses 3 s between them).  A WAIT becomes
+    a 3 s sleep; DONE and FAIL are dropped."""
+    out = []
     for c in codes:
-        if c in NON_CODE:
-            if c == "WAIT":
-                parts.append("time.sleep(3)")
-            continue
-        parts.append(c)
-        parts.append(f"time.sleep({STEP_PAUSE})")
-    return "; ".join(p.replace("\n", "; ") for p in parts)
+        if c == "WAIT":
+            out.append("import time; time.sleep(3)")
+        elif c not in NON_CODE:
+            out.append(c)
+    return out
 
 
 def main():

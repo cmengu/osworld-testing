@@ -105,6 +105,7 @@ def _alarm(signum, frame):
 
 signal.signal(signal.SIGALRM, _alarm)
 PRELUDE = "pyautogui.hotkey('ctrl', 'home')"
+STEP_PAUSE_AGENT = 3.0   # seconds between replayed agent steps (rows from rig/agentrun/make_rows_agent.py)
 TASK_DIR = OSWORLD / "evaluation_examples" / "examples" / "libreoffice_calc"
 EXAMPLES = OSWORLD / "evaluation_examples" / "examples"
 
@@ -376,8 +377,14 @@ class Collector:
         prelude = row.get("prelude", PRELUDE)
         if prelude:
             self.step(prelude, pause=1.0)
-        if row.get("setup"):
-            self.step(row["setup"], pause=2.0)
+        setup = row.get("setup")
+        if isinstance(setup, list):
+            # agent rows (rig/agentrun): the agent's earlier steps, one call each as the agent ran them; one joined
+            # string breaks multi-line loops and outlasts the VM's 120 s limit on a single command (28 Oct)
+            for code in setup:
+                self.step(code, pause=STEP_PAUSE_AGENT)
+        elif setup:
+            self.step(setup, pause=2.0)
         return {"fresh_start": how, "fresh_start_seconds": round(t_fs, 1), "setup_seconds": round(time.time() - t - t_fs, 1)}
 
     def act(self, row):
