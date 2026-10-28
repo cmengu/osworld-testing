@@ -129,3 +129,21 @@ After the reruns of 27 October the export holds 289 rows (960 lines), refuse row
 Two seeds, pooled: REVERSIBLE **0.929 ± 0.019**, GUARD **0.888 ± 0.000**, UNDO exact match 0.58 ± 0.03 (75/125 and 70/125); like for like on the 176 old rows GUARD **0.850 ± 0.018** against 0.756 ± 0.023 on 26 October. Fold means: REVERSIBLE 0.942 ± 0.017 and 0.915 ± 0.023, GUARD 0.884 ± 0.094 and 0.884 ± 0.076 (fold 3 is the weak fold under both seeds). Against the teacher on the covered rows (`compare_k3_v3.json`, `compare_k3_v3_seed7.json`): model GUARD 0.882 ± 0.084 and 0.889 ± 0.074, teacher B 0.908 ± 0.049, teacher A 0.790 ± 0.052; model REVERSIBLE 0.941 and 0.909, teacher B 0.919 ± 0.035.
 
 Reading: with the refuse rows more than doubled the student's GUARD rises by 0.09 on the very rows it was scored on before and by 0.13 pooled, while REVERSIBLE holds; the seed-to-seed spread on GUARD, 0.045 pooled on 26 October, is gone. The student sits within one standard deviation of the definition-prompt teacher on both questions. GUARD was limited by one-way examples, which is the case for the 3,000-row collection. Files `k3_v3/fold*.json`, `k3_v3_seed7/fold*.json`, `subsets_k3_v3.json`, `subsets_k3_v3_seed7.json`.
+
+## Model-G: the same student trained on the teacher's guesses (28 October; K=3, seed 2026)
+
+The paper's provenance test (H1): Model-E learns from the checked answers, Model-G from the definition-matched teacher's guesses (guess B, Claude Opus 5.5), on the same rows and folds, both tested against the checked answers (`data_k3_v3G` for training, `data_k3_v3` for testing). Model-G has 234 labelled rows against 273, because the probe rows of 22-23 October carry no guess; the teacher's GUARD label agrees with execution on 215 of 232 rows.
+
+| Model | Rows scored | REVERSIBLE P / R / F1 | GUARD P / R / F1 | UNDO EM (fold mean) |
+|---|---|---|---|---|
+| Model-E, seed 2026 | 273 | 0.930 / 0.955 / 0.942 | 0.873 / 0.904 / 0.888 | 0.597 |
+| Model-E, seed 7 | 273 | 0.921 / 0.909 / 0.915 | 0.908 / 0.868 / 0.888 | 0.548 |
+| Model-G, seed 2026 | 273 | 0.920 / 0.896 / 0.908 | 0.885 / 0.877 / 0.881 | 0.531 |
+| Model-E, seeds 2026 / 7 | 176 old rows | 0.953 / 0.937 | 0.837 / 0.863 | |
+| Model-G | 176 old rows | 0.927 | 0.821 | |
+| Model-E, seeds 2026 / 7 | 232 teacher-covered | 0.943 / 0.910 | 0.894 / 0.895 | |
+| Model-G | 232 teacher-covered | 0.901 | 0.887 | |
+
+On the 17 rows where the teacher's GUARD label is wrong, Model-E and Model-G are each right on 13 (in cross-validation these are test rows, so Model-G never trained on their own wrong labels).
+
+Reading: on GUARD the gap between learning from execution and learning from this teacher, 0.007, is smaller than the seed spread, so H1 is not supported on GUARD at this size; on REVERSIBLE and UNDO the checked answers lead by about 0.02 to 0.03, about one seed standard deviation. The reason is the teacher: given our written definition, Claude agrees with execution on 93% of GUARD rows, so its labels carry little noise for a student to avoid. Execution matters on the remaining 7%, which are the cases a guard exists for (terminal deletions Claude thinks are recoverable), and on a teacher prompted the way published guards are (guess A, GUARD 0.79 on the same rows). Files `k3_v3G/fold*.json`, `subsets_k3_v3G.json`, `compare_k3_v3G.json`.
