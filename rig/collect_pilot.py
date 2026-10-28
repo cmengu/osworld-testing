@@ -250,7 +250,7 @@ class Collector:
     def select_rows(self):
         rows = self.rows_all
         if self.args.rows:
-            wanted = set()
+            wanted, wanted_ids = set(), set()
             for part in self.args.rows.split(","):
                 part = part.strip()
                 if re.fullmatch(r"\d+-\d+", part):
@@ -258,9 +258,15 @@ class Collector:
                     wanted.update(range(int(a), int(b) + 1))
                 elif re.fullmatch(r"[a-z0-9]+-\d+", part):      # pilot-0300, probe-0012, v2-0045
                     wanted.add(int(part.split("-")[1]))
-                elif part:
+                elif re.fullmatch(r"\d+", part):
                     wanted.add(int(part))
-            rows = [r for r in rows if int(r["row_id"].split("-")[1]) in wanted]
+                elif part:                                        # agent rows: ag-<task>-<nn>, matched whole (28 Oct)
+                    wanted_ids.add(part)
+
+            def number(row_id):
+                tail = row_id.split("-")[1]
+                return int(tail) if tail.isdigit() else None
+            rows = [r for r in rows if r["row_id"] in wanted_ids or number(r["row_id"]) in wanted]
         if self.args.spots_filter:
             keep = set(self.args.spots_filter.split(","))
             rows = [r for r in rows if r["spot_id"] in keep]
