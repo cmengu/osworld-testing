@@ -225,6 +225,8 @@ class Collector:
         data = json.load(open(args.spots))
         self.spots = {s["id"]: s for s in data["spots"]}
         self.rows_all = data["rows"]
+        # tasks of agent rows (rig/agentrun): their VMs keep the task's own VS Code settings (rig/vmprep.py)
+        self.agent_tasks = {r["task_id"] for r in self.rows_all if r.get("band") == "agent"}
         self.mnemonics = dict(data["meta"].get("mnemonic_placeholders", {}))
         if args.mnemonics:
             self.mnemonics.update(json.loads(args.mnemonics))
@@ -309,7 +311,7 @@ class Collector:
             self.env_started = time.time()
             task = self.task(task_id)
             self.env.reset(task_config=task)
-            print(f"[env] task {task_id[:8]} ready after {time.time() - t0:.0f}s; prep: {prepare_vm(self.env)}; cache: {prime_cache(self.env, task)}", flush=True)
+            print(f"[env] task {task_id[:8]} ready after {time.time() - t0:.0f}s; prep: {prepare_vm(self.env, agent=task_id in self.agent_tasks)}; cache: {prime_cache(self.env, task)}", flush=True)
         finally:
             signal.alarm(prev if prev else 0)
         self.current_task_id = task_id

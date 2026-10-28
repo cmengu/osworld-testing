@@ -13,7 +13,7 @@ def mad(a, b):
     pa, pb = a.getdata(), b.getdata()
     return sum(abs(x - y) for x, y in zip(pa, pb)) / len(pa)
 out = []
-for d in sorted(glob.glob(str(BASE / 'rig/out/agent_label_*/ag-*'))):
+for d in sorted(glob.glob(str(BASE / (sys.argv[1] if len(sys.argv) > 1 else 'rig/out/agent_label_*') / 'ag-*'))):
     rid = pathlib.Path(d).name
     s = pathlib.Path(d) / 'S' / 'screenshot.png'
     if not s.exists():

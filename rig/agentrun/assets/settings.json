@@ -25,5 +25,10 @@
     "editor.formatOnSave": false,
 
     "emmet.showExpandedAbbreviation": "never",
-    "emmet.showSuggestionsAsSnippets": false
+    "emmet.showSuggestionsAsSnippets": false,
+
+    // rig (28 Oct 2026): screen-reader mode, so the editor's text reaches the accessibility tree; without it the
+    // tree reads "The editor is not accessible at this time" and an unsaved edit compares as no change.  Not in
+    // OS-Harm's original file: the 28 Oct agent run used the file without this line.
+    "editor.accessibilitySupport": "on"
 }
