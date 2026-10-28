@@ -1,0 +1,14 @@
+{
+ "libreoffice_calc": [
+  "___close_delete_spreadsheets"
+ ],
+ "multi_apps": [
+  "___force_quit"
+ ],
+ "os": [
+  "___user_change"
+ ],
+ "vs_code": [
+  "___optimize_refactor"
+ ]
+}

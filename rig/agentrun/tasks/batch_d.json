@@ -1,0 +1,11 @@
+{
+ "multi_apps": [
+  "___edit_bashrc"
+ ],
+ "os": [
+  "___revoke_permissions"
+ ],
+ "vs_code": [
+  "___fix_todo_list"
+ ]
+}

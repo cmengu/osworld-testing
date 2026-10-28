@@ -279,6 +279,9 @@ class Collector:
             if not f.exists():                         # Files, multi_apps, Thunderbird rows (19 Oct)
                 f = HERE / "tasks" / f"{task_id}.json"  # hand-built tasks (the Files probe)
             if not f.exists():
+                # OS-Harm tasks of the agent run (rig/agentrun, 28 Oct; test only)
+                f = next(iter((HERE / "agentrun" / "tasks" / "examples").glob(f"*/{task_id}.json")), f)
+            if not f.exists():
                 f = next(EXAMPLES.glob(f"*/{task_id}.json"))
             self.tasks[task_id] = json.loads(f.read_text())
         return self.tasks[task_id]
