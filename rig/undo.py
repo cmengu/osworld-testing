@@ -100,6 +100,7 @@ def tier2(app: str) -> List[Candidate]:
     """The application-specific tier: Calc's for the LibreOffice applications (Writer and Impress share its
     dialogs and key routes), Files' for Files rows, VS Code's and Thunderbird's for theirs, Files' + Calc's for
     multi_apps rows."""
+    app = app.replace("_", "-") if app.startswith("libreoffice_") else app   # agent rows carry the OSWorld domain (29 Oct)
     if app == "files":
         return FILES
     if app in ("libreoffice-calc", "libreoffice-writer", "libreoffice-impress"):
@@ -204,6 +205,14 @@ def step_code(step: str, ctx: dict) -> str:
         for ch in letters.strip().lower():
             code += f"; pyautogui.press({_py(ch)}); time.sleep(1.0)"
         return code + "; time.sleep(1.5)"
+    if kind == "launch":
+        # since 29 Oct (agent rows): start a program the way the desktop would, e.g. reopen a window the action closed
+        # (a document by its path, the Files window, a terminal, VS Code on its folder, Chrome); arg is a JSON argv
+        import json as _json
+        argv = _json.loads(arg)
+        return ("__import__('subprocess').Popen(" + _py(argv) + ", start_new_session=True, "
+                "stdout=__import__('subprocess').DEVNULL, stderr=__import__('subprocess').DEVNULL); time.sleep(10); "
+                "pyautogui.hotkey('super', 'up'); time.sleep(3)")
     if kind == "reopen":
         if ctx.get("reopen_cmd"):
             # rows outside Calc name their own reopen: the program and folder or file the task opened
@@ -287,6 +296,48 @@ def parse_steps(steps) -> Optional[Candidate]:
     return None if any(x is None for x in out) else out
 
 
+def task_paths(task: dict) -> List[str]:
+    """Every file or folder path a task's setup names (upload, download, open, launch arguments)."""
+    import json as _json
+    found = re.findall(r'"(/home/user/[^"]+)"', _json.dumps(task.get("config", [])))
+    return list(dict.fromkeys(found))
+
+
+def reopen_windows(before_titles, after_titles, task: dict) -> List[Candidate]:
+    """Agent rows (29 Oct): one candidate that reopens every window open before the action and gone after it, as a
+    user would from the desktop; a window whose program or file is not known is skipped."""
+    import json as _json
+    gone = [t for t in before_titles if t not in after_titles]
+    paths = task_paths(task)
+    steps: Candidate = []
+    for t in gone:
+        argv = None
+        m = re.match(r"^(.+?) - LibreOffice (Calc|Impress|Writer)$", t)
+        if m:
+            p = next((x for x in paths if x.rsplit("/", 1)[-1] == m.group(1)), None)
+            argv = ["libreoffice", p] if p else None
+        elif t.endswith(" - Visual Studio Code"):
+            folder = next((x for x in paths if x.endswith("/project/") or x.endswith("/project")), "/home/user/project")
+            argv = ["code", folder]
+        elif t.endswith(" - Google Chrome"):
+            argv = ["google-chrome"]
+        elif t.startswith("user@user-virtual-machine:"):
+            argv = ["gnome-terminal", "--working-directory=/home/user"]
+        elif t == "Home":
+            argv = ["nautilus", "/home/user"]
+        if argv:
+            steps += [f"launch:{_json.dumps(argv)}", "wait:3"]
+    return [steps] if steps else []
+
+
+def mode_restores(before_digest: dict, after_digest: dict) -> List[Candidate]:
+    """A chmod (29 Oct): put back the permissions each changed file had before, one shell command."""
+    import shlex as _sh
+    cmds = [f"chmod {oct(b['mode'] & 0o7777)[2:]} {_sh.quote(p.rstrip('/'))}" for p, b in sorted(before_digest.items())
+            if p in after_digest and "mode" in b and "mode" in after_digest[p] and b["mode"] != after_digest[p]["mode"]]
+    return [[f"shell:{' && '.join(cmds)}"]] if cmds else []
+
+
 def action_count(c: Candidate) -> int:
     """Actions in a candidate, the unit of K: waits are not actions, a reopen is one; a confirm counts as none
     (on this image the question it would answer never appears, 24 Oct)."""
@@ -338,12 +389,50 @@ _TYPED = re.compile(r"pyautogui\.typewrite\((['\"])(.*?)\1")
 
 
 def shell_inverses(code: str) -> List[Candidate]:
-    import shlex
     m = _TYPED.search(code or "")
     if not m:
         return []
+    cmd = m.group(2).replace("\\n", "").strip()
+    parts = [c.strip() for c in re.split(r"\s*&&\s*", cmd) if c.strip() and not c.strip().startswith(("clear", "ls", "cd ", "cat ", "pwd"))]
+    if len(parts) > 1:
+        # a chain (29 Oct, agent rows: "mkdir -p src tests && mv a.py src/ && ..."): each part's inverse, last first
+        inv = []
+        for part in reversed(parts):
+            one = _inverse_one(part)
+            if one is None:
+                return []
+            inv += one
+        return [[f"shell:{' && '.join(inv)}"]] if inv else []
+    return _legacy(m.group(2))     # one command: the rules of 25 Oct, unchanged
+
+
+def _inverse_one(part: str) -> Optional[List[str]]:
+    """Inverse of one shell command as a list of shell commands, or None if it has none here."""
+    q = shlex.quote
     try:
-        argv = shlex.split(m.group(2))
+        argv = shlex.split(part)
+    except ValueError:
+        return None
+    if not argv:
+        return []
+    if argv[0] == "mkdir":
+        dirs = [a for a in argv[1:] if not a.startswith("-")]
+        return [f"rmdir {' '.join(q(d) for d in reversed(dirs))}"] if dirs else None
+    if argv[0] == "mv" and len(argv) >= 3 and not any(a.startswith("-") for a in argv[1:]):
+        *srcs, dst = argv[1:]
+        if len(srcs) == 1 and not dst.endswith("/"):
+            return [f"mv {q(dst)} {q(srcs[0])}"]
+        return [f"mv {q(dst.rstrip('/') + '/' + s.rsplit('/', 1)[-1])} {q(s)}" for s in srcs]
+    if argv[0] == "touch" and len(argv) == 2:
+        return [f"rm {q(argv[1])}"]
+    if argv[0] == "cp" and len(argv) == 3:
+        return [f"rm {q(argv[2])}"]
+    return None
+
+
+def _legacy(code_cmd: str) -> List[Candidate]:
+    try:
+        argv = shlex.split(code_cmd)
     except ValueError:
         return []
     if not argv:

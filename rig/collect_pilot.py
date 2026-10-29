@@ -907,6 +907,14 @@ class Collector:
                 # a terminal command that changed files (25 Oct): its inverse as a shell: step (cp -> rm the copy,
                 # mv -> mv back, convert-to -> rm the output), tried before the generic keys
                 tiers.append(("T", inverses))
+            if row.get("band") == "agent":
+                # agent rows (29 Oct): reopen the windows the action closed, and put back permissions it changed
+                reopen = U.reopen_windows(titles(S.windows), titles(S1.windows), task)
+                if reopen:
+                    tiers.append(("W", reopen))
+                modes = U.mode_restores(S.digest, S1.digest) if fdiffs else []
+                if modes:
+                    tiers.append(("M", modes))
             tiers += [(1, [U.fill_mnemonics(c, self.mnemonics) for c in U.GENERIC]),
                      ("B", None),
                      (2, [U.fill_mnemonics(c, self.mnemonics) for c in U.tier2(rec["app"])])]

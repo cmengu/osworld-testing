@@ -113,6 +113,9 @@ SCROLLED = ("scroll-pane", "viewport")
 FILES_SELECTION_READOUT = re.compile(r"^(“.*” selected|\(\d+[ \u00a0]bytes\)|\([\d.,]+[ \u00a0][kMG]?B\)|\(containing \d+[ \u00a0]items?\)|\d+[ \u00a0]items? selected.*|\(\d+[ \u00a0]items?\))$")   # GNOME writes a no-break space before the unit ("(788.8\u00a0kB)", v2-0084 24 Oct)
 
 
+CHROME_MEMORY = re.compile(r" - Memory usage - [\d.,]+[ \u00a0]?[kMG]?B$")
+
+
 def _showing(el: ET.Element) -> bool:
     return any(_local(k) == "showing" and v == "true" for k, v in el.attrib.items())
 
@@ -188,6 +191,9 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
             name = child.get("name", "")
             if tag == "application" and not name and _office_app(child):
                 name = "soffice"        # the accessibility bus reports no name right after launch
+            if tag == "page-tab" and name:
+                name = CHROME_MEMORY.sub("", name)  # since 29 Oct (ag-user_change-07): Chrome's tab name carries a live
+                                                    # memory readout ("New Tab - Memory usage - 56.3 MB"); not state
             if "/document-presentation[" in prefix and name:
                 name = re.sub(r"\s+", "", name)   # since 25 Oct (v2-0012): a shape restored by Ctrl+Z is renamed
                                                    # "Google Shape;106;p1" -> "Google Shape;106;p 1"; identity, not state
