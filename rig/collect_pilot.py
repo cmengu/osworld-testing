@@ -108,7 +108,7 @@ signal.signal(signal.SIGALRM, _alarm)
 PRELUDE = "pyautogui.hotkey('ctrl', 'home')"
 GATE_IGNORED = ("/home/user/.config/", "/home/user/.cache/", "/home/user/.local/share/", "/home/user/.mozilla/",
                 "/home/user/.thunderbird/", "/home/user/.vscode/", "/home/user/snap/", "/home/user/.pki/", "/home/user/.rig_cache/")
-STEP_PAUSE_AGENT = 3.0   # seconds between replayed agent steps (rows from rig/agentrun/make_rows_agent.py)
+STEP_PAUSE_AGENT = 10.0  # seconds between replayed agent steps (rig/agentrun/make_rows_agent.py); 3 s until 29 Oct 12:22: 13 of the first 20 recorded VS Code rows diverged, e.g. a double-click that opened a file in the agent's run (30-60 s between its steps) did not in the replay
 TASK_DIR = OSWORLD / "evaluation_examples" / "examples" / "libreoffice_calc"
 EXAMPLES = OSWORLD / "evaluation_examples" / "examples"
 
@@ -919,7 +919,7 @@ class Collector:
                 # agent rows (29 Oct): reopen the windows the action closed, and put back permissions it changed
                 reopen = U.reopen_windows(titles(S.windows), titles(S1.windows), task)
                 if reopen:
-                    tiers.append(("W", reopen))
+                    tiers.append(("R", reopen))     # "R" for reopen; "W" is the window-closer tier above
                 modes = U.mode_restores(S.digest, S1.digest) if fdiffs else []
                 if modes:
                     tiers.append(("M", modes))
