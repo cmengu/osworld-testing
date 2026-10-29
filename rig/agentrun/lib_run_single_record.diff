@@ -1,0 +1,70 @@
+diff --git a/lib_run_single.py b/lib_run_single.py
+index 81972b1..147c768 100644
+--- a/lib_run_single.py
++++ b/lib_run_single.py
+@@ -10,6 +10,33 @@ from lib_results_logger import log_task_completion
+ 
+ logger = logging.getLogger("desktopenv.experiment")
+ 
++# osworld-testing rig (29 Oct 2026): with RIG_RECORD_STATES=1 the rig's VM preparation runs after the reset (the same
++# one the rig's replays use, so the agent and the replays see the same desktop), and the rig's state snapshot (tree,
++# file digest, window list, screenshot) is taken before the first action and after every action, in
++# <result dir>/states/sNN (NN = actions done).  A replay of the agent's steps is then checked against the recorded
++# state, not against a screenshot.  Off by default: an ordinary run is unchanged.  Only run_single_example has it.
++RIG_RECORD = os.environ.get("RIG_RECORD_STATES") == "1"
++
++
++def _rig_prepare(env):
++    import sys
++    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
++    from rig.vmprep import prepare_vm
++    logger.info("rig prep: %s", prepare_vm(env, agent=True))
++
++
++def _rig_record(env, example_result_dir, k):
++    import pathlib
++    from rig.snapshot import take_snapshot
++    t = time.time()
++    try:
++        snap = take_snapshot(env, pathlib.Path(example_result_dir) / "states" / f"s{k:02d}",
++                             meta={"actions_done": k}, expect=None, require_office=False)
++        logger.info("rig state s%02d recorded in %.0fs (ok=%s)", k, time.time() - t, snap.meta.get("ok"))
++    except Exception as e:      # a failed snapshot must not end the agent's run
++        logger.warning("rig state s%02d failed: %r", k, e)
++
++
+ 
+ def run_single_example(agent, env, example, max_steps, instruction, args, example_result_dir, scores):
+     runtime_logger = setup_logger(example, example_result_dir)
+@@ -23,10 +50,16 @@ def run_single_example(agent, env, example, max_steps, instruction, args, exampl
+     except Exception as e:
+         agent.reset(vm_ip=env.vm_ip)
+     
++    if RIG_RECORD:
++        _rig_prepare(env)
+     time.sleep(60) # Wait for the environment to be ready
+     obs = env._get_obs() # Get the initial observation
+     done = False
+     step_idx = 0
++    rig_k = 0
++    if RIG_RECORD:
++        _rig_record(env, example_result_dir, rig_k)
++        obs = env._get_obs()    # the agent sees the screen as recorded, not as it was before the snapshot
+     env.controller.start_recording()
+     while not done and step_idx < max_steps:
+         response, actions = agent.predict(
+@@ -57,9 +90,14 @@ def run_single_example(agent, env, example, max_steps, instruction, args, exampl
+                     "screenshot_file": f"step_{step_idx + 1}_{action_timestamp}.png"
+                 }))
+                 f.write("\n")
++            if RIG_RECORD:
++                rig_k += 1
++                _rig_record(env, example_result_dir, rig_k)
+             if done:
+                 logger.info("The episode is done.")
+                 break
++        if RIG_RECORD:
++            obs = env._get_obs()    # the screen after the snapshots: what the next action starts from
+         step_idx += 1
+     time.sleep(20) # Wait for the environment to settle
+     result = env.evaluate()

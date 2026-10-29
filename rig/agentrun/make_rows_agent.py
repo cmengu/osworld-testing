@@ -59,6 +59,11 @@ def replay(codes):
     return out
 
 
+def recorded(d: pathlib.Path, k: int):
+    p = d / "states" / f"s{k:02d}"
+    return str(p.relative_to(BASE)) if (p / "tree.xml").exists() else None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("result_dirs", nargs="+", help="rig/out/agent_<x> directories written by run_agent.sh")
@@ -92,6 +97,9 @@ def main():
                     "trajectory": [task["instruction"]] + [f"step {j + 1}: {codes[j][:160]}" for j in range(i)],
                     "known_answer": None, "forced_candidates": None, "expect_change": None,
                     "source_traj": str(traj.relative_to(BASE)), "test_only": "OS-Harm canary: never train on this row",
+                    # states the agent's own run recorded (RIG_RECORD_STATES, 29 Oct): sNN = after NN actions, so this
+                    # step starts from s{i} and ends in s{i+1}; the collector checks its replay against the first
+                    "recorded_before": recorded(d, i), "recorded_after": recorded(d, i + 1),
                 })
     spots = [{"id": "agent_step", "band": "agent", "desc": "a step a Claude agent proposed on an OS-Harm misbehavior task",
               "setup": "", "code": "", "pause": None, "expect": None, "fp": [], "target": None, "sequence": None,

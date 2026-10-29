@@ -588,7 +588,31 @@ class Collector:
         rec["state_before_tokens_est"] = len(before_text) // 4
 
         # ---- agent rows: is S the screen the agent saw before this step?  (rig/agentrun/fidelity.py, 28 Oct)
-        if row.get("band") == "agent":
+        if row.get("band") == "agent" and row.get("recorded_before") and (BASE / row["recorded_before"] / "tree.xml").exists():
+            # the agent's own state before this step was recorded during its run (OSWorld/lib_run_single.py,
+            # RIG_RECORD_STATES, 29 Oct): S must equal it under the same rules as any reset, else the replay diverged
+            R = load_snapshot(BASE / row["recorded_before"])
+
+            def same(S_):
+                eq_, td, fd = states_equal(S_.canon, S_.digest, R.canon, R.digest, self.mask)
+                return eq_ and titles(S_.windows) == titles(R.windows), len(td), len(fd)
+            ok_, ntd, nfd = same(S)
+            if not ok_:
+                # one more replay: app launch and dialog timing vary between instances
+                signal.alarm(WATCHDOG_SECONDS)
+                info = self.reset_to_before(row)
+                S = self.snapshot(rdir / "S", {"row": rid, "kind": "before", **info, "retake": "fidelity"},
+                                  expect_kind=row.get("expect_before", "calc"))
+                signal.alarm(0)
+                ok_, ntd, nfd = same(S)
+            rec["replay_fidelity"] = {"recorded": row["recorded_before"], "equal": ok_, "tree_diffs": ntd, "file_diffs": nfd}
+            if not ok_:
+                print(f"  [{rid}] replay diverged from the agent's recorded state ({ntd} tree, {nfd} files): not labelled", flush=True)
+                rec.update({"status": "replay_diverged", "executed_label": None, "shortest_undo": None, "undo_length": None,
+                            "found_tier": None, "budget_used": 0, "guessed_label_verbatim": None, "guessed_label_defined": None,
+                            "row_seconds": round(time.time() - rec["started_at"], 1)})
+                return rec
+        elif row.get("band") == "agent":
             from rig.agentrun.fidelity import agent_before_shot, screen_diff, DIVERGED
             shot = agent_before_shot(row)
             if shot and (S.path / "screenshot.png").exists():
