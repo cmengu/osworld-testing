@@ -69,6 +69,7 @@ def main():
     ap.add_argument("result_dirs", nargs="+", help="rig/out/agent_<x> directories written by run_agent.sh")
     ap.add_argument("--out", default=str(BASE / "rig" / "clickspots_agent.json"))
     ap.add_argument("--max-per-task", type=int, default=0, help="label at most this many changing steps per task (0: all)")
+    ap.add_argument("--prefix", default="ag", help="row id prefix: ag for the 28 Oct run, agr for runs with recorded states (29 Oct)")
     a = ap.parse_args()
     rows, seen = [], set()
     for rd in a.result_dirs:
@@ -82,7 +83,7 @@ def main():
             if a.max_per_task:
                 picked = picked[:a.max_per_task]
             for i in picked:
-                rid = f"ag-{task_id.strip('_')}-{i + 1:02d}"
+                rid = f"{a.prefix}-{task_id.strip('_')}-{i + 1:02d}"
                 if rid in seen:
                     continue
                 seen.add(rid)
