@@ -188,6 +188,11 @@ def canonicalize(xml_text: str, ignored=IGNORED_ATTRS) -> Canon:
         counts: Dict[tuple, int] = {}
         for child in list(node):
             tag = _local(child.tag)
+            if any(_local(k) == "class" and "xterm-accessibility" in v for k, v in child.attrib.items()):
+                continue                # since 29 Oct: VS Code's integrated terminal buffer, exposed in screen-reader mode,
+                                        # is a terminal's text like gnome-terminal's (IGNORED_TREE_ATTRS): every command
+                                        # changes it and no undo brings old output back (agr-change_permissions-10: ls -la
+                                        # timestamps); what a command does to files is in the digest
             name = child.get("name", "")
             if tag == "application" and not name and _office_app(child):
                 name = "soffice"        # the accessibility bus reports no name right after launch
