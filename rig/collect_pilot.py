@@ -106,6 +106,8 @@ def _alarm(signum, frame):
 
 signal.signal(signal.SIGALRM, _alarm)
 PRELUDE = "pyautogui.hotkey('ctrl', 'home')"
+GATE_IGNORED = ("/home/user/.config/", "/home/user/.cache/", "/home/user/.local/share/", "/home/user/.mozilla/",
+                "/home/user/.thunderbird/", "/home/user/.vscode/", "/home/user/snap/", "/home/user/.pki/", "/home/user/.rig_cache/")
 STEP_PAUSE_AGENT = 3.0   # seconds between replayed agent steps (rows from rig/agentrun/make_rows_agent.py)
 TASK_DIR = OSWORLD / "evaluation_examples" / "examples" / "libreoffice_calc"
 EXAMPLES = OSWORLD / "evaluation_examples" / "examples"
@@ -594,7 +596,13 @@ class Collector:
             R = load_snapshot(BASE / row["recorded_before"])
 
             def same(S_):
-                eq_, td, fd = states_equal(S_.canon, S_.digest, R.canon, R.digest, self.mask)
+                # the recorded state comes from another VM instance: its housekeeping files (ibus' bus address,
+                # evolution's contact DB, caches, browser profiles) differ between instances even with no action, and
+                # the noise mask was built within one instance (29 Oct, agr-shell_script_permissions-02: 0 tree, 2
+                # such files).  The gate compares the tree, the window titles and the user's files; labelling still
+                # compares S and S' of one instance under the full mask.
+                keep = lambda dg: {p: v for p, v in dg.items() if not p.startswith(GATE_IGNORED) or p.startswith("/home/user/.local/share/Trash/")}
+                eq_, td, fd = states_equal(S_.canon, keep(S_.digest), R.canon, keep(R.digest), self.mask)
                 return eq_ and titles(S_.windows) == titles(R.windows), len(td), len(fd)
             ok_, ntd, nfd = same(S)
             if not ok_:
