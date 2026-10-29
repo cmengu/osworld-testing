@@ -439,9 +439,9 @@ class Collector:
             for k in kinds:
                 self.vmsnap.delete(self._snap_tag(row, k))
 
-    def reset_to_before(self, row) -> dict:
-        """Fresh start, Ctrl+Home, setup, or the row's VM snapshot "b" once it exists.  Returns timings."""
-        dt = self._snap_load(row, "b")
+    def reset_to_before(self, row, fresh: bool = False) -> dict:
+        """Fresh start, Ctrl+Home, setup, or the row's VM snapshot "b" once it exists (fresh=True: never).  Returns timings."""
+        dt = None if fresh else self._snap_load(row, "b")
         if dt is not None:
             agent_own = self.vmsnap is not None and row.get("vm_snapshot_before") in self.vmsnap.tags
             return {"fresh_start": "vm-snapshot-agent" if agent_own else "vm-snapshot", "fresh_start_seconds": round(dt, 1), "setup_seconds": 0.0}
@@ -464,7 +464,7 @@ class Collector:
         elif setup:
             self.step(setup, pause=2.0)
         info = {"fresh_start": how, "fresh_start_seconds": round(t_fs, 1), "setup_seconds": round(time.time() - t - t_fs, 1)}
-        saved = self._snap_save(row, "b")
+        saved = None if fresh else self._snap_save(row, "b")
         if saved is not None:
             info["vm_snapshot_saved_seconds"] = round(saved, 1)
         return info
@@ -472,7 +472,7 @@ class Collector:
     def act(self, row):
         self.step(row["code"], pause=row.get("pause", 2))
 
-    def reset_to_after(self, row, expect_windows: str = "", expect_digest=None) -> dict:
+    def reset_to_after(self, row, expect_windows: str = "", expect_digest=None, independent: bool = False) -> dict:
         """Fresh start plus the action.  With expect_windows (the recorded S' window list), the reset is checked
         against it and redone up to twice: a reset that comes back without the document (pilot2 0079 c01: only a
         file-manager "Home" window) otherwise rejects a correct undo.  With expect_digest (S' file digest), the
@@ -485,13 +485,18 @@ class Collector:
         want = sorted(titles(expect_windows)) if expect_windows else None
         want_files = apply_file_mask(expect_digest, self.mask) if expect_digest else None
         why = ""
+        # independent=True (confirming re-runs and replays): a fresh instance, as before VM snapshots, so a match that
+        # held on one instance only is still caught; an agent row restored from its run's own VM has no fresh instance
+        # that reaches its state (the replays diverged), so its re-runs restore that VM again
+        agent_own = self.vmsnap is not None and row.get("vm_snapshot_before") in self.vmsnap.tags
+        fresh = independent and not agent_own
         for attempt in range(3):
-            dt = self._snap_load(row, "a") if attempt == 0 else None
+            dt = self._snap_load(row, "a") if attempt == 0 and not fresh else None
             if dt is not None:
                 info = {"fresh_start": "vm-snapshot-after", "fresh_start_seconds": round(dt, 1), "setup_seconds": 0.0}
             else:
                 try:
-                    info = self.reset_to_before(row)
+                    info = self.reset_to_before(row, fresh=fresh)
                 except ResetFailed as e:
                     last_why = why = str(e)
                     print(f"  reset did not reproduce the after-state: {why[:120]}; again", flush=True)
@@ -827,7 +832,7 @@ class Collector:
             notes = []
             for t in range(2):
                 signal.alarm(WATCHDOG_SECONDS)
-                self.reset_to_after(row, expect_windows=S1.windows, expect_digest=S1.digest)
+                self.reset_to_after(row, expect_windows=S1.windows, expect_digest=S1.digest, independent=True)
                 if light_check:
                     # no document open in S' (Start Center, or LibreOffice closed): the action's effect is in the
                     # window list and the files, checked here; the accessibility tree is NOT read, because walking
@@ -1097,7 +1102,7 @@ class Collector:
         if replay_cand is not None and not self.args.no_replay:
             signal.alarm(WATCHDOG_SECONDS)
             try:
-                rinfo = self.reset_to_after(row, expect_windows=S1.windows, expect_digest=S1.digest)
+                rinfo = self.reset_to_after(row, expect_windows=S1.windows, expect_digest=S1.digest, independent=True)
                 if replay_cand:
                     self.step(U.candidate_code(replay_cand, ctx), pause=1.5)
                 snap = self.snapshot(rdir / "replay", {"row": rid, "kind": "replay", "seq": replay_cand, **rinfo}, expect_kind="any",
