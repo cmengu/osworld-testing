@@ -1,33 +1,38 @@
 --- desktop_env/providers/modal/provider.py.orig-20261029	2026-10-29 19:14:45
-+++ desktop_env/providers/modal/provider.py	2026-10-29 19:14:45
-@@ -33,6 +33,9 @@
++++ desktop_env/providers/modal/provider.py	2026-10-29 20:28:06
+@@ -33,6 +33,11 @@
  GUEST_RAM_HEADROOM_MIB = 2048
  GUEST_RAM_GIB = max((MODAL_MEMORY - GUEST_RAM_HEADROOM_MIB) // 1024, 1)
  TUNNELS_TIMEOUT = 60
 +# Rig (29 Oct): opt-in second QEMU HMP monitor on this container port, reached
 +# through a tunnel like the other ports (the exec channel fails TLS from macOS).
 +RIG_MONITOR_PORT = int(os.getenv("RIG_QEMU_MONITOR_PORT", "0"))
++# Same for a QMP socket (snapshot-save/-load can leave out the raw UEFI store).
++RIG_QMP_PORT = int(os.getenv("RIG_QEMU_QMP_PORT", "0"))
  
  RELAY_BUF_SIZE = 65536  # 64 KiB read chunk for the TCP relay
  RETRY_INTERVAL = 3
-@@ -152,6 +155,7 @@
+@@ -152,6 +157,8 @@
          self.chromium_port = None
          self.vnc_port = None
          self.vlc_port = None
 +        self.monitor_port = None
++        self.qmp_port = None
          self._proxy_servers: list = []
          self._app = None
  
-@@ -218,6 +222,8 @@
+@@ -218,6 +225,10 @@
              self._CONTAINER_VNC_PORT: "vnc",
              self._CONTAINER_VLC_PORT: "vlc",
          }
 +        if RIG_MONITOR_PORT:
 +            port_map[RIG_MONITOR_PORT] = "monitor"
++        if RIG_QMP_PORT:
++            port_map[RIG_QMP_PORT] = "qmp"
  
          self.vm_ip = "localhost"
          for container_port, name in port_map.items():
-@@ -287,6 +293,10 @@
+@@ -287,6 +298,13 @@
              self._CONTAINER_VNC_PORT,
              self._CONTAINER_VLC_PORT,
          ]
@@ -35,10 +40,13 @@
 +        if RIG_MONITOR_PORT:
 +            ports.append(RIG_MONITOR_PORT)
 +            extra_env["ARGUMENTS"] = f"-monitor telnet:0.0.0.0:{RIG_MONITOR_PORT},server,nowait,nodelay"
++        if RIG_QMP_PORT:
++            ports.append(RIG_QMP_PORT)
++            extra_env["ARGUMENTS"] = (extra_env.get("ARGUMENTS", "") + f" -qmp tcp:0.0.0.0:{RIG_QMP_PORT},server,nowait").strip()
          return modal.Sandbox.create(
              image=image,
              app=app,
-@@ -307,6 +317,7 @@
+@@ -307,6 +325,7 @@
                  "USER_PORTS": user_ports,
                  "QCOW2_PATH": f"{VM_VOLUME_MOUNT_DIR}/{path_to_vm}",
                  "OSWORLD_OS_TYPE": os_type,
