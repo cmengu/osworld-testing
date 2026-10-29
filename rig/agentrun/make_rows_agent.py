@@ -64,6 +64,12 @@ def recorded(d: pathlib.Path, k: int):
     return str(p.relative_to(BASE)) if (p / "tree.xml").exists() else None
 
 
+def vm_snapshots(d: pathlib.Path):
+    """The sandbox the agent's run left running and the QEMU snapshots in it (RIG_SNAPSHOT_STEPS, 29 Oct), or None."""
+    p = d / "sandbox.json"
+    return json.loads(p.read_text()) if p.exists() else None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("result_dirs", nargs="+", help="rig/out/agent_<x> directories written by run_agent.sh")
@@ -78,6 +84,7 @@ def main():
             domain, task_id = d.parent.name, d.name
             task = json.loads((TASKS / domain / f"{task_id}.json").read_text())
             steps = load_traj(d)
+            vm = vm_snapshots(d)
             codes = [code_of(s["action"]) for s in steps]
             picked = [i for i, c in enumerate(codes) if c not in NON_CODE and CHANGING.search(c)]
             if a.max_per_task:
@@ -101,6 +108,10 @@ def main():
                     # states the agent's own run recorded (RIG_RECORD_STATES, 29 Oct): sNN = after NN actions, so this
                     # step starts from s{i} and ends in s{i+1}; the collector checks its replay against the first
                     "recorded_before": recorded(d, i), "recorded_after": recorded(d, i + 1),
+                    # the agent's own VM before this step, in the sandbox its run left running: the collector restores
+                    # it instead of replaying the setup (--vm-snapshots, OSWORLD_MODAL_SANDBOX_ID = vm_sandbox)
+                    "vm_sandbox": vm["sandbox_id"] if vm else None,
+                    "vm_snapshot_before": f"s{i:02d}" if vm and f"s{i:02d}" in vm["snapshots"] else None,
                 })
     spots = [{"id": "agent_step", "band": "agent", "desc": "a step a Claude agent proposed on an OS-Harm misbehavior task",
               "setup": "", "code": "", "pause": None, "expect": None, "fp": [], "target": None, "sequence": None,

@@ -41,6 +41,9 @@ sys.path.insert(0, str(OSWORLD))
 # mid-probe, the collector froze, and the sandbox billed ~4 h idle.  A fixed 2.5 h then let probe-0007 start at
 # 2.4 h and lose its sandbox mid-row.
 os.environ.setdefault("MODAL_SANDBOX_TIMEOUT", "10800")
+# --vm-snapshots needs the QMP port opened when the sandbox is created; the provider reads it at import (rig/vmsnap.py)
+if "--vm-snapshots" in sys.argv:
+    os.environ.setdefault("RIG_QEMU_QMP_PORT", "7102")
 SANDBOX_LIFETIME = int(os.environ["MODAL_SANDBOX_TIMEOUT"])
 ROW_GRACE_SECONDS = 10 * 60    # past the row cap, every VM call raises RowCapped (rig.vm) and the row ends with what it has
 
@@ -250,6 +253,8 @@ class Collector:
         self.tasks = {}
         self.timings = {"snapshot": [], "fresh_start": [], "row": [], "candidate": []}
         self.env_restarts = 0
+        self.vmsnap = None        # rig/vmsnap.py with --vm-snapshots: resets restore a VM snapshot instead of a fresh start
+        self._vm_row = None
 
     # ------------------------------------------------------------------ selection
     def select_rows(self):
@@ -315,6 +320,10 @@ class Collector:
             task = self.task(task_id)
             self.env.reset(task_config=task)
             print(f"[env] task {task_id[:8]} ready after {time.time() - t0:.0f}s; prep: {prepare_vm(self.env, agent=task_id in self.agent_tasks)}; cache: {prime_cache(self.env, task)}", flush=True)
+            if getattr(self.args, "vm_snapshots", False):
+                from rig.vmsnap import VMSnap
+                self.vmsnap = VMSnap(self.env)
+                print(f"[env] VM snapshots on (QEMU {self.vmsnap.qemu}, disk node {self.vmsnap.node})", flush=True)
         finally:
             signal.alarm(prev if prev else 0)
         self.current_task_id = task_id
@@ -340,6 +349,9 @@ class Collector:
         return False
 
     def close_env(self):
+        if self.vmsnap is not None:      # its snapshots live in the sandbox's disk and go with it
+            self.vmsnap.close()
+            self.vmsnap = None
         if self.env is None:
             return
         try:
@@ -376,8 +388,63 @@ class Collector:
     def step(self, code: str, pause: float = 1.0):
         self.env.step(code, pause=pause)
 
+    # VM snapshots of a row (--vm-snapshots, rig/vmsnap.py, 29 Oct): "b" is the VM after the row's first reset, saved
+    # before anything walks its accessibility tree, so every later reset gets an instance nobody has walked, as a fresh
+    # start did (probe-0005, 20 Oct); "a" is the VM right after the action, before S' is read.  A snapshot that fails
+    # to save or load falls back to the fresh start; the row's snapshots are deleted when the row ends (each is
+    # about 4.6 GB of the sandbox's disk with VS Code and Writer open).
+    def _snap_tag(self, row, kind):
+        return re.sub(r"[^A-Za-z0-9_]", "_", row["row_id"]) + "_" + kind
+
+    def _snap_save(self, row, kind):
+        if self.vmsnap is None:
+            return None
+        from rig.vmsnap import VMSnapError
+        tag = self._snap_tag(row, kind)
+        try:
+            self.vmsnap.delete(tag)
+            dt = self.vmsnap.save(tag)
+        except (VMSnapError, OSError) as e:
+            print(f"  VM snapshot {tag} not saved ({repr(e)[:160]}): fresh starts from here on", flush=True)
+            self.vmsnap = None
+            return None
+        if self._vm_row is not None:
+            self._vm_row["saves"].append(round(dt, 1))
+        return dt
+
+    def _snap_load(self, row, kind):
+        if self.vmsnap is None:
+            return None
+        tag = self._snap_tag(row, kind)
+        if kind == "b" and row.get("vm_snapshot_before") in self.vmsnap.tags:
+            # an agent row in the sandbox its run left behind: the agent's own VM just before this step
+            tag = row["vm_snapshot_before"]
+        if tag not in self.vmsnap.tags:
+            return None
+        from rig.vmsnap import VMSnapError
+        try:
+            dt = self.vmsnap.load(tag)
+        except (VMSnapError, OSError) as e:
+            print(f"  VM snapshot {tag} not restored ({repr(e)[:160]}): a fresh start instead", flush=True)
+            if self._vm_row is not None:
+                self._vm_row["load_failures"] += 1
+            self.vmsnap.tags.discard(tag)
+            return None
+        if self._vm_row is not None:
+            self._vm_row["loads"].append(round(dt, 1))
+        return dt
+
+    def _snap_drop(self, row, kinds=("b", "a")):
+        if self.vmsnap is not None:
+            for k in kinds:
+                self.vmsnap.delete(self._snap_tag(row, k))
+
     def reset_to_before(self, row) -> dict:
-        """Fresh start, Ctrl+Home, setup.  Returns timings."""
+        """Fresh start, Ctrl+Home, setup, or the row's VM snapshot "b" once it exists.  Returns timings."""
+        dt = self._snap_load(row, "b")
+        if dt is not None:
+            agent_own = self.vmsnap is not None and row.get("vm_snapshot_before") in self.vmsnap.tags
+            return {"fresh_start": "vm-snapshot-agent" if agent_own else "vm-snapshot", "fresh_start_seconds": round(dt, 1), "setup_seconds": 0.0}
         t = time.time()
         how = fresh_start(self.env, self.task(row["task_id"]))
         t_fs = time.time() - t
@@ -396,7 +463,11 @@ class Collector:
                 self.step(code, pause=STEP_PAUSE_AGENT)
         elif setup:
             self.step(setup, pause=2.0)
-        return {"fresh_start": how, "fresh_start_seconds": round(t_fs, 1), "setup_seconds": round(time.time() - t - t_fs, 1)}
+        info = {"fresh_start": how, "fresh_start_seconds": round(t_fs, 1), "setup_seconds": round(time.time() - t - t_fs, 1)}
+        saved = self._snap_save(row, "b")
+        if saved is not None:
+            info["vm_snapshot_saved_seconds"] = round(saved, 1)
+        return info
 
     def act(self, row):
         self.step(row["code"], pause=row.get("pause", 2))
@@ -415,14 +486,18 @@ class Collector:
         want_files = apply_file_mask(expect_digest, self.mask) if expect_digest else None
         why = ""
         for attempt in range(3):
-            try:
-                info = self.reset_to_before(row)
-            except ResetFailed as e:
-                last_why = why = str(e)
-                print(f"  reset did not reproduce the after-state: {why[:120]}; again", flush=True)
-                why = ""
-                continue
-            self.act(row)
+            dt = self._snap_load(row, "a") if attempt == 0 else None
+            if dt is not None:
+                info = {"fresh_start": "vm-snapshot-after", "fresh_start_seconds": round(dt, 1), "setup_seconds": 0.0}
+            else:
+                try:
+                    info = self.reset_to_before(row)
+                except ResetFailed as e:
+                    last_why = why = str(e)
+                    print(f"  reset did not reproduce the after-state: {why[:120]}; again", flush=True)
+                    why = ""
+                    continue
+                self.act(row)
             if want is None and want_files is None:
                 return info
             if want is not None:
@@ -608,6 +683,7 @@ class Collector:
             if not ok_:
                 # one more replay: app launch and dialog timing vary between instances
                 signal.alarm(WATCHDOG_SECONDS)
+                self._snap_drop(row, ("b",))
                 info = self.reset_to_before(row)
                 S = self.snapshot(rdir / "S", {"row": rid, "kind": "before", **info, "retake": "fidelity"},
                                   expect_kind=row.get("expect_before", "calc"))
@@ -628,6 +704,7 @@ class Collector:
                 if score > DIVERGED:
                     # one more replay: app launch and search timing vary between instances
                     signal.alarm(WATCHDOG_SECONDS)
+                    self._snap_drop(row, ("b",))
                     info = self.reset_to_before(row)
                     S = self.snapshot(rdir / "S", {"row": rid, "kind": "before", **info, "retake": "fidelity"},
                                       expect_kind=row.get("expect_before", "calc"))
@@ -679,6 +756,7 @@ class Collector:
             rec["action_instance"] = self.reset_to_before(row)
             rec["action_executed_at"] = time.time()
             self.act(row)
+            self._snap_save(row, "a")
             S1 = self.snapshot(rdir / "S1", {"row": rid, "kind": "after"}, expect_kind=row.get("expect", "calc"))
             for wait in (3, 10):
                 if S1.ok:
@@ -1186,8 +1264,11 @@ class Collector:
                     self.close_env()
                 for attempt in range(2):
                     VM.ROW_DEADLINE = time.time() + self.args.row_minutes * 60 + ROW_GRACE_SECONDS
+                    self._vm_row = {"saves": [], "loads": [], "load_failures": 0} if self.args.vm_snapshots else None
                     try:
                         rec = self.run_row(row)
+                        if self._vm_row is not None:
+                            rec["vm_snapshots"] = {**self._vm_row, "on_at_end": self.vmsnap is not None}
                         self.write(rec)
                         done += 1
                         print(f"[{row['row_id']}] {rec['executed_label']} undo={U.describe(rec.get('shortest_undo') or [])!r} tier={rec.get('found_tier')} "
@@ -1219,11 +1300,22 @@ class Collector:
                         elif attempt == 0:
                             break
                 VM.ROW_DEADLINE = None
+                try:
+                    self._snap_drop(row)
+                except Exception as e:
+                    print(f"  VM snapshots of {row['row_id']} not deleted: {repr(e)[:160]}", flush=True)
+                    self.vmsnap = None
                 print(self.report(done, len(rows)), flush=True)
         finally:
             VM.ROW_DEADLINE = None
             self.close_env()
             print(self.report(done, len(rows)), flush=True)
+            adopted = os.environ.get("OSWORLD_MODAL_SANDBOX_ID")
+            if adopted and self.args.end_sandbox:
+                # an adopted sandbox (an agent run's, rig/agentrun) outlives close_env; it bills until ended or timed out
+                import modal
+                modal.Sandbox.from_id(adopted).terminate()
+                print(f"[env] adopted sandbox {adopted} ended", flush=True)
 
     # ------------------------------------------------------------------ re-judge rows on disk (rule change, Section 4.3)
     def recompare(self):
@@ -1336,6 +1428,8 @@ def main():
     ap.add_argument("--recompare", action="store_true", help="re-judge the rows on disk with the current mask and rules")
     ap.add_argument("--drop-hidden", action="store_true", help="(on by default since 21 Oct) widgets not showing on screen are not state")
     ap.add_argument("--ignore-layout", action="store_true", help="(on by default since 21 Oct) scroll-bar and split-pane readouts are not state")
+    ap.add_argument("--vm-snapshots", action="store_true", help="resets restore QEMU snapshots of the row (rig/vmsnap.py); needs RIG_QEMU_QMP_PORT")
+    ap.add_argument("--end-sandbox", action="store_true", help="end the adopted sandbox (OSWORLD_MODAL_SANDBOX_ID) when the run ends")
     args = ap.parse_args()
     # the module chdirs into OSWorld at import, so a relative path would resolve under OSWorld/ (pilot_run2's --out did)
     for k in ("out", "spots", "mask"):

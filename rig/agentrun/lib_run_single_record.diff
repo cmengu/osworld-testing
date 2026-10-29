@@ -1,17 +1,21 @@
-diff --git a/lib_run_single.py b/lib_run_single.py
-index 81972b1..147c768 100644
---- a/lib_run_single.py
-+++ b/lib_run_single.py
-@@ -10,6 +10,33 @@ from lib_results_logger import log_task_completion
+--- lib_run_single.py.orig-20261029	2026-10-29 09:08:19
++++ lib_run_single.py	2026-10-29 22:59:32
+@@ -9,8 +9,56 @@
+ from lib_results_logger import log_task_completion
  
  logger = logging.getLogger("desktopenv.experiment")
- 
++
 +# osworld-testing rig (29 Oct 2026): with RIG_RECORD_STATES=1 the rig's VM preparation runs after the reset (the same
 +# one the rig's replays use, so the agent and the replays see the same desktop), and the rig's state snapshot (tree,
 +# file digest, window list, screenshot) is taken before the first action and after every action, in
 +# <result dir>/states/sNN (NN = actions done).  A replay of the agent's steps is then checked against the recorded
 +# state, not against a screenshot.  Off by default: an ordinary run is unchanged.  Only run_single_example has it.
 +RIG_RECORD = os.environ.get("RIG_RECORD_STATES") == "1"
++# RIG_SNAPSHOT_STEPS=1 (with RIG_RECORD_STATES=1 and RIG_QEMU_QMP_PORT): a QEMU snapshot sNN of the VM is saved just
++# before each recorded state sNN is read (rig/vmsnap.py), and the sandbox is left running when the task ends, with
++# <result dir>/sandbox.json naming it, so the rig can label each step from the agent's own VM (29 Oct).  The sandbox
++# bills until the rig ends it (collect_pilot.py --end-sandbox) or its lifetime (MODAL_SANDBOX_TIMEOUT) runs out.
++RIG_SNAP = RIG_RECORD and os.environ.get("RIG_SNAPSHOT_STEPS") == "1"
 +
 +
 +def _rig_prepare(env):
@@ -21,9 +25,25 @@ index 81972b1..147c768 100644
 +    logger.info("rig prep: %s", prepare_vm(env, agent=True))
 +
 +
++def _rig_vmsnap(env):
++    from rig.vmsnap import VMSnap
++    sid = env.provider.sandbox_id
++    if getattr(env, "_rig_vmsnap_sid", None) != sid:
++        env._rig_vmsnap = VMSnap(env)
++        env._rig_vmsnap_sid = sid
++    return env._rig_vmsnap
++
++
 +def _rig_record(env, example_result_dir, k):
 +    import pathlib
 +    from rig.snapshot import take_snapshot
++    if RIG_SNAP:
++        t = time.time()
++        try:
++            _rig_vmsnap(env).save(f"s{k:02d}")
++            logger.info("rig VM snapshot s%02d saved in %.0fs", k, time.time() - t)
++        except Exception as e:  # the run goes on; that step is labelled by replay
++            logger.warning("rig VM snapshot s%02d failed: %r", k, e)
 +    t = time.time()
 +    try:
 +        snap = take_snapshot(env, pathlib.Path(example_result_dir) / "states" / f"s{k:02d}",
@@ -31,12 +51,13 @@ index 81972b1..147c768 100644
 +        logger.info("rig state s%02d recorded in %.0fs (ok=%s)", k, time.time() - t, snap.meta.get("ok"))
 +    except Exception as e:      # a failed snapshot must not end the agent's run
 +        logger.warning("rig state s%02d failed: %r", k, e)
-+
-+
  
+ 
++
  def run_single_example(agent, env, example, max_steps, instruction, args, example_result_dir, scores):
      runtime_logger = setup_logger(example, example_result_dir)
-@@ -23,10 +50,16 @@ def run_single_example(agent, env, example, max_steps, instruction, args, exampl
+ 
+@@ -23,10 +71,16 @@
      except Exception as e:
          agent.reset(vm_ip=env.vm_ip)
      
@@ -53,7 +74,7 @@ index 81972b1..147c768 100644
      env.controller.start_recording()
      while not done and step_idx < max_steps:
          response, actions = agent.predict(
-@@ -57,9 +90,14 @@ def run_single_example(agent, env, example, max_steps, instruction, args, exampl
+@@ -57,9 +111,14 @@
                      "screenshot_file": f"step_{step_idx + 1}_{action_timestamp}.png"
                  }))
                  f.write("\n")
@@ -68,3 +89,19 @@ index 81972b1..147c768 100644
          step_idx += 1
      time.sleep(20) # Wait for the environment to settle
      result = env.evaluate()
+@@ -72,6 +131,15 @@
+     log_task_completion(example, result, example_result_dir, args)
+     
+     env.controller.end_recording(os.path.join(example_result_dir, "recording.mp4"))
++    if RIG_SNAP and getattr(env, "_rig_vmsnap", None) is not None:
++        # keep this sandbox for the rig: the provider leaves an adopted sandbox running on the next reset or close
++        with open(os.path.join(example_result_dir, "sandbox.json"), "w", encoding="utf-8") as f:
++            json.dump({"sandbox_id": env.provider.sandbox_id, "snapshots": sorted(env._rig_vmsnap.tags),
++                       "saved_at": time.time(), "lifetime_s": int(os.environ.get("MODAL_SANDBOX_TIMEOUT", "0"))}, f)
++        env.provider._adopted = True
++        env._rig_vmsnap.close()
++        env._rig_vmsnap = None
++        logger.info("rig: sandbox %s kept for labelling", env.provider.sandbox_id)
+ 
+ 
+ def setup_logger(example, example_result_dir):
