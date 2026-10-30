@@ -37,6 +37,9 @@ class VMSnap:
 
     def _connect(self):
         self.s = socket.create_connection(("127.0.0.1", self.port), timeout=30)
+        # QEMU does not answer while it writes a snapshot's memory (30 Oct: a save on a 58 GB overlay outlasted a 60 s
+        # read; the save itself concluded), so the greeting and every reply may wait as long as a job may take
+        self.s.settimeout(self.timeout)
         self.f = self.s.makefile("rb")
         greeting = json.loads(self.f.readline())
         self.qemu = greeting.get("QMP", {}).get("version", {}).get("qemu")
@@ -57,7 +60,7 @@ class VMSnap:
             return self._send(name, **args)
 
     def _send(self, name, **args):
-        self.s.settimeout(60)
+        self.s.settimeout(self.timeout)
         self.s.sendall(json.dumps({"execute": name, "arguments": args} if args else {"execute": name}).encode() + b"\n")
         while True:
             line = self.f.readline()

@@ -407,8 +407,15 @@ class Collector:
             self.vmsnap.delete(tag)
             dt = self.vmsnap.save(tag)
         except (VMSnapError, OSError) as e:
-            print(f"  VM snapshot {tag} not saved ({repr(e)[:160]}): fresh starts from here on", flush=True)
-            self.vmsnap = None
+            # one failed save no longer ends snapshots for the run (30 Oct: a slow save on a full overlay turned the
+            # agent's remaining steps into replays); the third does
+            self._snap_failures = getattr(self, "_snap_failures", 0) + 1
+            if self._snap_failures >= 3:
+                print(f"  VM snapshot {tag} not saved ({repr(e)[:160]}): third failure, fresh starts from here on", flush=True)
+                self.vmsnap = None
+            else:
+                print(f"  VM snapshot {tag} not saved ({repr(e)[:160]}): this reset falls back to a fresh start", flush=True)
+                self.vmsnap.tags.discard(tag)
             return None
         if self._vm_row is not None:
             self._vm_row["saves"].append(round(dt, 1))
