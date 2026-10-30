@@ -81,6 +81,7 @@ from rig import vm as VM                                        # noqa: E402
 from rig.vm import RowCapped, SandboxLost                       # noqa: E402
 
 SANDBOX_USD_PER_HOUR = 0.76
+CANDIDATE_ERRORS_IN_A_ROW = 3
 CONFIRMATION_SINCE = 1792425600     # 2026-10-20 00:00 +08: rows started before it were recorded without the confirming re-run (the old value, 19 Oct 08:00 +08, left pilot_rerun's 19 Oct rows outside it; fixed 25 Oct)
 WATCHDOG_SECONDS = 900        # no single candidate, snapshot or reset may take longer; a dead tunnel otherwise hangs forever
 
@@ -95,6 +96,11 @@ NO_CHANGE_EXPECTED = frozenset({"save_clean", "imp_save_clean", "wr_save_clean",
 
 class ResetFailed(Exception):
     """The fresh start plus action did not reproduce S'; a candidate judged from there would be judged wrongly."""
+
+
+class CandidatesFailing(Exception):
+    """Several candidates in a row errored before they could be judged (30 Oct, agent step 07: nine in an outage, a
+    minute each, then a no-undo label).  The row stops, and the run waits for the network and tries it again."""
 
 
 class Watchdog(BaseException):
@@ -900,9 +906,10 @@ class Collector:
             return False, "; ".join(notes)
 
         unconfirmed = None       # (tier, candidate, index): matched S once, the confirming re-run did not
+        errors_in_a_row = 0
 
         def try_candidate(cand, tier, idx, note=""):
-            nonlocal closest, budget_used, unconfirmed
+            nonlocal closest, budget_used, unconfirmed, errors_in_a_row
             t_c = time.time()
             r = {"tier": tier, "seq": cand, "idx": idx}
             if note:
@@ -974,6 +981,10 @@ class Collector:
             budget_used += 1
             search.append(r)
             print(f"  [{rid}] c{idx:02d} t{tier} {U.describe(cand)[:60]:60s} -> {r['result'][:70]} ({r['seconds']}s)", flush=True)
+            # a failed reset is about this row's state and is judged at the end of the row; any other error is about the rig
+            errors_in_a_row = errors_in_a_row + 1 if r.get("error") and not r.get("capped") and not r.get("reset_failed") else 0
+            if errors_in_a_row >= CANDIDATE_ERRORS_IN_A_ROW:
+                raise CandidatesFailing(f"{errors_in_a_row} candidates in a row errored; last: {r['result'][:200]}")
             return bool(r.get("match"))
 
         if rec["action_misfired"]:
@@ -1233,6 +1244,14 @@ class Collector:
 
         rec["row_seconds"] = round(time.time() - t_row, 1)
         rec["status"] = "broken_action" if rec.get("broken_action") else ("noise" if rec.get("noise") else "ok")
+        # no undo found only counts when every candidate that ran was judged; a candidate cut off by the row cap is the
+        # search running out of time, which shorter_search and candidates_skipped already report
+        unjudged = sum(1 for x in search if x.get("error") and not x.get("capped"))
+        rec["candidates_unjudged"] = unjudged
+        if unjudged and rec["status"] == "ok" and rec["executed_label"] == "NO-UNDO-FOUND":
+            rec["status"] = "incomplete"
+            rec["executed_label"] = "INCOMPLETE"
+            rec["labels_by_k"] = {k: "INCOMPLETE" for k in rec["labels_by_k"]}
         self.timings["row"].append(time.time() - t_row)
         return rec
 
@@ -1260,7 +1279,7 @@ class Collector:
         import statistics as st
         def q(xs):
             return (f"n={len(xs)} median={st.median(xs):.0f}s mean={st.mean(xs):.0f}s max={max(xs):.0f}s") if xs else "n=0"
-        sandbox_h = (self.sandbox_seconds + ((time.time() - self.env_started) if self.env_started else 0)) / 3600
+        sandbox_h = self.spent_usd() / SANDBOX_USD_PER_HOUR
         lines = [f"# Pilot run: {rows_done}/{rows_planned} rows done, sandbox {sandbox_h:.2f} h ≈ {sandbox_h * SANDBOX_USD_PER_HOUR:.2f} USD at {SANDBOX_USD_PER_HOUR}/h",
                  f"- snapshot: {q(self.timings['snapshot'])} (estimate was ~120 s)",
                  f"- fresh start: {q(self.timings['fresh_start'])}",
@@ -1295,6 +1314,9 @@ class Collector:
         (self.out / "report.md").write_text("\n".join(lines) + "\n")
         return "\n".join(lines[:6])
 
+    def spent_usd(self):
+        return (self.sandbox_seconds + ((time.time() - self.env_started) if self.env_started else 0)) / 3600 * SANDBOX_USD_PER_HOUR
+
     def run(self):
         rows = self.select_rows()
         if not rows:
@@ -1309,9 +1331,12 @@ class Collector:
         if est_h * SANDBOX_USD_PER_HOUR > self.args.max_usd and not self.args.yes:
             sys.exit(f"worst-case cost {est_h * SANDBOX_USD_PER_HOUR:.2f} USD exceeds --max-usd {self.args.max_usd}; pass --yes to proceed")
         done = 0
+        queue, retried = list(rows), set()
         try:
             rotate = rotate_seconds(self.args.row_minutes)
-            for row in rows:
+            while queue:
+                row = queue.pop(0)
+                labelled = False
                 if self.env is not None and self.env_started and time.time() - self.env_started > rotate:
                     print(f"[env] {(time.time() - self.env_started) / 3600:.1f} h old: a fresh sandbox, so the row ends inside the "
                           f"{SANDBOX_LIFETIME / 3600:.0f} h lifetime", flush=True)
@@ -1324,7 +1349,8 @@ class Collector:
                         if self._vm_row is not None:
                             rec["vm_snapshots"] = {**self._vm_row, "on_at_end": self.vmsnap is not None}
                         self.write(rec)
-                        done += 1
+                        labelled = rec["status"] != "incomplete"
+                        done += labelled
                         print(f"[{row['row_id']}] {rec['executed_label']} undo={U.describe(rec.get('shortest_undo') or [])!r} tier={rec.get('found_tier')} "
                               f"budget={rec['budget_used']} guessA={(rec['guessed_label_verbatim'] or {}).get('reversible')} "
                               f"guessB={(rec['guessed_label_defined'] or {}).get('reversible')} in {rec['row_seconds']}s", flush=True)
@@ -1359,6 +1385,14 @@ class Collector:
                 except Exception as e:
                     print(f"  VM snapshots of {row['row_id']} not deleted: {repr(e)[:160]}", flush=True)
                     self.vmsnap = None
+                if not labelled and row["row_id"] not in retried:
+                    # once more at the end of the run, the network having had time to come back
+                    if self.spent_usd() + self.args.row_minutes / 60 * SANDBOX_USD_PER_HOUR <= self.args.max_usd:
+                        retried.add(row["row_id"])
+                        queue.append(row)
+                        print(f"[{row['row_id']}] will be tried again at the end of the run", flush=True)
+                    else:
+                        print(f"[{row['row_id']}] not tried again: another row could pass --max-usd {self.args.max_usd}", flush=True)
                 print(self.report(done, len(rows)), flush=True)
         finally:
             VM.ROW_DEADLINE = None

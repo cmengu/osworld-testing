@@ -273,4 +273,90 @@ w.warm_accessibility(refs=True)
 assert calls == [50, 580, 586], calls                 # cold: filled in over three reads
 _ft.fast_tree, cp.time.sleep = _real_ft, _sleep
 
+# Candidates that cannot be judged: "no undo found" must not come out of them (agent step 07, 30 Oct)
+class Failing(Fake):
+    def reset_to_after(self, row, expect_windows="", expect_digest=None, independent=False):
+        self.resets = getattr(self, "resets", 0) + 1
+        if self.resets >= self.fail_from:
+            raise self.failure
+        return super().reset_to_after(row, expect_windows, expect_digest, independent)
+
+
+real = Fake
+def with_fake(cls, *a, **k):
+    global Fake
+    Fake = cls
+    try:
+        return run(*a, **k)
+    finally:
+        Fake = real
+
+
+Failing.failure, Failing.fail_from = ValueError("tunnel gone"), 2
+try:
+    with_fake(Failing, ["key:nothing-works"], ["key:escape"])
+    raise AssertionError("three errors in a row must stop the row")
+except cp.CandidatesFailing as e:
+    assert "3 candidates" in str(e), e
+
+Failing.failure, Failing.fail_from = cp.ResetFailed("windows differ"), 2
+r = with_fake(Failing, ["key:nothing-works"], ["key:escape"], budget=5)
+assert r["status"] == "incomplete" and r["executed_label"] == "INCOMPLETE" and r["candidates_unjudged"] > 0, (r["status"], r["executed_label"])
+assert set(r["labels_by_k"].values()) == {"INCOMPLETE"}
+
+r = run(["key:nothing-works"], ["key:escape"], budget=5)     # every candidate judged: still a no-undo label
+assert r["status"] == "ok" and r["executed_label"] == "NO-UNDO-FOUND" and r["candidates_unjudged"] == 0
+
+# A row that errors or comes back incomplete goes round once more at the end of the run, within --max-usd
+class Runner(Fake):
+    def select_rows(self):
+        return [{"row_id": x, "spot_id": "s", "band": "b", "on_task": None, "workbook": "w", "task_id": "t"} for x in ("a", "b")]
+    def run_row(self, row):
+        self.calls.append(row["row_id"])
+        if self.script[row["row_id"]]:
+            out = self.script[row["row_id"]].pop(0)
+            if isinstance(out, Exception):
+                raise out
+            return {"row_id": row["row_id"], "status": out, "executed_label": out, "budget_used": 0, "row_seconds": 1,
+                    "guessed_label_verbatim": None, "guessed_label_defined": None}
+        return {"row_id": row["row_id"], "status": "ok", "executed_label": "ok", "budget_used": 0, "row_seconds": 1,
+                "guessed_label_verbatim": None, "guessed_label_defined": None}
+    def start_env(self, task_id): pass
+    def close_env(self): pass
+    def wait_for_network(self, max_s=1800): return True
+    def report(self, done, planned):
+        self.done_count = done
+        return ""
+
+
+def run_loop(script, max_usd=10.0):
+    args = argparse.Namespace(out=tempfile.mkdtemp(), mask=str(HERE / "out" / "mask_run" / "mask.json"), spots=str(HERE / "clickspots_pilot.json"),
+                              mnemonics="", rows="", spots_filter="", limit=0, budget=5, blind=4, row_minutes=25, dry=False, yes=True, max_usd=max_usd,
+                              vm_snapshots=False, end_sandbox=False, no_teacher=False, no_proposer=True, no_replay=True, no_zero_shot=False,
+                              shorter_tries=8, no_confirm_matches=False)
+    c = Runner(args)
+    c.calls, c.script = [], script
+    c._snap_drop = lambda row: None
+    _sl = cp.time.sleep
+    cp.time.sleep = lambda s: None
+    try:
+        c.run()
+    finally:
+        cp.time.sleep = _sl
+    return c
+
+
+# a: incomplete, then labelled at the end, after b
+c = run_loop({"a": ["incomplete"], "b": []})
+assert c.calls == ["a", "b", "a"] and c.done_count == 2, c.calls
+# a: errors on both attempts, labelled on the end-of-run go
+c = run_loop({"a": [ValueError("x"), ValueError("x")], "b": []})
+assert c.calls == ["a", "a", "b", "a"] and c.done_count == 2, c.calls
+# only one extra go, however it ends
+c = run_loop({"a": ["incomplete", "incomplete", "incomplete"], "b": []})
+assert c.calls == ["a", "b", "a"] and c.done_count == 1, c.calls
+# no extra go when another row could pass --max-usd
+c = run_loop({"a": ["incomplete"], "b": []}, max_usd=0.1)
+assert c.calls == ["a", "b"], c.calls
+
 print("COLLECTOR FLOW CHECKS PASSED")
