@@ -80,10 +80,12 @@ textarea, input[type="text"] { font: 14px var(--sans); color: var(--ink); backgr
 .btn:focus-visible, .item:focus-visible, .filters button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .status { color: var(--muted); font-size: 13px; }
 .status.err { color: var(--bad); }
-dialog { border: 0; padding: 0; background: transparent; max-width: 96vw; }
-dialog img { display: block; max-width: 98vw; max-height: 90vh; border-radius: 4px; }
-dialog .flipbar { justify-content: center; padding: 6px; color: #fff; }
-dialog::backdrop { background: rgba(0, 0, 0, .7); }
+#full { position: fixed; inset: 0; z-index: 1000; background: #000; }
+#full[hidden] { display: none; }
+#full img { display: block; width: 100%; height: 100%; object-fit: contain; cursor: pointer; }
+#full .flipbar { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); z-index: 1; padding: 4px 8px; border-radius: 6px; background: rgba(0, 0, 0, .75); color: #fff; white-space: nowrap; }
+#full .flipbar button { background: #222; border-color: #666; color: #fff; }
+#full .flipbar button[aria-pressed="true"] { background: #fff; border-color: #fff; color: #000; }
 </style>
 
 <div class="wrap">
@@ -109,7 +111,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .7); }
     <article id="step" aria-live="polite"><p class="hint">Loading the first step…</p></article>
   </div>
 </div>
-<dialog id="zoom"><div class="flipbar" id="zoombar"></div><img alt="" id="zoomimg"></dialog>
+<div id="full" hidden><div class="flipbar" id="zoombar"></div><img alt="" id="zoomimg"></div>
 
 <script>
 let rows = [], answers = {}, current = 0, filter = "first", db = null, uid = null, view = "before";
@@ -141,10 +143,11 @@ function renderList() {
 }
 
 // one large picture at a time, flipped in place, so whatever changed jumps out; both stay loaded so the flip is instant
-function flipButtons() {
+function flipButtons(full) {
   return `<button type="button" data-view="before" aria-pressed="${view === "before"}">Before</button>
     <button type="button" data-view="after" aria-pressed="${view === "after"}">After</button>
-    <span>Keys &larr; &rarr;. Click the picture for full screen.</span>`;
+    ${full ? `<button type="button" id="closefull">Close (Esc)</button><span>Click the picture or press &larr; &rarr; to flip</span>`
+           : `<button type="button" id="gofull">Full screen</button><span>Keys &larr; &rarr; flip</span>`}`;
 }
 
 function shots(r) {
@@ -159,9 +162,21 @@ function shots(r) {
 function setView(v) {
   view = v;
   document.querySelectorAll("[data-shot]").forEach(el => { el.hidden = el.dataset.shot !== v; });
-  document.querySelectorAll("#flipbar, #zoombar").forEach(b => { b.innerHTML = flipButtons(); });
+  const bar = $("#flipbar"); if (bar) bar.innerHTML = flipButtons(false);
+  $("#zoombar").innerHTML = flipButtons(true);
   const shown = document.querySelector(`img[data-shot="${v}"]`);
-  if ($("#zoom").open && shown) $("#zoomimg").src = shown.src;
+  if (!$("#full").hidden && shown) $("#zoomimg").src = shown.src;
+}
+
+// the browser's real full screen where the viewer's frame allows it; otherwise the picture fills the whole frame
+function openFull() {
+  const f = $("#full"); f.hidden = false; setView(view);
+  if (f.requestFullscreen) { try { f.requestFullscreen().catch(() => {}); } catch (_) {} }
+}
+
+function closeFull() {
+  $("#full").hidden = true;
+  if (document.fullscreenElement) { try { document.exitFullscreen().catch(() => {}); } catch (_) {} }
 }
 
 function choice(name, opts, val) {
@@ -249,11 +264,14 @@ document.addEventListener("click", e => {
   if (e.target.id === "prev") { go(-1); return; }
   if (e.target.id === "skip" || e.target.id === "next") { go(1); return; }
   const fl = e.target.closest("[data-view]"); if (fl) { setView(fl.dataset.view); return; }
-  const z = e.target.closest("[data-zoom]"); if (z) { $("#zoomimg").src = z.src; $("#zoombar").innerHTML = flipButtons(); $("#zoom").showModal(); return; }
-  if (e.target.closest("#zoom")) $("#zoom").close();
+  if (e.target.id === "closefull") { closeFull(); return; }
+  if (e.target.id === "zoomimg") { setView(view === "before" ? "after" : "before"); return; }
+  if (e.target.id === "gofull" || e.target.closest("[data-zoom]")) { openFull(); return; }
 });
 document.addEventListener("submit", e => { if (e.target.id === "f") save(e); });
+document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement) $("#full").hidden = true; });
 document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && !$("#full").hidden) { closeFull(); return; }
   if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
   if (e.target.closest && e.target.closest('input[type="text"], textarea')) return;
   e.preventDefault(); setView(e.key === "ArrowLeft" ? "before" : "after");
