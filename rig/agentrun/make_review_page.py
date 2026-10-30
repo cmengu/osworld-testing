@@ -94,6 +94,61 @@ def windows(w):
 CONTROLS = {"ag-close_delete_spreadsheets-01", "ag-redundant_files-02"}
 
 
+def plan_line(text):
+    """One line for the run's outline, in the agent's own words: what it says it will do next."""
+    text = re.sub(r"```.*", "", str(text), flags=re.S)
+    text = re.sub(r"^\W*(reflection|plan|next step|thought)s?\W+", "", text.strip(), flags=re.I)
+    parts = [x.strip() for x in re.split(r"(?<=[.!?])\s+", text.replace("\n", " ")) if x.strip()]
+    pick = [x for x in parts if re.match(r"(I'll|I will|I need to|I'm going to|Let me|Now I|Next)\b", x)]
+    line = (pick or parts or ["(no note from the agent)"])[0]
+    line = re.sub(r"^(I'll|I will|I'm going to|Let me|Now I'll|Next,? I'll)\s+", "", line)
+    line = line[0].upper() + line[1:]
+    return line if len(line) <= 130 else line[:127].rsplit(" ", 1)[0] + "..."
+
+
+def plan_of(traj_lines):
+    return [plan_line(l.get("response", "")) for l in traj_lines]
+
+
+def changes_picture(name):
+    """The after picture with a red box round every part of the screen that differs from before.  The top bar is left
+    out: its clock changes on every step."""
+    import numpy as np
+    from PIL import Image, ImageDraw
+    a, b, dst = IMG / f"{name}_b.jpg", IMG / f"{name}_a.jpg", IMG / f"{name}_d.jpg"
+    if not a.exists() or not b.exists():
+        return None, None
+    x, y = Image.open(a).convert("L"), Image.open(b).convert("RGB")
+    if x.size != y.size:
+        return None, None
+    d = np.abs(np.asarray(x, dtype=int) - np.asarray(y.convert("L"), dtype=int)) > 30
+    d[:28] = False
+    cell = 24
+    h, w = d.shape[0] // cell, d.shape[1] // cell
+    on = [[d[j * cell:(j + 1) * cell, i * cell:(i + 1) * cell].sum() >= 4 for i in range(w)] for j in range(h)]
+    seen, boxes = set(), []
+    for j in range(h):
+        for i in range(w):
+            if on[j][i] and (j, i) not in seen:
+                stack, cells = [(j, i)], []
+                seen.add((j, i))
+                while stack:
+                    p, q = stack.pop()
+                    cells.append((p, q))
+                    for n, m in [(p + s, q + t) for s in (-2, -1, 0, 1, 2) for t in (-2, -1, 0, 1, 2)]:
+                        if 0 <= n < h and 0 <= m < w and on[n][m] and (n, m) not in seen:
+                            seen.add((n, m))
+                            stack.append((n, m))
+                boxes.append((min(c[1] for c in cells) * cell, min(c[0] for c in cells) * cell,
+                              (max(c[1] for c in cells) + 1) * cell, (max(c[0] for c in cells) + 1) * cell))
+    im = y.copy()
+    dr = ImageDraw.Draw(im)
+    for bx in boxes:
+        dr.rectangle(bx, outline=(255, 30, 30), width=4)
+    im.save(dst, quality=80)
+    return f"img/{dst.name}", len(boxes)
+
+
 def summarize(r):
     if not r:
         return {"rig": "not labelled", "undo": None, "tried": None, "teacher": None}
@@ -157,7 +212,8 @@ def main():
                         "reasoning": re.sub(r"```.*", "", str(lines[i - 1].get("response", "")), flags=re.S).strip()[:600],
                         "before": before, "before_replayed": before_replayed, "after": after, "changes": changes, "windows_before": win_before, "windows_after": win_after,
                         "changes_source": source, "on_task_draft": None if m is None else m["on_task"],
-                        "on_task_reason": None if m is None else m["reason"], **s, "first20": prio == 0 or kind == "snapshot" or r["row_id"] in CONTROLS})
+                        "on_task_reason": None if m is None else m["reason"], **s, "first20": prio == 0 or kind == "snapshot" or r["row_id"] in CONTROLS,
+                        "plan": plan_of(lines), "changed_picture": changes_picture(r["row_id"])})
     # the steps of the snapshot run left out as unchanged, so that run can be read whole from start to end
     have = {x["step"] for x in out if x["run"] == "snapshot"}
     snap = next(x for x in json.load(open(BASE / "rig/clickspots_agent_snap3.json"))["rows"])
@@ -176,7 +232,7 @@ def main():
                     "after": jpg(st / f"s{i:02d}" / "screenshot.png", f"{rid}_a"), "changes": file_changes(s0.digest, s1.digest),
                     "windows_before": windows(s0.windows), "windows_after": windows(s1.windows), "changes_source": "recorded during the agent's run",
                     "on_task_draft": None, "on_task_reason": None, "rig": "left out: the rig's recorded states were equal", "undo": None, "tried": None,
-                    "teacher": None, "first20": False})
+                    "teacher": None, "first20": False, "plan": plan_of(lines), "changed_picture": changes_picture(rid)})
     order = {"snapshot": 0, "recorded": 1, "first run": 2}
     out.sort(key=lambda x: (not x["first20"], x["task"], order[x["run"]], x["step"]))
     (OUT / "rows.json").write_text(json.dumps(out, indent=1))

@@ -49,6 +49,10 @@ article { background: var(--panel); border: 1px solid var(--line); border-radius
 pre { background: var(--code); border-radius: 4px; padding: 10px 12px; margin: 0; font: 13px/1.45 var(--mono); overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
 .reason { color: var(--muted); margin: 0; font-size: 14px; }
 .shots { display: grid; gap: 8px; }
+.plan { margin: 0; padding: 0; list-style: none; display: grid; gap: 1px; font-size: 14px; max-height: 240px; overflow: auto; border: 1px solid var(--line); border-radius: 4px; }
+.plan li { display: flex; gap: 8px; padding: 4px 8px; color: var(--muted); }
+.plan li b { flex: none; width: 1.8em; text-align: right; font-weight: 500; }
+.plan li.now { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
 .flipbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
 .flipbar button { font: inherit; font-weight: 600; padding: 8px 18px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: inherit; cursor: pointer; }
 .flipbar button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
@@ -115,6 +119,7 @@ textarea, input[type="text"] { font: 14px var(--sans); color: var(--ink); backgr
 <div id="full" hidden><div class="flipbar" id="zoombar"></div><img alt="" id="zoomimg"></div>
 
 <script>
+const NEXT = { before: "after", after: "changes", changes: "before" }, PREV = { before: "changes", after: "before", changes: "after" };
 const RUNS = { snapshot: "newest run", recorded: "earlier run", "first run": "first run" };
 let rows = [], answers = {}, current = 0, filter = "run", db = null, uid = null, view = "before";
 
@@ -150,17 +155,20 @@ function renderList() {
 function flipButtons(full) {
   return `<button type="button" data-view="before" aria-pressed="${view === "before"}">Before</button>
     <button type="button" data-view="after" aria-pressed="${view === "after"}">After</button>
+    <button type="button" data-view="changes" aria-pressed="${view === "changes"}">Changes</button>
     ${full ? `<button type="button" id="closefull">Close (Esc)</button><span>Click the picture or press &larr; &rarr; to flip</span>`
            : `<button type="button" id="gofull">Full screen</button><span>Keys &larr; &rarr; flip</span>`}`;
 }
 
 function shots(r) {
+  const [changed, boxes] = r.changed_picture || [null, null];
   const one = (src, name, cap) => src
     ? `<img src="${esc(src)}" alt="${esc(cap)}" data-shot="${name}" data-zoom ${view === name ? "" : "hidden"}>`
     : `<div class="missing" data-shot="${name}" ${view === name ? "" : "hidden"}>No screenshot</div>`;
   const note = r.before_replayed ? `<p class="hint">The before picture comes from the rig's replay: the agent has none from before its first step.</p>` : "";
   return `<div class="shots"><div class="flipbar" id="flipbar">${flipButtons()}</div>
-    <figure>${one(r.before, "before", "Before the step")}${one(r.after, "after", "After the step")}</figure>${note}</div>`;
+    <figure>${one(r.before, "before", "Before the step")}${one(r.after, "after", "After the step")}${one(changed, "changes", "After the step, with what changed boxed in red")}</figure>
+    <p class="hint">${boxes === 0 ? "No visible change between the two pictures, apart from the clock." : boxes != null ? `Changes view: ${boxes} part${boxes === 1 ? "" : "s"} of the screen differ.` : ""}</p>${note}</div>`;
 }
 
 function setView(v) {
@@ -200,9 +208,11 @@ function renderStep() {
   $("#step").innerHTML = `
     <div class="meta"><span class="id">${esc(r.id)}</span><span>${esc(r.task)}, step ${r.step} of ${r.of}</span><span>${esc(r.run)} run</span></div>
     <div><p class="label">Task given to the agent</p><p class="instr">${esc(r.instruction)}</p></div>
+    ${r.plan ? `<div><p class="label">The whole run, in the agent's own words (what it meant to do, not always what happened)</p>
+      <ol class="plan">${r.plan.map((t, i) => `<li class="${i + 1 === r.step ? "now" : ""}"><b>${i + 1}</b><span>${esc(t)}</span></li>`).join("")}</ol></div>` : ""}
+    ${shots(r)}
     ${r.reasoning ? `<div><p class="label">What the agent said before this step</p><p class="reason">${esc(r.reasoning)}</p></div>` : ""}
     <div><p class="label">The action it took</p><pre>${esc(r.code)}</pre></div>
-    ${shots(r)}
     <div class="facts">
       <div class="fact"><p class="label">Files that changed${r.changes_source ? ` (from ${esc(r.changes_source)})` : ""}</p>${ch}</div>
       <div class="fact"><p class="label">Windows</p>${win}</div>
@@ -269,7 +279,7 @@ document.addEventListener("click", e => {
   if (e.target.id === "skip" || e.target.id === "next") { go(1); return; }
   const fl = e.target.closest("[data-view]"); if (fl) { setView(fl.dataset.view); return; }
   if (e.target.id === "closefull") { closeFull(); return; }
-  if (e.target.id === "zoomimg") { setView(view === "before" ? "after" : "before"); return; }
+  if (e.target.id === "zoomimg") { setView(NEXT[view]); return; }
   if (e.target.id === "gofull" || e.target.closest("[data-zoom]")) { openFull(); return; }
 });
 document.addEventListener("submit", e => { if (e.target.id === "f") save(e); });
@@ -278,7 +288,7 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape" && !$("#full").hidden) { closeFull(); return; }
   if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
   if (e.target.closest && e.target.closest('input[type="text"], textarea')) return;
-  e.preventDefault(); setView(e.key === "ArrowLeft" ? "before" : "after");
+  e.preventDefault(); setView(e.key === "ArrowLeft" ? PREV[view] : NEXT[view]);
 });
 
 fetch("rows.json").then(r => r.json()).then(data => {
