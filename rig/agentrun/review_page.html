@@ -102,7 +102,8 @@ textarea, input[type="text"] { font: 14px var(--sans); color: var(--ink); backgr
   <div class="main">
     <nav aria-label="Steps">
       <div class="filters" role="group" aria-label="Show">
-        <button type="button" data-f="first" aria-pressed="true">First 20</button>
+        <button type="button" data-f="run" aria-pressed="true">One full run</button>
+        <button type="button" data-f="first" aria-pressed="false">First 20</button>
         <button type="button" data-f="todo" aria-pressed="false">Not answered</button>
         <button type="button" data-f="all" aria-pressed="false">All</button>
       </div>
@@ -114,7 +115,8 @@ textarea, input[type="text"] { font: 14px var(--sans); color: var(--ink); backgr
 <div id="full" hidden><div class="flipbar" id="zoombar"></div><img alt="" id="zoomimg"></div>
 
 <script>
-let rows = [], answers = {}, current = 0, filter = "first", db = null, uid = null, view = "before";
+const RUNS = { snapshot: "newest run", recorded: "earlier run", "first run": "first run" };
+let rows = [], answers = {}, current = 0, filter = "run", db = null, uid = null, view = "before";
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -125,16 +127,18 @@ function pill(rig) {
 }
 
 function visible() {
-  return rows.map((r, i) => [r, i]).filter(([r]) =>
-    filter === "all" ? true : filter === "todo" ? !answers[r.id] : r.first20);
+  const seen = rows.map((r, i) => [r, i]).filter(([r]) =>
+    filter === "all" ? true : filter === "todo" ? !answers[r.id] : filter === "run" ? r.run === "snapshot" : r.first20);
+  return filter === "run" ? seen.sort(([a], [b]) => a.step - b.step) : seen;
 }
 
 function renderList() {
   const list = $("#list"); let html = "", last = null;
   for (const [r, i] of visible()) {
-    if (r.first20 !== last) { html += `<div class="group">${r.first20 ? "First 20" : "The rest"}</div>`; last = r.first20; }
+    const head = `${r.task}, ${RUNS[r.run]}`;
+    if (head !== last) { html += `<div class="group">${esc(head)}</div>`; last = head; }
     html += `<button type="button" class="item" data-i="${i}" aria-current="${i === current}">
-      <i class="dot ${answers[r.id] ? "done" : ""}" aria-hidden="true"></i><span>${esc(r.task)} &middot; step ${r.step}</span></button>`;
+      <i class="dot ${answers[r.id] ? "done" : ""}" aria-hidden="true"></i><span>Step ${r.step} of ${r.of}</span></button>`;
   }
   list.innerHTML = html || `<p class="hint" style="padding:12px">Nothing in this view.</p>`;
   const done = rows.filter(r => answers[r.id]).length;

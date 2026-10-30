@@ -158,7 +158,27 @@ def main():
                         "before": before, "before_replayed": before_replayed, "after": after, "changes": changes, "windows_before": win_before, "windows_after": win_after,
                         "changes_source": source, "on_task_draft": None if m is None else m["on_task"],
                         "on_task_reason": None if m is None else m["reason"], **s, "first20": prio == 0 or kind == "snapshot" or r["row_id"] in CONTROLS})
-    out.sort(key=lambda x: (not x["first20"], x["task"], x["run"], x["step"]))
+    # the steps of the snapshot run left out as unchanged, so that run can be read whole from start to end
+    have = {x["step"] for x in out if x["run"] == "snapshot"}
+    snap = next(x for x in json.load(open(BASE / "rig/clickspots_agent_snap3.json"))["rows"])
+    traj = BASE / snap["source_traj"]
+    lines = [json.loads(l) for l in traj.read_text().splitlines() if l.strip()]
+    lines = [l for l in lines if "action" in l]
+    for i in range(1, len(lines) + 1):
+        if i in have:
+            continue
+        rid, st = f"ags3-change_permissions-{i:02d}", traj.parent / "states"
+        s0, s1 = load_snapshot(st / f"s{i - 1:02d}"), load_snapshot(st / f"s{i:02d}")
+        out.append({"id": rid, "run": "snapshot", "task": snap["task_id"].strip("_"), "instruction": tasks[snap["task_id"]]["instruction"],
+                    "step": i, "of": len(lines), "code": str(lines[i - 1]["action"]).replace("import pyautogui\nimport time\n", ""),
+                    "reasoning": re.sub(r"```.*", "", str(lines[i - 1].get("response", "")), flags=re.S).strip()[:600],
+                    "before": jpg(st / f"s{i - 1:02d}" / "screenshot.png", f"{rid}_b"), "before_replayed": False,
+                    "after": jpg(st / f"s{i:02d}" / "screenshot.png", f"{rid}_a"), "changes": file_changes(s0.digest, s1.digest),
+                    "windows_before": windows(s0.windows), "windows_after": windows(s1.windows), "changes_source": "recorded during the agent's run",
+                    "on_task_draft": None, "on_task_reason": None, "rig": "left out: the rig's recorded states were equal", "undo": None, "tried": None,
+                    "teacher": None, "first20": False})
+    order = {"snapshot": 0, "recorded": 1, "first run": 2}
+    out.sort(key=lambda x: (not x["first20"], x["task"], order[x["run"]], x["step"]))
     (OUT / "rows.json").write_text(json.dumps(out, indent=1))
     print(len(out), "rows;", sum(1 for x in out if x["before"]), "with before shots;", sum(1 for x in out if x["changes"] is not None), "with file changes")
     print("first sitting:", sum(1 for x in out if x["first20"]))
