@@ -12,3 +12,4 @@ v3-0080  Files paste over a same-named file in ~/Documents/Papers: the Files win
 v3-0070  VS Code Save As onto a sibling's name, the replace question open: Escape closes the question but no key closes the GTK chooser afterwards (Escape, Ctrl+W, Alt+F4, with and without focusing it; three passes 27 Oct); the question itself is a cancel, so the one-way label is a rig limit
 v3-0072  same as v3-0070 (tetris task)
 v3-0074  same as v3-0070 (vs_code task)
+v3-0052  Impress save over another file: 3 of 4 candidates not judged (after-state not reproduced in 3 resets), so the no-undo label was not tested; excluded at the next export (author, 30 Oct)
