@@ -545,7 +545,9 @@ class Collector:
         t = time.time()
         if expect_kind in ("calc", "dialog", "start_center", "second_window"):
             self.settle_windows()
-        primed = self.warm_accessibility() if getattr(self, "_warm_code", False) else None
+        # the size shortcut never applies to S or S' themselves: a half-filled S' the size of S would hide the action
+        primed = (self.warm_accessibility(refs=meta.get("kind") not in ("before", "after"))
+                  if getattr(self, "_warm_code", False) else None)
         if expect_kind == "none":                     # no readiness gate: an application whose bus name is not known yet
             snap = take_snapshot(self.env, path, meta, expect=None, require_office=False, primed=primed)
         elif expect_kind.startswith("apps:"):
@@ -585,18 +587,25 @@ class Collector:
         text = json.dumps(task.get("config", [])).lower() + " " + json.dumps(row.get("reopen_cmd") or []).lower() + " " + str(row.get("code", "")).lower()
         return any(k in text for k in ("vscode", "vs_code", "\"code\"", "code -g", ".pdf", "evince"))
 
-    def warm_accessibility(self, reads: int = 3, tolerance: float = 0.02):
+    def warm_accessibility(self, reads: int = 3, tolerance: float = 0.02, refs: bool = False):
         """VS Code (Chromium) exposes its web content to the accessibility bus only once something has asked for it,
         and fills it in over a few seconds: v2-0040 (24 Oct, VS Code no-op) recorded 50 nodes in S and 340 in S', the
         editor absent from the first.  Walk the tree until two consecutive reads agree in size (at most `reads`).
         Returns the last read, (xml, stats), when it agreed with the one before: the snapshot uses it instead of a
-        fourth walk (30 Oct: about 40 s each in VS Code).  None otherwise, and the snapshot walks again."""
+        fourth walk (30 Oct: about 40 s each in VS Code).  None otherwise, and the snapshot walks again.
+        With refs (candidates, confirmations, replays; never S or S'), a first read already within the same tolerance
+        of a full tree this row recorded (S or S', self._warm_refs) is taken at once: a VS Code tree still filling in is far smaller (50 nodes of 586, 29 Oct), and restores of
+        VS Code rows come back warm, so the second read only repeated the first (30 Oct check: two or three walks
+        of 29-38 s per candidate)."""
         from rig.fasttree import fast_tree
         prev = None
-        for _ in range(reads):
+        for i in range(reads):
             xml, stats = fast_tree(self.env)
             n = xml.count("<")
-            if prev is not None and abs(n - prev) <= max(5, tolerance * max(n, prev)):
+            near = lambda m: abs(n - m) <= max(5, tolerance * max(n, m))
+            if refs and xml and i == 0 and any(near(m) for m in getattr(self, "_warm_refs", [])):
+                return xml, {**stats, "warm_ref": True}
+            if prev is not None and near(prev):
                 return (xml, stats) if xml else None
             prev = n
             time.sleep(3)
@@ -654,6 +663,7 @@ class Collector:
         # saving before any walk, since walking LibreOffice and then acting on it made it vanish (probe-0005)
         self._snap_after_walk = self.vmsnap is not None and row.get("app") == "vs_code"
         self._cur_row = row
+        self._warm_refs = []             # sizes of this row's full trees (S, S'), for warm_accessibility
         spot = self.spots[row["spot_id"]]
         rdir = self.out / rid
         rdir.mkdir(parents=True, exist_ok=True)
@@ -677,6 +687,8 @@ class Collector:
             time.sleep(3)
             S = self.snapshot(rdir / "S", {"row": rid, "kind": "before", **info, "retake": True}, expect_kind=row.get("expect_before", "calc"))
         signal.alarm(0)
+        if S.ok and S.tree_xml:
+            self._warm_refs = [S.tree_xml.count("<")]
         rec["snapshot_before"] = str(S.path.relative_to(self.out))
         rec["before_ok"] = S.ok
         rec["tree_before"] = str((S.path / "tree.xml").relative_to(self.out))
@@ -809,6 +821,8 @@ class Collector:
             kept = rdir / f"S1_misfire_{action_try}"
             shutil.rmtree(kept, ignore_errors=True)
             (rdir / "S1").rename(kept)
+        if S1.ok and S1.tree_xml:
+            self._warm_refs = [m for m in self._warm_refs[:1]] + [S1.tree_xml.count("<")]
         rec["action_misfires"] = misfires
         rec["action_misfired"] = bool(want_change) and not (changed & want_change)
         rec["snapshot_after"] = str(S1.path.relative_to(self.out))

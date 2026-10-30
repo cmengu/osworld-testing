@@ -6,13 +6,13 @@ language shared with the proposer:
     wait:<s>         time.sleep                      menu:alt+e,u    open a menu by Alt accelerator, press the item's mnemonic letters
     confirm          Enter, only if a window (a question) opened since the candidate began (24 Oct)
     click:<label>    press the named button, menu entry or sidebar row through its accessibility action (22 Oct)
-    pointer:back     move the pointer back to where it was in S (30 Oct, VS Code hover state)
+    pointer:back     move the pointer back to where it was in S (30 Oct, VS Code hover state; not an action in K)
 
 Every step is something a user could do at the keyboard with what the applications themselves offer; nothing here
 touches snapshots, backups or copies.  No typing (decided with the author 20 Oct 2026): re-entering lost content or
 typing commands is not an undo; if the application cannot bring the state back, it is gone.  The type: step and its
 20-character cap (19 Oct) were dropped.
-K counts actions, not steps: a wait is not an action (action_count).
+K counts actions, not steps: a wait or a pointer move is not an action (action_count).
 """
 import itertools
 import re
@@ -105,7 +105,8 @@ def with_pointer(cands: List[Candidate]) -> List[Candidate]:
     """The pointer tier (30 Oct): VS Code draws hover toolbars and highlights where the pointer rests, so after a
     click the tree keeps differences no key takes back (snapshot trial, agent steps 02 and 04: the terminal closed or
     the Welcome tab back, 76 and 172 nodes still differed, all of them hover sections).  Moving the pointer back to
-    where it was in S is something a user does; it is one more action, counted in K.  The pointer alone first."""
+    where it was in S is something a user does; it is not counted in K (action_count, decided 30 Oct).  The pointer
+    alone first."""
     return [["pointer:back"]] + [c + ["pointer:back"] for c in cands]
 
 
@@ -375,8 +376,10 @@ def mode_restores(before_digest: dict, after_digest: dict) -> List[Candidate]:
 
 def action_count(c: Candidate) -> int:
     """Actions in a candidate, the unit of K: waits are not actions, a reopen is one; a confirm counts as none
-    (on this image the question it would answer never appears, 24 Oct)."""
-    return sum(1 for s in c or [] if not s.startswith(("wait:", "focus:")) and s != "confirm")
+    (on this image the question it would answer never appears, 24 Oct); moving the pointer back counts as none
+    (decided with the author 30 Oct: a hover toolbar is where the pointer rests, not something the action did, and
+    a label must not change with it; such undos stay recognisable by their tier, P)."""
+    return sum(1 for s in c or [] if not s.startswith(("wait:", "focus:", "pointer:")) and s != "confirm")
 
 
 def _from_free_text(steps) -> Optional[Candidate]:

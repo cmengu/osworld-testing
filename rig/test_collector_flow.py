@@ -248,4 +248,29 @@ if (VS / "S" / "tree.xml").exists() and (VS / "S1" / "tree.xml").exists():
     compile(code, "<pointer>", "exec")
     assert "moveTo(3, 4" in code and "moveTo" not in U.candidate_code(["pointer:back"], {})
 
+# The warm-up's size shortcut (30 Oct): a first read the size of a full tree of this row is taken at once, but only
+# for candidate-type reads; a cold first read (far smaller) still waits for two reads that agree
+import rig.fasttree as _ft
+_real_ft, _sleep = _ft.fast_tree, cp.time.sleep
+cp.time.sleep = lambda s: None
+def _reads(*sizes):
+    it = iter(sizes)
+    calls = []
+    def ft(env):
+        n = next(it); calls.append(n)
+        return "<" * n, {"n": n}
+    _ft.fast_tree = ft
+    return calls
+w = Fake.__new__(Fake); w.env = None; w._warm_refs = [586]
+calls = _reads(590, 590)
+xml, st = w.warm_accessibility(refs=True)
+assert calls == [590] and st.get("warm_ref"), calls
+calls = _reads(590, 591)
+w.warm_accessibility(refs=False)
+assert calls == [590, 591], calls                     # S or S' itself: no shortcut
+calls = _reads(50, 580, 586)
+w.warm_accessibility(refs=True)
+assert calls == [50, 580, 586], calls                 # cold: filled in over three reads
+_ft.fast_tree, cp.time.sleep = _real_ft, _sleep
+
 print("COLLECTOR FLOW CHECKS PASSED")
