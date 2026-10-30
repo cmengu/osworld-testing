@@ -100,6 +100,10 @@ def main():
                     help="leave out steps whose recorded states before and after are equal (listed in meta.skipped_unchanged)")
     ap.add_argument("--mask", default=str(BASE / "rig" / "out" / "mask_run" / "mask.json"))
     a = ap.parse_args()
+    # absolute before anything imports rig.collect_pilot, which changes into OSWorld (30 Oct: a relative --out was
+    # written under OSWorld/, the run's script found no rows and ended the agent's sandbox with its snapshots)
+    a.out = str(pathlib.Path(a.out).resolve())
+    a.result_dirs = [str(pathlib.Path(d).resolve()) for d in a.result_dirs]
     mask = json.loads(pathlib.Path(a.mask).read_text()) if a.skip_unchanged else None
     rows, seen, skipped = [], set(), []
     for rd in a.result_dirs:
