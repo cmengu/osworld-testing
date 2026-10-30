@@ -234,7 +234,7 @@ if (VS / "S" / "tree.xml").exists() and (VS / "S1" / "tree.xml").exists():
             return snap
 
     VS_S, VS_S1 = load_snapshot(VS / "S"), load_snapshot(VS / "S1")
-    vs_args = argparse.Namespace(**{**vars(args), "out": tempfile.mkdtemp(), "spots": str(HERE / "clickspots_agent_snap.json"),
+    vs_args = argparse.Namespace(**{**vars(args), "out": tempfile.mkdtemp(), "spots": str(HERE / "clickspots_agent_snap.json"), "budget": 55,
                                     "no_zero_shot": True})
     teacher.guess_b = lambda *a, **k: {"reversible": True, "shortest_undo": [], "model": "fake"}
     v = FakeVS(vs_args)

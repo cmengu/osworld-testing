@@ -1027,12 +1027,15 @@ class Collector:
             if rec["app"] == "vs_code":
                 # VS Code's own routes before the generic tier (30 Oct; undo.py VSCODE_FIRST), then the same with the
                 # pointer moved back where S had it, when the action moved it (tier "P", undo.py with_pointer)
+                # Guess B's own undo straight after tier V (30 Oct check, step 04: queued after the generic tier, its
+                # Ctrl+W came 4 s after the row's cap)
                 tiers.append(("V", U.VSCODE_FIRST))
+                tiers.append(("B", None))
                 p0, p1 = S.meta.get("pointer"), S1.meta.get("pointer")
                 if p0 and p1 and p0 != p1:
-                    tiers.append(("P", U.with_pointer(U.VSCODE_FIRST[:5] + [["key:ctrl+z"], ["key:escape"]])))
+                    tiers.append(("P", U.with_pointer(U.VSCODE_FIRST[:6] + [["key:ctrl+z"], ["key:escape"]])))
             tiers += [(1, [U.fill_mnemonics(c, self.mnemonics) for c in U.GENERIC]),
-                     ("B", None),
+                     *([] if rec["app"] == "vs_code" else [("B", None)]),
                      (2, [U.fill_mnemonics(c, self.mnemonics) for c in U.tier2(rec["app"])])]
             tried = []
             idx = 0

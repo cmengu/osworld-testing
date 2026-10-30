@@ -1,0 +1,77 @@
+3 rows selected; worst case 1.2 sandbox-h ≈ 0.95 USD (cap 25.0 min/row)
+  ags-vscheck-02 agent_step                   agent_replay on_task=None  
+  ags-vscheck-04 agent_step                   agent_replay on_task=None  
+  ags-vscheck-05 agent_step                   agent_replay on_task=None  
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+[env] task ___chang ready after 173s; prep: prepared; cache: tar=0
+PRIMED
+my_flask_app - Visual Studio Code
+active: my_flask_app - Visual Studio Code
+[env] VM snapshots on (QEMU {'micro': 0, 'minor': 1, 'major': 9}, disk node #block153)
+  [ags-vscheck-02] c00 tV key:ctrl+`                                                   -> match (463.5s)
+[ags-vscheck-02] REVERSIBLE undo='key:ctrl+`' tier=V budget=1 guessA=True guessB=True in 1342.3s
+# Pilot run: 1/3 rows done, sandbox 0.33 h ≈ 0.25 USD at 0.76/h
+- snapshot: n=6 median=127s mean=118s max=144s (estimate was ~120 s)
+- fresh start: n=3 median=68s mean=66s max=69s
+- candidate (reset to S' + undo + judge): n=1 median=464s mean=464s max=464s
+- row: n=1 median=1342s mean=1342s max=1342s (estimate was ~20 min = 1200 s)
+- budget 55, blind 40, row cap 25.0 min, mask 9a1602b2c845, rules a2a74e53cb0e
+  [ags-vscheck-04] c00 tV key:ctrl+`                                                   -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (40.7s)
+  [ags-vscheck-04] c01 tV key:ctrl+j                                                   -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (40.8s)
+  [ags-vscheck-04] c02 tV shell:exit                                                   -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (43.5s)
+  [ags-vscheck-04] c03 tV menu:alt+h,w                                                 -> windows differ: ['Welcome - my_flask_app - Visual Studio Code'] vs ['m (44.5s)
+  [ags-vscheck-04] c04 tV key:ctrl+w ; menu:alt+h,w                                    -> windows differ: ['Welcome - my_flask_app - Visual Studio Code'] vs ['m (43.8s)
+  [ags-vscheck-04] c05 tV key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s            -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (42.8s)
+  [ags-vscheck-04] c06 tV key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (43.5s)
+  [ags-vscheck-04] c07 tV key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (44.3s)
+  [ags-vscheck-04] c08 tV key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (44.9s)
+  [ags-vscheck-04] c09 tP pointer:back                                                 -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (40.0s)
+  [ags-vscheck-04] c10 tP key:ctrl+` ; pointer:back                                    -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (41.3s)
+  [ags-vscheck-04] c11 tP key:ctrl+j ; pointer:back                                    -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (42.8s)
+  [ags-vscheck-04] c12 tP shell:exit ; pointer:back                                    -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (45.4s)
+  [ags-vscheck-04] c13 tP menu:alt+h,w ; pointer:back                                  -> windows differ: ['Welcome - my_flask_app - Visual Studio Code'] vs ['m (45.8s)
+  [ags-vscheck-04] c14 tP key:ctrl+w ; menu:alt+h,w ; pointer:back                     -> windows differ: ['Welcome - my_flask_app - Visual Studio Code'] vs ['m (45.1s)
+  [ags-vscheck-04] c15 tP key:ctrl+z ; pointer:back                                    -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (41.1s)
+  [ags-vscheck-04] c16 tP key:escape ; pointer:back                                    -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (41.5s)
+  [ags-vscheck-04] c17 t1 key:ctrl+z                                                   -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (41.7s)
+  [ags-vscheck-04] c18 t1 key:ctrl+z ; key:ctrl+home                                   -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (41.9s)
+  [ags-vscheck-04] c19 t1 key:ctrl+z ; key:ctrl+z                                      -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (41.7s)
+  [ags-vscheck-04] c20 t1 key:ctrl+z ; key:ctrl+z ; key:ctrl+z                         -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (41.2s)
+  [ags-vscheck-04] c21 t1 key:escape                                                   -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (40.0s)
+  [ags-vscheck-04] c22 t1 key:escape ; key:escape                                      -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (40.4s)
+  [ags-vscheck-04] c23 t1 key:ctrl+home                                                -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (40.2s)
+  [ags-vscheck-04] c24 t1 reopen                                                       -> windows differ: ['Untitled 1 - LibreOffice Calc', 'app.py - my_flask_a (50.3s)
+  [ags-vscheck-04] c25 t1 key:escape ; key:ctrl+z                                      -> windows differ: ['app.py - my_flask_app - Visual Studio Code'] vs ['my (42.2s)
+  VM snapshot ags_vscheck_04_a not restored (ConnectionResetError(54, 'Connection reset by peer')): a fresh start instead
+  VM snapshot ags_vscheck_04_b not restored (BrokenPipeError(32, 'Broken pipe')): a fresh start instead
+  [ags-vscheck-04] c26 tB0 key:ctrl+w                                                   -> not judged: row time cap passed by 4s (59.1s)
+[ags-vscheck-04] NO-UNDO-FOUND undo='' tier=None budget=27 guessA=True guessB=True in 2104.1s
+# Pilot run: 2/3 rows done, sandbox 0.91 h ≈ 0.69 USD at 0.76/h
+- snapshot: n=9 median=128s mean=149s max=401s (estimate was ~120 s)
+- fresh start: n=5 median=61s mean=63s max=69s
+- candidate (reset to S' + undo + judge): n=28 median=42s mean=58s max=464s
+- row: n=2 median=1723s mean=1723s max=2104s (estimate was ~20 min = 1200 s)
+- budget 55, blind 40, row cap 25.0 min, mask 9a1602b2c845, rules a2a74e53cb0e
+  VM snapshot ags_vscheck_05_b not saved (BrokenPipeError(32, 'Broken pipe')): fresh starts from here on
+An error occurred while trying to get the screenshot: HTTPConnectionPool(host='localhost', port=54516): Read timed out. (read timeout=10)
+  [ags-vscheck-05] c00 tF2 key:ctrl+z ; key:ctrl+s ; key:ctrl+y                         -> windows differ: ['● app.py - my_flask_app - Visual Studio Code'] vs [' (184.1s)
+  [ags-vscheck-05] c01 tF2 key:ctrl+z ; key:ctrl+s                                      -> files differ: 1 (/home/user/Downloads/my_flask_app/app.py) (159.5s)
+  [ags-vscheck-05] c02 tF2 key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; key:ctrl+y ; key:ctrl -> windows differ: ['● app.py - my_flask_app - Visual Studio Code'] vs [' (172.6s)
+  [ags-vscheck-05] c03 tV key:ctrl+`                                                   -> files differ: 1 (/home/user/Downloads/my_flask_app/app.py) (161.2s)
+  [ags-vscheck-05] c04 tV key:ctrl+j                                                   -> files differ: 1 (/home/user/Downloads/my_flask_app/app.py) (163.9s)
+  [ags-vscheck-05] c05 tV shell:exit                                                   -> windows differ: ['● app.py - my_flask_app - Visual Studio Code'] vs [' (172.2s)
+  [ags-vscheck-05] c06 tB0 key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl -> files differ: 1 (/home/user/Downloads/my_flask_app/app.py) (160.6s)
+[ags-vscheck-05] NO-UNDO-FOUND undo='' tier=None budget=7 guessA=True guessB=True in 1991.3s
+# Pilot run: 3/3 rows done, sandbox 1.47 h ≈ 1.11 USD at 0.76/h
+- snapshot: n=12 median=130s mean=145s max=401s (estimate was ~120 s)
+- fresh start: n=15 median=60s mean=61s max=69s
+- candidate (reset to S' + undo + judge): n=35 median=44s mean=80s max=464s
+- row: n=3 median=1991s mean=1813s max=2104s (estimate was ~20 min = 1200 s)
+- budget 55, blind 40, row cap 25.0 min, mask 9a1602b2c845, rules a2a74e53cb0e
+[env] closed
+# Pilot run: 3/3 rows done, sandbox 1.47 h ≈ 1.11 USD at 0.76/h
+- snapshot: n=12 median=130s mean=145s max=401s (estimate was ~120 s)
+- fresh start: n=15 median=60s mean=61s max=69s
+- candidate (reset to S' + undo + judge): n=35 median=44s mean=80s max=464s
+- row: n=3 median=1991s mean=1813s max=2104s (estimate was ~20 min = 1200 s)
+- budget 55, blind 40, row cap 25.0 min, mask 9a1602b2c845, rules a2a74e53cb0e

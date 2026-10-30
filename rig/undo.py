@@ -84,9 +84,11 @@ VSCODE: List[Candidate] = [
 # VS Code, tried before the generic tier (30 Oct, from the snapshot trial's agent steps on change_permissions, which
 # ran out their 30 minutes without them): the terminal panel an action opened closes with Ctrl+` or Ctrl+J, or goes
 # with its shell ("exit" typed into it, as a shell: step); a Welcome tab a file replaced comes back from Help >
-# Welcome (Alt+H, W); an overwrite of several lines that VS Code already autosaved needs more undo steps than two
+# Welcome (Alt+H, W); an editor a click opened closes with Ctrl+W; an overwrite of several lines that VS Code already autosaved needs more undo steps than two
 # before the file is saved back.
 VSCODE_FIRST: List[Candidate] = [
+    ["key:ctrl+w"],                                              # close the editor a click opened (30 Oct check, step 04:
+                                                                 # guess B's Ctrl+W came 4 s after the row's cap)
     ["key:ctrl+`"],
     ["key:ctrl+j"],
     ["shell:exit"],

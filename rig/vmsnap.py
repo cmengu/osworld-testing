@@ -27,18 +27,36 @@ class VMSnap:
             raise VMSnapError("no QMP port: set RIG_QEMU_QMP_PORT before the sandbox starts")
         self.env = env
         self.timeout = timeout
-        self.s = socket.create_connection(("127.0.0.1", port), timeout=30)
-        self.f = self.s.makefile("rb")
-        greeting = json.loads(self.f.readline())
-        self.qemu = greeting.get("QMP", {}).get("version", {}).get("qemu")
-        self._cmd("qmp_capabilities")
+        self.port = port
+        self._connect()
         disk = next(b for b in self._cmd("query-block")["return"] if b["device"] == "ide0-hd0")
         self.node = disk["inserted"]["node-name"]
         # snapshots already in the disk: an adopted sandbox keeps those the agent's run saved (sNN, lib_run_single.py)
         self.tags = {sn["name"] for sn in disk["inserted"]["image"].get("snapshots", [])}
         self.n = 0
 
+    def _connect(self):
+        self.s = socket.create_connection(("127.0.0.1", self.port), timeout=30)
+        self.f = self.s.makefile("rb")
+        greeting = json.loads(self.f.readline())
+        self.qemu = greeting.get("QMP", {}).get("version", {}).get("qemu")
+        self._send("qmp_capabilities")
+
     def _cmd(self, name, **args):
+        """One command; a dropped tunnel is reopened once and the command sent again (30 Oct check: "Connection
+        reset by peer" after an hour, and every later restore fell back to a fresh start).  QEMU keeps its jobs and
+        snapshots across QMP connections, so a resent query is safe; a resent job start fails on its used job-id."""
+        try:
+            return self._send(name, **args)
+        except (OSError, VMSnapError, ValueError):
+            try:
+                self.s.close()
+            except Exception:
+                pass
+            self._connect()
+            return self._send(name, **args)
+
+    def _send(self, name, **args):
         self.s.settimeout(60)
         self.s.sendall(json.dumps({"execute": name, "arguments": args} if args else {"execute": name}).encode() + b"\n")
         while True:
