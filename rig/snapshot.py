@@ -147,19 +147,22 @@ def apps_ready(stats: dict, expect_apps) -> bool:
     return all(have.get(a, 0) >= 1 for a in expect_apps or [])
 
 
-def fetch_tree(env, attempts: int = 4, delay: float = 4.0, expect: str = "LibreOffice", expect_apps=None):
+def fetch_tree(env, attempts: int = 4, delay: float = 4.0, expect: str = "LibreOffice", expect_apps=None, primed=None):
     """Fast scoped walk first; the server's full walk as a last resort.  Returns (xml, info).
 
     A dump taken before the application has registered on the accessibility bus comes back
     without it, so a tree that lacks `expect` (a window-title fragment) or one of `expect_apps` is retried.
+    primed: (xml, stats) of a scoped walk the caller has just made (the collector's VS Code warm-up, whose last read
+    agreed with the one before it); used as the first attempt instead of walking again (30 Oct: each VS Code walk
+    takes about 40 s, and a candidate's snapshot walked three or four times).
     """
     info = {}
     last_xml = ""
     for i in range(attempts):
-        xml, stats = fast_tree(env)
+        xml, stats = primed if (i == 0 and primed) else fast_tree(env)
         formats_whole = not stats.get("format_skipped") and not stats.get("format_error")
         if xml and (not expect or expect in xml) and apps_ready(stats, expect_apps) and formats_whole:
-            info = {"source": "fast", **stats, "attempt": i + 1}
+            info = {"source": "fast", **stats, "attempt": i + 1, **({"primed": True} if i == 0 and primed else {})}
             return xml, info
         if xml and (not expect or expect in xml) and apps_ready(stats, expect_apps):
             # cell formats read only in part: some cells would carry a format and others not, which reads as
@@ -204,7 +207,8 @@ def _digest(env):
 
 
 def take_snapshot(env, out_dir: pathlib.Path, meta: Optional[dict] = None, with_screenshot: bool = True,
-                  expect: Optional[str] = "LibreOffice", require_office: bool = EXPECT_OFFICE, expect_apps=None) -> Snapshot:
+                  expect: Optional[str] = "LibreOffice", require_office: bool = EXPECT_OFFICE, expect_apps=None,
+                  primed=None) -> Snapshot:
     """expect: window-title fragment the tree must contain (None when the application may be closed);
     require_office: whether `ok` demands a LibreOffice frame with a shallow menu bar (False for states
     after Ctrl+Q, where the tree legitimately holds no office window); expect_apps: non-office applications that
@@ -215,7 +219,7 @@ def take_snapshot(env, out_dir: pathlib.Path, meta: Optional[dict] = None, with_
     meta["taken_at"] = time.time()
 
     t = time.time()
-    tree_xml, tree_info = fetch_tree(env, expect=expect or "", expect_apps=expect_apps)
+    tree_xml, tree_info = fetch_tree(env, expect=expect or "", expect_apps=expect_apps, primed=primed)
     meta["tree_seconds"] = round(time.time() - t, 1)
     meta["tree_info"] = tree_info
     (out_dir / "tree.xml").write_text(tree_xml)
@@ -232,6 +236,15 @@ def take_snapshot(env, out_dir: pathlib.Path, meta: Optional[dict] = None, with_
 
     windows = vm_shell(env, WINDOWS_SCRIPT, timeout=20).get("output") or ""
     (out_dir / "windows.txt").write_text(windows)
+    # the pointer's position (30 Oct): VS Code shows hover toolbars where the pointer rests, so a click leaves tree
+    # differences no key undoes; the collector's pointer candidate moves it back here
+    try:
+        xy = ((env.controller.execute_python_command("import pyautogui; p = pyautogui.position(); print(p[0], p[1])")
+               or {}).get("output") or "").split()
+        if len(xy) == 2:
+            meta["pointer"] = [int(xy[0]), int(xy[1])]
+    except Exception:
+        pass
 
     if with_screenshot:
         shot = env.controller.get_screenshot()

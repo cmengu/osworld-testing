@@ -6,6 +6,7 @@ language shared with the proposer:
     wait:<s>         time.sleep                      menu:alt+e,u    open a menu by Alt accelerator, press the item's mnemonic letters
     confirm          Enter, only if a window (a question) opened since the candidate began (24 Oct)
     click:<label>    press the named button, menu entry or sidebar row through its accessibility action (22 Oct)
+    pointer:back     move the pointer back to where it was in S (30 Oct, VS Code hover state)
 
 Every step is something a user could do at the keyboard with what the applications themselves offer; nothing here
 touches snapshots, backups or copies.  No typing (decided with the author 20 Oct 2026): re-entering lost content or
@@ -79,6 +80,32 @@ VSCODE: List[Candidate] = [
     ["key:ctrl+w", "wait:2", "reopen"],
     ["key:alt+f4"],
 ]
+
+# VS Code, tried before the generic tier (30 Oct, from the snapshot trial's agent steps on change_permissions, which
+# ran out their 30 minutes without them): the terminal panel an action opened closes with Ctrl+` or Ctrl+J, or goes
+# with its shell ("exit" typed into it, as a shell: step); a Welcome tab a file replaced comes back from Help >
+# Welcome (Alt+H, W); an overwrite of several lines that VS Code already autosaved needs more undo steps than two
+# before the file is saved back.
+VSCODE_FIRST: List[Candidate] = [
+    ["key:ctrl+`"],
+    ["key:ctrl+j"],
+    ["shell:exit"],
+    ["menu:alt+h,w"],
+    ["key:ctrl+w", "menu:alt+h,w"],
+    ["key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+s"],
+    ["key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+s"],
+    ["key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+s"],
+    ["key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+s"],
+]
+
+
+def with_pointer(cands: List[Candidate]) -> List[Candidate]:
+    """The pointer tier (30 Oct): VS Code draws hover toolbars and highlights where the pointer rests, so after a
+    click the tree keeps differences no key takes back (snapshot trial, agent steps 02 and 04: the terminal closed or
+    the Welcome tab back, 76 and 172 nodes still differed, all of them hover sections).  Moving the pointer back to
+    where it was in S is something a user does; it is one more action, counted in K.  The pointer alone first."""
+    return [["pointer:back"]] + [c + ["pointer:back"] for c in cands]
+
 
 # Thunderbird (24 Oct): a compose window with content asks "Save message?" on close (Don't Save is Alt+N as in
 # LibreOffice's dialog on this image, to be confirmed by the smoke rows); a moved or deleted message comes back
@@ -193,6 +220,12 @@ def step_code(step: str, ctx: dict) -> str:
         return click_code(arg, settle=3, proc=ctx.get("proc") or "*")
     if kind == "wait":
         return f"time.sleep({min(float(arg), 8.0)})"
+    if kind == "pointer":
+        # back to the pointer's position in S (snapshot meta "pointer", ctx["pointer"]); a no-op where it is unknown
+        xy = ctx.get("pointer")
+        if arg != "back":
+            raise ValueError(f"unknown pointer target {arg!r}")
+        return f"pyautogui.moveTo({int(xy[0])}, {int(xy[1])}, duration=0.3); time.sleep(1.5)" if xy else "time.sleep(0.1)"
     if kind == "confirm":
         # Enter for a question the previous step may have opened (Keep Current Format, Save Document?), pressed only
         # when a window appeared since the candidate began: on this image LibreOffice saves .pptx/.docx without the

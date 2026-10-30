@@ -28,14 +28,14 @@ class Fake(cp.Collector):
     def ensure_task(self, task_id):
         return "fake"
 
-    def reset_to_before(self, row):
+    def reset_to_before(self, row, fresh=False):
         self.state = S_REC
         return {"fresh_start": "fake"}
 
     def act(self, row):
         self.state = S_REC if row.get("code") == "noop" else S1_REC
 
-    def reset_to_after(self, row, expect_windows="", expect_digest=None):
+    def reset_to_after(self, row, expect_windows="", expect_digest=None, independent=False):
         self.state = S1_REC
         return {"fresh_start": "fake"}
 
@@ -109,7 +109,7 @@ assert r["labels_by_k"]["1"] == "REVERSIBLE" and r["guess_b_zero_shot"]["source"
 # probe-0007's failure: resets whose action silently failed leave S on screen, so every candidate "matches".
 # Confirmation re-reads the full state after the reset; it is never S', so no match survives and the label is no-undo.
 class Broken(Fake):
-    def reset_to_after(self, row, expect_windows="", expect_digest=None):
+    def reset_to_after(self, row, expect_windows="", expect_digest=None, independent=False):
         self.state = S_REC
         return {"fresh_start": "fake"}
 
@@ -124,7 +124,7 @@ assert all(x.get("result", "").startswith("match not confirmed") for x in r["und
 
 # The window tier: more windows after the action than before puts Escape, Ctrl+W, Alt+F4 first; a changed title alone does not
 w0 = "0x1 0 host Desktop\n0x2 0 host a.xlsx - LibreOffice Calc\n"
-assert cp.window_tier(w0, w0 + "0x3 0 host Format Cells\n") == [["key:escape"], ["key:ctrl+w"], ["key:alt+f4"]]
+assert cp.window_tier(w0, w0 + "0x3 0 host Format Cells\n") == [list(c) for c in cp.WINDOW_CLOSERS]
 assert cp.window_tier(w0, "0x1 0 host Desktop\n0x2 0 host b.xlsx - LibreOffice Calc\n") == []
 
 # The real reset_to_after: a reset whose action left the files as in S (the Delete did not happen) is redone, and three
@@ -207,5 +207,45 @@ assert U.parse_step("click:") is None and U.action_count(["click:Trash", "wait:2
 code = U.candidate_code(["click:Undo Trash"], {"proc": "nautilus"})
 compile(code, "<click>", "exec")
 assert "'Undo Trash'" in code and "'nautilus'" in code and "doAction" in code
+
+# VS Code (30 Oct): an action that moved the pointer gets VS Code's own routes (tier V) and then the same with the
+# pointer moved back where S had it (tier P); the agent step 02 of the snapshot trial, recorded states, pointer faked
+VS = HERE / "out" / "agent_snap_label" / "ags-change_permissions-02"
+if (VS / "S" / "tree.xml").exists() and (VS / "S1" / "tree.xml").exists():
+    class FakeVS(Fake):
+        def reset_to_before(self, row, fresh=False):
+            self.state = VS_S
+            return {"fresh_start": "fake"}
+
+        def act(self, row):
+            self.state = VS_S1
+
+        def reset_to_after(self, row, expect_windows="", expect_digest=None, independent=False):
+            self.state = VS_S1
+            return {"fresh_start": "fake"}
+
+        def step(self, code, pause=1.0):
+            if code == U.candidate_code(self.good, {"pointer": [10, 20], "proc": "code"}):
+                self.state = VS_S
+
+        def snapshot(self, path, meta, expect_kind="calc", office_expected=True):
+            snap = Fake.snapshot(self, path, meta, expect_kind, office_expected)
+            snap.meta["pointer"] = [10, 20] if self.state is VS_S else [1100, 700]
+            return snap
+
+    VS_S, VS_S1 = load_snapshot(VS / "S"), load_snapshot(VS / "S1")
+    vs_args = argparse.Namespace(**{**vars(args), "out": tempfile.mkdtemp(), "spots": str(HERE / "clickspots_agent_snap.json"),
+                                    "no_zero_shot": True})
+    teacher.guess_b = lambda *a, **k: {"reversible": True, "shortest_undo": [], "model": "fake"}
+    v = FakeVS(vs_args)
+    FakeVS.good = ["key:ctrl+`", "pointer:back"]
+    vrow = dict(next(x for x in v.rows_all if x["row_id"] == "ags-change_permissions-02"), band="test", recorded_before=None)
+    r = v.run_row(vrow)
+    tiers = [x.get("tier") for x in r["undo_search"]]
+    assert r["executed_label"] == "REVERSIBLE" and r["found_tier"] == "P" and r["shortest_undo"] == ["key:ctrl+`", "pointer:back"], (r["executed_label"], r["found_tier"], tiers)
+    assert tiers[:len(U.VSCODE_FIRST)] == ["V"] * len(U.VSCODE_FIRST), tiers
+    code = U.candidate_code(["pointer:back"], {"pointer": [3, 4]})
+    compile(code, "<pointer>", "exec")
+    assert "moveTo(3, 4" in code and "moveTo" not in U.candidate_code(["pointer:back"], {})
 
 print("COLLECTOR FLOW CHECKS PASSED")

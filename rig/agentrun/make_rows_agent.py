@@ -70,14 +70,38 @@ def vm_snapshots(d: pathlib.Path):
     return json.loads(p.read_text()) if p.exists() else None
 
 
+def unchanged(d: pathlib.Path, i: int, mask: dict):
+    """Whether the agent's own run recorded the same state before and after step i+1 (tree, files, window titles,
+    under the collector's noise mask), or None when either state is missing.  The two states come from one VM, as
+    the collector's S and S' do.  30 Oct: 11 of the 20 change_permissions rows changed nothing (their chmod lines were
+    Python syntax errors), and labelling each costs a sandbox about 5 minutes for a foregone "no change"."""
+    import sys
+    sys.path.insert(0, str(BASE))
+    from rig.mask import states_equal
+    from rig.collect_pilot import titles
+    from rig.snapshot import load_snapshot
+    a, b = d / "states" / f"s{i:02d}", d / "states" / f"s{i + 1:02d}"
+    if not (a / "tree.xml").exists() or not (b / "tree.xml").exists():
+        return None
+    A, B = load_snapshot(a), load_snapshot(b)
+    if not A.canon or not B.canon or not A.digest or not B.digest:
+        return None
+    eq, _, _ = states_equal(A.canon, A.digest, B.canon, B.digest, mask)
+    return eq and titles(A.windows) == titles(B.windows)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("result_dirs", nargs="+", help="rig/out/agent_<x> directories written by run_agent.sh")
     ap.add_argument("--out", default=str(BASE / "rig" / "clickspots_agent.json"))
     ap.add_argument("--max-per-task", type=int, default=0, help="label at most this many changing steps per task (0: all)")
     ap.add_argument("--prefix", default="ag", help="row id prefix: ag for the 28 Oct run, agr for runs with recorded states (29 Oct)")
+    ap.add_argument("--skip-unchanged", action="store_true",
+                    help="leave out steps whose recorded states before and after are equal (listed in meta.skipped_unchanged)")
+    ap.add_argument("--mask", default=str(BASE / "rig" / "out" / "mask_run" / "mask.json"))
     a = ap.parse_args()
-    rows, seen = [], set()
+    mask = json.loads(pathlib.Path(a.mask).read_text()) if a.skip_unchanged else None
+    rows, seen, skipped = [], set(), []
     for rd in a.result_dirs:
         for traj in sorted(pathlib.Path(rd).resolve().glob("*/*/*/*/*/traj.jsonl")):
             d = traj.parent
@@ -94,6 +118,9 @@ def main():
                 if rid in seen:
                     continue
                 seen.add(rid)
+                if a.skip_unchanged and unchanged(d, i, mask):
+                    skipped.append(rid)
+                    continue
                 rows.append({
                     "row_id": rid, "probe": f"agent step {i + 1} of {len(steps)} on {task_id}",
                     "spot_id": "agent_step", "task_id": task_id, "app": domain, "workbook": "", "open_path": None,
@@ -117,13 +144,14 @@ def main():
               "setup": "", "code": "", "pause": None, "expect": None, "fp": [], "target": None, "sequence": None,
               "step": None, "twin": None, "shares": None}]
     out = {"meta": {"generated_by": "rig/agentrun/make_rows_agent.py", "test_only": True,
-                    "source": "OS-Harm misbehavior tasks (tml-epfl/os-harm @ c0fa95e7), unguarded agent runs"},
+                    "source": "OS-Harm misbehavior tasks (tml-epfl/os-harm @ c0fa95e7), unguarded agent runs",
+                    "skipped_unchanged": skipped},
            "spots": spots, "rows": rows}
     pathlib.Path(a.out).write_text(json.dumps(out, indent=1, ensure_ascii=False))
     per = {}
     for r in rows:
         per[r["task_id"]] = per.get(r["task_id"], 0) + 1
-    print(f"{len(rows)} rows from {len(per)} tasks -> {a.out}")
+    print(f"{len(rows)} rows from {len(per)} tasks -> {a.out}" + (f"; {len(skipped)} unchanged steps left out" if a.skip_unchanged else ""))
     for t, n in sorted(per.items()):
         print(f"  {t}: {n}")
 

@@ -255,6 +255,8 @@ class Collector:
         self.env_restarts = 0
         self.vmsnap = None        # rig/vmsnap.py with --vm-snapshots: resets restore a VM snapshot instead of a fresh start
         self._vm_row = None
+        self._cur_row = None           # the row run_row is on, for the VS Code snapshot saves in snapshot()
+        self._snap_after_walk = False
 
     # ------------------------------------------------------------------ selection
     def select_rows(self):
@@ -464,7 +466,7 @@ class Collector:
         elif setup:
             self.step(setup, pause=2.0)
         info = {"fresh_start": how, "fresh_start_seconds": round(t_fs, 1), "setup_seconds": round(time.time() - t - t_fs, 1)}
-        saved = None if fresh else self._snap_save(row, "b")
+        saved = None if fresh or getattr(self, "_snap_after_walk", False) else self._snap_save(row, "b")
         if saved is not None:
             info["vm_snapshot_saved_seconds"] = round(saved, 1)
         return info
@@ -543,17 +545,17 @@ class Collector:
         t = time.time()
         if expect_kind in ("calc", "dialog", "start_center", "second_window"):
             self.settle_windows()
-        if getattr(self, "_warm_code", False):
-            self.warm_accessibility()
+        primed = self.warm_accessibility() if getattr(self, "_warm_code", False) else None
         if expect_kind == "none":                     # no readiness gate: an application whose bus name is not known yet
-            snap = take_snapshot(self.env, path, meta, expect=None, require_office=False)
+            snap = take_snapshot(self.env, path, meta, expect=None, require_office=False, primed=primed)
         elif expect_kind.startswith("apps:"):
             apps = [a for a in expect_kind[5:].split(",") if a]
             office = "soffice" in apps
             snap = take_snapshot(self.env, path, meta, expect="LibreOffice" if office else None, require_office=office,
-                                 expect_apps=[a for a in apps if a != "soffice"])
+                                 expect_apps=[a for a in apps if a != "soffice"], primed=primed)
         elif expect_kind == "any":
-            snap = take_snapshot(self.env, path, meta, expect="LibreOffice" if office_expected else None, require_office=False)
+            snap = take_snapshot(self.env, path, meta, expect="LibreOffice" if office_expected else None, require_office=False,
+                                 primed=primed)
         else:
             app_may_be_closed = expect_kind == "app_closed"
             snap = take_snapshot(self.env, path, meta, expect=None if app_may_be_closed else "LibreOffice",
@@ -566,6 +568,14 @@ class Collector:
             snap.meta["ok"] = False
             snap.meta["window_error"] = "window list lacks a LibreOffice window"
         self.timings["snapshot"].append(time.time() - t)
+        if getattr(self, "_snap_after_walk", False) and self._cur_row is not None and snap.ok:
+            # VS Code rows (30 Oct): the row's VM snapshots are saved after the state's tree was read, so every restore
+            # comes back with VS Code's tree already exposed (a cold one needs three walks of about 40 s to fill in)
+            kind = meta.get("kind")
+            if kind == "before" and not str(meta.get("fresh_start", "")).startswith("vm-snapshot"):
+                self._snap_save(self._cur_row, "b")
+            elif kind == "after":
+                self._snap_save(self._cur_row, "a")
         return snap
 
     def needs_warm(self, row) -> bool:
@@ -578,17 +588,19 @@ class Collector:
     def warm_accessibility(self, reads: int = 3, tolerance: float = 0.02):
         """VS Code (Chromium) exposes its web content to the accessibility bus only once something has asked for it,
         and fills it in over a few seconds: v2-0040 (24 Oct, VS Code no-op) recorded 50 nodes in S and 340 in S', the
-        editor absent from the first.  Walk the tree until two consecutive reads agree in size (at most `reads`),
-        then let the real snapshot read it."""
+        editor absent from the first.  Walk the tree until two consecutive reads agree in size (at most `reads`).
+        Returns the last read, (xml, stats), when it agreed with the one before: the snapshot uses it instead of a
+        fourth walk (30 Oct: about 40 s each in VS Code).  None otherwise, and the snapshot walks again."""
         from rig.fasttree import fast_tree
         prev = None
         for _ in range(reads):
-            xml, _stats = fast_tree(self.env)
+            xml, stats = fast_tree(self.env)
             n = xml.count("<")
             if prev is not None and abs(n - prev) <= max(5, tolerance * max(n, prev)):
-                break
+                return (xml, stats) if xml else None
             prev = n
             time.sleep(3)
+        return None
 
     def settle_windows(self, timeout: float = 45) -> list:
         """Wait until a LibreOffice window is listed and the window list is the same on two reads 3 s apart, before
@@ -638,6 +650,10 @@ class Collector:
         # (warm_accessibility): both expose their content lazily (VS Code: v2-0040; evince's 97 page nodes appeared
         # after a click: step had walked the tree, v2-0084, 24 Oct); set before S is taken
         self._warm_code = self.needs_warm(row)
+        # VS Code rows save their VM snapshots after the state's tree is read (snapshot()); LibreOffice rows keep
+        # saving before any walk, since walking LibreOffice and then acting on it made it vanish (probe-0005)
+        self._snap_after_walk = self.vmsnap is not None and row.get("app") == "vs_code"
+        self._cur_row = row
         spot = self.spots[row["spot_id"]]
         rdir = self.out / rid
         rdir.mkdir(parents=True, exist_ok=True)
@@ -761,7 +777,8 @@ class Collector:
             rec["action_instance"] = self.reset_to_before(row)
             rec["action_executed_at"] = time.time()
             self.act(row)
-            self._snap_save(row, "a")
+            if not self._snap_after_walk:
+                self._snap_save(row, "a")
             S1 = self.snapshot(rdir / "S1", {"row": rid, "kind": "after"}, expect_kind=row.get("expect", "calc"))
             for wait in (3, 10):
                 if S1.ok:
@@ -813,7 +830,8 @@ class Collector:
         office_running = any("LibreOffice" in t for t in titles(S1.windows))
         ctx = {"doc_path": row.get("open_path"), "office_running": office_running, "reopen_cmd": row.get("reopen_cmd"),
                "proc": {"files": "nautilus", "thunderbird": "*", "libreoffice-calc": "", "libreoffice-writer": "",   # thunderbird's process is thunderbird-bin (24 Oct): search every app
-                        "libreoffice-impress": "", "vs_code": "code"}.get(rec["app"], "*")}
+                        "libreoffice-impress": "", "vs_code": "code"}.get(rec["app"], "*"),
+               "pointer": S.meta.get("pointer")}
         reopens_office = not row.get("reopen_cmd") or "libreoffice" in " ".join(row["reopen_cmd"])
 
         def office_after(cand):
@@ -1006,6 +1024,13 @@ class Collector:
                 modes = U.mode_restores(S.digest, S1.digest) if fdiffs else []
                 if modes:
                     tiers.append(("M", modes))
+            if rec["app"] == "vs_code":
+                # VS Code's own routes before the generic tier (30 Oct; undo.py VSCODE_FIRST), then the same with the
+                # pointer moved back where S had it, when the action moved it (tier "P", undo.py with_pointer)
+                tiers.append(("V", U.VSCODE_FIRST))
+                p0, p1 = S.meta.get("pointer"), S1.meta.get("pointer")
+                if p0 and p1 and p0 != p1:
+                    tiers.append(("P", U.with_pointer(U.VSCODE_FIRST[:5] + [["key:ctrl+z"], ["key:escape"]])))
             tiers += [(1, [U.fill_mnemonics(c, self.mnemonics) for c in U.GENERIC]),
                      ("B", None),
                      (2, [U.fill_mnemonics(c, self.mnemonics) for c in U.tier2(rec["app"])])]
