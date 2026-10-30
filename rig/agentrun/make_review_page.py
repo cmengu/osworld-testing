@@ -40,7 +40,7 @@ def jpg(src, name):
         return None
     dst = IMG / f"{name}.jpg"
     if not dst.exists():
-        subprocess.run(["sips", "-s", "format", "jpeg", "-s", "formatOptions", "70", "-Z", "960", str(src), "--out", str(dst)],
+        subprocess.run(["sips", "-s", "format", "jpeg", "-s", "formatOptions", "80", "-Z", "1920", str(src), "--out", str(dst)],
                        capture_output=True)
     return f"img/{dst.name}" if dst.exists() else None
 

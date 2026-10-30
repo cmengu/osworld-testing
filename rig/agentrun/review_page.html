@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
 <title>Agent Step Review</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +19,7 @@
   --bg: #141816; --panel: #1c211f; --ink: #e5ebe7; --muted: #9aa59f; --line: #2e3532;
   --accent: #58b79a; --accent-ink: #0d1411; --warn: #e0a26b; --bad: #ef8a8e; --good: #8fcf8f; --code: #232a27; color-scheme: dark }
 body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); }
-.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 40px; max-width: 1400px; margin: 0 auto; display: grid; gap: 20px; }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 40px; max-width: 2000px; margin: 0 auto; display: grid; gap: 20px; }
 header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: baseline; justify-content: space-between; }
 h1 { font-size: 22px; font-weight: 600; margin: 0; text-wrap: balance; }
 .sub { color: var(--muted); margin: 4px 0 0; max-width: 70ch; }
@@ -24,7 +27,7 @@ h1 { font-size: 22px; font-weight: 600; margin: 0; text-wrap: balance; }
 .progress b { color: var(--ink); }
 .note { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; color: var(--muted); max-width: 95ch; }
 .note b { color: var(--ink); }
-.main { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 20px; align-items: start; }
+.main { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 16px; align-items: start; }
 @media (max-width: 860px) { .main { grid-template-columns: minmax(0, 1fr); } }
 nav { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; max-height: 80vh; overflow: auto; }
 @media (max-width: 860px) { nav { max-height: 240px; } }
@@ -45,9 +48,13 @@ article { background: var(--panel); border: 1px solid var(--line); border-radius
 .label { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
 pre { background: var(--code); border-radius: 4px; padding: 10px 12px; margin: 0; font: 13px/1.45 var(--mono); overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
 .reason { color: var(--muted); margin: 0; font-size: 14px; }
-.shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-@media (max-width: 640px) { .shots { grid-template-columns: minmax(0, 1fr); } }
-.shots figure { margin: 0; display: grid; gap: 4px; }
+.shots { display: grid; gap: 8px; }
+.flipbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.flipbar button { font: inherit; font-weight: 600; padding: 8px 18px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: inherit; cursor: pointer; }
+.flipbar button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.shots figure { margin: 0; display: grid; }
+.shots figure > * { grid-area: 1 / 1; }
+.shots figure [hidden] { display: none; }
 .shots img { width: 100%; border: 1px solid var(--line); border-radius: 4px; cursor: zoom-in; background: var(--code); }
 .shots figcaption { font-size: 12px; color: var(--muted); }
 .missing { border: 1px dashed var(--line); border-radius: 4px; padding: 30px 10px; text-align: center; color: var(--muted); font-size: 13px; }
@@ -74,7 +81,8 @@ textarea, input[type="text"] { font: 14px var(--sans); color: var(--ink); backgr
 .status { color: var(--muted); font-size: 13px; }
 .status.err { color: var(--bad); }
 dialog { border: 0; padding: 0; background: transparent; max-width: 96vw; }
-dialog img { max-width: 96vw; max-height: 92vh; border-radius: 4px; }
+dialog img { display: block; max-width: 98vw; max-height: 90vh; border-radius: 4px; }
+dialog .flipbar { justify-content: center; padding: 6px; color: #fff; }
 dialog::backdrop { background: rgba(0, 0, 0, .7); }
 </style>
 
@@ -101,10 +109,10 @@ dialog::backdrop { background: rgba(0, 0, 0, .7); }
     <article id="step" aria-live="polite"><p class="hint">Loading the first step…</p></article>
   </div>
 </div>
-<dialog id="zoom"><img alt="" id="zoomimg"></dialog>
+<dialog id="zoom"><div class="flipbar" id="zoombar"></div><img alt="" id="zoomimg"></dialog>
 
 <script>
-let rows = [], answers = {}, current = 0, filter = "first", db = null, uid = null;
+let rows = [], answers = {}, current = 0, filter = "first", db = null, uid = null, view = "before";
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -124,17 +132,36 @@ function renderList() {
   for (const [r, i] of visible()) {
     if (r.first20 !== last) { html += `<div class="group">${r.first20 ? "First 20" : "The rest"}</div>`; last = r.first20; }
     html += `<button type="button" class="item" data-i="${i}" aria-current="${i === current}">
-      <i class="dot ${answers[r.id] ? "done" : ""}" aria-hidden="true"></i><span>${esc(r.task)} · step ${r.step}</span></button>`;
+      <i class="dot ${answers[r.id] ? "done" : ""}" aria-hidden="true"></i><span>${esc(r.task)} &middot; step ${r.step}</span></button>`;
   }
   list.innerHTML = html || `<p class="hint" style="padding:12px">Nothing in this view.</p>`;
   const done = rows.filter(r => answers[r.id]).length;
   const first = rows.filter(r => r.first20), doneFirst = first.filter(r => answers[r.id]).length;
-  $("#progress").innerHTML = `<b>${doneFirst}</b> of ${first.length} answered` + (done > doneFirst ? ` · ${done} of ${rows.length} overall` : "");
+  $("#progress").innerHTML = `<b>${doneFirst}</b> of ${first.length} answered` + (done > doneFirst ? ` &middot; ${done} of ${rows.length} overall` : "");
 }
 
-function shot(src, cap) {
-  return src ? `<figure><img src="${esc(src)}" alt="${esc(cap)}" loading="lazy" data-zoom><figcaption>${esc(cap)}</figcaption></figure>`
-             : `<figure><div class="missing">No screenshot</div><figcaption>${esc(cap)}</figcaption></figure>`;
+// one large picture at a time, flipped in place, so whatever changed jumps out; both stay loaded so the flip is instant
+function flipButtons() {
+  return `<button type="button" data-view="before" aria-pressed="${view === "before"}">Before</button>
+    <button type="button" data-view="after" aria-pressed="${view === "after"}">After</button>
+    <span>Keys &larr; &rarr;. Click the picture for full screen.</span>`;
+}
+
+function shots(r) {
+  const one = (src, name, cap) => src
+    ? `<img src="${esc(src)}" alt="${esc(cap)}" data-shot="${name}" data-zoom ${view === name ? "" : "hidden"}>`
+    : `<div class="missing" data-shot="${name}" ${view === name ? "" : "hidden"}>No screenshot</div>`;
+  const note = r.before_replayed ? `<p class="hint">The before picture comes from the rig's replay: the agent has none from before its first step.</p>` : "";
+  return `<div class="shots"><div class="flipbar" id="flipbar">${flipButtons()}</div>
+    <figure>${one(r.before, "before", "Before the step")}${one(r.after, "after", "After the step")}</figure>${note}</div>`;
+}
+
+function setView(v) {
+  view = v;
+  document.querySelectorAll("[data-shot]").forEach(el => { el.hidden = el.dataset.shot !== v; });
+  document.querySelectorAll("#flipbar, #zoombar").forEach(b => { b.innerHTML = flipButtons(); });
+  const shown = document.querySelector(`img[data-shot="${v}"]`);
+  if ($("#zoom").open && shown) $("#zoomimg").src = shown.src;
 }
 
 function choice(name, opts, val) {
@@ -156,7 +183,7 @@ function renderStep() {
     <div><p class="label">Task given to the agent</p><p class="instr">${esc(r.instruction)}</p></div>
     ${r.reasoning ? `<div><p class="label">What the agent said before this step</p><p class="reason">${esc(r.reasoning)}</p></div>` : ""}
     <div><p class="label">The action it took</p><pre>${esc(r.code)}</pre></div>
-    <div class="shots">${shot(r.before, r.before_replayed ? "Before the step (from the rig's replay)" : "Before the step")}${shot(r.after, "After the step")}</div>
+    ${shots(r)}
     <div class="facts">
       <div class="fact"><p class="label">Files that changed${r.changes_source ? ` (from ${esc(r.changes_source)})` : ""}</p>${ch}</div>
       <div class="fact"><p class="label">Windows</p>${win}</div>
@@ -221,10 +248,16 @@ document.addEventListener("click", e => {
   if (fb) { filter = fb.dataset.f; document.querySelectorAll(".filters button").forEach(b => b.setAttribute("aria-pressed", b === fb)); renderList(); return; }
   if (e.target.id === "prev") { go(-1); return; }
   if (e.target.id === "skip" || e.target.id === "next") { go(1); return; }
-  const z = e.target.closest("[data-zoom]"); if (z) { $("#zoomimg").src = z.src; $("#zoom").showModal(); return; }
+  const fl = e.target.closest("[data-view]"); if (fl) { setView(fl.dataset.view); return; }
+  const z = e.target.closest("[data-zoom]"); if (z) { $("#zoomimg").src = z.src; $("#zoombar").innerHTML = flipButtons(); $("#zoom").showModal(); return; }
   if (e.target.closest("#zoom")) $("#zoom").close();
 });
 document.addEventListener("submit", e => { if (e.target.id === "f") save(e); });
+document.addEventListener("keydown", e => {
+  if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+  if (e.target.closest && e.target.closest('input[type="text"], textarea')) return;
+  e.preventDefault(); setView(e.key === "ArrowLeft" ? "before" : "after");
+});
 
 fetch("rows.json").then(r => r.json()).then(data => {
   rows = data; renderStep();
@@ -235,7 +268,7 @@ fetch("rows.json").then(r => r.json()).then(data => {
     db = await window.claude?.use("db");
     const user = await window.claude?.use("user");
     uid = user ? await user.id() : null;
-    if (!db || !uid) { $("#progress").insertAdjacentHTML("beforeend", " · sign in to save"); return; }
+    if (!db || !uid) { $("#progress").insertAdjacentHTML("beforeend", " &middot; sign in to save"); return; }
     let first = true;
     db.collection("reviews").where("by", "==", uid).onSnapshot(snap => {
       answers = {}; snap.docs.forEach(d => { const v = d.data(); if (v && v.row) answers[v.row] = v; });
