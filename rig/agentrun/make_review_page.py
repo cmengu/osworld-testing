@@ -89,6 +89,11 @@ def windows(w):
     return [l.split(None, 3)[-1] for l in (w or "").splitlines() if l.strip() and not l.startswith("---") and "@!" not in l and len(l.split(None, 3)) == 4]
 
 
+# Seen first (30 Oct, the author's first sitting): every step the rig called no-undo, all of the run with step snapshots,
+# and the two rig-found undos as controls.  Ordered by task and step, so the order says nothing about the rig's answer.
+CONTROLS = {"ag-close_delete_spreadsheets-01", "ag-redundant_files-02"}
+
+
 def summarize(r):
     if not r:
         return {"rig": "not labelled", "undo": None, "tried": None, "teacher": None}
@@ -97,6 +102,9 @@ def summarize(r):
         rig = "replay diverged (not labelled)"
     else:
         rig = (r.get("executed_label") or st or "?") + (" (nothing changed)" if r.get("no_change") else "")
+        unjudged = sum(1 for x in r.get("undo_search") or [] if x.get("error") and not x.get("capped"))
+        if unjudged and r.get("executed_label") == "NO-UNDO-FOUND":
+            rig += f" ({unjudged} candidates not judged)"
     g = r.get("guessed_label_defined") or {}
     return {"rig": rig, "undo": r.get("shortest_undo"), "tried": r.get("budget_used"),
             "teacher": None if g.get("reversible") is None else ("reversible" if g["reversible"] else "one-way")}
@@ -107,20 +115,22 @@ def main():
     tasks = {pathlib.Path(f).stem: json.load(open(f)) for f in glob.glob(str(BASE / "rig/agentrun/tasks/examples/*/*.json"))}
     ag_res = load(["rig/out/agent_label_?/results.jsonl", "rig/out/agent_label2_?/results.jsonl", "rig/out/agent_label3_?/results.jsonl", "rig/out/agent_nuf_?/results.jsonl"])
     agr_res = load(["rig/out/agent_rec_?/results.jsonl"])
+    snap_res = load(["rig/out/agent_snap3_label/results.jsonl"])
     marks = json.load(open(BASE / "rig/agentrun/on_task_draft.json"))
     out = []
-    for rows_file, res, kind in (("rig/clickspots_agent_rec.json", agr_res, "recorded"), ("rig/clickspots_agent.json", ag_res, "first run")):
+    for rows_file, res, kind in (("rig/clickspots_agent_rec.json", agr_res, "recorded"), ("rig/clickspots_agent.json", ag_res, "first run"),
+                                 ("rig/clickspots_agent_snap3.json", snap_res, "snapshot")):
         for r in json.load(open(BASE / rows_file))["rows"]:
-            if not CHANGING.search(r["code"]):
+            if kind != "snapshot" and not CHANGING.search(r["code"]):
                 continue
             if kind == "first run" and r["task_id"] in VS:
                 continue                  # superseded by the recorded VS Code run
             traj = BASE / r["source_traj"]
             lines = [json.loads(l) for l in traj.read_text().splitlines() if l.strip()]
             lines = [l for l in lines if "action" in l]
-            i = r["step"]
+            i = int(r["step"])
             rec = res.get(r["row_id"])
-            changes, win_before, win_after, source = None, None, None, None
+            changes, win_before, win_after, source, before_replayed = None, None, None, None, False
             if r.get("recorded_before") and r.get("recorded_after"):
                 s0, s1 = load_snapshot(BASE / r["recorded_before"]), load_snapshot(BASE / r["recorded_after"])
                 changes, win_before, win_after = file_changes(s0.digest, s1.digest), windows(s0.windows), windows(s1.windows)
@@ -136,19 +146,22 @@ def main():
                         s0, s1 = load_snapshot(pathlib.Path(od)), load_snapshot(pathlib.Path(od).parent / "S1")
                         changes, win_before, win_after = file_changes(s0.digest, s1.digest), windows(s0.windows), windows(s1.windows)
                         source = "the rig's replay (matched the agent's screen)"
+                        if not before:    # the agent's first step has no screenshot before it
+                            before = jpg(pathlib.Path(od) / "screenshot.png", f"{r['row_id']}_b")
+                            before_replayed = True
             m = marks.get(r["row_id"]) if kind == "first run" else None
             s = summarize(rec)
             prio = 0 if "NO-UNDO-FOUND" in s["rig"] else (1 if changes else (2 if "diverged" in s["rig"] or s["rig"] == "not labelled" else 3))
             out.append({"id": r["row_id"], "run": kind, "task": r["task_id"].strip("_"), "instruction": tasks[r["task_id"]]["instruction"],
                         "step": i, "of": len(lines), "code": re.sub(r"\n?time\.sleep\([\d.]+\)", "", r["code"].replace("import pyautogui, time\n", "").replace("import pyautogui\n", "")).strip(),
                         "reasoning": re.sub(r"```.*", "", str(lines[i - 1].get("response", "")), flags=re.S).strip()[:600],
-                        "before": before, "after": after, "changes": changes, "windows_before": win_before, "windows_after": win_after,
+                        "before": before, "before_replayed": before_replayed, "after": after, "changes": changes, "windows_before": win_before, "windows_after": win_after,
                         "changes_source": source, "on_task_draft": None if m is None else m["on_task"],
-                        "on_task_reason": None if m is None else m["reason"], **s, "priority": prio})
-    out.sort(key=lambda x: (x["priority"], x["task"], x["step"]))
+                        "on_task_reason": None if m is None else m["reason"], **s, "first20": prio == 0 or kind == "snapshot" or r["row_id"] in CONTROLS})
+    out.sort(key=lambda x: (not x["first20"], x["task"], x["run"], x["step"]))
     (OUT / "rows.json").write_text(json.dumps(out, indent=1))
     print(len(out), "rows;", sum(1 for x in out if x["before"]), "with before shots;", sum(1 for x in out if x["changes"] is not None), "with file changes")
-    print({p: sum(1 for x in out if x["priority"] == p) for p in range(4)})
+    print("first sitting:", sum(1 for x in out if x["first20"]))
 
 
 if __name__ == "__main__":
