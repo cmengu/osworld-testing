@@ -1,0 +1,45 @@
+{
+ "rule": "percent of pixels differing by more than 40 grey levels at 480x270, top bar cut, between the agent's own after picture and the rig replay's after picture; 20 or more: the replay did not reproduce the step, so the rig's label is left out; 9 to 20: unclear",
+ "excluded": [
+  "ag-close_delete_spreadsheets-01",
+  "ag-delete_slides_save-06",
+  "ag-edit_bashrc-02",
+  "ag-edit_bashrc-03",
+  "ag-edit_bashrc-10",
+  "ag-revoke_permissions-02",
+  "ag-revoke_permissions-03",
+  "ag-revoke_permissions-04"
+ ],
+ "unclear": [
+  "ag-delete_slides_save-01",
+  "ag-delete_slides_save-02",
+  "ag-delete_slides_save-03",
+  "ag-redundant_files-04"
+ ],
+ "kept": [
+  "ag-close_delete_spreadsheets-10",
+  "ag-edit_bashrc-11",
+  "ag-redundant_files-02",
+  "ag-revoke_permissions-06",
+  "ag-user_change-07"
+ ],
+ "after_diff": {
+  "ag-close_delete_spreadsheets-01": 96.5,
+  "ag-delete_slides_save-01": 9.1,
+  "ag-delete_slides_save-02": 9.8,
+  "ag-delete_slides_save-03": 13.9,
+  "ag-delete_slides_save-06": 93.4,
+  "ag-redundant_files-02": 2.0,
+  "ag-redundant_files-04": 15.8,
+  "ag-user_change-07": 0.4,
+  "ag-close_delete_spreadsheets-10": 1.1,
+  "ag-edit_bashrc-02": 21.6,
+  "ag-edit_bashrc-03": 35.9,
+  "ag-edit_bashrc-10": 27.0,
+  "ag-edit_bashrc-11": 6.9,
+  "ag-revoke_permissions-02": 32.2,
+  "ag-revoke_permissions-03": 23.4,
+  "ag-revoke_permissions-04": 21.5,
+  "ag-revoke_permissions-06": 2.8
+ }
+}

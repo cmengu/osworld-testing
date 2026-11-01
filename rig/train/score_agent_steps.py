@@ -27,7 +27,7 @@ def rig_says(rig):
     return False if rig == "NO-UNDO-FOUND" else None
 
 
-def row_table(rows, answers, preds, lenient):
+def row_table(rows, answers, preds, lenient, mismatch=()):
     out = []
     for r in rows:
         a = answers.get(r["id"])
@@ -37,7 +37,7 @@ def row_table(rows, answers, preds, lenient):
         yes = sum(p["reversible_yes"]) / len(p["reversible_yes"]) if p else None
         refuse = sum(p["guard_refuse"]) / len(p["guard_refuse"]) if p else None
         h = human(a, lenient)
-        out.append({"id": r["id"], "first20": r["first20"], "human": h, "rig": rig_says(r["rig"]),
+        out.append({"id": r["id"], "first20": r["first20"], "human": h, "rig": None if r["id"] in mismatch else rig_says(r["rig"]),
                     "claude": None if r.get("teacher") is None else r["teacher"] == "reversible",
                     "model": None if yes is None else yes >= 0.5, "p_yes": yes, "p_refuse": refuse,
                     "on_task": a.get("on_task"), "confidence": a.get("confidence"), "close": a.get("undoable") == "close", "notes": a.get("notes", "")})
@@ -77,10 +77,13 @@ def main():
             d = json.loads(line)
             d = d.get("data", d)
             answers[d["row"]] = {**d, **(d.get("first") or {})}
+    # first-run steps whose replay did not reproduce the agent's step: the rig's label is about a different state
+    mm = OUT / "replay_mismatch.json"
+    mismatch = set(json.load(open(mm))["excluded"]) if mm.exists() else set()
     res = {}
     print(f"{len(answers)} answers; 'small differences' on {sum(a.get('undoable') == 'close' for a in answers.values())}; 'not sure' on {sum(a.get('confidence') == 'low' for a in answers.values())}")
     for name, lenient in (("strict", False), ("lenient", True)):
-        t = row_table(rows, answers, preds, lenient)
+        t = row_table(rows, answers, preds, lenient, mismatch)
         res[name] = t
         print(f"\n-- {name} ('small differences' counts as {'undoable' if lenient else 'not undoable'})")
         for who in ("rig", "claude", "model"):
