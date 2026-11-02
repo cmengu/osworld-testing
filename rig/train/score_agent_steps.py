@@ -68,6 +68,7 @@ def main():
     ap.add_argument("--rows", default=str(BASE / "rig" / "out" / "review_page" / "rows.json"))
     ap.add_argument("--predictions", default=str(OUT / "predictions.json"))
     ap.add_argument("--out", default=str(OUT / "comparison.json"))
+    ap.add_argument("--final", action="store_true", help="count the author's final answers, not the first ones")
     args = ap.parse_args()
     rows = json.load(open(args.rows))
     preds = json.load(open(args.predictions))["rows"]
@@ -76,7 +77,7 @@ def main():
         if line.strip():
             d = json.loads(line)
             d = d.get("data", d)
-            answers[d["row"]] = {**d, **(d.get("first") or {})}
+            answers[d["row"]] = d if args.final else {**d, **(d.get("first") or {})}
     # first-run steps whose replay did not reproduce the agent's step: the rig's label is about a different state
     mm = OUT / "replay_mismatch.json"
     mismatch = set(json.load(open(mm))["excluded"]) if mm.exists() else set()

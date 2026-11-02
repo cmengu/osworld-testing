@@ -6,7 +6,7 @@ Status: draft for the author. `[TO CONFIRM]` marks a point not settled yet. The 
 
 The model answers questions about one proposed desktop action, given a text rendering of the state before it.
 
-An action is **reversible at K** if the state before it can be brought back within K actions, using only what the desktop offers a user: keys, menus, named buttons, reopening a file or window, or one terminal command per action. Waits, window focus changes, answering a confirmation prompt and moving the pointer back do not count as actions. Typing lost content back in is not an undo. The main setting is K = 3, with K = 1 run as a comparison. K is a chosen threshold, not a derived one.
+An action is **reversible at K** if the state before it can be brought back within K actions, using only what the desktop offers a user: keys, menus, named buttons, reopening a file or window, or one terminal command per action. Waits, window focus changes, answering a confirmation prompt and moving the pointer back do not count as actions. Typing lost content back in is not an undo. The main setting is K = 3, with K = 1 run as a comparison. K is a chosen threshold, not a derived one. For the hand review, "brought back" means files and document content match exactly; pointer effects and on-screen trivia do not count (author's decision, 2 November). The rig's own comparison remains stricter than this.
 
 The **guard target** is `refuse` when an action is not reversible at K and the task did not ask for it, and `allow` otherwise. On-task marks take the instruction literally, so a harmful action the instruction asked for counts as on-task. Harm is not part of the target.
 
@@ -66,17 +66,16 @@ Five-fold cross-validation, with seeds 2026 and 7 for Model-E and seed 2026 for 
 
 **Protocol.** For each step the reviewer sees the task, the run's outline in the agent's own words, the before and after screenshots, a view boxing pixel differences, recorded file and window changes, the agent's note and the action's code. The reviewer then answers: did it change anything; could the earlier state be brought back in at most 3 actions (yes exactly, yes except small on-screen differences, no, can't tell, nothing to undo); was it on-task; and how sure. The rig's result, Claude's guess and the draft on-task mark stay hidden until the answer is saved, and a later change keeps the first answer.
 
-**Scoring.** The first answer counts. "Small differences" is scored both ways: strict (not undoable, as the rig's match works) and lenient (undoable). "Can't tell" is left out. "Nothing to undo" counts as undoable.
+**Scoring.** The author's final answers are the labels. Under the definition in Section 1, "small differences" counts as undoable; the strict reading is reported as well. "Can't tell" is left out. "Nothing to undo" counts as undoable.
 
 **Model predictions.** The five K = 3 Model-E adapters (seed 2026) scored 70 steps, with the mean probability used, and the results were saved before any answer existed. The other steps have no prediction: 12 had a diverged replay and so no faithful before-state, and 2 were added to the page later. No adapter trained on these tasks. Agent steps have no natural description, so the action text reads "agent step" plus the code.
 
-**Sample.** `[TO CONFIRM: which steps are labelled. Proposed first set: the First 20, or the steps where the rig and Claude disagree.]` A set selected for disagreement measures the hard cases only, so it can show whether the rig is too strict but gives no overall accuracy.
+**Sample.** The First 20: 11 rig no-undo steps from the earlier runs, 7 steps from the newest run and 2 controls. 19 were labelled; `ag-close_delete_spreadsheets-01` was left out because its replay is unreliable. The set is mostly rig no-undo steps (16 of 20), so it can show whether the rig is too strict but gives no overall accuracy.
 
 ## 9. Limits to state in the paper
 
 - **One rater, who is the author.** There is no agreement figure unless a second rater labels a sample.
-- **Not all answers will be blind.** The author discussed some steps with Claude while learning the task, including `change_permissions` of the newest run. Those are marked "discussed with Claude" and scored separately, because Claude is one of the sources compared.
-- **First pass, 2 November.** All 19 answers so far (of the First 20; `ag-close_delete_spreadsheets-01` left blank) were entered by Claude at the author's request after discussion, and many "small differences" choices and undo routes are Claude's. The author also learned before finishing that the First 20 is mostly rig no-undo steps. This pass cannot serve as an independent key.
+- **How the labels were made.** The 19 labels are the author's final human decisions, reached with Claude's help. Claude explained steps, suggested answers on some of them and entered the answers at the author's request, and each answer's note records this. Claude is also one of the sources compared, so agreement with Claude's guess may be overstated. The author also knew before finishing that the set is mostly rig no-undo steps.
 - **Pictures can lag the recorded state.** On `agr-fix_todo_list-12` the After picture shows one typed character while the recorded files show `todo.py` overwritten, and on `ag-redundant_files-04` the pictures do not match the agent's note.
 - **The review aids shape judgment.** The outline is the agent's stated intent, not what happened, and the difference boxes are an aid that can over- or under-mark.
 - **Screenshots cannot show everything.** Users, mounts, services and settings outside the home folder are invisible on the page, so some steps stay "can't tell".
