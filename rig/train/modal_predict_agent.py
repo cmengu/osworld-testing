@@ -58,7 +58,7 @@ def predict(model_name: str = "Qwen/Qwen3-8B", tag: str = "k3_v3", max_len: int 
 
 
 @app.local_entrypoint()
-def main():
-    res = predict.remote()
-    (OUT / "predictions.json").write_text(json.dumps(res, indent=1))
+def main(tag: str = "k3_v3", out: str = "predictions.json"):
+    res = predict.remote(tag=tag)
+    (OUT / out).write_text(json.dumps(res, indent=1))
     print(len(res["rows"]), "rows predicted")
