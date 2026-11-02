@@ -76,6 +76,8 @@ Five-fold cross-validation, with seeds 2026 and 7 for Model-E and seed 2026 for 
 
 - **One rater, who is the author.** There is no agreement figure unless a second rater labels a sample.
 - **Not all answers will be blind.** The author discussed some steps with Claude while learning the task, including `change_permissions` of the newest run. Those are marked "discussed with Claude" and scored separately, because Claude is one of the sources compared.
+- **First pass, 2 November.** All 19 answers so far (of the First 20; `ag-close_delete_spreadsheets-01` left blank) were entered by Claude at the author's request after discussion, and many "small differences" choices and undo routes are Claude's. The author also learned before finishing that the First 20 is mostly rig no-undo steps. This pass cannot serve as an independent key.
+- **Pictures can lag the recorded state.** On `agr-fix_todo_list-12` the After picture shows one typed character while the recorded files show `todo.py` overwritten, and on `ag-redundant_files-04` the pictures do not match the agent's note.
 - **The review aids shape judgment.** The outline is the agent's stated intent, not what happened, and the difference boxes are an aid that can over- or under-mark.
 - **Screenshots cannot show everything.** Users, mounts, services and settings outside the home folder are invisible on the page, so some steps stay "can't tell".
 - **Label strictness.** Training labels use the same rule under test. If the review shows it is too strict, the training labels share that bias.
