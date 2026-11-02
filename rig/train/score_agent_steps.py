@@ -27,13 +27,15 @@ def rig_says(rig):
     return False if rig == "NO-UNDO-FOUND" else None
 
 
-def row_table(rows, answers, preds, lenient, mismatch=()):
+def row_table(rows, answers, preds, lenient, mismatch=(), replayed_state=()):
+    """A step in mismatch has no faithful replay, so the rig's label is left out, and so is the model's prediction if
+    its before-state came from that replay (replayed_state)."""
     out = []
     for r in rows:
         a = answers.get(r["id"])
         if not a:
             continue
-        p = preds.get(r["id"])
+        p = None if r["id"] in mismatch and r["id"] in replayed_state else preds.get(r["id"])
         yes = sum(p["reversible_yes"]) / len(p["reversible_yes"]) if p else None
         refuse = sum(p["guard_refuse"]) / len(p["guard_refuse"]) if p else None
         h = human(a, lenient)
@@ -81,10 +83,12 @@ def main():
     # first-run steps whose replay did not reproduce the agent's step: the rig's label is about a different state
     mm = OUT / "replay_mismatch.json"
     mismatch = set(json.load(open(mm))["excluded"]) if mm.exists() else set()
+    prompts = OUT / "prompts.jsonl"
+    replayed = {json.loads(l)["row_id"] for l in open(prompts) if json.loads(l).get("state_source") == "rig replay"} if prompts.exists() else set()
     res = {}
     print(f"{len(answers)} answers; 'small differences' on {sum(a.get('undoable') == 'close' for a in answers.values())}; 'not sure' on {sum(a.get('confidence') == 'low' for a in answers.values())}")
     for name, lenient in (("strict", False), ("lenient", True)):
-        t = row_table(rows, answers, preds, lenient, mismatch)
+        t = row_table(rows, answers, preds, lenient, mismatch, replayed)
         res[name] = t
         print(f"\n-- {name} ('small differences' counts as {'undoable' if lenient else 'not undoable'})")
         for who in ("rig", "claude", "model"):
