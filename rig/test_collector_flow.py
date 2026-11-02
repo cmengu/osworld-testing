@@ -32,7 +32,7 @@ class Fake(cp.Collector):
         self.state = S_REC
         return {"fresh_start": "fake"}
 
-    def act(self, row):
+    def act(self, row, full_settle=False):
         self.state = S_REC if row.get("code") == "noop" else S1_REC
 
     def reset_to_after(self, row, expect_windows="", expect_digest=None, independent=False):
@@ -162,7 +162,7 @@ if True:
 class Misfire(Fake):
     acted = 0
 
-    def act(self, row):
+    def act(self, row, full_settle=False):
         Misfire.acted += 1
         self.state = S_REC
 
@@ -217,7 +217,7 @@ if (VS / "S" / "tree.xml").exists() and (VS / "S1" / "tree.xml").exists():
             self.state = VS_S
             return {"fresh_start": "fake"}
 
-        def act(self, row):
+        def act(self, row, full_settle=False):
             self.state = VS_S1
 
         def reset_to_after(self, row, expect_windows="", expect_digest=None, independent=False):
