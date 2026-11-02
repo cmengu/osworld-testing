@@ -90,6 +90,7 @@ def wait(idles, frames, cap=60):
 F, G = bytes(100), bytes([200]) * 100
 # busy, then quiet: a still screen alone must not end the wait
 r = wait([10, 10, 95, 95, 95], [F, F, F, F, F])
+# (idle 68 now counts as quiet, as part A read it)
 assert r["settled"] is True and r["polls"] == 4, r
 # screen still changing while the CPU is idle
 r = wait([95] * 5, [F, G, F, F, F])
@@ -104,4 +105,6 @@ assert r["settled"] is None and r["polls"] == 1, r
 r = wait([RuntimeError()] * 5, [F, F, F])
 assert r["settled"] is True, r
 
+r = wait([68] * 3, [F] * 3)
+assert r["settled"] is True, r
 print("RULES CHECKS PASSED")

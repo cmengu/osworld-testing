@@ -15,7 +15,8 @@ import time
 
 # what can leave work queued in the VM: typed text, Enter, a save.  A plain click or menu key does not wait.
 TYPED = re.compile(r"\b(typewrite|write)\(|press\(\s*['\"]enter['\"]|hotkey\(\s*['\"]ctrl['\"]\s*,\s*['\"]s['\"]")
-IDLE_PERCENT = 70       # CPU idle at or above this counts as quiet
+IDLE_PERCENT = 60       # CPU idle at or above this counts as quiet (70 never settled on part A, 2 Nov: 68 to 69 read; 60 is untested)
+RESET_CAP = 15          # seconds for an action replayed as a reset, not the row's recorded action
 FRAME_CHANGE = 0.005    # share of pixels that may differ between two quiet frames (a blinking cursor)
 TOP_BAR = 8             # rows of the 270-row frame holding the clock
 

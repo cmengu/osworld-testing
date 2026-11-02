@@ -1,0 +1,40 @@
+{
+ "H1": {
+  "A": {
+   "rows": 230,
+   "no_undo_rows": 103,
+   "recall_no": 0.757,
+   "precision_no": 0.736,
+   "agreement": 0.77
+  },
+  "B": {
+   "rows": 232,
+   "no_undo_rows": 103,
+   "recall_no": 0.825,
+   "precision_no": 0.955,
+   "agreement": 0.905
+  }
+ },
+ "H2": {
+  "rows": 273,
+  "refuse_rows": 114,
+  "E_recall": 0.798,
+  "E_false": 0.044,
+  "G_recall": 0.649,
+  "G_false": 0.038,
+  "gap_points": 14.9,
+  "gap_95ci": [
+   -12.4,
+   37.1
+  ]
+ },
+ "H3": {
+  "reversible_rows_with_an_undo": 125,
+  "zero_shot_executed": 88,
+  "zero_shot_rollback_rate": 0.44,
+  "ctrl_z_recorded": 105,
+  "ctrl_z_rollback_rate": 0.232,
+  "model_exact_match_not_rollback": 0.6,
+  "model_undo_rows": 125
+ }
+}

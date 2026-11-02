@@ -74,7 +74,7 @@ os.chdir(OSWORLD)
 from rig.compact import file_diff, render                      # noqa: E402
 from rig.freshstart import fresh_start, is_calc_task, prime_cache, switch_task  # noqa: E402
 from rig.mask import apply_file_mask, file_sig, states_equal    # noqa: E402
-from rig.settle import late_file_changes, needs_settle, wait_settled    # noqa: E402
+from rig.settle import IDLE_PERCENT, RESET_CAP, late_file_changes, needs_settle, wait_settled    # noqa: E402
 from rig.snapshot import load_snapshot, take_snapshot           # noqa: E402
 from rig.treediff import summarize                              # noqa: E402
 from rig import undo as U                                       # noqa: E402
@@ -236,7 +236,7 @@ class Collector:
             _mask.IGNORE_LAYOUT = True
             self.rules_version += "+layout"
         if getattr(args, "settle_cap", 0):
-            self.rules_version += f"+settle{args.settle_cap:g}"
+            self.rules_version += f"+settle{args.settle_cap:g}i{IDLE_PERCENT}"
         self.candidates_version = hashlib.sha256((HERE / "undo.py").read_bytes()).hexdigest()[:12]
         self.last_settle = None
         data = json.load(open(args.spots))
@@ -489,9 +489,10 @@ class Collector:
             info["vm_snapshot_saved_seconds"] = round(saved, 1)
         return info
 
-    def act(self, row):
+    def act(self, row, full_settle: bool = False):
         self.step(row["code"], pause=row.get("pause", 2))
         cap = getattr(self.args, "settle_cap", 0)
+        cap = cap if full_settle else min(cap, RESET_CAP)
         self.last_settle = wait_settled(self.env, cap=cap) if cap and needs_settle(row["code"]) else None
 
     def reset_to_after(self, row, expect_windows: str = "", expect_digest=None, independent: bool = False) -> dict:
@@ -808,7 +809,7 @@ class Collector:
             signal.alarm(WATCHDOG_SECONDS)
             rec["action_instance"] = self.reset_to_before(row)
             rec["action_executed_at"] = time.time()
-            self.act(row)
+            self.act(row, full_settle=True)
             if not self._snap_after_walk:
                 self._snap_save(row, "a")
             rec["settle"] = self.last_settle
