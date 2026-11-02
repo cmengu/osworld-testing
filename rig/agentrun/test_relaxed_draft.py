@@ -1,12 +1,16 @@
-"""Offline test of rig/mask_relaxed_draft.py on saved states; no VM.  Writes rig/out/model_on_agent/relaxed_draft_test.json.
+"""Offline test of the 2 November rules in rig/mask.py on saved states; no VM.  Writes rig/out/model_on_agent/relaxed_draft_test.json.
     OSWorld/.venv/bin/python -I rig/agentrun/test_relaxed_draft.py
 For each row: does the action still count as a change, and does any recorded undo attempt now match?"""
 import collections, json, multiprocessing as mp, pathlib, sys
 BASE = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(BASE))
 from rig.snapshot import load_snapshot
-from rig.mask import states_equal
-from rig.mask_relaxed_draft import states_equal_relaxed
+from rig.mask import apply_tree_mask, relax, strict_states_equal as states_equal
+
+def states_equal_relaxed(ac, ad, bc, bd, mask):
+    _, td, fd = states_equal(ac, ad, bc, bd, mask)
+    left, dr = relax(td, apply_tree_mask(ac, mask), apply_tree_mask(bc, mask))
+    return (not left and not fd), left, fd, dr
 MASK = json.load(open(BASE / "rig/out/mask_run/mask.json"))
 OUT = BASE / "rig/out"
 

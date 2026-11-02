@@ -74,6 +74,7 @@ os.chdir(OSWORLD)
 from rig.compact import file_diff, render                      # noqa: E402
 from rig.freshstart import fresh_start, is_calc_task, prime_cache, switch_task  # noqa: E402
 from rig.mask import apply_file_mask, file_sig, states_equal    # noqa: E402
+from rig.settle import late_file_changes, needs_settle, wait_settled    # noqa: E402
 from rig.snapshot import load_snapshot, take_snapshot           # noqa: E402
 from rig.treediff import summarize                              # noqa: E402
 from rig import undo as U                                       # noqa: E402
@@ -234,6 +235,10 @@ class Collector:
             from rig import mask as _mask
             _mask.IGNORE_LAYOUT = True
             self.rules_version += "+layout"
+        if getattr(args, "settle_cap", 0):
+            self.rules_version += f"+settle{args.settle_cap:g}"
+        self.candidates_version = hashlib.sha256((HERE / "undo.py").read_bytes()).hexdigest()[:12]
+        self.last_settle = None
         data = json.load(open(args.spots))
         self.spots = {s["id"]: s for s in data["spots"]}
         self.rows_all = data["rows"]
@@ -486,6 +491,8 @@ class Collector:
 
     def act(self, row):
         self.step(row["code"], pause=row.get("pause", 2))
+        cap = getattr(self.args, "settle_cap", 0)
+        self.last_settle = wait_settled(self.env, cap=cap) if cap and needs_settle(row["code"]) else None
 
     def reset_to_after(self, row, expect_windows: str = "", expect_digest=None, independent: bool = False) -> dict:
         """Fresh start plus the action.  With expect_windows (the recorded S' window list), the reset is checked
@@ -689,7 +696,7 @@ class Collector:
                "action": {"type": "pyautogui", "desc": spot["desc"], "code": row["code"], "setup": row.get("setup") or "",
                           "prelude": row.get("prelude", PRELUDE), "pause": row.get("pause", 2), "expect": row.get("expect", "calc")},
                "known_answer": row.get("known_answer"),
-               "mask_version": self.mask_version, "rules_version": self.rules_version, "env": env_how,
+               "mask_version": self.mask_version, "rules_version": self.rules_version, "candidates_version": self.candidates_version, "env": env_how,
                "started_at": time.time()}
 
         # ---- S
@@ -804,7 +811,10 @@ class Collector:
             self.act(row)
             if not self._snap_after_walk:
                 self._snap_save(row, "a")
+            rec["settle"] = self.last_settle
             S1 = self.snapshot(rdir / "S1", {"row": rid, "kind": "after"}, expect_kind=row.get("expect", "calc"))
+            if self.last_settle:
+                rec["after_late_changes"] = late_file_changes(self.env, S1.digest, self.mask)
             for wait in (3, 10):
                 if S1.ok:
                     break
@@ -1065,7 +1075,9 @@ class Collector:
                 tiers.append(("B", None))
                 p0, p1 = S.meta.get("pointer"), S1.meta.get("pointer")
                 if p0 and p1 and p0 != p1:
-                    tiers.append(("P", U.with_pointer(U.VSCODE_FIRST[:6] + [["key:ctrl+z"], ["key:escape"]])))
+                    tiers.append(("P", U.with_pointer(U.VSCODE_FIRST[:7] + [["key:ctrl+z"], ["key:escape"]])))
+            if rec["app"] in ("libreoffice-impress", "libreoffice_impress"):
+                tiers.append(("I", U.IMPRESS_FIRST))
             tiers += [(1, [U.fill_mnemonics(c, self.mnemonics) for c in U.GENERIC]),
                      *([] if rec["app"] == "vs_code" else [("B", None)]),
                      (2, [U.fill_mnemonics(c, self.mnemonics) for c in U.tier2(rec["app"])])]
@@ -1514,6 +1526,7 @@ def main():
     ap.add_argument("--dry", action="store_true", help="print the plan and the worst-case cost, no VM")
     ap.add_argument("--yes", action="store_true")
     ap.add_argument("--recompare", action="store_true", help="re-judge the rows on disk with the current mask and rules")
+    ap.add_argument("--settle-cap", type=float, default=60, help="after a typed action, wait up to this many seconds for the VM to go quiet (rig/settle.py); 0 turns it off")
     ap.add_argument("--drop-hidden", action="store_true", help="(on by default since 21 Oct) widgets not showing on screen are not state")
     ap.add_argument("--ignore-layout", action="store_true", help="(on by default since 21 Oct) scroll-bar and split-pane readouts are not state")
     ap.add_argument("--vm-snapshots", action="store_true", help="resets restore QEMU snapshots of the row (rig/vmsnap.py); needs RIG_QEMU_QMP_PORT")

@@ -87,6 +87,8 @@ VSCODE: List[Candidate] = [
 # Welcome (Alt+H, W); an editor a click opened closes with Ctrl+W; an overwrite of several lines that VS Code already autosaved needs more undo steps than two
 # before the file is saved back.
 VSCODE_FIRST: List[Candidate] = [
+    ["menu:alt+f,v"],                                            # File > Revert File: an edit not yet saved, title and file back (2 Nov;
+                                                                 # the time cap ended agr-change_permissions-10 and agr-fix_text_search-08 before it)
     ["key:ctrl+w"],                                              # close the editor a click opened (30 Oct check, step 04:
                                                                  # guess B's Ctrl+W came 4 s after the row's cap)
     ["key:ctrl+`"],
@@ -98,6 +100,13 @@ VSCODE_FIRST: List[Candidate] = [
     ["key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+s"],
     ["key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+s"],
     ["key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+z", "key:ctrl+s"],
+]
+
+
+# Impress, tried before the generic tier (2 Nov): Ctrl+Z restores a deleted slide but can land on another one, and the
+# last slide is one key away (ag-delete_slides_save-03 came back on slide 2 of 16, not 16).
+IMPRESS_FIRST: List[Candidate] = [
+    ["key:ctrl+z", "key:ctrl+end"],
 ]
 
 

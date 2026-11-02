@@ -1,8 +1,8 @@
 diff --git a/lib_run_single.py.orig-20261029 b/lib_run_single.py
-index 81972b1..9d83080 100644
+index 81972b1..23e6a98 100644
 --- a/lib_run_single.py.orig-20261029
 +++ b/lib_run_single.py
-@@ -10,6 +10,73 @@ from lib_results_logger import log_task_completion
+@@ -10,6 +10,82 @@ from lib_results_logger import log_task_completion
  
  logger = logging.getLogger("desktopenv.experiment")
  
@@ -37,8 +37,11 @@ index 81972b1..9d83080 100644
 +
 +def _rig_record(env, example_result_dir, k):
 +    import pathlib
++    from rig.settle import late_file_changes, wait_settled
 +    from rig.snapshot import take_snapshot
 +    t = time.time()
++    # 2 Nov: wait for typed input to land before the state is read (rig/settle.py), and note files that changed after
++    settle = wait_settled(env, cap=60) if k else None
 +    try:
 +        # VS Code exposes its accessibility tree only once something has read it, and fills it in over seconds: the
 +        # first recorded state of the 29 Oct snapshot run had 50 nodes where the collector's warmed read of the same
@@ -68,15 +71,21 @@ index 81972b1..9d83080 100644
 +            logger.warning("rig VM snapshot s%02d failed: %r", k, e)
 +    try:
 +        snap = take_snapshot(env, pathlib.Path(example_result_dir) / "states" / f"s{k:02d}",
-+                             meta={"actions_done": k}, expect=None, require_office=False, primed=primed)
++                             meta={"actions_done": k, "settle": settle}, expect=None, require_office=False, primed=primed)
 +        logger.info("rig state s%02d recorded in %.0fs (ok=%s)", k, time.time() - t, snap.meta.get("ok"))
++        try:
++            import json
++            mask = json.load(open(pathlib.Path(__file__).resolve().parent.parent / "rig" / "out" / "mask_run" / "mask.json"))
++            (snap.path / "late_changes.json").write_text(json.dumps(late_file_changes(env, snap.digest, mask)))
++        except Exception as e:
++            logger.warning("rig late check after s%02d failed: %r", k, e)
 +    except Exception as e:      # a failed snapshot must not end the agent's run
 +        logger.warning("rig state s%02d failed: %r", k, e)
 +
  
  def run_single_example(agent, env, example, max_steps, instruction, args, example_result_dir, scores):
      runtime_logger = setup_logger(example, example_result_dir)
-@@ -23,10 +90,16 @@ def run_single_example(agent, env, example, max_steps, instruction, args, exampl
+@@ -23,10 +99,16 @@ def run_single_example(agent, env, example, max_steps, instruction, args, exampl
      except Exception as e:
          agent.reset(vm_ip=env.vm_ip)
      
@@ -93,7 +102,7 @@ index 81972b1..9d83080 100644
      env.controller.start_recording()
      while not done and step_idx < max_steps:
          response, actions = agent.predict(
-@@ -57,9 +130,14 @@ def run_single_example(agent, env, example, max_steps, instruction, args, exampl
+@@ -57,9 +139,14 @@ def run_single_example(agent, env, example, max_steps, instruction, args, exampl
                      "screenshot_file": f"step_{step_idx + 1}_{action_timestamp}.png"
                  }))
                  f.write("\n")
@@ -108,7 +117,7 @@ index 81972b1..9d83080 100644
          step_idx += 1
      time.sleep(20) # Wait for the environment to settle
      result = env.evaluate()
-@@ -72,6 +150,15 @@ def run_single_example(agent, env, example, max_steps, instruction, args, exampl
+@@ -72,6 +159,15 @@ def run_single_example(agent, env, example, max_steps, instruction, args, exampl
      log_task_completion(example, result, example_result_dir, args)
      
      env.controller.end_recording(os.path.join(example_result_dir, "recording.mp4"))

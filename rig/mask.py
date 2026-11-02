@@ -17,6 +17,7 @@ Files compare by (size, content hash): the modified time is never compared, and 
 office files the content hash leaves the embedded metadata out (see snapshot.py).
 Comparing two states = apply the mask to both, then require exact equality of the rest.
 """
+import collections
 import os
 import re
 from collections import Counter, defaultdict
@@ -271,13 +272,78 @@ def drop_viewport_cells(tree_diffs: List[dict], a_canon: Canon, b_canon: Canon) 
     return out
 
 
-def states_equal(a_canon: Canon, a_digest: Digest, b_canon: Canon, b_digest: Digest, mask: dict):
-    """(equal?, tree differences, file differences) after masking."""
+def strict_states_equal(a_canon: Canon, a_digest: Digest, b_canon: Canon, b_digest: Digest, mask: dict):
+    """(equal?, tree differences, file differences) after masking, before the 2 November rules in relax."""
     ma, mb = apply_tree_mask(a_canon, mask), apply_tree_mask(b_canon, mask)
     tree_diffs = drop_viewport_cells(diff(ma, mb), ma, mb)
     fa, fb = apply_file_mask(a_digest, mask), apply_file_mask(b_digest, mask)
     file_diffs = sorted(p for p in set(fa) | set(fb) if _fsig(p, fa.get(p)) != _fsig(p, fb.get(p)))
     return (not tree_diffs and not file_diffs), tree_diffs, file_diffs
+
+
+# Rules since 2 Nov 2026 (rig/agentrun/rig_no_undo_12_20261102.md, author's decision that day: pointer effects and
+# on-screen trivia are not state; files and document content must match).  Files are untouched and a changed value
+# still counts.  R1 VS Code's Welcome page contents; R2 the Explorer toolbar that appears on hover; R3 Impress's hover
+# label; R4 Impress objects renumbered with equal attributes (Title1, Title2); R5 Chrome's memory text in tab names;
+# R6 CSS classes inside a web page.  Written from 12 agent steps, so not independently tested.
+_WELCOME = "document-frame[Overview of how to get up to speed"
+_TOOLBAR = re.compile(r"push-button\[Explorer Section: [^\]]*\]#\d+/section\[\]#1(/|$)")
+_TOOLTIP = re.compile(r"frame\[[^\]]*LibreOffice Impress\]#\d+/panel\[\]#1(/label\[[^\]]*\]#\d+)?$")
+_NUMBERED = re.compile(r"panel\[(Title|Subtitle|ContentPlaceholder|TextPlaceholder|PicturePlaceholder)\d+\]")
+_MEMORY = re.compile(r" - Memory usage - [\d.]+ [KMG]B")
+
+
+def _normal(path):
+    return _MEMORY.sub("", _NUMBERED.sub(lambda m: f"panel[{m.group(1)}]", path))
+
+
+def _value(v):
+    """A node's own name repeats the number or memory text, so it is normalised too; any other change still counts."""
+    return _MEMORY.sub("", re.sub(r"^(Title|Subtitle|ContentPlaceholder|TextPlaceholder|PicturePlaceholder)\d+$", r"\1", str(v)))
+
+
+def _attrs(canon, path):
+    return tuple(sorted((k, _value(v)) for k, v in (canon.get(path) or {}).items()))
+
+
+def relax(tree_diffs, a_canon, b_canon):
+    """The differences that remain, and the count dropped per rule."""
+    kept, dropped = [], collections.Counter()
+    for d in tree_diffs:
+        p, attr = d["path"], d["attr"]
+        if _WELCOME in p:
+            dropped["R1"] += 1
+        elif attr == NODE and _TOOLBAR.search(p):
+            dropped["R2"] += 1
+        elif attr == NODE and _TOOLTIP.search(p):
+            dropped["R3"] += 1
+        elif attr == "class" and "/document-web[" in p:
+            dropped["R6"] += 1
+        else:
+            kept.append(d)
+    gone, new = collections.defaultdict(list), collections.defaultdict(list)
+    for d in kept:
+        if d["attr"] == NODE and _normal(d["path"]) != d["path"]:
+            if d["new"] is None:
+                gone[(_normal(d["path"]), _attrs(a_canon, d["path"]))].append(d)
+            elif d["old"] is None:
+                new[(_normal(d["path"]), _attrs(b_canon, d["path"]))].append(d)
+    paired = set()
+    for key in gone.keys() & new.keys():
+        for x, y in zip(gone[key], new[key]):
+            paired.update((id(x), id(y)))
+            rule = "R5" if "Memory usage" in x["path"] else "R4"
+            dropped[rule] += 2
+    return [d for d in kept if id(d) not in paired], dropped
+
+
+
+def states_equal(a_canon: Canon, a_digest: Digest, b_canon: Canon, b_digest: Digest, mask: dict):
+    """(equal?, tree differences, file differences) after masking and the 2 November rules."""
+    ma, mb = apply_tree_mask(a_canon, mask), apply_tree_mask(b_canon, mask)
+    _, tree_diffs, file_diffs = strict_states_equal(a_canon, a_digest, b_canon, b_digest, mask)
+    left, _ = relax(tree_diffs, ma, mb)
+    return (not left and not file_diffs), left, file_diffs
 
 
 def describe(mask: dict, limit: int = 12) -> str:
