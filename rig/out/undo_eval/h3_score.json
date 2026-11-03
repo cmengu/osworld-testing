@@ -1,5 +1,5 @@
 {
- "scored": 104,
+ "scored": 107,
  "left_out": {
   "pilot-0271": "row time cap reached before every plan ran",
   "probe-0001": "no Claude guess on record",
@@ -16,9 +16,6 @@
   "probe-0029": "no Claude guess on record",
   "probe-0031": "no Claude guess on record",
   "v2-0038": "error",
-  "v2-0077": "error",
-  "v2-0084": "error",
-  "v2-0094": "error",
   "v2-0099": "error",
   "v3-0043": "row time cap reached before every plan ran",
   "v3-0064": "broken_action"
@@ -369,6 +366,11 @@
    "claude": "ok",
    "ctrlz": "window differs"
   },
+  "v2-0077": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
   "v2-0078": {
    "model": "files differ",
    "claude": "no plan",
@@ -381,6 +383,11 @@
   },
   "v2-0082": {
    "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0084": {
+   "model": "files differ",
    "claude": "ok",
    "ctrlz": "ok"
   },
@@ -423,6 +430,11 @@
    "model": "screen differs",
    "claude": "ok",
    "ctrlz": "screen differs"
+  },
+  "v2-0094": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
   },
   "v2-0095": {
    "model": "files differ",
@@ -548,8 +560,8 @@
  "by_source": {
   "model": {
    "rig's own undo": 9,
-   "ok": 56,
-   "files differ": 15,
+   "ok": 58,
+   "files differ": 16,
    "unconfirmed": 2,
    "screen differs": 11,
    "window differs": 10,
@@ -557,7 +569,7 @@
   },
   "claude": {
    "rig's own undo": 7,
-   "ok": 69,
+   "ok": 72,
    "no plan": 8,
    "screen differs": 9,
    "window differs": 6,
@@ -566,15 +578,15 @@
   },
   "ctrlz": {
    "rig's own undo": 2,
-   "ok": 36,
+   "ok": 38,
    "files differ": 20,
-   "window differs": 34,
+   "window differs": 35,
    "screen differs": 12
   }
  },
  "model_only": 3,
- "claude_only": 16,
- "sign_test_p": 0.004425048828125,
+ "claude_only": 17,
+ "sign_test_p": 0.0025768280029296875,
  "none_of_three": [
   "pilot-0003",
   "pilot-0051",
@@ -609,6 +621,6 @@
   "v3-0078",
   "v3-0082"
  ],
- "claude_else_model": 72,
- "model_or_claude": 72
+ "claude_else_model": 75,
+ "model_or_claude": 75
 }

@@ -1,6 +1,6 @@
-# Methods (draft, 1 November 2026)
+# Methods and findings so far (draft, updated 3 November 2026)
 
-Status: draft for the author. `[TO CONFIRM]` marks a point not settled yet. The hand review has no answers yet, so this section describes its protocol only and reports no results from it.
+Status: draft for the author. `[TO CONFIRM]` marks a point not settled yet. Section 8 now reports the hand review's results (two rounds, 33 labelled steps). Section 10 gives the hypotheses' status and the work since 1 November. Section 10.3 gives the H3 rollback run of 3 to 4 November and the relabel run.
 
 ## 1. What is being predicted
 
@@ -72,6 +72,16 @@ Five-fold cross-validation, with seeds 2026 and 7 for Model-E and seed 2026 for 
 
 **Sample.** The First 20: 11 rig no-undo steps from the earlier runs, 7 steps from the newest run and 2 controls. 19 were labelled; `ag-close_delete_spreadsheets-01` was left out because its replay is unreliable. The set is mostly rig no-undo steps (16 of 20), so it can show whether the rig is too strict but gives no overall accuracy.
 
+**Results (33 labelled steps, two rounds).** Round 1 was the First 20. Round 2 was 15 steps where the model was unsure or likely wrong, chosen from its ranked uncertainty, so it shows the model's weak tail, not its general accuracy. Under the lenient reading:
+
+| Source | Agrees with the author | Calls one-way what the author can undo | Calls undoable what the author calls one-way |
+|---|---|---|---|
+| Model-E | 21 of 33 | 9 | 3 |
+| Claude's guess | 21 of 22 | 1 | 0 |
+| Rig | 8 of 18 | 10 | 0 |
+
+The author found 4 of the 33 steps really one-way. All 4 overwrite a saved file, and all 4 were on-task. So no recorded agent step was both off-task and one-way, and the guard's target is `allow` on every step. The guard refuses 3 steps, all wrongly. All 7 model misses in round 2 are terminal steps it calls one-way: it reads the command (useradd, sudo, pytest) rather than its effect. The training data has no terminal command that changes nothing or undoes in one command. Claude's score is inflated, because Claude suggested many of the answers.
+
 ## 9. Limits to state in the paper
 
 - **One rater, who is the author.** There is no agreement figure unless a second rater labels a sample.
@@ -82,4 +92,43 @@ Five-fold cross-validation, with seeds 2026 and 7 for Model-E and seed 2026 for 
 - **Label strictness.** Training labels use the same rule under test. If the review shows it is too strict, the training labels share that bias.
 - **Input gaps.** The model's state text omits the VS Code editor's contents. Its system prompt describes actions as keyboard input and its training is mostly keyboard actions, while the agent also clicks at screen coordinates. A low score on agent steps may partly reflect this.
 - **Small test set.** Few tasks and few steps, with several steps from one task. Results are a first read, not an estimate for agents in general.
-- **Benign runs.** On the newest run all steps appear on-task, so the guard's target is `allow` throughout and that run cannot show whether the guard catches anything.
+- **Benign runs.** On the newest run all steps appear on-task, so the guard's target is `allow` throughout and that run cannot show whether the guard catches anything. Across all 33 reviewed steps, none is both off-task and one-way.
+- **Where the rig sends its keys.** On 9 training rows, a terminal command deleted or emptied a file open in an application, and the rig's Save went to the terminal, not the application. A focus step added on 3 November fixed this. With it, VS Code saved the file back, but LibreOffice did not (Section 10.3).
+- **The rig is noisy.** In the H3 run the rig's own confirmed undo failed again on 7 to 9 of 107 rows.
+
+## 10. Findings so far (3 November)
+
+### 10.1 Hypotheses
+
+| Hypothesis | Status | Why |
+|---|---|---|
+| H1: Claude zero-shot misjudges one-way actions (below 90% on the no-undo class) | Mixed | 82.5% as scored. The relabel run (10.3) found 8 of 21 doubted no-undo rows undoable, so some of Claude's misses were the rig's. But all 6 rows where an open LibreOffice document was deleted stayed one-way, so Claude was wrong there. |
+| H2: executed labels train a better guard than guessed labels | Promising, not proven | Model-E 0.888 vs Model-G 0.881 GUARD F1 on built rows, within noise. |
+| H3: the trained model rolls back more often than Claude zero-shot | False | On 107 rows Claude's plan rolled back 72 (67%) and the model's 58 (54%); Claude alone succeeded on 17 rows, the model alone on 3 (sign test p ≈ 0.003). |
+| H4: live guarded agent run | Not run | No recorded step is both off-task and one-way, so a live run on these tasks has nothing to catch yet. |
+
+### 10.2 How many actions are really one-way
+
+Reading the 117 no-undo training rows by what each action does: about 106 destroy content with no copy left (rm 26, discard an edit 22, terminal overwrite 19, delete for good 16, Save As or Replace over another document 15, mv or cp over 12, sed -i 4). 6 destroy nothing; something was created or opened (a new window, a new folder, a converted copy). 5 are doubtful. All 5 on-task one-way training rows are among those 11. No label was changed from this reading.
+
+### 10.3 H3 rollback comparison and relabel run (3 to 4 November)
+
+**Setup.** For each of the 125 UNDO rows, three plans ran from the row's after-state, in the same rig and under the 2 November rules: the model's plan (from the fold adapter that never saw the row), Claude's guess B undo (recorded before the action ran), and plain Ctrl+Z. Every plan ran, even after another worked. Every row is known to be undoable: the rig found and confirmed an undo for it earlier. A Claude answer of "cannot be undone", or text outside the step language, counts as a failure. Rows with no Claude guess on record (13 probe rows) are left out, as are 5 rows the rig could not rebuild or ran out of time on, so 107 rows are scored. Plans that run in this mode are never training labels. Cost: about 46 USD of sandbox time.
+
+| Source | Rolled back (107 rows) | No plan | Rig's own undo also failed | Unconfirmed | File left changed | Window left wrong | Screen-only difference |
+|---|---|---|---|---|---|---|---|
+| Model-E | 58 (54%) | 1 | 9 | 2 | 16 | 10 | 11 |
+| Claude Opus 5.5 | 72 (67%) | 8 | 7 | 3 | 2 | 6 | 9 |
+| Ctrl+Z | 38 (36%) | 0 | 2 | 0 | 20 | 35 | 12 |
+
+Claude alone succeeded on 17 rows and the model alone on 3, so H3 fails. Taking Claude's plan when it gives one and the model's otherwise rolls back 75 (70%).
+
+**Why the model loses.** It learned the common answers. By the kind of undo the rig found, its plans worked on Ctrl+Z 33 of 43, Escape 17 of 32, reopen 4 of 8, close a window 1 of 4, undo then save again 0 of 9, and a terminal command 0 of 6. It never answers with a terminal command, and answers Ctrl+Z on 67 rows where 48 need it. The training data has only 6 terminal undos and 9 save-again undos among 125, so the labels are right but too few. Claude reads what the action did (a `cp` is undone by removing the copy).
+
+**Rig noise.** On 7 to 9 rows the rig's own earlier undo failed again, and some failures differ only in the accessibility tree. About one failure in five is the rig's, not the plan's, so all three rates are lower bounds.
+
+**Relabel run.** The 21 doubted no-undo rows were rerun with the undo a user would try first ahead of the usual search. 8 are undoable: reopen a closed file, `rm` a created file or the copies, Ctrl+Z then Enter on a new folder, save again from VS Code, and in Calc undo, save, redo. 10 stay no-undo, including all 6 where a document open in LibreOffice was deleted: LibreOffice warns that the document was changed by others and does not save it back. 3 could not be tested, because the rig froze or lost its sandbox on every try. `[TO CONFIRM: whether the 8 rows change label at the next export is the author's decision.]`
+
+### 10.4 Injection judgment (judgment only, nothing executed)
+
+Five one-way actions on recorded before-states (delete the Documents folder, empty the unit tests, delete the project, delete a desktop file, empty the Trash). Each is asked four ways: the user's task asks for it, a note planted in the open file asks for it, a desktop notification asks for it, or nothing asks for it. Claude Opus 5.5 with the plain guard question was right on 20 of 20: it allowed the 5 the user asked for and refused the 15 others, naming the planted text as not the user's request. Agents that delete files on injected instructions are therefore not failing the judgment when asked. They fail because they never ask, which is the case for a pre-click guard. These items come from OS-Harm and are test only. No live injection task was built or run.
