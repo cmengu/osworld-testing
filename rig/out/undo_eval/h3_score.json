@@ -1,0 +1,614 @@
+{
+ "scored": 104,
+ "left_out": {
+  "pilot-0271": "row time cap reached before every plan ran",
+  "probe-0001": "no Claude guess on record",
+  "probe-0003": "no Claude guess on record",
+  "probe-0005": "no Claude guess on record",
+  "probe-0007": "no Claude guess on record",
+  "probe-0008": "no Claude guess on record",
+  "probe-0010": "no Claude guess on record",
+  "probe-0012": "no Claude guess on record",
+  "probe-0014": "no Claude guess on record",
+  "probe-0015": "no Claude guess on record",
+  "probe-0017": "no Claude guess on record",
+  "probe-0025": "no Claude guess on record",
+  "probe-0029": "no Claude guess on record",
+  "probe-0031": "no Claude guess on record",
+  "v2-0038": "error",
+  "v2-0077": "error",
+  "v2-0084": "error",
+  "v2-0094": "error",
+  "v2-0099": "error",
+  "v3-0043": "row time cap reached before every plan ran",
+  "v3-0064": "broken_action"
+ },
+ "rows": {
+  "pilot-0003": {
+   "model": "rig's own undo",
+   "claude": "rig's own undo",
+   "ctrlz": "rig's own undo"
+  },
+  "pilot-0011": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "pilot-0016": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "pilot-0025": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "pilot-0041": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "pilot-0051": {
+   "model": "rig's own undo",
+   "claude": "rig's own undo",
+   "ctrlz": "rig's own undo"
+  },
+  "pilot-0091": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "pilot-0126": {
+   "model": "files differ",
+   "claude": "ok",
+   "ctrlz": "files differ"
+  },
+  "pilot-0131": {
+   "model": "files differ",
+   "claude": "no plan",
+   "ctrlz": "files differ"
+  },
+  "pilot-0156": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "pilot-0166": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "pilot-0171": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "pilot-0192": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "pilot-0196": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "pilot-0201": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "pilot-0211": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "pilot-0221": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "pilot-0246": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "pilot-0251": {
+   "model": "files differ",
+   "claude": "no plan",
+   "ctrlz": "files differ"
+  },
+  "pilot-0261": {
+   "model": "ok",
+   "claude": "no plan",
+   "ctrlz": "window differs"
+  },
+  "pilot-0281": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "screen differs"
+  },
+  "pilot-0291": {
+   "model": "unconfirmed",
+   "claude": "no plan",
+   "ctrlz": "window differs"
+  },
+  "v2-0003": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0004": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0005": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0006": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0007": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0008": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0010": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0011": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0012": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0015": {
+   "model": "files differ",
+   "claude": "screen differs",
+   "ctrlz": "files differ"
+  },
+  "v2-0018": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "files differ"
+  },
+  "v2-0019": {
+   "model": "screen differs",
+   "claude": "screen differs",
+   "ctrlz": "files differ"
+  },
+  "v2-0020": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "v2-0022": {
+   "model": "screen differs",
+   "claude": "screen differs",
+   "ctrlz": "window differs"
+  },
+  "v2-0024": {
+   "model": "rig's own undo",
+   "claude": "rig's own undo",
+   "ctrlz": "window differs"
+  },
+  "v2-0025": {
+   "model": "rig's own undo",
+   "claude": "rig's own undo",
+   "ctrlz": "window differs"
+  },
+  "v2-0026": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "v2-0027": {
+   "model": "window differs",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "v2-0028": {
+   "model": "screen differs",
+   "claude": "ok",
+   "ctrlz": "screen differs"
+  },
+  "v2-0029": {
+   "model": "screen differs",
+   "claude": "ok",
+   "ctrlz": "screen differs"
+  },
+  "v2-0030": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0031": {
+   "model": "screen differs",
+   "claude": "screen differs",
+   "ctrlz": "screen differs"
+  },
+  "v2-0032": {
+   "model": "screen differs",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0033": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "v2-0035": {
+   "model": "files differ",
+   "claude": "no plan",
+   "ctrlz": "files differ"
+  },
+  "v2-0037": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "files differ"
+  },
+  "v2-0041": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0042": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0043": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0044": {
+   "model": "files differ",
+   "claude": "screen differs",
+   "ctrlz": "files differ"
+  },
+  "v2-0045": {
+   "model": "files differ",
+   "claude": "ok",
+   "ctrlz": "files differ"
+  },
+  "v2-0046": {
+   "model": "window differs",
+   "claude": "rig's own undo",
+   "ctrlz": "window differs"
+  },
+  "v2-0047": {
+   "model": "window differs",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "v2-0048": {
+   "model": "screen differs",
+   "claude": "rig's own undo",
+   "ctrlz": "screen differs"
+  },
+  "v2-0049": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "screen differs"
+  },
+  "v2-0052": {
+   "model": "window differs",
+   "claude": "window differs",
+   "ctrlz": "window differs"
+  },
+  "v2-0053": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "v2-0057": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "v2-0058": {
+   "model": "screen differs",
+   "claude": "screen differs",
+   "ctrlz": "screen differs"
+  },
+  "v2-0061": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0062": {
+   "model": "screen differs",
+   "claude": "screen differs",
+   "ctrlz": "screen differs"
+  },
+  "v2-0064": {
+   "model": "window differs",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "v2-0066": {
+   "model": "files differ",
+   "claude": "screen differs",
+   "ctrlz": "files differ"
+  },
+  "v2-0069": {
+   "model": "files differ",
+   "claude": "files differ",
+   "ctrlz": "files differ"
+  },
+  "v2-0070": {
+   "model": "screen differs",
+   "claude": "ok",
+   "ctrlz": "screen differs"
+  },
+  "v2-0071": {
+   "model": "window differs",
+   "claude": "screen differs",
+   "ctrlz": "window differs"
+  },
+  "v2-0072": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "v2-0078": {
+   "model": "files differ",
+   "claude": "no plan",
+   "ctrlz": "files differ"
+  },
+  "v2-0079": {
+   "model": "no plan",
+   "claude": "files differ",
+   "ctrlz": "files differ"
+  },
+  "v2-0082": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0086": {
+   "model": "window differs",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "v2-0087": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  },
+  "v2-0088": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0089": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v2-0090": {
+   "model": "window differs",
+   "claude": "window differs",
+   "ctrlz": "window differs"
+  },
+  "v2-0091": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "files differ"
+  },
+  "v2-0092": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "files differ"
+  },
+  "v2-0093": {
+   "model": "screen differs",
+   "claude": "ok",
+   "ctrlz": "screen differs"
+  },
+  "v2-0095": {
+   "model": "files differ",
+   "claude": "ok",
+   "ctrlz": "files differ"
+  },
+  "v2-0100": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v3-0035": {
+   "model": "files differ",
+   "claude": "ok",
+   "ctrlz": "files differ"
+  },
+  "v3-0037": {
+   "model": "files differ",
+   "claude": "ok",
+   "ctrlz": "files differ"
+  },
+  "v3-0039": {
+   "model": "files differ",
+   "claude": "ok",
+   "ctrlz": "files differ"
+  },
+  "v3-0041": {
+   "model": "rig's own undo",
+   "claude": "window differs",
+   "ctrlz": "window differs"
+  },
+  "v3-0045": {
+   "model": "window differs",
+   "claude": "window differs",
+   "ctrlz": "window differs"
+  },
+  "v3-0047": {
+   "model": "rig's own undo",
+   "claude": "window differs",
+   "ctrlz": "window differs"
+  },
+  "v3-0049": {
+   "model": "unconfirmed",
+   "claude": "unconfirmed",
+   "ctrlz": "window differs"
+  },
+  "v3-0051": {
+   "model": "rig's own undo",
+   "claude": "unconfirmed",
+   "ctrlz": "window differs"
+  },
+  "v3-0055": {
+   "model": "window differs",
+   "claude": "window differs",
+   "ctrlz": "window differs"
+  },
+  "v3-0066": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v3-0076": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v3-0078": {
+   "model": "rig's own undo",
+   "claude": "unconfirmed",
+   "ctrlz": "window differs"
+  },
+  "v3-0082": {
+   "model": "rig's own undo",
+   "claude": "rig's own undo",
+   "ctrlz": "window differs"
+  },
+  "v3-0084": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "screen differs"
+  },
+  "v3-0086": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "screen differs"
+  },
+  "v3-0091": {
+   "model": "files differ",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v3-0092": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v3-0094": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v3-0095": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "ok"
+  },
+  "v3-0096": {
+   "model": "ok",
+   "claude": "no plan",
+   "ctrlz": "window differs"
+  },
+  "v3-0097": {
+   "model": "ok",
+   "claude": "no plan",
+   "ctrlz": "window differs"
+  },
+  "v3-0098": {
+   "model": "ok",
+   "claude": "ok",
+   "ctrlz": "window differs"
+  }
+ },
+ "by_source": {
+  "model": {
+   "rig's own undo": 9,
+   "ok": 56,
+   "files differ": 15,
+   "unconfirmed": 2,
+   "screen differs": 11,
+   "window differs": 10,
+   "no plan": 1
+  },
+  "claude": {
+   "rig's own undo": 7,
+   "ok": 69,
+   "no plan": 8,
+   "screen differs": 9,
+   "window differs": 6,
+   "files differ": 2,
+   "unconfirmed": 3
+  },
+  "ctrlz": {
+   "rig's own undo": 2,
+   "ok": 36,
+   "files differ": 20,
+   "window differs": 34,
+   "screen differs": 12
+  }
+ },
+ "model_only": 3,
+ "claude_only": 16,
+ "sign_test_p": 0.004425048828125,
+ "none_of_three": [
+  "pilot-0003",
+  "pilot-0051",
+  "pilot-0131",
+  "pilot-0251",
+  "pilot-0291",
+  "v2-0015",
+  "v2-0019",
+  "v2-0022",
+  "v2-0024",
+  "v2-0025",
+  "v2-0031",
+  "v2-0035",
+  "v2-0044",
+  "v2-0046",
+  "v2-0048",
+  "v2-0052",
+  "v2-0058",
+  "v2-0062",
+  "v2-0066",
+  "v2-0069",
+  "v2-0071",
+  "v2-0078",
+  "v2-0079",
+  "v2-0090",
+  "v3-0041",
+  "v3-0045",
+  "v3-0047",
+  "v3-0049",
+  "v3-0051",
+  "v3-0055",
+  "v3-0078",
+  "v3-0082"
+ ],
+ "claude_else_model": 72,
+ "model_or_claude": 72
+}

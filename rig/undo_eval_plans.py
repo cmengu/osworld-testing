@@ -85,7 +85,10 @@ def main():
         m = model.get(rid)
         plans.append({"source": "model", "steps": [s.strip() for s in m["text"].split(";")] if m else None})
         c = claude.get(rid) or {}
-        cand, how = U.guess_parse(c.get("steps")) if c.get("claimed") else (None, "claimed one-way" if c else "no guess")
+        if c.get("claimed") is None:                 # no guess recorded for the row (probe rows, some v2 rows): not a one-way claim
+            cand, how = None, "no guess"
+        else:
+            cand, how = U.guess_parse(c.get("steps")) if c.get("claimed") else (None, "claimed one-way")
         plans.append({"source": "claude", "steps": cand if cand else (c.get("steps") or []), "how": how})
         plans.append({"source": "ctrlz", "steps": ["key:ctrl+z"]})
         h3[src][rid] = plans

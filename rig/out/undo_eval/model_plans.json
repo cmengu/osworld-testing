@@ -1,0 +1,631 @@
+{
+ "tag": "k3_v3",
+ "model": "Qwen/Qwen3-8B",
+ "rows": {
+  "pilot-0291": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "key:escape ; key:escape"
+  },
+  "pilot-0211": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0025": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0171": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "pilot-0246": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "probe-0025": {
+   "fold": 0,
+   "text": "key:ctrl+w",
+   "target": "reopen"
+  },
+  "probe-0029": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "probe-0031": {
+   "fold": 0,
+   "text": "key:ctrl+alt+t ; key:enter",
+   "target": "key:alt+f4"
+  },
+  "v2-0032": {
+   "fold": 0,
+   "text": "key:ctrl+shift+t",
+   "target": "key:ctrl+z"
+  },
+  "v2-0069": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "shell:rm Desktop/Answer2.docx"
+  },
+  "v2-0005": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0022": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "key:escape ; key:escape"
+  },
+  "v2-0003": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0058": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z"
+  },
+  "v2-0084": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "click:Undo Trash"
+  },
+  "v2-0086": {
+   "fold": 0,
+   "text": "key:ctrl+w",
+   "target": "reopen"
+  },
+  "v3-0094": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v3-0045": {
+   "fold": 0,
+   "text": "reopen",
+   "target": "key:escape"
+  },
+  "v3-0039": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "shell:rm Desktop/cpjpg/*.jpg"
+  },
+  "v3-0047": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0078": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0086": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0092": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "click:Undo Trash"
+  },
+  "pilot-0016": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0126": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+s ; wait:4 ; key:enter ; wait:3"
+  },
+  "pilot-0156": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "pilot-0192": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0131": {
+   "fold": 1,
+   "text": "key:ctrl+w",
+   "target": "reopen"
+  },
+  "pilot-0261": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "pilot-0201": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0251": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+s ; wait:4 ; key:enter ; wait:3"
+  },
+  "pilot-0281": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "probe-0003": {
+   "fold": 1,
+   "text": "key:alt+n ; key:alt+f4",
+   "target": "reopen"
+  },
+  "probe-0005": {
+   "fold": 1,
+   "text": "key:alt+f4",
+   "target": "reopen ; key:ctrl+home ; type:pilot ; key:enter ; key:ctrl+w"
+  },
+  "v2-0012": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0026": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0011": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0024": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0064": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "reopen"
+  },
+  "v2-0008": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0020": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0077": {
+   "fold": 1,
+   "text": "key:alt+f4",
+   "target": "key:ctrl+w"
+  },
+  "v2-0078": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "shell:mv Desktop/inv.pdf 'Desktop/Invoice # 243729.pdf'"
+  },
+  "v2-0066": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y"
+  },
+  "v3-0082": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0095": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v3-0084": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0091": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "click:Undo Trash"
+  },
+  "v3-0037": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "shell:rm output.txt"
+  },
+  "pilot-0011": {
+   "fold": 2,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0271": {
+   "fold": 2,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0004": {
+   "fold": 2,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0090": {
+   "fold": 2,
+   "text": "reopen",
+   "target": "focus:newest ; key:ctrl+w"
+  },
+  "v2-0091": {
+   "fold": 2,
+   "text": "reopen",
+   "target": "reopen"
+  },
+  "v2-0019": {
+   "fold": 2,
+   "text": "reopen",
+   "target": "key:ctrl+w ; wait:2 ; key:alt+n ; reopen"
+  },
+  "v2-0028": {
+   "fold": 2,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z"
+  },
+  "v2-0038": {
+   "fold": 2,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0070": {
+   "fold": 2,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z"
+  },
+  "v2-0071": {
+   "fold": 2,
+   "text": "reopen",
+   "target": "focus:newest ; key:alt+f4"
+  },
+  "v2-0072": {
+   "fold": 2,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0092": {
+   "fold": 2,
+   "text": "reopen",
+   "target": "reopen"
+  },
+  "v2-0093": {
+   "fold": 2,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z"
+  },
+  "v2-0052": {
+   "fold": 2,
+   "text": "key:alt+left",
+   "target": "focus:newest ; key:alt+f4 ; wait:2 ; click:Discard changes"
+  },
+  "v2-0053": {
+   "fold": 2,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0057": {
+   "fold": 2,
+   "text": "key:ctrl+w",
+   "target": "key:ctrl+w"
+  },
+  "v2-0094": {
+   "fold": 2,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0095": {
+   "fold": 2,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y"
+  },
+  "v3-0096": {
+   "fold": 2,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0098": {
+   "fold": 2,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0049": {
+   "fold": 2,
+   "text": "key:escape",
+   "target": "key:escape ; key:escape"
+  },
+  "v3-0055": {
+   "fold": 2,
+   "text": "reopen",
+   "target": "key:escape"
+  },
+  "v3-0097": {
+   "fold": 2,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "pilot-0003": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0041": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0196": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0051": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0166": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "pilot-0221": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+home"
+  },
+  "probe-0008": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "probe-0010": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "probe-0012": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "probe-0007": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "click:Undo Trash"
+  },
+  "probe-0014": {
+   "fold": 3,
+   "text": "key:alt+f4",
+   "target": "key:alt+left"
+  },
+  "probe-0015": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "probe-0017": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0041": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0044": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+s ; key:ctrl+y"
+  },
+  "v2-0043": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0047": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:escape"
+  },
+  "v2-0049": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0079": {
+   "fold": 3,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+z",
+   "target": "shell:rm /home/user/Desktop/file1.csv"
+  },
+  "v2-0006": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0015": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y"
+  },
+  "v2-0025": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0030": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+home"
+  },
+  "v2-0035": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y"
+  },
+  "v2-0061": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0062": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+home"
+  },
+  "v2-0031": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+home"
+  },
+  "v2-0037": {
+   "fold": 3,
+   "text": "reopen",
+   "target": "reopen"
+  },
+  "v2-0082": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v3-0064": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v3-0076": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v3-0041": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0043": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "pilot-0091": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "probe-0001": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0018": {
+   "fold": 4,
+   "text": "reopen",
+   "target": "reopen"
+  },
+  "v2-0007": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0027": {
+   "fold": 4,
+   "text": "key:ctrl+w",
+   "target": "key:escape"
+  },
+  "v2-0029": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z"
+  },
+  "v2-0033": {
+   "fold": 4,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0042": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0045": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+s ; key:ctrl+y"
+  },
+  "v2-0046": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+shift+t"
+  },
+  "v2-0048": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:escape"
+  },
+  "v2-0087": {
+   "fold": 4,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0088": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0089": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0010": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0099": {
+   "fold": 4,
+   "text": "key:ctrl+w",
+   "target": "key:ctrl+w"
+  },
+  "v2-0100": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v3-0035": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "shell:mv /home/user/Desktop/todo_list_Jan_2 /home/user/Desktop/todo_list_Jan_1"
+  },
+  "v3-0051": {
+   "fold": 4,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0066": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  }
+ }
+}
