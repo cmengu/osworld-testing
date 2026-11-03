@@ -249,6 +249,10 @@ class Collector:
             self.mnemonics.update(json.loads(args.mnemonics))
         self.results_path = self.out / "results.jsonl"
         self.done = set()
+        # --plans (3 Nov): undo plans to execute per row, {row_id: [{"source": "model"|"claude"|"ctrlz"|..., "steps": [...]}]}.
+        # With --plans-only they are the whole search (the H3 rollback comparison); without it they go first, ahead of
+        # the usual tiers (relabelling rows under the 2 November rules).
+        self.plans = json.loads(pathlib.Path(args.plans).read_text()) if getattr(args, "plans", "") else {}
         if self.results_path.exists():
             for line in self.results_path.read_text().splitlines():
                 try:
@@ -869,7 +873,11 @@ class Collector:
         ctx = {"doc_path": row.get("open_path"), "office_running": office_running, "reopen_cmd": row.get("reopen_cmd"),
                "proc": {"files": "nautilus", "thunderbird": "*", "libreoffice-calc": "", "libreoffice-writer": "",   # thunderbird's process is thunderbird-bin (24 Oct): search every app
                         "libreoffice-impress": "", "vs_code": "code"}.get(rec["app"], "*"),
-               "pointer": S.meta.get("pointer")}
+               "pointer": S.meta.get("pointer"),
+               # for "focus:doc" (3 Nov): the document's file name, or the name part of the first editor window in S
+               "doc_name": (pathlib.Path(row["open_path"]).name if row.get("open_path") else
+                            next((t.split(" - ")[0].lstrip("● ").strip() for t in titles(S.windows)
+                                  if " - LibreOffice " in t or "Visual Studio Code" in t), None))}
         reopens_office = not row.get("reopen_cmd") or "libreoffice" in " ".join(row["reopen_cmd"])
 
         def office_after(cand):
@@ -1029,6 +1037,10 @@ class Collector:
             # a probe row can name candidates to try first (tier F): the 0266 retype test executes guess B's undo
             tiers = ([("F", [U.parse_steps(c) for c in row["forced_candidates"] if U.parse_steps(c)])]
                      if row.get("forced_candidates") else [])
+            row_plans = self.plans.get(rid) or []
+            plan_cands = [c for c in (U.parse_steps(pl.get("steps")) for pl in row_plans) if c]
+            if plan_cands:
+                tiers.append(("PL", plan_cands))
             w_tier = window_tier(S.windows, S1.windows)
             if w_tier:
                 tiers.append(("W", w_tier))
@@ -1087,7 +1099,9 @@ class Collector:
             stop = False
             skipped = 0
             extra = 0                                  # tries spent looking for a shorter undo after the first match
-            for tier, cands in tiers + [(3, None), (4, None)]:
+            if getattr(self.args, "plans_only", False):
+                tiers = [t for t in tiers if t[0] == "PL"]      # the given plans and nothing else
+            for tier, cands in tiers + ([] if getattr(self.args, "plans_only", False) else [(3, None), (4, None)]):
                 if stop:
                     break
                 if tier == 3:
@@ -1115,9 +1129,9 @@ class Collector:
                         continue
                     # labels at every K (19 Oct): after a match, only strictly shorter candidates are worth a try,
                     # and at most --shorter-tries of them
-                    if found is not None and U.action_count(cand) >= U.action_count(found[1]):
+                    if found is not None and not getattr(self.args, "plans_only", False) and U.action_count(cand) >= U.action_count(found[1]):
                         continue
-                    if found is not None and extra >= self.args.shorter_tries:
+                    if found is not None and not getattr(self.args, "plans_only", False) and extra >= self.args.shorter_tries:
                         stop = True
                         break
                     if budget_used >= self.args.budget or time.time() > deadline:
@@ -1130,11 +1144,24 @@ class Collector:
                     matched = try_candidate(cand, tier, idx)
                     idx += 1
                     if matched:
-                        found = (tier, cand, idx - 1)
-                        if U.action_count(cand) <= 1:
+                        if found is None or U.action_count(cand) < U.action_count(found[1]):
+                            found = (tier, cand, idx - 1)
+                        if U.action_count(cand) <= 1 and not getattr(self.args, "plans_only", False):
                             stop = True
                             break
             rec["shorter_search"] = {"tries": extra, "limit": self.args.shorter_tries} if found is not None else None
+            if row_plans:
+                # each plan's own result, by source (3 Nov); a plan that does not parse was never executed
+                by_seq = {json.dumps(x.get("seq")): x for x in search if x.get("tier") == "PL"}
+                rec["plans"] = []
+                for pl in row_plans:
+                    c = U.parse_steps(pl.get("steps"))
+                    x = by_seq.get(json.dumps(c)) if c else None
+                    rec["plans"].append({"source": pl.get("source"), "steps": pl.get("steps"), "parsed": c,
+                                         "executed": bool(x) and not x.get("error"), "match": bool(x and x.get("match")),
+                                         "result": (x or {}).get("result") or ("does not parse" if c is None else "not run")})
+            if getattr(self.args, "plans_only", False):
+                rec["mode"] = "plans-only: not a label"
             if skipped:
                 search.append({"tier": "-", "seq": [], "result": f"skipped {skipped} candidates: budget {self.args.budget} / {self.args.row_minutes} min reached"})
             if found:
@@ -1532,7 +1559,14 @@ def main():
     ap.add_argument("--ignore-layout", action="store_true", help="(on by default since 21 Oct) scroll-bar and split-pane readouts are not state")
     ap.add_argument("--vm-snapshots", action="store_true", help="resets restore QEMU snapshots of the row (rig/vmsnap.py); needs RIG_QEMU_QMP_PORT")
     ap.add_argument("--end-sandbox", action="store_true", help="end the adopted sandbox (OSWORLD_MODAL_SANDBOX_ID) when the run ends")
+    ap.add_argument("--plans", default="", help="JSON {row_id: [{source, steps}]}: undo plans to execute on each row (3 Nov)")
+    ap.add_argument("--plans-only", action="store_true", help="execute only the --plans, every one of them, and nothing else "
+                    "(H3 rollback comparison); implies --no-teacher --no-proposer --no-replay --no-zero-shot")
     args = ap.parse_args()
+    if args.plans_only:
+        if not args.plans:
+            ap.error("--plans-only needs --plans")
+        args.no_teacher = args.no_proposer = args.no_replay = args.no_zero_shot = True
     # the module chdirs into OSWorld at import, so a relative path would resolve under OSWorld/ (pilot_run2's --out did)
     for k in ("out", "spots", "mask"):
         if not os.path.isabs(getattr(args, k)):

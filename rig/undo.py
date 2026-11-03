@@ -211,12 +211,17 @@ def step_code(step: str, ctx: dict) -> str:
         # since 25 Oct: bring the newest window to the front, so a window-closing key reaches the window the action
         # opened and not the one that kept the focus (v2-0090: Writer opened from a terminal without the focus;
         # Alt+F4 closed the terminal).  wmctrl lists windows in mapping order, the newest last.
-        if arg != "newest":
+        if arg not in ("newest", "doc"):
             raise ValueError(f"unknown focus target {arg!r}")
         # 26 Oct (v2-0090 rerun): wmctrl -i -a only raised the window, the keyboard stayed on the terminal.  So: up to
         # 6 tries checked with xprop, as rowlib.activate does, and if the manager still withholds the focus a click
         # at the centre of the window's client area (geometry from wmctrl -lG; xdotool is not on the image).
-        script = ('w=$(wmctrl -l | grep -v "@!" | tail -1 | cut -d" " -f1); [ -z "$w" ] && exit 0; '
+        # "doc" (3 Nov): the window holding the row's document (ctx["doc_name"], a file name or a window title from S),
+        # so a save reaches the editor and not the terminal that ran the action (v3-0026..0033: Ctrl+S went to the
+        # terminal, so "save the open document again" was never tried)
+        pick = ('w=$(wmctrl -l | grep -v "@!" | tail -1 | cut -d" " -f1); ' if arg == "newest" else
+                'w=$(wmctrl -l | grep -v "@!" | grep -F -- ' + shlex.quote(ctx.get("doc_name") or "@@none@@") + ' | head -1 | cut -d" " -f1); ')
+        script = (pick + '[ -z "$w" ] && exit 0; '
                   'for i in 1 2 3 4 5 6; do wmctrl -i -a "$w"; sleep 1; '
                   'a=$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | grep -o "0x[0-9a-f]*" | head -1); '
                   '[ -n "$a" ] && [ "$((a))" = "$((w))" ] && exit 0; done; '
@@ -329,7 +334,8 @@ def parse_step(raw) -> Optional[str]:
         cmd = arg.strip()
         return "shell:" + cmd if 0 < len(cmd) <= 200 and "\n" not in cmd else None
     if kind == "focus":
-        return "focus:newest" if arg.strip().lower() == "newest" else None
+        a = arg.strip().lower()
+        return "focus:" + a if a in ("newest", "doc") else None
     return None
 
 
