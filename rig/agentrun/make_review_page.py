@@ -20,6 +20,8 @@ OUT = BASE / "rig" / "out" / "review_page"
 IMG = OUT / "img"
 VS = {"___optimize_refactor", "___change_permissions", "___reorganize_rename", "___shell_script_permissions", "___fix_text_search", "___fix_todo_list"}
 CHANGING = re.compile(r"typewrite|\.write\(|press\('(delete|enter)'\)|'ctrl', '(z|s|q)'|'ctrl', 'shift', 'k'")
+# Round 2 (3 Nov 2026): steps where the model is unsure or likely wrong, from rig/agentrun/uncertain_steps_20261102.md
+ROUND2 = ["agr-optimize_refactor-06", "agr-optimize_refactor-08", "agr-change_permissions-07", "agr-change_permissions-06", "agr-change_permissions-08", "agr-change_permissions-04", "agr-optimize_refactor-09", "agr-fix_text_search-19", "agr-fix_todo_list-14", "agr-fix_todo_list-15", "ag-close_delete_spreadsheets-10", "agr-shell_script_permissions-03", "ag-revoke_permissions-06", "agr-shell_script_permissions-09", "agr-shell_script_permissions-10"]
 NOISE = ("/home/user/.config/", "/home/user/.cache/", "/home/user/.local/share/", "/home/user/.mozilla/", "/home/user/.thunderbird/",
          "/home/user/.vscode/", "/home/user/snap/", "/home/user/.pki/", "/home/user/.rig_cache/", "/home/user/.bash_history")
 
@@ -235,6 +237,8 @@ def main():
                     "teacher": None, "first20": False, "plan": plan_of(lines), "changed_picture": changes_picture(rid)})
     order = {"snapshot": 0, "recorded": 1, "first run": 2}
     out.sort(key=lambda x: (not x["first20"], x["task"], order[x["run"]], x["step"]))
+    for x in out:
+        x["round2"] = ROUND2.index(x["id"]) + 1 if x["id"] in ROUND2 else 0   # position in the round, 0 = not in it
     (OUT / "rows.json").write_text(json.dumps(out, indent=1))
     print(len(out), "rows;", sum(1 for x in out if x["before"]), "with before shots;", sum(1 for x in out if x["changes"] is not None), "with file changes")
     print("first sitting:", sum(1 for x in out if x["first20"]))

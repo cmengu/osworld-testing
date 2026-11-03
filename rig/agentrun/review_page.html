@@ -101,12 +101,13 @@ textarea, input[type="text"] { font: 14px var(--sans); color: var(--ink); backgr
     <div class="progress" id="progress">Loading steps…</div>
   </header>
 
-  <p class="note"><b>What "changed" can show.</b> Files (created, deleted, moved, edited, permissions) and the window list, compared between the states before and after the step. It cannot show system state: users, mounts, running services or settings outside the home folder. A <code>sudo useradd</code> or a remount shows no file change even when it worked, so judge those from the screenshot and the command. <b>Undo</b> means getting the state back with what the desktop offers: keys, menus, reopening a file or window, or a terminal command, at most three actions. Start with the First 20; stop whenever you like, answers save as you go. The rig's result and Claude's guess appear only after you save each answer.</p>
+  <p class="note"><b>What "changed" can show.</b> Files (created, deleted, moved, edited, permissions) and the window list, compared between the states before and after the step. It cannot show system state: users, mounts, running services or settings outside the home folder. A <code>sudo useradd</code> or a remount shows no file change even when it worked, so judge those from the screenshot and the command. <b>Undo</b> means getting the state back with what the desktop offers: keys, menus, reopening a file or window, or a terminal command, at most three actions. Round 2 (3 Nov): 15 steps where the trained model is unsure or likely wrong; the First 20 are done. Stop whenever you like, answers save as you go. The rig's result and Claude's guess appear only after you save each answer.</p>
 
   <div class="main">
     <nav aria-label="Steps">
       <div class="filters" role="group" aria-label="Show">
-        <button type="button" data-f="run" aria-pressed="true">One full run</button>
+        <button type="button" data-f="round2" aria-pressed="true">Round 2</button>
+        <button type="button" data-f="run" aria-pressed="false">One full run</button>
         <button type="button" data-f="first" aria-pressed="false">First 20</button>
         <button type="button" data-f="todo" aria-pressed="false">Not answered</button>
         <button type="button" data-f="all" aria-pressed="false">All</button>
@@ -121,7 +122,7 @@ textarea, input[type="text"] { font: 14px var(--sans); color: var(--ink); backgr
 <script>
 const NEXT = { before: "after", after: "changes", changes: "before" }, PREV = { before: "changes", after: "before", changes: "after" };
 const RUNS = { snapshot: "newest run", recorded: "earlier run", "first run": "first run" };
-let rows = [], answers = {}, current = 0, filter = "run", db = null, uid = null, view = "before";
+let rows = [], answers = {}, current = 0, filter = "round2", db = null, uid = null, view = "before";
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -133,8 +134,8 @@ function pill(rig) {
 
 function visible() {
   const seen = rows.map((r, i) => [r, i]).filter(([r]) =>
-    filter === "all" ? true : filter === "todo" ? !answers[r.id] : filter === "run" ? r.run === "snapshot" : r.first20);
-  return filter === "run" ? seen.sort(([a], [b]) => a.step - b.step) : seen;
+    filter === "all" ? true : filter === "todo" ? !answers[r.id] : filter === "run" ? r.run === "snapshot" : filter === "round2" ? r.round2 : r.first20);
+  return filter === "run" ? seen.sort(([a], [b]) => a.step - b.step) : filter === "round2" ? seen.sort(([a], [b]) => a.round2 - b.round2) : seen;
 }
 
 function renderList() {
@@ -148,7 +149,8 @@ function renderList() {
   list.innerHTML = html || `<p class="hint" style="padding:12px">Nothing in this view.</p>`;
   const done = rows.filter(r => answers[r.id]).length;
   const first = rows.filter(r => r.first20), doneFirst = first.filter(r => answers[r.id]).length;
-  $("#progress").innerHTML = `<b>${doneFirst}</b> of ${first.length} answered` + (done > doneFirst ? ` &middot; ${done} of ${rows.length} overall` : "");
+  const r2 = rows.filter(r => r.round2), doneR2 = r2.filter(r => answers[r.id]).length;
+  $("#progress").innerHTML = `Round 2: <b>${doneR2}</b> of ${r2.length} &middot; First 20: ${doneFirst} of ${first.length}` + (done > doneFirst + doneR2 ? ` &middot; ${done} of ${rows.length} overall` : "");
 }
 
 // one large picture at a time, flipped in place, so whatever changed jumps out; both stay loaded so the flip is instant
@@ -292,7 +294,7 @@ document.addEventListener("keydown", e => {
 });
 
 fetch("rows.json").then(r => r.json()).then(data => {
-  rows = data; renderStep();
+  rows = data; const v = visible(); if (v.length) current = v[0][1]; renderStep();
 }).catch(() => { $("#step").innerHTML = `<p class="status err">The step data did not load. Reload the page.</p>`; });
 
 (async () => {
