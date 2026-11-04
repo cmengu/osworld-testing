@@ -2,7 +2,7 @@
 
 The H3 run of 3-4 Nov executed three plans per row (old model, Claude, Ctrl+Z).  A new plan identical to one of those
 is scored from that execution, at no cost.  The rest are written to plans_h3new_<src>.json for a --plans-only run
-(source "model_v5"), and scored from that run's records once it exists (rig/out/h3n*).
+(source "model_v5"), and scored from that run's records once it exists (rig/out/n5_*).
 
     /usr/bin/python3 -I rig/undo_eval_new.py rig/out/undo_eval/model_plans_v5.json
 """
@@ -28,14 +28,14 @@ def main(plans_path):
     score = json.loads((EV / "h3_score.json").read_text())["rows"]           # the 107 rows scored in the H3 run
     rec = {}
     for f in glob.glob(str(BASE / "rig/out/h3*/results.jsonl")):
-        if "/h3n" in f:
+        if "/n5_" in f:
             continue
         for l in open(f):
             r = json.loads(l)
             if r.get("status") == "ok" and r.get("plans"):
                 rec[r["row_id"]] = r
     reruns = {}
-    for f in glob.glob(str(BASE / "rig/out/h3n*/results.jsonl")):
+    for f in glob.glob(str(BASE / "rig/out/n5_*/results.jsonl")):
         for l in open(f):
             r = json.loads(l)
             if r.get("status") == "ok" and r.get("plans"):

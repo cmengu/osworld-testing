@@ -1,0 +1,841 @@
+{
+ "tag": "k3_v5w",
+ "model": "Qwen/Qwen3-8B",
+ "rows": {
+  "pilot-0003": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0051": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0201": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0251": {
+   "fold": 0,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+s ; wait:4 ; key:enter ; wait:3"
+  },
+  "pilot-0211": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "probe-0001": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "probe-0023": {
+   "fold": 0,
+   "text": "shell:rm Desktop/pilot.txt",
+   "target": "shell:rm pilot.txt"
+  },
+  "probe-0025": {
+   "fold": 0,
+   "text": "key:ctrl+home",
+   "target": "reopen"
+  },
+  "v2-0018": {
+   "fold": 0,
+   "text": "reopen",
+   "target": "reopen"
+  },
+  "v2-0007": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0027": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0069": {
+   "fold": 0,
+   "text": "shell:rm Desktop/Answer2.docx",
+   "target": "shell:rm Desktop/Answer2.docx"
+  },
+  "v2-0079": {
+   "fold": 0,
+   "text": "shell:rm Desktop/file1.csv",
+   "target": "shell:rm /home/user/Desktop/file1.csv"
+  },
+  "v2-0030": {
+   "fold": 0,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+home"
+  },
+  "v2-0035": {
+   "fold": 0,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y"
+  },
+  "v2-0061": {
+   "fold": 0,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y",
+   "target": "key:ctrl+z"
+  },
+  "v2-0062": {
+   "fold": 0,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+home"
+  },
+  "v2-0092": {
+   "fold": 0,
+   "text": "reopen",
+   "target": "reopen"
+  },
+  "v2-0093": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z"
+  },
+  "v2-0064": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "reopen"
+  },
+  "v2-0084": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "click:Undo Trash"
+  },
+  "v2-0086": {
+   "fold": 0,
+   "text": "key:ctrl+home",
+   "target": "reopen"
+  },
+  "v2-0066": {
+   "fold": 0,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; key:enter ; wait:3",
+   "target": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y"
+  },
+  "v3-0094": {
+   "fold": 0,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v3-0051": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0041": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0078": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0086": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0092": {
+   "fold": 0,
+   "text": "key:escape",
+   "target": "click:Undo Trash"
+  },
+  "v4-0004": {
+   "fold": 0,
+   "text": "shell:rm Desktop/grammar_copy.docx",
+   "target": "shell:rm Desktop/grammar_copy.docx"
+  },
+  "v4-0010": {
+   "fold": 0,
+   "text": "shell:mv Desktop/Grammar test 2.docx 'Desktop/Grammar test.docx'",
+   "target": "shell:mv 'Desktop/Grammar test 2.docx' 'Desktop/Grammer test 2.docx'"
+  },
+  "v4-0015": {
+   "fold": 0,
+   "text": "shell:rmdir Desktop/graded",
+   "target": "shell:rmdir Desktop/graded"
+  },
+  "v4-0005": {
+   "fold": 0,
+   "text": "shell:rm Desktop/book/spectral_copy.pdf",
+   "target": "shell:rm Desktop/book/spectral_copy.pdf"
+  },
+  "v4-0009": {
+   "fold": 0,
+   "text": "shell:mv Desktop/book/spectral.pdf 'Desktop/book/Spectral Graph Theory.pdf'",
+   "target": "shell:mv Desktop/book/spectral.pdf 'Desktop/book/Spectral Graph Theory.pdf'"
+  },
+  "pilot-0091": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0231": {
+   "fold": 1,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; key:enter ; wait:3",
+   "target": "focus:doc ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y"
+  },
+  "pilot-0271": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "probe-0029": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0025": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0171": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "pilot-0246": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0041": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0044": {
+   "fold": 1,
+   "text": "key:ctrl+z ; key:ctrl+s ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+s ; key:ctrl+y"
+  },
+  "v2-0004": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0012": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0026": {
+   "fold": 1,
+   "text": "key:ctrl+w",
+   "target": "key:escape"
+  },
+  "v2-0043": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0047": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:escape"
+  },
+  "v2-0049": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0087": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0088": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0089": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0019": {
+   "fold": 1,
+   "text": "reopen",
+   "target": "key:ctrl+w ; wait:2 ; key:alt+n ; reopen"
+  },
+  "v2-0058": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z"
+  },
+  "v2-0077": {
+   "fold": 1,
+   "text": "key:ctrl+w",
+   "target": "key:ctrl+w"
+  },
+  "v2-0078": {
+   "fold": 1,
+   "text": "shell:mv Desktop/inv.pdf 'Desktop/Invoice # 243729.pdf'",
+   "target": "shell:mv Desktop/inv.pdf 'Desktop/Invoice # 243729.pdf'"
+  },
+  "v3-0082": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0095": {
+   "fold": 1,
+   "text": "shell:mv Desktop/x.pdf 'Desktop/Invoice # 243729.pdf'",
+   "target": "key:ctrl+z"
+  },
+  "v3-0032": {
+   "fold": 1,
+   "text": "shell:touch /home/user/Desktop/vscode_replace_text.txt",
+   "target": "focus:doc ; key:ctrl+s"
+  },
+  "v3-0064": {
+   "fold": 1,
+   "text": "key:ctrl+shift+t",
+   "target": "key:ctrl+z"
+  },
+  "v3-0076": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v3-0084": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0091": {
+   "fold": 1,
+   "text": "key:ctrl+z",
+   "target": "click:Undo Trash"
+  },
+  "v3-0049": {
+   "fold": 1,
+   "text": "key:escape",
+   "target": "key:escape ; key:escape"
+  },
+  "v3-0037": {
+   "fold": 1,
+   "text": "shell:rm output.txt",
+   "target": "shell:rm output.txt"
+  },
+  "v4-0020": {
+   "fold": 1,
+   "text": "shell:rm dir1/file1 dir2/file2 dir3/file3",
+   "target": "shell:rmdir testDir/backup"
+  },
+  "v4-0035": {
+   "fold": 1,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y"
+  },
+  "v4-0003": {
+   "fold": 1,
+   "text": "shell:rm Desktop/invoice_copy.pdf",
+   "target": "shell:rm Desktop/invoice_copy.pdf"
+  },
+  "v4-0012": {
+   "fold": 1,
+   "text": "shell:rm Desktop/pilot.txt",
+   "target": "shell:rm Desktop/pilot.txt"
+  },
+  "v4-0018": {
+   "fold": 1,
+   "text": "shell:mv Desktop/invoice_243729.pdf Desktop/Invoice # 243729.pdf",
+   "target": "shell:mv Desktop/invoice_243729.pdf 'Desktop/Invoice # 243729.pdf'"
+  },
+  "v4-0039": {
+   "fold": 1,
+   "text": "key:ctrl+z ; key:ctrl+s ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+s ; key:ctrl+y"
+  },
+  "v4-0022": {
+   "fold": 1,
+   "text": "shell:rm notes.txt",
+   "target": "shell:rm notes.txt"
+  },
+  "pilot-0041": {
+   "fold": 2,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0196": {
+   "fold": 2,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0126": {
+   "fold": 2,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+s ; wait:4 ; key:enter ; wait:3"
+  },
+  "pilot-0156": {
+   "fold": 2,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "pilot-0192": {
+   "fold": 2,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0005": {
+   "fold": 2,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0022": {
+   "fold": 2,
+   "text": "key:escape",
+   "target": "key:escape ; key:escape"
+  },
+  "v2-0028": {
+   "fold": 2,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z"
+  },
+  "v2-0038": {
+   "fold": 2,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0008": {
+   "fold": 2,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0020": {
+   "fold": 2,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0031": {
+   "fold": 2,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+home"
+  },
+  "v2-0037": {
+   "fold": 2,
+   "text": "reopen",
+   "target": "reopen"
+  },
+  "v3-0039": {
+   "fold": 2,
+   "text": "shell:rm Desktop/cpjpg/*",
+   "target": "shell:rm Desktop/cpjpg/*.jpg"
+  },
+  "v3-0043": {
+   "fold": 2,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v4-0001": {
+   "fold": 2,
+   "text": "shell:rm /home/user/Desktop/snake/food_backup.py",
+   "target": "shell:rm Desktop/snake/food_backup.py"
+  },
+  "v4-0006": {
+   "fold": 2,
+   "text": "shell:mv /home/user/Desktop/snake/config.py 'Desktop/snake/settings.py'",
+   "target": "shell:mv Desktop/snake/config.py Desktop/snake/settings.py"
+  },
+  "v4-0011": {
+   "fold": 2,
+   "text": "shell:rm Desktop/snake/notes.txt",
+   "target": "shell:rm Desktop/snake/notes.txt"
+  },
+  "v4-0037": {
+   "fold": 2,
+   "text": "key:ctrl+z ; key:ctrl+s ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y"
+  },
+  "v4-0025": {
+   "fold": 2,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y"
+  },
+  "v4-0029": {
+   "fold": 2,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y"
+  },
+  "v4-0034": {
+   "fold": 2,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3"
+  },
+  "v4-0002": {
+   "fold": 2,
+   "text": "shell:rm Desktop/tetris/block_old.py",
+   "target": "shell:rm Desktop/tetris/block_old.py"
+  },
+  "v4-0007": {
+   "fold": 2,
+   "text": "shell:mv Desktop/tetris/start.py Desktop/tetris/main.py",
+   "target": "shell:mv Desktop/tetris/start.py Desktop/tetris/main.py"
+  },
+  "v4-0014": {
+   "fold": 2,
+   "text": "shell:rmdir Desktop/tetris/assets",
+   "target": "shell:rmdir Desktop/tetris/assets"
+  },
+  "v4-0026": {
+   "fold": 2,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y"
+  },
+  "v4-0023": {
+   "fold": 2,
+   "text": "key:ctrl+s",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y"
+  },
+  "v4-0027": {
+   "fold": 2,
+   "text": "key:ctrl+s",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y"
+  },
+  "pilot-0131": {
+   "fold": 3,
+   "text": "reopen",
+   "target": "reopen"
+  },
+  "pilot-0261": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "pilot-0166": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "pilot-0221": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+home"
+  },
+  "pilot-0281": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "probe-0003": {
+   "fold": 3,
+   "text": "reopen",
+   "target": "reopen"
+  },
+  "probe-0005": {
+   "fold": 3,
+   "text": "reopen",
+   "target": "reopen ; key:ctrl+home ; type:pilot ; key:enter ; key:ctrl+w"
+  },
+  "probe-0031": {
+   "fold": 3,
+   "text": "key:ctrl+w",
+   "target": "key:alt+f4"
+  },
+  "v2-0006": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0015": {
+   "fold": 3,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y"
+  },
+  "v2-0011": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0024": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0025": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0070": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z"
+  },
+  "v2-0071": {
+   "fold": 3,
+   "text": "key:ctrl+w",
+   "target": "focus:newest ; key:alt+f4"
+  },
+  "v2-0072": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0003": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0010": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0052": {
+   "fold": 3,
+   "text": "key:ctrl+w",
+   "target": "focus:newest ; key:alt+f4 ; wait:2 ; click:Discard changes"
+  },
+  "v2-0053": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0057": {
+   "fold": 3,
+   "text": "key:ctrl+w",
+   "target": "key:ctrl+w"
+  },
+  "v2-0082": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0094": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "v2-0095": {
+   "fold": 3,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y"
+  },
+  "v3-0096": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0047": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0098": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v3-0097": {
+   "fold": 3,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v4-0008": {
+   "fold": 3,
+   "text": "key:ctrl+z",
+   "target": "shell:mv Desktop/receipt_one.jpg Desktop/receipt_1.jpg"
+  },
+  "v4-0017": {
+   "fold": 3,
+   "text": "shell:rmdir Desktop/receipts",
+   "target": "shell:rmdir Desktop/receipts"
+  },
+  "v4-0036": {
+   "fold": 3,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y"
+  },
+  "pilot-0011": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0016": {
+   "fold": 4,
+   "text": "key:ctrl+z",
+   "target": "key:ctrl+z"
+  },
+  "pilot-0210": {
+   "fold": 4,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y",
+   "target": "focus:doc ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y"
+  },
+  "pilot-0141": {
+   "fold": 4,
+   "text": "reopen",
+   "target": "reopen"
+  },
+  "pilot-0291": {
+   "fold": 4,
+   "text": "key:escape",
+   "target": "key:escape ; key:escape"
+  },
+  "probe-0008": {
+   "fold": 4,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "probe-0011": {
+   "fold": 4,
+   "text": "shell:rmdir Desktop/probe/newdir",
+   "target": "key:ctrl+z ; key:enter"
+  },
+  "probe-0010": {
+   "fold": 4,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y",
+   "target": "key:ctrl+z"
+  },
+  "probe-0012": {
+   "fold": 4,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "probe-0007": {
+   "fold": 4,
+   "text": "click:Undo Trash",
+   "target": "click:Undo Trash"
+  },
+  "probe-0014": {
+   "fold": 4,
+   "text": "key:alt+f4",
+   "target": "key:alt+left"
+  },
+  "probe-0015": {
+   "fold": 4,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "probe-0017": {
+   "fold": 4,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0029": {
+   "fold": 4,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z"
+  },
+  "v2-0033": {
+   "fold": 4,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0032": {
+   "fold": 4,
+   "text": "key:ctrl+shift+t",
+   "target": "key:ctrl+z"
+  },
+  "v2-0042": {
+   "fold": 4,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y",
+   "target": "key:ctrl+z"
+  },
+  "v2-0045": {
+   "fold": 4,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+s ; key:ctrl+y"
+  },
+  "v2-0046": {
+   "fold": 4,
+   "text": "key:ctrl+w ; key:ctrl+shift+n ; key:ctrl+o ; key:ctrl+home ; key:ctrl+s ; key:ctrl+y",
+   "target": "key:ctrl+shift+t"
+  },
+  "v2-0048": {
+   "fold": 4,
+   "text": "key:escape",
+   "target": "key:escape"
+  },
+  "v2-0090": {
+   "fold": 4,
+   "text": "reopen",
+   "target": "focus:newest ; key:ctrl+w"
+  },
+  "v2-0091": {
+   "fold": 4,
+   "text": "reopen",
+   "target": "reopen"
+  },
+  "v2-0099": {
+   "fold": 4,
+   "text": "key:ctrl+w",
+   "target": "key:ctrl+w"
+  },
+  "v2-0100": {
+   "fold": 4,
+   "text": "shell:mv /home/user/Documents/Papers/x.pdf /home/user/Documents/Papers/zhang_appagent.pdf",
+   "target": "key:ctrl+z"
+  },
+  "v3-0035": {
+   "fold": 4,
+   "text": "shell:mv Desktop/todo_list_Jan_2/ Desktop/todo_list_Jan_1/",
+   "target": "shell:mv /home/user/Desktop/todo_list_Jan_2 /home/user/Desktop/todo_list_Jan_1"
+  },
+  "v3-0045": {
+   "fold": 4,
+   "text": "reopen",
+   "target": "key:escape"
+  },
+  "v3-0033": {
+   "fold": 4,
+   "text": "shell:touch main.py",
+   "target": "focus:doc ; key:ctrl+s"
+  },
+  "v3-0066": {
+   "fold": 4,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y",
+   "target": "key:ctrl+z"
+  },
+  "v3-0055": {
+   "fold": 4,
+   "text": "reopen",
+   "target": "key:escape"
+  },
+  "v3-0038": {
+   "fold": 4,
+   "text": "shell:rmdir testdir/backup",
+   "target": "shell:rm dir1/file1 dir2/file1 dir3/file1"
+  },
+  "v4-0024": {
+   "fold": 4,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y"
+  },
+  "v4-0028": {
+   "fold": 4,
+   "text": "key:ctrl+z ; key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y ; key:ctrl+y"
+  },
+  "v4-0040": {
+   "fold": 4,
+   "text": "key:ctrl+z ; key:ctrl+s ; wait:4 ; confirm ; wait:3 ; key:ctrl+y",
+   "target": "key:ctrl+z ; key:ctrl+s ; key:ctrl+y"
+  },
+  "v4-0013": {
+   "fold": 4,
+   "text": "shell:rm reading_list.txt",
+   "target": "shell:rm Documents/Papers/reading_list.txt"
+  },
+  "v4-0016": {
+   "fold": 4,
+   "text": "shell:rmdir Documents/Papers/read",
+   "target": "shell:rmdir Documents/Papers/read"
+  },
+  "v4-0021": {
+   "fold": 4,
+   "text": "shell:rm file1_copy",
+   "target": "shell:rm file1_copy"
+  }
+ }
+}
