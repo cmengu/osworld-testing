@@ -1,0 +1,1 @@
+The 8 rows of the 3-4 November relabel run (rig/out/rl_rl*) that the author accepted as REVERSIBLE on 4 November: pilot-0141, pilot-0210, pilot-0231, probe-0011, probe-0023, v3-0032, v3-0033, v3-0038. Copied whole from the run's records; listed last in the v4 export so they replace the earlier no-undo records.

@@ -1,0 +1,37 @@
+{
+ "rows": 289,
+ "lines": 966,
+ "k": 3,
+ "folds": 5,
+ "by_task_type": {
+  "FORWARD": 289,
+  "UNDO": 133,
+  "REVERSIBLE": 272,
+  "REVERSIBLE=yes": 162,
+  "GUARD": 272,
+  "GUARD=allow": 165,
+  "REVERSIBLE=no": 110,
+  "GUARD=refuse": 107,
+  "skipped (unconfirmed or unlabelled)": 4,
+  "excluded as rig issues (exclude_rig_issues.txt)": 13
+ },
+ "by_app": {
+  "libreoffice-calc": 41,
+  "files": 15,
+  "multi_apps": 129,
+  "thunderbird": 14,
+  "libreoffice-impress": 40,
+  "vs_code": 21,
+  "libreoffice-writer": 24,
+  "os": 5
+ },
+ "fold_rows": {
+  "3": 58,
+  "2": 58,
+  "1": 58,
+  "0": 58,
+  "4": 57
+ },
+ "max_prompt_chars": 12810,
+ "sha256_all": "cd52445267db"
+}
