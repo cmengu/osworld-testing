@@ -1,0 +1,18 @@
+{
+ "rows": 106,
+ "first_try": {
+  "old": 58,
+  "claude": 71,
+  "ctrlz": 38,
+  "new": 64
+ },
+ "best_of_two": {
+  "old": 62,
+  "claude": 77,
+  "ctrlz": 40,
+  "new": 70,
+  "any of old, new, claude": 87,
+  "rig's own undo, second try": "10 of 20"
+ },
+ "retried_rows": 20
+}
