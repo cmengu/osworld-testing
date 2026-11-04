@@ -11,7 +11,8 @@ import modal
 
 HERE = pathlib.Path(__file__).parent
 OUT = HERE.parent / "out" / "undo_eval"
-DATA = HERE / "data_k3_v3"
+import os
+DATA = HERE / os.environ.get("UNDO_DATA", "data_k3_v3")     # 4 Nov: UNDO_DATA=data_k3_v5 for the retrained model
 app = modal.App("osguard-predict-undo")
 vol = modal.Volume.from_name("osguard-train")
 image = (modal.Image.debian_slim(python_version="3.12")
@@ -55,10 +56,10 @@ def predict(model_name: str = "Qwen/Qwen3-8B", tag: str = "k3_v3", max_len: int 
 
 
 @app.local_entrypoint()
-def main(tag: str = "k3_v3"):
+def main(tag: str = "k3_v3", out_name: str = "model_plans.json"):
     OUT.mkdir(parents=True, exist_ok=True)
     res = predict.remote(tag=tag)
-    (OUT / "model_plans.json").write_text(json.dumps(res, indent=1))
+    (OUT / out_name).write_text(json.dumps(res, indent=1))
     n = len(res["rows"])
     em = sum(v["text"] == v["target"] for v in res["rows"].values())
     print(f"{n} rows; exact match with the rig's undo {em} of {n}")

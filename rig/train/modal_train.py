@@ -26,7 +26,11 @@ image = (modal.Image.debian_slim(python_version="3.12")
          .add_local_dir(str(HERE / "data_k3_v3"), remote_path="/data/k3_v3")
          .add_local_dir(str(HERE / "data_k3_v3G"), remote_path="/data/k3_v3G")
          .add_local_dir(str(HERE / "data_k3_v3nodesc"), remote_path="/data/k3_v3nodesc")
-         .add_local_dir(str(HERE / "subsets"), remote_path="/data/subsets")
+         .add_local_dir(str(HERE / "subsets"), remote_path="/data/subsets"))
+for _extra in ("data_k3_v5", "data_k3_v5w"):          # 4 Nov: v4 relabels + the 40 undo-variety rows; w = rare undo kinds repeated
+    if (HERE / _extra).exists():
+        image = image.add_local_dir(str(HERE / _extra), remote_path="/data/" + _extra[len("data_"):])
+image = (image
          .add_local_file(str(HERE / "train_lora.py"), remote_path="/code/train_lora.py")
          .add_local_file(str(HERE / "evaluate.py"), remote_path="/code/evaluate.py"))
 
