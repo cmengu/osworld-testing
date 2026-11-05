@@ -1038,7 +1038,7 @@ class Collector:
             tiers = ([("F", [U.parse_steps(c) for c in row["forced_candidates"] if U.parse_steps(c)])]
                      if row.get("forced_candidates") else [])
             row_plans = self.plans.get(rid) or []
-            plan_cands = [c for c in (U.parse_steps(pl.get("steps")) for pl in row_plans) if c]
+            plan_cands = [c for c in (U.parse_steps(pl.get("steps"), U.PLAN_MAX_STEPS) for pl in row_plans) if c]
             if plan_cands:
                 tiers.append(("PL", plan_cands))
             w_tier = window_tier(S.windows, S1.windows)
@@ -1155,7 +1155,7 @@ class Collector:
                 by_seq = {json.dumps(x.get("seq")): x for x in search if x.get("tier") == "PL"}
                 rec["plans"] = []
                 for pl in row_plans:
-                    c = U.parse_steps(pl.get("steps"))
+                    c = U.parse_steps(pl.get("steps"), U.PLAN_MAX_STEPS)
                     x = by_seq.get(json.dumps(c)) if c else None
                     rec["plans"].append({"source": pl.get("source"), "steps": pl.get("steps"), "parsed": c,
                                          "executed": bool(x) and not x.get("error"), "match": bool(x and x.get("match")),

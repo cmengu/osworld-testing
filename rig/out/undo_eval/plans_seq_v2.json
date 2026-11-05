@@ -1,0 +1,262 @@
+{
+ "v2-0015": [
+  {
+   "source": "chain:claude-then-new",
+   "steps": [
+    "key:ctrl+z",
+    "key:ctrl+s",
+    "wait:3",
+    "key:enter",
+    "wait:3",
+    "key:ctrl+y",
+    "wait:2",
+    "key:ctrl+z",
+    "key:ctrl+s",
+    "wait:4",
+    "confirm",
+    "wait:3",
+    "key:ctrl+y"
+   ]
+  }
+ ],
+ "v2-0066": [
+  {
+   "source": "chain:claude-then-new",
+   "steps": [
+    "key:ctrl+z",
+    "key:ctrl+s",
+    "wait:3",
+    "key:enter",
+    "wait:3",
+    "key:ctrl+y",
+    "wait:2",
+    "key:ctrl+z",
+    "key:ctrl+s",
+    "wait:4",
+    "key:enter",
+    "wait:3"
+   ]
+  }
+ ],
+ "v2-0069": [
+  {
+   "source": "chain:claude-then-new",
+   "steps": [
+    "click:Answer2.docx",
+    "key:shift+delete",
+    "click:Delete",
+    "wait:2",
+    "shell:rm Desktop/Answer2.docx"
+   ]
+  }
+ ],
+ "v2-0019": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:ctrl+w",
+    "wait:2",
+    "key:alt+n",
+    "reopen"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:ctrl+w",
+    "wait:2",
+    "key:alt+n",
+    "reopen"
+   ]
+  }
+ ],
+ "v2-0022": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:escape",
+    "key:escape"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:escape",
+    "key:escape"
+   ]
+  }
+ ],
+ "v2-0024": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:escape"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:escape"
+   ]
+  }
+ ],
+ "v2-0031": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:ctrl+z",
+    "key:ctrl+home"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:ctrl+z",
+    "key:ctrl+home"
+   ]
+  }
+ ],
+ "v2-0035": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:ctrl+z",
+    "key:ctrl+z",
+    "key:ctrl+z",
+    "key:ctrl+s",
+    "wait:4",
+    "confirm",
+    "wait:3",
+    "key:ctrl+y",
+    "key:ctrl+y",
+    "key:ctrl+y"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:ctrl+z",
+    "key:ctrl+z",
+    "key:ctrl+z",
+    "key:ctrl+s",
+    "wait:4",
+    "confirm",
+    "wait:3",
+    "key:ctrl+y",
+    "key:ctrl+y",
+    "key:ctrl+y"
+   ]
+  }
+ ],
+ "v2-0052": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "focus:newest",
+    "key:alt+f4",
+    "wait:2",
+    "click:Discard changes"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "focus:newest",
+    "key:alt+f4",
+    "wait:2",
+    "click:Discard changes"
+   ]
+  }
+ ],
+ "v2-0058": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:ctrl+z",
+    "key:ctrl+z",
+    "key:ctrl+z"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:ctrl+z",
+    "key:ctrl+z",
+    "key:ctrl+z"
+   ]
+  }
+ ],
+ "v2-0062": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:ctrl+z",
+    "key:ctrl+home"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:ctrl+z",
+    "key:ctrl+home"
+   ]
+  }
+ ],
+ "v2-0071": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "focus:newest",
+    "key:alt+f4"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "focus:newest",
+    "key:alt+f4"
+   ]
+  }
+ ],
+ "v2-0079": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "shell:rm /home/user/Desktop/file1.csv"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "shell:rm /home/user/Desktop/file1.csv"
+   ]
+  }
+ ],
+ "v2-0090": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "focus:newest",
+    "key:ctrl+w"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "focus:newest",
+    "key:ctrl+w"
+   ]
+  }
+ ]
+}

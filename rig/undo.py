@@ -339,9 +339,12 @@ def parse_step(raw) -> Optional[str]:
     return None
 
 
-def parse_steps(steps) -> Optional[Candidate]:
+PLAN_MAX_STEPS = 16     # given plans (--plans, 5 Nov): a chained retry or a recorded long undo; the search itself keeps MAX_STEPS
+
+
+def parse_steps(steps, max_steps: int = MAX_STEPS) -> Optional[Candidate]:
     """A whole sequence in the step language, or None if any step is not."""
-    if not steps or not isinstance(steps, list) or len(steps) > MAX_STEPS:
+    if not steps or not isinstance(steps, list) or len(steps) > max_steps:
         return None
     out = [parse_step(x) for x in steps]
     return None if any(x is None for x in out) else out

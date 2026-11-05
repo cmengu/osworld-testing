@@ -1,0 +1,124 @@
+{
+ "v3-0041": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:escape"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:escape"
+   ]
+  }
+ ],
+ "v3-0045": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:escape"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:escape"
+   ]
+  }
+ ],
+ "v3-0047": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:escape"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:escape"
+   ]
+  }
+ ],
+ "v3-0049": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:escape",
+    "key:escape"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:escape",
+    "key:escape"
+   ]
+  }
+ ],
+ "v3-0051": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:escape"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:escape"
+   ]
+  }
+ ],
+ "v3-0055": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:escape"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:escape"
+   ]
+  }
+ ],
+ "v3-0078": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:escape"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:escape"
+   ]
+  }
+ ],
+ "v3-0082": [
+  {
+   "source": "recheck:rig",
+   "steps": [
+    "key:escape"
+   ]
+  },
+  {
+   "source": "recheck:rig+wait6",
+   "steps": [
+    "wait:6",
+    "key:escape"
+   ]
+  }
+ ]
+}
