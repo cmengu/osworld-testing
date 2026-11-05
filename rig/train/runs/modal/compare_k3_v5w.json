@@ -1,0 +1,568 @@
+[
+ {
+  "fold": 0,
+  "rows": 64,
+  "covered": 52,
+  "missing": [
+   "probe-0001",
+   "probe-0002",
+   "probe-0004",
+   "probe-0021",
+   "probe-0022",
+   "probe-0023",
+   "probe-0024",
+   "probe-0025",
+   "v2-0117",
+   "v2-0119",
+   "v2-0120",
+   "v3-0102"
+  ],
+  "teacher": {
+   "A": {
+    "REVERSIBLE": {
+     "n": 52,
+     "positives": 32,
+     "accuracy": 0.846,
+     "precision": 0.929,
+     "recall": 0.812,
+     "f1": 0.867
+    },
+    "GUARD": {
+     "n": 52,
+     "positives": 20,
+     "accuracy": 0.885,
+     "precision": 0.818,
+     "recall": 0.9,
+     "f1": 0.857
+    }
+   },
+   "B": {
+    "REVERSIBLE": {
+     "n": 52,
+     "positives": 32,
+     "accuracy": 0.981,
+     "precision": 1.0,
+     "recall": 0.969,
+     "f1": 0.984
+    },
+    "GUARD": {
+     "n": 52,
+     "positives": 20,
+     "accuracy": 1.0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0
+    }
+   }
+  },
+  "model": {
+   "all": {
+    "REVERSIBLE": {
+     "n": 64,
+     "positives": 40,
+     "accuracy": 0.984,
+     "precision": 0.976,
+     "recall": 1.0,
+     "f1": 0.988
+    },
+    "GUARD": {
+     "n": 64,
+     "positives": 24,
+     "accuracy": 0.969,
+     "precision": 0.958,
+     "recall": 0.958,
+     "f1": 0.958
+    }
+   },
+   "covered": {
+    "REVERSIBLE": {
+     "n": 52,
+     "positives": 32,
+     "accuracy": 0.981,
+     "precision": 0.97,
+     "recall": 1.0,
+     "f1": 0.985
+    },
+    "GUARD": {
+     "n": 52,
+     "positives": 20,
+     "accuracy": 0.962,
+     "precision": 0.95,
+     "recall": 0.95,
+     "f1": 0.95
+    }
+   },
+   "reported": {
+    "REVERSIBLE": {
+     "n": 64,
+     "positives": 40,
+     "accuracy": 0.984,
+     "precision": 0.976,
+     "recall": 1.0,
+     "f1": 0.988
+    },
+    "GUARD": {
+     "n": 64,
+     "positives": 24,
+     "accuracy": 0.969,
+     "precision": 0.958,
+     "recall": 0.958,
+     "f1": 0.958
+    },
+    "UNDO": {
+     "n": 34,
+     "exact_match": 0.588
+    }
+   }
+  }
+ },
+ {
+  "fold": 1,
+  "rows": 63,
+  "covered": 60,
+  "missing": [
+   "probe-0028",
+   "probe-0029",
+   "v3-0101"
+  ],
+  "teacher": {
+   "A": {
+    "REVERSIBLE": {
+     "n": 59,
+     "positives": 38,
+     "accuracy": 0.746,
+     "precision": 0.811,
+     "recall": 0.789,
+     "f1": 0.8
+    },
+    "GUARD": {
+     "n": 59,
+     "positives": 18,
+     "accuracy": 0.814,
+     "precision": 0.667,
+     "recall": 0.778,
+     "f1": 0.718
+    }
+   },
+   "B": {
+    "REVERSIBLE": {
+     "n": 60,
+     "positives": 39,
+     "accuracy": 0.9,
+     "precision": 0.884,
+     "recall": 0.974,
+     "f1": 0.927
+    },
+    "GUARD": {
+     "n": 60,
+     "positives": 18,
+     "accuracy": 0.95,
+     "precision": 0.941,
+     "recall": 0.889,
+     "f1": 0.914
+    }
+   }
+  },
+  "model": {
+   "all": {
+    "REVERSIBLE": {
+     "n": 63,
+     "positives": 42,
+     "accuracy": 0.873,
+     "precision": 0.925,
+     "recall": 0.881,
+     "f1": 0.902
+    },
+    "GUARD": {
+     "n": 63,
+     "positives": 18,
+     "accuracy": 0.889,
+     "precision": 0.72,
+     "recall": 1.0,
+     "f1": 0.837
+    }
+   },
+   "covered": {
+    "REVERSIBLE": {
+     "n": 60,
+     "positives": 39,
+     "accuracy": 0.867,
+     "precision": 0.919,
+     "recall": 0.872,
+     "f1": 0.895
+    },
+    "GUARD": {
+     "n": 60,
+     "positives": 18,
+     "accuracy": 0.883,
+     "precision": 0.72,
+     "recall": 1.0,
+     "f1": 0.837
+    }
+   },
+   "reported": {
+    "REVERSIBLE": {
+     "n": 63,
+     "positives": 42,
+     "accuracy": 0.873,
+     "precision": 0.925,
+     "recall": 0.881,
+     "f1": 0.902
+    },
+    "GUARD": {
+     "n": 63,
+     "positives": 18,
+     "accuracy": 0.889,
+     "precision": 0.72,
+     "recall": 1.0,
+     "f1": 0.837
+    },
+    "UNDO": {
+     "n": 38,
+     "exact_match": 0.658
+    }
+   }
+  }
+ },
+ {
+  "fold": 2,
+  "rows": 61,
+  "covered": 59,
+  "missing": [
+   "probe-0026",
+   "v3-0100"
+  ],
+  "teacher": {
+   "A": {
+    "REVERSIBLE": {
+     "n": 58,
+     "positives": 29,
+     "accuracy": 0.776,
+     "precision": 0.767,
+     "recall": 0.793,
+     "f1": 0.78
+    },
+    "GUARD": {
+     "n": 58,
+     "positives": 29,
+     "accuracy": 0.793,
+     "precision": 0.815,
+     "recall": 0.759,
+     "f1": 0.786
+    }
+   },
+   "B": {
+    "REVERSIBLE": {
+     "n": 59,
+     "positives": 30,
+     "accuracy": 0.847,
+     "precision": 0.769,
+     "recall": 1.0,
+     "f1": 0.87
+    },
+    "GUARD": {
+     "n": 59,
+     "positives": 29,
+     "accuracy": 0.847,
+     "precision": 1.0,
+     "recall": 0.69,
+     "f1": 0.816
+    }
+   }
+  },
+  "model": {
+   "all": {
+    "REVERSIBLE": {
+     "n": 61,
+     "positives": 32,
+     "accuracy": 0.934,
+     "precision": 0.938,
+     "recall": 0.938,
+     "f1": 0.938
+    },
+    "GUARD": {
+     "n": 61,
+     "positives": 29,
+     "accuracy": 0.918,
+     "precision": 0.962,
+     "recall": 0.862,
+     "f1": 0.909
+    }
+   },
+   "covered": {
+    "REVERSIBLE": {
+     "n": 59,
+     "positives": 30,
+     "accuracy": 0.932,
+     "precision": 0.933,
+     "recall": 0.933,
+     "f1": 0.933
+    },
+    "GUARD": {
+     "n": 59,
+     "positives": 29,
+     "accuracy": 0.915,
+     "precision": 0.962,
+     "recall": 0.862,
+     "f1": 0.909
+    }
+   },
+   "reported": {
+    "REVERSIBLE": {
+     "n": 61,
+     "positives": 32,
+     "accuracy": 0.934,
+     "precision": 0.938,
+     "recall": 0.938,
+     "f1": 0.938
+    },
+    "GUARD": {
+     "n": 61,
+     "positives": 29,
+     "accuracy": 0.918,
+     "precision": 0.962,
+     "recall": 0.862,
+     "f1": 0.909
+    },
+    "UNDO": {
+     "n": 28,
+     "exact_match": 0.536
+    }
+   }
+  }
+ },
+ {
+  "fold": 3,
+  "rows": 61,
+  "covered": 55,
+  "missing": [
+   "probe-0003",
+   "probe-0005",
+   "probe-0030",
+   "probe-0031",
+   "probe-0032",
+   "v2-0121"
+  ],
+  "teacher": {
+   "A": {
+    "REVERSIBLE": {
+     "n": 55,
+     "positives": 32,
+     "accuracy": 0.709,
+     "precision": 0.786,
+     "recall": 0.688,
+     "f1": 0.733
+    },
+    "GUARD": {
+     "n": 55,
+     "positives": 23,
+     "accuracy": 0.782,
+     "precision": 0.739,
+     "recall": 0.739,
+     "f1": 0.739
+    }
+   },
+   "B": {
+    "REVERSIBLE": {
+     "n": 55,
+     "positives": 32,
+     "accuracy": 0.873,
+     "precision": 0.857,
+     "recall": 0.938,
+     "f1": 0.896
+    },
+    "GUARD": {
+     "n": 55,
+     "positives": 23,
+     "accuracy": 0.873,
+     "precision": 0.9,
+     "recall": 0.783,
+     "f1": 0.837
+    }
+   }
+  },
+  "model": {
+   "all": {
+    "REVERSIBLE": {
+     "n": 61,
+     "positives": 36,
+     "accuracy": 0.869,
+     "precision": 0.889,
+     "recall": 0.889,
+     "f1": 0.889
+    },
+    "GUARD": {
+     "n": 61,
+     "positives": 25,
+     "accuracy": 0.836,
+     "precision": 0.826,
+     "recall": 0.76,
+     "f1": 0.792
+    }
+   },
+   "covered": {
+    "REVERSIBLE": {
+     "n": 55,
+     "positives": 32,
+     "accuracy": 0.855,
+     "precision": 0.875,
+     "recall": 0.875,
+     "f1": 0.875
+    },
+    "GUARD": {
+     "n": 55,
+     "positives": 23,
+     "accuracy": 0.818,
+     "precision": 0.81,
+     "recall": 0.739,
+     "f1": 0.773
+    }
+   },
+   "reported": {
+    "REVERSIBLE": {
+     "n": 61,
+     "positives": 36,
+     "accuracy": 0.869,
+     "precision": 0.889,
+     "recall": 0.889,
+     "f1": 0.889
+    },
+    "GUARD": {
+     "n": 61,
+     "positives": 25,
+     "accuracy": 0.836,
+     "precision": 0.826,
+     "recall": 0.76,
+     "f1": 0.792
+    },
+    "UNDO": {
+     "n": 31,
+     "exact_match": 0.774
+    }
+   }
+  }
+ },
+ {
+  "fold": 4,
+  "rows": 61,
+  "covered": 43,
+  "missing": [
+   "probe-0006",
+   "probe-0007",
+   "probe-0008",
+   "probe-0009",
+   "probe-0010",
+   "probe-0011",
+   "probe-0012",
+   "probe-0013",
+   "probe-0014",
+   "probe-0015",
+   "probe-0016",
+   "probe-0017",
+   "probe-0018",
+   "probe-0019",
+   "probe-0020",
+   "v2-0108",
+   "v2-0109",
+   "v2-0115"
+  ],
+  "teacher": {
+   "A": {
+    "REVERSIBLE": {
+     "n": 43,
+     "positives": 27,
+     "accuracy": 0.814,
+     "precision": 0.852,
+     "recall": 0.852,
+     "f1": 0.852
+    },
+    "GUARD": {
+     "n": 43,
+     "positives": 16,
+     "accuracy": 0.814,
+     "precision": 0.75,
+     "recall": 0.75,
+     "f1": 0.75
+    }
+   },
+   "B": {
+    "REVERSIBLE": {
+     "n": 43,
+     "positives": 27,
+     "accuracy": 0.907,
+     "precision": 0.871,
+     "recall": 1.0,
+     "f1": 0.931
+    },
+    "GUARD": {
+     "n": 43,
+     "positives": 16,
+     "accuracy": 0.907,
+     "precision": 1.0,
+     "recall": 0.75,
+     "f1": 0.857
+    }
+   }
+  },
+  "model": {
+   "all": {
+    "REVERSIBLE": {
+     "n": 61,
+     "positives": 37,
+     "accuracy": 0.951,
+     "precision": 0.972,
+     "recall": 0.946,
+     "f1": 0.959
+    },
+    "GUARD": {
+     "n": 61,
+     "positives": 24,
+     "accuracy": 0.918,
+     "precision": 0.88,
+     "recall": 0.917,
+     "f1": 0.898
+    }
+   },
+   "covered": {
+    "REVERSIBLE": {
+     "n": 43,
+     "positives": 27,
+     "accuracy": 0.93,
+     "precision": 0.962,
+     "recall": 0.926,
+     "f1": 0.943
+    },
+    "GUARD": {
+     "n": 43,
+     "positives": 16,
+     "accuracy": 0.93,
+     "precision": 0.933,
+     "recall": 0.875,
+     "f1": 0.903
+    }
+   },
+   "reported": {
+    "REVERSIBLE": {
+     "n": 61,
+     "positives": 37,
+     "accuracy": 0.951,
+     "precision": 0.972,
+     "recall": 0.946,
+     "f1": 0.959
+    },
+    "GUARD": {
+     "n": 61,
+     "positives": 24,
+     "accuracy": 0.918,
+     "precision": 0.88,
+     "recall": 0.917,
+     "f1": 0.898
+    },
+    "UNDO": {
+     "n": 36,
+     "exact_match": 0.444
+    }
+   }
+  }
+ }
+]
