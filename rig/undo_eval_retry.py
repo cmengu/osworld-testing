@@ -22,6 +22,13 @@ from rig import undo as U  # noqa: E402
 
 EV = BASE / "rig" / "out" / "undo_eval"
 RIG_SIDE = ("rig's own undo", "unconfirmed", "screen differs")
+# Dropped from the H3 test set by the author (5 Nov, "yes drop the 7"): Escape-closes-the-replace-question rows where the
+# rig cannot rebuild the after-state with the dialog open ("reset not S'" on every try, sq_* recheck), so no undo on them
+# can be confirmed.  Unscorable, not shown to be mislabelled.
+DROPPED = {"v3-0041", "v3-0045", "v3-0047", "v3-0049", "v3-0051", "v3-0078", "v3-0082"}
+# Claude's plan, then the model's plan in one go (sq_* run, 5 Nov) on the 3 rows where Claude's ran and failed but a
+# model's works alone.  v2-0015: files restored, status bar only (lenient pass).
+CHAIN = {"v2-0066": True, "v2-0015": True, "v2-0069": False}
 
 
 def load():
@@ -74,7 +81,8 @@ def score():
             r = json.loads(l)
             if r.get("status") == "ok" and r.get("plans"):
                 retry[r["row_id"]] = r["plans"]
-    rows = [r for r in s if r in n and n[r] != "needs a run"]
+    drop = "--keep-dropped" not in sys.argv
+    rows = [r for r in s if r in n and n[r] != "needs a run" and not (drop and r in DROPPED)]
     second = collections.defaultdict(dict)        # row -> source -> matched on the second try
     for rid, plans in retry.items():
         for p in plans:
@@ -89,8 +97,16 @@ def score():
     res["any of old, new, claude"] = sum(any(first[k](r) or second.get(r, {}).get(key[k], False) for k in ("old", "new", "claude")) for r in rows)
     res["rig's own undo, second try"] = f"{sum(v.get('rig', False) for v in second.values())} of {len(second)}"
     before = {k: sum(first[k](r) for r in rows) for k in first}
-    out = {"rows": len(rows), "first_try": before, "best_of_two": res, "retried_rows": len(retry)}
-    (EV / "h3_retry_score.json").write_text(json.dumps(out, indent=1))
+    ok = {k: {r for r in rows if first[k](r) or second.get(r, {}).get(key[k], False)} for k in first}
+    noplan = {r for r in rows if s[r]["claude"] == "no plan"}
+    # try-check-retry: Claude's plan; if Claude gave none, a model's; if Claude's ran and failed, the chained run
+    res["try-check-retry"] = sum(r in ok["claude"] or (r in noplan and (r in ok["old"] or r in ok["new"])) or CHAIN.get(r, False)
+                                 for r in rows)
+    for a, b in (("new", "claude"), ("old", "claude"), ("new", "old")):
+        res[f"{a} only vs {b} only"] = [len(ok[a] - ok[b]), len(ok[b] - ok[a])]
+    out = {"rows": len(rows), "dropped": sorted(DROPPED) if drop else [], "first_try": before, "best_of_two": res,
+           "retried_rows": len(retry)}
+    (EV / ("h3_retry_score.json" if drop else "h3_retry_score_all.json")).write_text(json.dumps(out, indent=1))
     print(json.dumps(out, indent=1))
 
 

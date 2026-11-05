@@ -1,5 +1,14 @@
 {
- "rows": 106,
+ "rows": 99,
+ "dropped": [
+  "v3-0041",
+  "v3-0045",
+  "v3-0047",
+  "v3-0049",
+  "v3-0051",
+  "v3-0078",
+  "v3-0082"
+ ],
  "first_try": {
   "old": 58,
   "claude": 71,
@@ -12,7 +21,20 @@
   "ctrlz": 40,
   "new": 70,
   "any of old, new, claude": 87,
-  "rig's own undo, second try": "10 of 20"
+  "rig's own undo, second try": "10 of 20",
+  "try-check-retry": 86,
+  "new only vs claude only": [
+   10,
+   17
+  ],
+  "old only vs claude only": [
+   4,
+   19
+  ],
+  "new only vs old only": [
+   16,
+   8
+  ]
  },
  "retried_rows": 20
 }

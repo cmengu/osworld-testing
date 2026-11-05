@@ -1,5 +1,5 @@
 {
- "cost_usd": 7.96,
+ "cost_usd": 8.37,
  "rows": {
   "v2-0015": {
    "chain:claude-then-new": "state differs: 2 tree, 0 files; other+statusbar"
@@ -43,7 +43,8 @@
    "chain:claude-then-new": "files differ: 1 (/home/user/Desktop/Answer2.docx)"
   },
   "v2-0071": {
-   "status": "error (network outage)"
+   "recheck:rig": "match",
+   "recheck:rig+wait6": "match"
   },
   "v2-0079": {
    "recheck:rig": "match",
@@ -108,7 +109,8 @@
     "v2-0058",
     "v2-0062",
     "v2-0079",
-    "v2-0090"
+    "v2-0090",
+    "v2-0071"
    ],
    "statusbar_only": [
     "v2-0022"
@@ -116,7 +118,8 @@
    "real_fail": [
     "v3-0055"
    ],
-   "unscorable_reset_not_S_prime": [
+   "not_run": [],
+   "dropped_by_author_5nov": [
     "v3-0041",
     "v3-0045",
     "v3-0047",
@@ -124,10 +127,12 @@
     "v3-0051",
     "v3-0078",
     "v3-0082"
-   ],
-   "not_run": [
-    "v2-0071"
    ]
+  },
+  "try_check_retry_of_99_after_drop": {
+   "try_check_retry": 86,
+   "claude_alone": 77,
+   "oracle_any": 87
   }
  }
 }
