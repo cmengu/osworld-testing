@@ -1,0 +1,133 @@
+{
+ "cost_usd": 7.96,
+ "rows": {
+  "v2-0015": {
+   "chain:claude-then-new": "state differs: 2 tree, 0 files; other+statusbar"
+  },
+  "v2-0019": {
+   "recheck:rig": "match",
+   "recheck:rig+wait6": "match"
+  },
+  "v2-0022": {
+   "recheck:rig": "state differs: 7 tree, 0 files; other+statusbar",
+   "recheck:rig+wait6": "state differs: 1 tree, 0 files; statusbar"
+  },
+  "v2-0024": {
+   "recheck:rig": "match",
+   "recheck:rig+wait6": "match"
+  },
+  "v2-0031": {
+   "recheck:rig": "match",
+   "recheck:rig+wait6": "match"
+  },
+  "v2-0035": {
+   "recheck:rig": "match",
+   "recheck:rig+wait6": "match"
+  },
+  "v2-0052": {
+   "recheck:rig": "match",
+   "recheck:rig+wait6": "match"
+  },
+  "v2-0058": {
+   "recheck:rig": "match",
+   "recheck:rig+wait6": "match"
+  },
+  "v2-0062": {
+   "recheck:rig": "match",
+   "recheck:rig+wait6": "match"
+  },
+  "v2-0066": {
+   "chain:claude-then-new": "match"
+  },
+  "v2-0069": {
+   "chain:claude-then-new": "files differ: 1 (/home/user/Desktop/Answer2.docx)"
+  },
+  "v2-0071": {
+   "status": "error (network outage)"
+  },
+  "v2-0079": {
+   "recheck:rig": "match",
+   "recheck:rig+wait6": "match"
+  },
+  "v2-0090": {
+   "recheck:rig": "match",
+   "recheck:rig+wait6": "match"
+  },
+  "v3-0041": {
+   "recheck:rig": "match not confirmed: try 1: reset not S' (tree 4, files 0); try 2: reset not S' (tree 4, files 0)",
+   "recheck:rig+wait6": "match not confirmed: try 1: reset not S' (tree 4, files 0); try 2: reset not S' (tree 4, files 0)"
+  },
+  "v3-0045": {
+   "recheck:rig": "match not confirmed: try 1: reset not S' (tree 314, files 0); try 2: reset not S' (tree 314, files 0)",
+   "recheck:rig+wait6": "match not confirmed: try 1: reset not S' (tree 314, files 0); try 2: reset not S' (tree 314, files 0)"
+  },
+  "v3-0047": {
+   "recheck:rig": "match not confirmed: try 1: reset not S' (tree 4, files 0); try 2: reset not S' (tree 4, files 0)",
+   "recheck:rig+wait6": "match not confirmed: try 1: reset not S' (tree 4, files 0); try 2: reset not S' (tree 4, files 0)"
+  },
+  "v3-0049": {
+   "recheck:rig": "match not confirmed: try 1: reset not S' (tree 4, files 0); try 2: reset not S' (tree 4, files 0)",
+   "recheck:rig+wait6": "match not confirmed: try 1: reset not S' (tree 4, files 0); try 2: reset not S' (tree 4, files 0)"
+  },
+  "v3-0051": {
+   "recheck:rig": "match not confirmed: try 1: reset not S' (tree 4, files 0); try 2: reset not S' (tree 4, files 0)",
+   "recheck:rig+wait6": "match not confirmed: try 1: reset not S' (tree 4, files 0); try 2: reset not S' (tree 4, files 0)"
+  },
+  "v3-0055": {
+   "recheck:rig": "state differs: 1 tree, 0 files; cells",
+   "recheck:rig+wait6": "windows differ: [] vs ['OSP_Envelope_Price-List_2023_5000.xlsx - LibreOffice Calc']"
+  },
+  "v3-0078": {
+   "recheck:rig": "match not confirmed: try 1: reset not S' (tree 2, files 0); try 2: reset not S' (tree 2, files 0)",
+   "recheck:rig+wait6": "match not confirmed: try 1: reset not S' (tree 2, files 0); try 2: reset not S' (tree 2, files 0)"
+  },
+  "v3-0082": {
+   "recheck:rig": "match not confirmed: try 1: reset not S' (tree 2, files 0); try 2: reset not S' (tree 2, files 0)",
+   "recheck:rig+wait6": "match not confirmed: try 1: reset not S' (tree 2, files 0); try 2: reset not S' (tree 2, files 0)"
+  }
+ },
+ "summary": {
+  "chain": {
+   "v2-0066": "match",
+   "v2-0015": "lenient pass (statusbar only)",
+   "v2-0069": "fail (file deleted by first try)"
+  },
+  "try_check_retry_of_106": {
+   "lenient": 86,
+   "strict": 85,
+   "claude_alone": 77,
+   "oracle_any": 87
+  },
+  "recheck_19": {
+   "rig_undo_matched": [
+    "v2-0019",
+    "v2-0024",
+    "v2-0031",
+    "v2-0035",
+    "v2-0052",
+    "v2-0058",
+    "v2-0062",
+    "v2-0079",
+    "v2-0090"
+   ],
+   "statusbar_only": [
+    "v2-0022"
+   ],
+   "real_fail": [
+    "v3-0055"
+   ],
+   "unscorable_reset_not_S_prime": [
+    "v3-0041",
+    "v3-0045",
+    "v3-0047",
+    "v3-0049",
+    "v3-0051",
+    "v3-0078",
+    "v3-0082"
+   ],
+   "not_run": [
+    "v2-0071"
+   ]
+  }
+ }
+}
