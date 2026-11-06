@@ -1,0 +1,23 @@
+{
+ "shot0": [
+  200,
+  9123,
+  2.3
+ ],
+ "shot1": [
+  200,
+  9123,
+  1.6
+ ],
+ "shot2": [
+  200,
+  9123,
+  1.7
+ ],
+ "shot3": [
+  200,
+  9123,
+  1.6
+ ],
+ "probe": "== tree\n./.venv/bin/activate_this.py\n./src/capture.py\n./src/http_routes.py\n./src/server.py\n./src/platform_runtime.py\n./src/__init__.py\n./src/accessibility.py\n./src/actions.py\n./src/pyxcursor.py\n./src/streaming.py\n./main.py\n== atspi defs\n./src/accessibility.py:70:MAX_DEPTH = 50\n./src/accessibility.py:579:        libreoffice_version_tuple = get_libreoffice_version()\n== import\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/home/user/server/main.py\", line 1, in <module>\n    from src.server import app, asgi_app, main\n  File \"/home/user/server/src/server.py\", line 3, in <module>\n    import uvicorn\nModuleNotFoundError: No module named 'uvicorn'\n== python\nPython 3.10.12\nfrom src.server import app, asgi_app, main\n\n\nif __name__ == \"__main__\":\n    main()\n== service\n    612 /home/user/server/.venv/bin/python /home/user/server/main.py\n   1336 /usr/libexec/gnome-shell-calendar-server\n   1513 /usr/libexec/evolution-data-server/evolution-alarm-notify"
+}

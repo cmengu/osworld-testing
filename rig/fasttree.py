@@ -27,7 +27,9 @@ from .vm import vm_shell
 
 TREE_PATH = "/tmp/rig_tree.xml"
 
-FAST_TREE_SCRIPT = r"""pkill -f '^python3 - RIG_TREE_WALKER$' 2>/dev/null; exec python3 - RIG_TREE_WALKER <<'PY' 2>&1
+# OSWorld 2.1 VMs (6 Nov 2026) run the server from its own venv, and the tree code lives in src/accessibility.py with
+# public names; the v1 server is main.py with underscored names.  The walker picks the interpreter and aliases the names.
+FAST_TREE_SCRIPT = r"""pkill -f ' - RIG_TREE_WALKER$' 2>/dev/null; PY=python3; [ -x /home/user/server/.venv/bin/python ] && [ -f /home/user/server/src/accessibility.py ] && PY=/home/user/server/.venv/bin/python; exec $PY - RIG_TREE_WALKER <<'PY' 2>&1
 import sys, time, json, logging, traceback, signal, os
 logging.disable(logging.CRITICAL)
 sys.path.insert(0, "/home/user/server")
@@ -38,7 +40,13 @@ def _too_slow(signum, frame):
 signal.signal(signal.SIGALRM, _too_slow)
 signal.alarm(105)                       # stay under the server's 120 s limit, never linger
 try:
-    import main as srv                  # the VM's own server module; importing does not start Flask
+    if os.path.exists("/home/user/server/src/accessibility.py"):      # OSWorld 2.1 server layout
+        from src import accessibility as srv
+        srv._get_libreoffice_version = srv.get_libreoffice_version
+        srv._create_atspi_node = srv.create_atspi_node
+        srv._accessibility_ns_map_ubuntu = srv.accessibility_ns_map_ubuntu
+    else:
+        import main as srv              # the VM's own server module; importing does not start Flask
     import pyatspi, lxml.etree
     logging.disable(logging.CRITICAL)
     t0 = time.time()

@@ -30,3 +30,6 @@ calc-tree/tree_raw.xml
 __pycache__/
 *.pyc
 .DS_Store
+
+# the OSWorld 2.1 checkout (xlang-ai/OSWorld-V2, tag osworld-v2.1) is its own repository
+OSWorld-V2/

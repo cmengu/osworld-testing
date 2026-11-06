@@ -1,0 +1,11 @@
+{
+ "disk": "osworld-v2-ubuntu-x86.qcow2",
+ "boot_seconds": 132,
+ "screenshot_bytes": 0,
+ "checks": "== os\nUbuntu 22.04.3 LTS\n6.5.0-15-generic\nuser\n== apps\nsoffice: /usr/bin/soffice\ncode: /usr/bin/code\nthunderbird: /usr/bin/thunderbird\ngoogle-chrome: /usr/bin/google-chrome\nchromium: missing\nfirefox: /usr/bin/firefox\nvlc: /usr/bin/vlc\ngimp: /usr/bin/gimp\ngnome-terminal: /usr/bin/gnome-terminal\nnautilus: /usr/bin/nautilus\n== sudo\nv2 password ok\nv1 password no\n== disk\n/dev/sda3        29G   26G  1.9G  94% /\n== a11y\ntrue\n== net\n2600:9000:288b:e000:17:b174:6d00:93a1 huggingface.co\n== home\nDesktop\nDocuments\nDownloads\nMusic\nopt\nPictures\nPublic\nrequirement.txt\nserver\nsnap\nTemplates\nVideos\nZotero\n== hosts\n127.0.0.1\tlocalhost\n127.0.1.1\tuser-virtual-machine\n\n::1     ip6-localhost ip6-loopback\nfe00::0 ip6-localnet\nff00::0 ip6-mcastprefix\nff02::1 ip6-allnodes\nff02::2 ip6-allrouters",
+ "tree": {
+  "info": "{'source': 'server-fallback', 'fast_error': '__ERR__Traceback (most recent call last):\\n  File \"<stdin>\", line 11, in <module>\\n  File \"/home/user/server/main.py\", line 1, in <module>\\n    from src.server import app, asgi_app, main\\n  File \"/home/user/server/src/server.py\", line 3, in <module>\\n    ",
+  "nodes": 76
+ },
+ "total_seconds": 227
+}

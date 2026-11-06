@@ -1,0 +1,9 @@
+{
+ "src/accessibility.py": 24119,
+ "src/http_routes.py": 39405,
+ "src/platform_runtime.py": 4761,
+ "writer_shot": 122524,
+ "tree_chars": 0,
+ "tree_has_writer": false,
+ "windows": "0x02600003 -1 user-virtual-machine @!0,0;BDHF\n0x02c00096  0 user-virtual-machine probe.txt - LibreOffice Writer"
+}

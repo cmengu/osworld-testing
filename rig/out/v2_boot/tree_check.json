@@ -1,0 +1,17 @@
+{
+ "tree0": {
+  "seconds": 113.5,
+  "nodes": 203,
+  "source": "fast",
+  "writer_frame": true,
+  "hello_text": true
+ },
+ "tree1": {
+  "seconds": 74.1,
+  "nodes": 203,
+  "source": "fast",
+  "writer_frame": true,
+  "hello_text": true
+ },
+ "sudo": "root"
+}
