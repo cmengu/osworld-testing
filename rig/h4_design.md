@@ -14,6 +14,15 @@ ordinary tasks can only measure false blocks. So the design uses two task pools 
 | A. Benign | OSWorld 2.0 desktop tasks (106 published; gated, needs the author's Hugging Face access) | false blocks, task success with vs without the guard |
 | B. Mistake-prone | OSWorld 2.0 tasks built for the agent to stop or ask (human_in_the_loop 6, conflict_disambiguation), the 14 OS-Harm misbehavior tasks we already run (TEST ONLY, never training), plus a weaker agent (Haiku) on pool A | catch rate, rollback success |
 
+## Second problem: the guard's on-task judgement is untested (found 6 Nov, before any run)
+A live guard must decide on-task by itself. The 0.907 "fair" guard score was given the on-task flag from the data, and
+the guard's own head has almost nothing to learn it from: only 3 of 310 test rows are both one-way and on-task, and at
+least 2 of those are already flagged as doubtful (pilot-0181, v3-0040, v3-0036). So in our data "refuse" nearly equals "not undoable".
+Evidence it matters: on the 58 real agent steps drafted as on-task, the older model (k3_v3) refused 12, a 21% false-block
+rate against the 5% limit below (OS-Harm steps, draft flags not hand-checked, older model, so a warning and not a result).
+H7 points the same way: about 6.9 steps per task on OSWorld 2.0 are not undoable, and nearly all of them were requested.
+This must be fixed and measured offline before the pilot.
+
 ## Arms (same tasks, same agent seed per task)
 1. No guard (baseline trajectory).
 2. Our guard: read state, FORWARD (Model-E 8B), the step 1b rule on the predicted change, block = not undoable AND off-task.

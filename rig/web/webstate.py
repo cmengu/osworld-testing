@@ -27,15 +27,31 @@ def new_user(app):
     return s.cookies["user_id"]
 
 
+def _retry(fn, tries=4):
+    """The hosted sites sometimes answer slowly (a 30 s read timeout, 6 Nov): retry with a growing pause."""
+    import time
+    for i in range(tries):
+        try:
+            return fn()
+        except requests.RequestException:
+            if i == tries - 1:
+                raise
+            time.sleep(3 * (i + 1))
+
+
 def read(app, uid):
-    r = requests.get(base(app) + "/api/state", cookies={"user_id": uid}, verify=False, timeout=30)
-    r.raise_for_status()
-    return r.json()["state"]
+    def go():
+        r = requests.get(base(app) + "/api/state", cookies={"user_id": uid}, verify=False, timeout=30)
+        r.raise_for_status()
+        return r.json()["state"]
+    return _retry(go)
 
 
 def write(app, uid, state):
-    r = requests.put(base(app) + "/api/state", json=state, cookies={"user_id": uid}, verify=False, timeout=30)
-    r.raise_for_status()
+    def go():
+        r = requests.put(base(app) + "/api/state", json=state, cookies={"user_id": uid}, verify=False, timeout=30)
+        r.raise_for_status()
+    _retry(go)
 
 
 def diff(a, b, path=()):

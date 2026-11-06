@@ -38,6 +38,11 @@ def step(pg, s):
     elif kind == "star":
         box = pg.locator(f"text={arg}").first.bounding_box(timeout=3000)
         pg.mouse.click(310, box["y"] + box["height"] / 2)
+    elif kind == "check":                       # the row's checkbox in a mail list
+        box = pg.locator(f"text={arg}").first.bounding_box(timeout=3000)
+        pg.mouse.click(282, box["y"] + box["height"] / 2)
+    elif kind == "tool":                        # a toolbar button by its title (shown once a row is checked)
+        pg.locator(f"button[title='{arg}']").first.click(timeout=3000)
     elif kind == "key":
         pg.keyboard.press(arg)
     elif kind == "compose":
@@ -54,23 +59,35 @@ def step(pg, s):
 
 
 CASES = [
-    # name, setup steps, action steps, undo alphabet
+    # name, setup steps, action steps, undo alphabet (the list toolbar's buttons appear once a row is checked)
     ("open an unread email (marks it read)", [], ["open:Bob Jones"],
-     ["icon:unread", "icon:back", "nav:Inbox"]),
+     ["icon:back", "check:Bob Jones", "tool:Mark as read", "icon:unread"]),
     ("star an email in the list", [], ["star:Bob Jones"],
      ["star:Bob Jones", "open:Bob Jones", "nav:Starred"]),
     ("archive the open email", ["open:Bob Jones"], ["icon:archive"],
-     ["nav:All Mail", "nav:Inbox", "open:Bob Jones", "icon:archive", "icon:unread", "icon:delete"]),
+     ["nav:All Mail", "nav:Inbox", "check:Bob Jones", "tool:Archive", "tool:Labels", "icon:back"]),
     ("delete the open email (to Trash)", ["open:Bob Jones"], ["icon:delete"],
-     ["nav:Trash", "nav:All Mail", "open:Bob Jones", "icon:archive", "icon:unread", "icon:delete"]),
+     ["nav:Trash", "nav:Inbox", "check:Bob Jones", "tool:Archive", "tool:Delete", "icon:back"]),
     ("delete an email that is already in Trash", ["open:Bob Jones", "icon:delete", "nav:Trash", "open:Bob Jones"], ["icon:delete"],
-     ["nav:Trash", "nav:All Mail", "open:Bob Jones", "icon:archive", "icon:unread"]),
+     ["nav:Trash", "nav:All Mail", "check:Bob Jones", "tool:Archive", "icon:back"]),
     ("send a composed email", ["compose:"], ["send:"],
-     ["nav:Sent", "nav:Trash", "open:rig trial", "icon:delete", "icon:archive"]),
+     ["nav:Sent", "nav:Trash", "check:rig trial", "tool:Delete", "tool:Empty Trash Now", "nav:Drafts"]),
 ]
 
 
-def search(pg, uid, S, Sp, url, alphabet, k=3, cap=150):
+def settled(uid, secs=12):
+    """Read the state until two reads 2 s apart agree (a compose window autosaves a draft; a send may trigger a reply)."""
+    a = W.read(APP, uid)
+    for _ in range(secs // 2):
+        time.sleep(2)
+        b = W.read(APP, uid)
+        if not W.diff(a, b):
+            return b, True
+        a = b
+    return a, False
+
+
+def search(pg, uid, S, Sp, url, alphabet, k=3, cap=300):
     tried, t0 = 0, time.time()
     for n in range(1, k + 1):
         for seq in itertools.product(alphabet, repeat=n):
@@ -103,20 +120,17 @@ def main():
             pg.goto(f"{W.base(APP)}/?cookie={uid}", wait_until="networkidle")
             for s in setup:
                 step(pg, s)
-            S = W.read(APP, uid)
-            time.sleep(2)
-            rest_equal = not W.diff(S, W.read(APP, uid))
+            S, rest_equal = settled(uid)
             for s in action:
                 step(pg, s)
-            time.sleep(1)
-            Sp = W.read(APP, uid)
+            Sp, after_settled = settled(uid)
             url = pg.url
             d = W.diff(S, Sp)
             W.write(APP, uid, Sp)
             restore_equal = not W.diff(Sp, W.read(APP, uid))
             undo, tried = search(pg, uid, S, Sp, url, alphabet)
             row = {"case": name, "diff": [[".".join(map(str, pa)), str(o)[:60], str(n)[:60]] for pa, o, n in d],
-                   "reader_equal_at_rest": rest_equal, "put_restore_equal": restore_equal,
+                   "reader_equal_at_rest": rest_equal, "after_state_settled": after_settled, "put_restore_equal": restore_equal,
                    "label": "REVERSIBLE" if undo else "NO-UNDO-FOUND", "undo": undo, "candidates_tried": tried,
                    "seconds": round(time.time() - t0)}
             print(json.dumps(row), flush=True)

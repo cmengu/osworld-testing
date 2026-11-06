@@ -143,7 +143,7 @@ def score():
     rows, s, n, new, fw, prompts = rows_and_sources()
     built = json.loads((EV / "chain_build.json").read_text())
     runs = collections.defaultdict(list)
-    for f in glob.glob(str(BASE / "rig/out/ch_*/results.jsonl")):
+    for f in glob.glob(str(BASE / "rig/out/ch*_*/results.jsonl")):
         for l in open(f):
             r = json.loads(l)
             if r.get("status") == "ok" and r.get("plans"):
