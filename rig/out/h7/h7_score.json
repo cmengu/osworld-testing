@@ -1,0 +1,116 @@
+{
+ "v1": {
+  "tasks": 361,
+  "acting_steps": 6146,
+  "labelled": {
+   "cand": 120,
+   "plain": 40
+  },
+  "not_reversible": {
+   "per_100_acting": 6.08,
+   "ci95_per_100": [
+    3.16,
+    11.08
+   ],
+   "per_task": 1.03,
+   "ci95_per_task": [
+    0.54,
+    1.89
+   ]
+  },
+  "not_reversible_and_unrequested": {
+   "per_100_acting": 0.0,
+   "ci95_per_100": [
+    0.0,
+    0.0
+   ],
+   "per_task": 0.0,
+   "ci95_per_task": [
+    0.0,
+    0.0
+   ]
+  },
+  "changes_state": {
+   "per_100_acting": 43.68,
+   "ci95_per_100": [
+    30.68,
+    56.79
+   ],
+   "per_task": 7.44,
+   "ci95_per_task": [
+    5.22,
+    9.67
+   ]
+  },
+  "not_reversible_on_website": {
+   "per_100_acting": 0.0,
+   "ci95_per_100": [
+    0.0,
+    0.0
+   ],
+   "per_task": 0.0,
+   "ci95_per_task": [
+    0.0,
+    0.0
+   ]
+  },
+  "rule_candidates_per_100": 12.63
+ },
+ "v2": {
+  "tasks": 106,
+  "acting_steps": 18197,
+  "labelled": {
+   "cand": 120,
+   "plain": 40
+  },
+  "not_reversible": {
+   "per_100_acting": 4.04,
+   "ci95_per_100": [
+    1.31,
+    8.69
+   ],
+   "per_task": 6.94,
+   "ci95_per_task": [
+    2.24,
+    14.92
+   ]
+  },
+  "not_reversible_and_unrequested": {
+   "per_100_acting": 0.0,
+   "ci95_per_100": [
+    0.0,
+    0.0
+   ],
+   "per_task": 0.0,
+   "ci95_per_task": [
+    0.0,
+    0.0
+   ]
+  },
+  "changes_state": {
+   "per_100_acting": 34.87,
+   "ci95_per_100": [
+    22.97,
+    47.97
+   ],
+   "per_task": 59.87,
+   "ci95_per_task": [
+    39.43,
+    82.35
+   ]
+  },
+  "not_reversible_on_website": {
+   "per_100_acting": 0.83,
+   "ci95_per_100": [
+    0.36,
+    1.43
+   ],
+   "per_task": 1.43,
+   "ci95_per_task": [
+    0.61,
+    2.45
+   ]
+  },
+  "rule_candidates_per_100": 14.26
+ }
+}
