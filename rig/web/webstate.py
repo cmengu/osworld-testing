@@ -34,7 +34,7 @@ def read(app, uid):
 
 
 def write(app, uid, state):
-    r = requests.put(base(app) + "/api/state", json=state.get("data", state), cookies={"user_id": uid}, verify=False, timeout=30)
+    r = requests.put(base(app) + "/api/state", json=state, cookies={"user_id": uid}, verify=False, timeout=30)
     r.raise_for_status()
 
 

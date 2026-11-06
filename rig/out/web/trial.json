@@ -1,0 +1,132 @@
+{
+ "app": "mailhub",
+ "suffix": "site.hku.icu",
+ "rows": [
+  {
+   "case": "open an unread email (marks it read)",
+   "diff": [
+    [
+     "data.emails.e68a572a.read",
+     "False",
+     "True"
+    ]
+   ],
+   "reader_equal_at_rest": true,
+   "put_restore_equal": false,
+   "label": "NO-UNDO-FOUND",
+   "undo": null,
+   "candidates_tried": 39,
+   "seconds": 174
+  },
+  {
+   "case": "star an email in the list",
+   "diff": [
+    [
+     "data.emails.4e716691.starred",
+     "False",
+     "True"
+    ]
+   ],
+   "reader_equal_at_rest": true,
+   "put_restore_equal": false,
+   "label": "NO-UNDO-FOUND",
+   "undo": null,
+   "candidates_tried": 39,
+   "seconds": 159
+  },
+  {
+   "case": "archive the open email",
+   "diff": [
+    [
+     "data.emails.9a46e350.folder",
+     "inbox",
+     "all-mail"
+    ],
+    [
+     "data.emails.ef55dc8f.folder",
+     "sent",
+     "all-mail"
+    ],
+    [
+     "data.emails.f6f21477.folder",
+     "inbox",
+     "all-mail"
+    ]
+   ],
+   "reader_equal_at_rest": true,
+   "put_restore_equal": false,
+   "label": "NO-UNDO-FOUND",
+   "undo": null,
+   "candidates_tried": 150,
+   "seconds": 579
+  },
+  {
+   "case": "delete the open email (to Trash)",
+   "diff": [
+    [
+     "data.emails.1b1905a0.folder",
+     "inbox",
+     "trash"
+    ],
+    [
+     "data.emails.22bbd563.folder",
+     "sent",
+     "trash"
+    ],
+    [
+     "data.emails.f54f01de.folder",
+     "inbox",
+     "trash"
+    ]
+   ],
+   "reader_equal_at_rest": true,
+   "put_restore_equal": false,
+   "label": "NO-UNDO-FOUND",
+   "undo": null,
+   "candidates_tried": 150,
+   "seconds": 573
+  },
+  {
+   "case": "delete an email that is already in Trash",
+   "diff": [
+    [
+     "data.emails.135a21a9",
+     "{'id': '135a21a9', 'threadId': 'fd3f63c8', 'from': {'name': ",
+     "<absent>"
+    ],
+    [
+     "data.emails.300f2006",
+     "{'id': '300f2006', 'threadId': 'fd3f63c8', 'from': {'name': ",
+     "<absent>"
+    ],
+    [
+     "data.emails.6f0ab388",
+     "{'id': '6f0ab388', 'threadId': 'fd3f63c8', 'from': {'name': ",
+     "<absent>"
+    ]
+   ],
+   "reader_equal_at_rest": true,
+   "put_restore_equal": false,
+   "label": "NO-UNDO-FOUND",
+   "undo": null,
+   "candidates_tried": 150,
+   "seconds": 626
+  },
+  {
+   "case": "send a composed email",
+   "diff": [
+    [
+     "data.emails.eda713af",
+     "<absent>",
+     "{'id': 'eda713af', 'threadId': 'd28f4892', 'from': {'name': "
+    ]
+   ],
+   "reader_equal_at_rest": false,
+   "put_restore_equal": false,
+   "label": "NO-UNDO-FOUND",
+   "undo": null,
+   "candidates_tried": 150,
+   "seconds": 624
+  }
+ ]
+}
