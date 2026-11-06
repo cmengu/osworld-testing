@@ -1,0 +1,67 @@
+{
+ "v2-0030": [
+  {
+   "source": "chain",
+   "steps": [
+    "wait:3",
+    "key:ctrl+z",
+    "key:ctrl+z",
+    "key:ctrl+z"
+   ]
+  }
+ ],
+ "v2-0031": [
+  {
+   "source": "chain",
+   "steps": [
+    "wait:3",
+    "key:ctrl+z",
+    "key:ctrl+z",
+    "key:ctrl+z"
+   ]
+  }
+ ],
+ "v2-0046": [
+  {
+   "source": "chain",
+   "steps": [
+    "wait:3",
+    "key:ctrl+w",
+    "key:ctrl+shift+n",
+    "key:ctrl+o",
+    "key:ctrl+home"
+   ]
+  }
+ ],
+ "v2-0061": [
+  {
+   "source": "chain",
+   "steps": [
+    "wait:3",
+    "key:ctrl+z",
+    "key:ctrl+z",
+    "key:ctrl+z"
+   ]
+  }
+ ],
+ "v2-0062": [
+  {
+   "source": "chain",
+   "steps": [
+    "wait:3",
+    "key:ctrl+z",
+    "key:ctrl+z",
+    "key:ctrl+z"
+   ]
+  }
+ ],
+ "v2-0090": [
+  {
+   "source": "chain",
+   "steps": [
+    "wait:3",
+    "shell:rm Desktop/price.docx"
+   ]
+  }
+ ]
+}

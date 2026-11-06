@@ -1,0 +1,20 @@
+{
+ "v3-0035": [
+  {
+   "source": "chain",
+   "steps": [
+    "wait:3",
+    "shell:mv Desktop/todo_list_Jan_2 Desktop/todo_list_Jan_1"
+   ]
+  }
+ ],
+ "v3-0039": [
+  {
+   "source": "chain",
+   "steps": [
+    "wait:3",
+    "shell:rm Desktop/cpjpg/emnlp2023.jpg Desktop/cpjpg/hk_group_photo.jpg Desktop/cpjpg/hong-kong-china.jpg Desktop/cpjpg/monk252520thailand252520wat252520arun252520scaled25255B225255D.jpg"
+   ]
+  }
+ ]
+}
