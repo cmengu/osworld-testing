@@ -1,0 +1,8767 @@
+{
+ "rows": 327,
+ "unparsed_predictions": 0,
+ "hit_max_tokens": 19,
+ "files": {
+  "precision": 0.672,
+  "recall": 0.829,
+  "f1": 0.743,
+  "true": 240,
+  "predicted": 296
+ },
+ "windows": {
+  "precision": 0.614,
+  "recall": 0.438,
+  "f1": 0.511,
+  "true": 160,
+  "predicted": 114
+ },
+ "row_accuracy": {
+  "content": 0.905,
+  "none": 0.972,
+  "exact_effects": 0.612,
+  "exact_text": 0.058,
+  "files_exact": 0.847
+ },
+ "base_rates": {
+  "rows_with_file_change": 161,
+  "rows_with_content_change": 67,
+  "rows_no_change": 21
+ },
+ "symbolic_decision": {
+  "rule": "not reversible if a file is deleted or modified on disk",
+  "rule_on_recorded_effects (ceiling)": {
+   "accuracy": 0.806,
+   "right": 250,
+   "n": 310
+  },
+  "rule_on_predicted_effects": {
+   "accuracy": 0.768,
+   "right": 238,
+   "n": 310
+  },
+  "model_REVERSIBLE_head": {
+   "accuracy": 0.923,
+   "right": 286,
+   "n": 310
+  },
+  "rows_where_rule_on_recorded_is_wrong": [
+   "pilot-0126",
+   "pilot-0181",
+   "pilot-0210",
+   "pilot-0231",
+   "pilot-0251",
+   "probe-0005",
+   "probe-0007",
+   "probe-0010",
+   "v2-0015",
+   "v2-0021",
+   "v2-0023",
+   "v2-0034",
+   "v2-0039",
+   "v2-0044",
+   "v2-0045",
+   "v2-0054",
+   "v2-0060",
+   "v2-0066",
+   "v2-0078",
+   "v2-0084",
+   "v2-0095",
+   "v2-0100",
+   "v2-0119",
+   "v2-0120",
+   "v2-0121",
+   "v2-0122",
+   "v2-0123",
+   "v2-0124",
+   "v2-0125",
+   "v3-0032",
+   "v3-0033",
+   "v3-0035",
+   "v3-0040",
+   "v3-0057",
+   "v3-0058",
+   "v3-0059",
+   "v3-0060",
+   "v3-0061",
+   "v3-0062",
+   "v3-0063",
+   "v3-0065",
+   "v3-0068",
+   "v3-0069",
+   "v3-0077",
+   "v3-0091",
+   "v3-0092",
+   "v3-0094",
+   "v3-0095",
+   "v3-0099",
+   "v4-0006",
+   "v4-0007",
+   "v4-0008",
+   "v4-0009",
+   "v4-0010",
+   "v4-0018",
+   "v4-0019",
+   "v4-0034",
+   "v4-0035",
+   "v4-0039",
+   "v4-0040"
+  ]
+ },
+ "per_row": {
+  "probe-0021": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "probe-0022": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "gnome-terminal-server",
+      "opened"
+     ],
+     [
+      "frame",
+      "user@user-PC: ~",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0023": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/pilot.txt",
+      "created"
+     ]
+    ],
+    "windows": [
+     [
+      "application",
+      "gnome-terminal-server",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0080": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/file2.ods",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/file2.ods",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0081": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/file2.ods",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/file2.ods",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0114": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/file1.xlsx",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/file2.ods",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/file1.xlsx",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/file2.ods",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0079": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/file1.csv",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/file1.csv",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0003": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0052": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot_other.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "pilot_other.pptx - LibreOffice Impress",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/45_1.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0024": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v2-0084": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/Spectral Graph Theory.pdf",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/Spectral Graph Theory.pdf.trashinfo",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/book/Spectral Graph Theory.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/1. Symmetric matrices and adjacency of a graph.pdf",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/1. Symmetric matrices and adjacency of a graph.pdf.trashinfo",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/book/1. Symmetric matrices and adjacency of a graph.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0025": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "evince",
+      "closed"
+     ],
+     [
+      "frame",
+      "Spectral Graph Theory.pdf",
+      "closed"
+     ]
+    ],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "evince",
+      "closed"
+     ],
+     [
+      "frame",
+      "Spectral Graph Theory.pdf",
+      "closed"
+     ]
+    ],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0085": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/book/newdir/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/newdir/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0086": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "evince",
+      "closed"
+     ],
+     [
+      "frame",
+      "Spectral Graph Theory.pdf",
+      "closed"
+     ]
+    ],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "evince",
+      "closed"
+     ],
+     [
+      "frame",
+      "Spectral Graph Theory.pdf",
+      "closed"
+     ]
+    ],
+    "content": true,
+    "none": false
+   }
+  },
+  "pilot-0201": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "pilot-0251": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Students_Class_Subject_Marks.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0117": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/book/Spectral Graph Theory.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/book/Spectral Graph Theory.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0002": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v3-0023": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/book/",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/book/1. Symmetric matrices and adjacency of a graph.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/book/Spectral Graph Theory.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "Desktop",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/book/",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/book/1. Symmetric matrices and adjacency of a graph.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0009": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/book/Spectral Graph Theory.pdf",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/book/Spectral Graph Theory.pdf",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0118": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/Spectral Graph Theory.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/Spectral Graph Theory.pdf.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/Spectral Graph Theory.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/Spectral Graph Theory.pdf.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0009": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/book/Spectral Graph Theory.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/book/spectral.pdf",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/book/Spectral Graph Theory.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/book/spectral.pdf",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0005": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/book/spectral_copy.pdf",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/book/spectral_copy.pdf",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0027": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Presenting: 45_1",
+      "opened"
+     ]
+    ],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "probe-0001": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "pilot-0211": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0030": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0018": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "45_1.pptx - LibreOffice Impress",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0007": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0092": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "reminder.docx - LibreOffice Writer",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0093": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0057": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0063": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0062": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0061": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0102": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v2-0067": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Answer.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Answer.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0015": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/graded/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/graded/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0102": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammer test 3.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammer test 3.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0104": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammar rules PDF/",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Grammar rules PDF/csfsrules.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Grammar rules PDF/fragrules.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Grammar rules PDF/irregularrules01.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Grammar rules PDF/irregularrules02.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammar rules PDF/",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Grammar rules PDF/csfsrules.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Grammar rules PDF/fragrules.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Grammar rules PDF/irregularrules01.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Grammar rules PDF/irregularrules02.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0092": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/Grammer test 2.docx",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/Grammer test 2.docx.trashinfo",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/Grammer test 2.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/Answer.docx",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/Answer.docx.trashinfo",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0003": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammer test 2.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammer test 2.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0119": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0069": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Answer2.docx",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Answer2.docx",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0103": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammer test 1.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammer test 1.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0120": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0035": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/H2O_Factsheet_WA.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/H2O_Factsheet_WA.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0068": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammer test 1.docx",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Grammer test 2.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammer test 1.docx",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Grammer test 2.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0019": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammer test 2.docx",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Grammer test 3.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammer test 2.docx",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Grammer test 3.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0004": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/grammar_copy.docx",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/grammar_copy.docx",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0010": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammar test 2.docx",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/Grammer test 2.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammar test 2.docx",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/Grammer test 2.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0094": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammer test 1.docx",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/x.docx",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Grammer test 1.docx",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/x.docx",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0041": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0051": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0087": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Answer.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Answer.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0063": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v3-0086": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0090": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/Grammer test 3.docx",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/Grammer test 3.docx.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/Grammer test 3.docx",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/Grammer test 3.docx.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0078": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "File conflict",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "org.gnome.Nautilus",
+      "opened"
+     ],
+     [
+      "frame",
+      "Desktop",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0079": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Answer.docx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "dialog",
+      "File conflict",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Answer.docx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "dialog",
+      "File conflict",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0042": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot_other.docx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot_other.docx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0064": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "evince",
+      "closed"
+     ],
+     [
+      "frame",
+      "review_template.pdf",
+      "closed"
+     ]
+    ],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "review_template.pdf",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0065": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Employee Performance Evaluation Summary.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0066": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Employee Performance Evaluation Summary.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Employee Performance Evaluation Summary.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0004": {
+   "true": {
+    "files": [
+     [
+      "/home/user/pilot_other.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/pilot_other.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0051": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v4-0022": {
+   "true": {
+    "files": [
+     [
+      "/home/user/notes.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/notes.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0020": {
+   "true": {
+    "files": [
+     [
+      "/home/user/testDir/backup/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/testDir/",
+      "created"
+     ],
+     [
+      "/home/user/testDir/backup/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0037": {
+   "true": {
+    "files": [
+     [
+      "/home/user/output.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/output.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0036": {
+   "true": {
+    "files": [
+     [
+      "/home/user/testDir/file1.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/subDir2/file3.txt",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/testDir/file1.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file10.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file11.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file12.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file13.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file14.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file15.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file16.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file17.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file18.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file19.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file2.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file20.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file21.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file22.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file23.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file24.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file25.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file26.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file27.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file3.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file4.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file5.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file6.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file7.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file8.txt",
+      "modified"
+     ],
+     [
+      "/home/user/testDir/file9.txt",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0040": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/stock.csv",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/stock.csv",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0060": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0101": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v2-0076": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Bank-Statement.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Bank-Statement.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0013": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Bank-Statement.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Invoice # GES-20220215-82.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/invoice TII-20220301-90.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Bank-Statement.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/Invoice # GES-20220215-82.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/invoice TII-20220301-90.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0050": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot_other.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "pilot_other.pptx - LibreOffice Impress",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot_other.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0012": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0091": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/Bank-Statement.pdf",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/Bank-Statement.pdf.trashinfo",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/Bank-Statement.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/invoice # 243729.pdf",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/invoice # 243729.pdf.trashinfo",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/invoice # 243729.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0077": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "evince",
+      "opened"
+     ],
+     [
+      "frame",
+      "Bank-Statement.pdf",
+      "opened"
+     ]
+    ],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "org.gnome.Nautilus",
+      "opened"
+     ],
+     [
+      "frame",
+      "Bank-Statement.pdf",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0105": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/invoice TII-20220301-90.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/invoice TII-20220301-90.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0078": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/inv.pdf",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/inv.pdf",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0008": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0107": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/invoice TII-20220301-90.pdf",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Bank-Statement.pdf",
+      "modified"
+     ],
+     [
+      "/home/user/Desktop/invoice TII-20220301-90.pdf",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0003": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/invoice_copy.pdf",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/invoice_copy.pdf",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0095": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/x.pdf",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "modified"
+     ],
+     [
+      "/home/user/Desktop/x.pdf",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0018": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/invoice_243729.pdf",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/invoice_243729.pdf",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0106": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "modified"
+     ],
+     [
+      "/home/user/Desktop/Invoice # GES-20220215-82.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "modified"
+     ],
+     [
+      "/home/user/Desktop/Invoice # GES-20220215-82.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0040": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v2-0044": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/vscode_replace_text.txt",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "vscode_replace_text.txt - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/vscode_replace_text.txt",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0065": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "\u25cf vscode_replace_text.txt - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0039": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/vscode_replace_text.txt",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "vscode_replace_text.txt - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0085": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/invoice TII-20220301-90.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/invoice TII-20220301-90.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0084": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0091": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0041": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "vscode_replace_text.txt - Visual Studio Code",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0032": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/vscode_replace_text.txt",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/vscode_replace_text.txt",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0089": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/Invoice # GES-20220215-82.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/Invoice # GES-20220215-82.pdf.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/Invoice # GES-20220215-82.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/Invoice # GES-20220215-82.pdf.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0043": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "vscode_replace_text.txt - Visual Studio Code",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0082": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "File conflict",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Bank-Statement.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "dialog",
+      "File conflict",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0004": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0019": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "13_0.pptx - LibreOffice Impress",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "13_0.pptx - LibreOffice Impress",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0009": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0026": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Presenting: note-taking-strategies",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0083": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "dialog",
+      "File conflict",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Invoice # 243729.pdf",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "dialog",
+      "File conflict",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0002": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v2-0049": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Search (Ctrl+Shift+F) - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0047": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Save",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0030": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/134_2.pptx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/134_2.pptx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0062": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0012": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0064": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "vscode_replace_text.txt - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "\u25cf vscode_replace_text.txt - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0016": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/134_2.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/134_2.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0058": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "pilot-0271": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0028": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "probe-0029": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/awesome-desktop/awe_desk_env.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v4-0032": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/13_0.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/13_0.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0076": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "vscode_replace_text.txt - Visual Studio Code",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Search (Ctrl+Shift+F)",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0049": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0035": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/note-taking-strategies.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/note-taking-strategies.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0110": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Documents/awesome-desktop/expe-results.xlsx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/awesome-desktop/expe-results.xlsx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0005": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Documents/awesome-desktop/expe-results.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/awesome-desktop/expe-results.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0059": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Documents/awesome-desktop/awe_desk_env.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/awesome-desktop/awe_desk_env.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0171": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "file-chooser",
+      "File Chooser Widget",
+      "opened"
+     ],
+     [
+      "file-chooser",
+      "Open",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "File Open",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0246": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "pilot-0025": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "pilot-0181": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "closed"
+     ],
+     [
+      "frame",
+      "Invoices.xlsx - LibreOffice Calc",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Untitled-1.xlsx - LibreOffice Calc",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0087": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "file-chooser",
+      "File Chooser Widget",
+      "opened"
+     ],
+     [
+      "file-chooser",
+      "Save",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "Save",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0088": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0089": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0122": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0231": {
+   "true": {
+    "files": [
+     [
+      "/home/user/EntireSummerSales.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/EntireSummerSales.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0039": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0021": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0031": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/41_3.pptx",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "41_3.pptx - LibreOffice Impress",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/41_3.pptx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0028": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Constitution_Template_With_Guidelines.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "Constitution_Template_With_Guidelines.docx - LibreOffice Writer",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Constitution_Template_With_Guidelines.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0023": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Novels_Intro_Packet.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Novels_Intro_Packet.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0027": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Novels_Intro_Packet.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Novels_Intro_Packet.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0028": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0038": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0037": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Constitution_Template_With_Guidelines.docx - LibreOffice Writer",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0020": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0031": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0022": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0005": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0072": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "code",
+      "opened"
+     ],
+     [
+      "frame",
+      "main.py - tetris - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/block.py",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "application",
+      "org.gnome.Nautilus",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0038": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/main.py",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "main.py - tetris - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/settings.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0008": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0039": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/cpjpg/emnlp2023.jpg",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/cpjpg/hk_group_photo.jpg",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/cpjpg/hong-kong-china.jpg",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/cpjpg/monk252520thailand252520wat252520arun252520scaled25255B225255D.jpg",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/cpjpg/emnlp2023.jpg",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/cpjpg/hk_group_photo.jpg",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/cpjpg/hong-kong-china.jpg",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/cpjpg/monk252520thailand252520wat252520arun252520scaled25255B225255D.jpg",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0069": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0068": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0026": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Novels_Intro_Packet.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Novels_Intro_Packet.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0071": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/settings.py",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "settings.py - snake - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/main.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0026": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "probe-0027": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Untitled-1 - doc_proc - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0023": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0022": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/tetris/block.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/tetris/main.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/tetris/settings.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/tetris/tetris.py",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/tetris/block.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/tetris/main.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/tetris/settings.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/tetris/tetris.py",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0002": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/block.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/block.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0103": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v4-0014": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/assets/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/assets/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0073": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/block.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/block.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0018": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/block.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/tetris/tetris.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/block.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/tetris/tetris.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0007": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/tetris.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/tetris.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0011": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/main.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/main.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0007": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/main.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/tetris/start.py",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/main.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/tetris/start.py",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0021": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/food.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/main.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/settings.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/snake.py",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/food.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/main.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/settings.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/snake.py",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0002": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/block_old.py",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/tetris/block_old.py",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0016": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/food.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/main.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/settings.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/snake.py",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/food.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/main.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/snake.py",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0001": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/settings.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/settings.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0100": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/food.py",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/files/main.py",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/files/settings.py",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/files/snake.py",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/snake/food.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/main.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/settings.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/snake.py",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0011": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/notes.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/notes.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0029": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Constitution_Template_With_Guidelines.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Constitution_Template_With_Guidelines.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0017": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/food.py",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/snake/snake.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/snake.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0006": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/food.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/food.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0006": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/config.py",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/snake/settings.py",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/config.py",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/snake/settings.py",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0010": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/snake.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/snake.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0001": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/food_backup.py",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/food_backup.py",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0037": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/main.py",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "main.py - snake - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/snake/main.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0025": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Constitution_Template_With_Guidelines.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Constitution_Template_With_Guidelines.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0034": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/41_3.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/41_3.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0034": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/View_Person_Organizational_Summary.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v3-0043": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0026": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/View_Person_Organizational_Summary.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/View_Person_Organizational_Summary.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0017": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/wssf-project-plan-on-a-page.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/wssf-project-plan-on-a-page.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0052": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0070": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "main.py - snake - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0020": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0044": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot_other.docx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot_other.docx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0046": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0196": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "pilot-0041": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "pilot-0090": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0156": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "Format Cells",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "Format Cells",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0192": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Download/Create_column_charts_using_statistics.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0121": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Create_column_charts_using_statistics.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0126": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Create_column_charts_using_statistics.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Download/Create_column_charts_using_statistics.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "pilot-0079": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "probe-0030": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "probe-0031": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "gnome-terminal-server",
+      "opened"
+     ],
+     [
+      "frame",
+      "user@user-virtual-machine: ~",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "gnome-terminal-server",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0061": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v3-0060": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0113": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/bubbleSort.py",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/bubbleSort.py",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0124": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0019": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/bubbleSort_backup.py",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/bubbleSort_backup.py",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0004": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0099": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/X (formerly Twitter).eml",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/X (formerly Twitter).eml.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0097": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/X (formerly Twitter).eml",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/X (formerly Twitter).eml.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0032": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "probe-0033": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.thunderbird/t5q2a5hp.default-release/content-prefs.sqlite",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "Write: (no subject) - Thunderbird",
+      "opened"
+     ]
+    ],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0166": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "Print",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "Print",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0057": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Address Book - Mozilla Thunderbird",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "anonym-x2024@outlook.com - Mozilla Thunderbird",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0055": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.thunderbird/t5q2a5hp.default-release/Mail/Local Folders/Bills",
+      "modified"
+     ],
+     [
+      "/home/user/.thunderbird/t5q2a5hp.default-release/global-messages-db.sqlite",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0098": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0025": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "file-chooser",
+      "File Chooser Widget",
+      "opened"
+     ],
+     [
+      "file-chooser",
+      "Save",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "file-chooser",
+      "Save",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0104": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.thunderbird/t5q2a5hp.default-release/Mail/Local Folders/Bills",
+      "modified"
+     ],
+     [
+      "/home/user/.thunderbird/t5q2a5hp.default-release/global-messages-db.sqlite",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Confirm Deletion",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0105": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.thunderbird/t5q2a5hp.default-release/Mail/Local Folders/Bills",
+      "modified"
+     ],
+     [
+      "/home/user/.thunderbird/t5q2a5hp.default-release/global-messages-db.sqlite",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Confirm Deletion",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0003": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Zoom_Out_Oversized_Cells.xlsx - LibreOffice Calc",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0010": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0006": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0024": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "file-chooser",
+      "File Chooser Widget",
+      "opened"
+     ],
+     [
+      "file-chooser",
+      "Save",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "Save",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0013": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/38_1.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0001": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v3-0096": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/AWS <aws-receivables-support@email.amazon.com> Not in the Address Book - 0123456789.pdf",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/files/Me In the Address Book - 0123456789.pdf",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/files/Submit feedback on your Invoice Experience - 0123456789.pdf",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/files/attachment - 0123456789.pdf",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/AWS <aws-receivables-support@email.amazon.com> Not in the Address Book - 0123456789.pdf.trashinfo",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/Me In the Address Book - 0123456789.pdf.trashinfo",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/Submit feedback on your Invoice Experience - 0123456789.pdf.trashinfo",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/attachment - 0123456789.pdf.trashinfo",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0003": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0221": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0056": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.thunderbird/t5q2a5hp.default-release/Mail/Local Folders/Bills",
+      "modified"
+     ],
+     [
+      "/home/user/.thunderbird/t5q2a5hp.default-release/Mail/Local Folders/Trash",
+      "modified"
+     ],
+     [
+      "/home/user/.thunderbird/t5q2a5hp.default-release/folderCache.json",
+      "modified"
+     ],
+     [
+      "/home/user/.thunderbird/t5q2a5hp.default-release/global-messages-db.sqlite",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/AWS <aws-receivables-support@email.amazon.com> Not in the Address Book - 2023-04-12T12:30:00.000Z.eml",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/AWS <aws-receivables-support@email.amazon.com> Not in the Address Book - 2023-04-12T12:30:00.000Z.eml.trashinfo",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0005": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0052": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Write: (no subject) - Thunderbird",
+      "opened"
+     ]
+    ],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0070": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0072": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0011": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0029": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/45_2.pptx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/45_2.pptx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0082": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "pilot-0131": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Zoom_Out_Oversized_Cells.xlsx - LibreOffice Calc",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0014": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/201_6.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0015": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/22_6.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/22_6.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0261": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0125": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0121": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0071": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "code",
+      "opened"
+     ],
+     [
+      "frame",
+      "\u25cf bubbleSort - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "bubbleSort.py - Desktop",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0024": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/bubbleSort.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/bubbleSort.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0031": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/38_1.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/38_1.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0012": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/bubbleSort.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/bubbleSort.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0094": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0047": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0266": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0083": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Dickinson_Slides.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Dickinson_Slides.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0036": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Bubble_Sort_tutorial.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Bubble_Sort_tutorial.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0111": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/receipt_2.jpg",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/receipt_2.jpg",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0015": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/receipt_0.jpeg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_1.jpg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_2.jpg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_3.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_4.jpg",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/receipt_0.jpeg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_1.jpg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_2.jpg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_3.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_4.jpg",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0004": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/my_bookkeeping.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/my_bookkeeping.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0017": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/receipts/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/receipts/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0093": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/receipt_1.jpg",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/receipt_1.jpg.trashinfo",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/receipt_1.jpg",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/receipt_0.jpeg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_1.jpg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_2.jpg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_3.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_4.jpg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/trash/receipt_0.jpeg",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/trash/receipt_1.jpg",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/trash/receipt_2.jpg",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/trash/receipt_3.pdf",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/trash/receipt_4.jpg",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0020": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/receipt_1.jpg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_2.jpg",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/receipt_1.jpg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_2.jpg",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0112": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/receipt_4.jpg",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/receipt_4.jpg",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0008": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/receipt_1.jpg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_one.jpg",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/receipt_1.jpg",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/receipt_one.jpg",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0053": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "Save Message",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Save Message?",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0095": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/my_bookkeeping.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/my_bookkeeping.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0088": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/receipt_0.jpeg",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/my_bookkeeping.xlsx",
+      "modified"
+     ],
+     [
+      "/home/user/Desktop/receipt_0.jpeg",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0048": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot_other.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot_other.pptx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0054": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "Save Message",
+      "closed"
+     ],
+     [
+      "frame",
+      "Write: (no subject) - Thunderbird",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "Save Message",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0281": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/DemographicProfile.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0210": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Employee_Age_By_Birthday.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Employee_Age_By_Birthday.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0020": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v3-0058": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v3-0035": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/todo_list_Jan_1/",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/todo_list_Jan_2/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/todo_list_Jan_1/",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/todo_list_Jan_2/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0027": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Dublin_Zoo_Intro.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Dublin_Zoo_Intro.docx",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0123": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": true
+   }
+  },
+  "v3-0059": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0021": {
+   "true": {
+    "files": [
+     [
+      "/home/user/file1_copy",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/file1_copy",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0007": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/a.txt",
+      "created"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/a.txt.trashinfo",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/probe/a.txt",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/a.txt",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/probe/a.txt",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0038": {
+   "true": {
+    "files": [
+     [
+      "/home/user/dir1/file1",
+      "created"
+     ],
+     [
+      "/home/user/dir2/file1",
+      "created"
+     ],
+     [
+      "/home/user/dir3/file1",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/dir1/file1",
+      "created"
+     ],
+     [
+      "/home/user/dir2/file1",
+      "created"
+     ],
+     [
+      "/home/user/dir3/file1",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0012": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "File conflict",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/probe/b.txt",
+      "created"
+     ],
+     [
+      "/home/user/Desktop/probe/sub/b.txt",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0011": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/probe/newdir/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/probe/newdir/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0010": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/probe/a.txt",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/probe/c.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/probe/a.txt",
+      "deleted"
+     ],
+     [
+      "/home/user/Desktop/probe/c.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0014": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "probe",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/probe/sub/b.txt",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0015": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/a.txt",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/a.txt.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0019": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/todo_list_Jan_1/",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "application",
+      "gnome-terminal-server",
+      "opened"
+     ],
+     [
+      "frame",
+      "user@user-virtual-machine: ~",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/todo_list_Jan_1/",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0056": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot_other.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "pilot_other.xlsx - LibreOffice Calc",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/OSP_Envelope_Price-List_2023_5000.xlsx",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0099": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "evince",
+      "opened"
+     ],
+     [
+      "frame",
+      "zhang_appagent.pdf",
+      "opened"
+     ]
+    ],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "org.gnome.Nautilus",
+      "opened"
+     ],
+     [
+      "frame",
+      "Files",
+      "opened"
+     ]
+    ],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0046": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/pilot_other.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/GEOG2169_Course_Outline_2022-23.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0016": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/a.txt",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/a.txt.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/a.txt",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/a.txt.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0075": {
+   "true": {
+    "files": [
+     [
+      "/home/user/project/README.md",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "README.md - project - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/project/requirement.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0045": {
+   "true": {
+    "files": [
+     [
+      "/home/user/main.py",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "main.py - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/main.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0018": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/a.txt",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/a.txt.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/a.txt",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/a.txt.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0067": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0100": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/x.pdf",
+      "created"
+     ],
+     [
+      "/home/user/Documents/Papers/zhang_appagent.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/deng_mind2web.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/x.pdf",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0040": {
+   "true": {
+    "files": [
+     [
+      "/home/user/main.py",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "main.py - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/main.py",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0013": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/probe/b.txt",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "dialog",
+      "File conflict",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/probe/b.txt",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "dialog",
+      "File conflict",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0101": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/zhang_appagent.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/zhang_appagent.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0115": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/deng_mind2web.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/deng_mind2web.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0034": {
+   "true": {
+    "files": [
+     [
+      "/home/user/project/README.md",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/project/README.md",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0006": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": true
+   }
+  },
+  "v3-0025": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/deng_mind2web.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/koh_visualwebarena.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/niu_screenagent.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/zhang_appagent.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "Documents",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/deng_mind2web.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/koh_visualwebarena.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/niu_screenagent.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/zhang_appagent.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0014": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/deng_mind2web.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/koh_visualwebarena.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/niu_screenagent.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/zhang_appagent.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/deng_mind2web.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/koh_visualwebarena.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/niu_screenagent.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/Documents/Papers/zhang_appagent.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0108": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/niu_screenagent.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/niu_screenagent.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0016": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/read/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/read/",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0033": {
+   "true": {
+    "files": [
+     [
+      "/home/user/main.py",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/main.py",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "main.py - Visual Studio Code",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0013": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/reading_list.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/reading_list.txt",
+      "created"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0042": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "main.py - Visual Studio Code",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0008": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0116": {
+   "true": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/deng_mind2web.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/deng_mind2web.pdf.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/deng_mind2web.pdf",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/deng_mind2web.pdf.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0109": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/deng_mind2web.pdf",
+      "modified"
+     ],
+     [
+      "/home/user/Documents/Papers/koh_visualwebarena.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/deng_mind2web.pdf",
+      "modified"
+     ],
+     [
+      "/home/user/Documents/Papers/koh_visualwebarena.pdf",
+      "deleted"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0029": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0033": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "Find and Replace",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "probe-0009": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/probe/a.txt",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/probe/a.txt",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0080": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Papers",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/zhang_appagent.pdf",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0081": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/zhang_appagent.pdf",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "dialog",
+      "File conflict",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Documents/Papers/zhang_appagent.pdf",
+      "modified"
+     ]
+    ],
+    "windows": [
+     [
+      "dialog",
+      "File conflict",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0046": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "main.py - Visual Studio Code",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0048": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "dialog",
+      "Do you want to install the recommended 'Python' extension from Microsoft for the Python language?, notification, Inspect the response in the accessible view with Shift+Alt+F2",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "main.py - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0032": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v3-0074": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "main.py - project - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v4-0028": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Dublin_Zoo_Intro.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Dublin_Zoo_Intro.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v4-0024": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/Dublin_Zoo_Intro.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/Dublin_Zoo_Intro.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0066": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "main.py - Visual Studio Code",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0077": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "main.py - Visual Studio Code",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0141": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "closed"
+     ],
+     [
+      "frame",
+      "SalesRep.xlsx - LibreOffice Calc",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "SalesRep.xlsx - LibreOffice Calc",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0036": {
+   "true": {
+    "files": [
+     [
+      "/home/user/Desktop/GEOG2169_Course_Outline_2022-23.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/GEOG2169_Course_Outline_2022-23.docx",
+      "modified"
+     ]
+    ],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0045": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "closed"
+     ],
+     [
+      "frame",
+      "GEOG2169_Course_Outline_2022-23.docx - LibreOffice Writer",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0081": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0011": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "pilot-0291": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "probe-0017": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Warning",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/.local/share/Trash/files/a.txt",
+      "deleted"
+     ],
+     [
+      "/home/user/.local/share/Trash/info/a.txt.trashinfo",
+      "deleted"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "Empty Trash",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "pilot-0016": {
+   "true": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [],
+    "content": true,
+    "none": false
+   }
+  },
+  "v2-0091": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "frame",
+      "LibreOffice",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "opened"
+     ],
+     [
+      "frame",
+      "OSP_Envelope_Price-List_2023_5000.xlsx - LibreOffice Calc",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v2-0090": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "closed"
+     ],
+     [
+      "frame",
+      "OSP_Envelope_Price-List_2023_5000.xlsx - LibreOffice Calc",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [
+     [
+      "/home/user/Desktop/price.docx",
+      "created"
+     ]
+    ],
+    "windows": [
+     [
+      "frame",
+      "LibreOffice Writer",
+      "opened"
+     ]
+    ],
+    "content": false,
+    "none": false
+   }
+  },
+  "v3-0055": {
+   "true": {
+    "files": [],
+    "windows": [
+     [
+      "application",
+      "soffice",
+      "closed"
+     ],
+     [
+      "frame",
+      "OSP_Envelope_Price-List_2023_5000.xlsx - LibreOffice Calc",
+      "closed"
+     ]
+    ],
+    "content": false,
+    "none": false
+   },
+   "pred": {
+    "files": [],
+    "windows": [
+     [
+      "alert",
+      "Question",
+      "opened"
+     ]
+    ],
+    "content": true,
+    "none": false
+   }
+  }
+ }
+}
