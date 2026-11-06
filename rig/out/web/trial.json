@@ -6,127 +6,140 @@
    "case": "open an unread email (marks it read)",
    "diff": [
     [
-     "data.emails.e68a572a.read",
+     "data.emails.5fa42b56.read",
      "False",
      "True"
     ]
    ],
    "reader_equal_at_rest": true,
-   "put_restore_equal": false,
+   "after_state_settled": true,
+   "put_restore_equal": true,
    "label": "NO-UNDO-FOUND",
    "undo": null,
-   "candidates_tried": 39,
-   "seconds": 174
+   "candidates_tried": 84,
+   "seconds": 377
   },
   {
    "case": "star an email in the list",
    "diff": [
     [
-     "data.emails.4e716691.starred",
+     "data.emails.e2192745.starred",
      "False",
      "True"
     ]
    ],
    "reader_equal_at_rest": true,
-   "put_restore_equal": false,
-   "label": "NO-UNDO-FOUND",
-   "undo": null,
-   "candidates_tried": 39,
-   "seconds": 159
+   "after_state_settled": true,
+   "put_restore_equal": true,
+   "label": "REVERSIBLE",
+   "undo": [
+    "star:Bob Jones"
+   ],
+   "candidates_tried": 1,
+   "seconds": 18
   },
   {
    "case": "archive the open email",
    "diff": [
     [
-     "data.emails.9a46e350.folder",
-     "inbox",
-     "all-mail"
-    ],
-    [
-     "data.emails.ef55dc8f.folder",
+     "data.emails.104feb81.folder",
      "sent",
      "all-mail"
     ],
     [
-     "data.emails.f6f21477.folder",
+     "data.emails.2f30d549.folder",
+     "inbox",
+     "all-mail"
+    ],
+    [
+     "data.emails.88983cd8.folder",
      "inbox",
      "all-mail"
     ]
    ],
    "reader_equal_at_rest": true,
-   "put_restore_equal": false,
+   "after_state_settled": true,
+   "put_restore_equal": true,
    "label": "NO-UNDO-FOUND",
    "undo": null,
-   "candidates_tried": 150,
-   "seconds": 579
+   "candidates_tried": 258,
+   "seconds": 1150
   },
   {
    "case": "delete the open email (to Trash)",
    "diff": [
     [
-     "data.emails.1b1905a0.folder",
-     "inbox",
-     "trash"
-    ],
-    [
-     "data.emails.22bbd563.folder",
+     "data.emails.5eeecaa3.folder",
      "sent",
      "trash"
     ],
     [
-     "data.emails.f54f01de.folder",
+     "data.emails.b8f79468.folder",
+     "inbox",
+     "trash"
+    ],
+    [
+     "data.emails.bed65688.folder",
      "inbox",
      "trash"
     ]
    ],
    "reader_equal_at_rest": true,
-   "put_restore_equal": false,
+   "after_state_settled": true,
+   "put_restore_equal": true,
    "label": "NO-UNDO-FOUND",
    "undo": null,
-   "candidates_tried": 150,
-   "seconds": 573
+   "candidates_tried": 258,
+   "seconds": 1145
   },
   {
    "case": "delete an email that is already in Trash",
    "diff": [
     [
-     "data.emails.135a21a9",
-     "{'id': '135a21a9', 'threadId': 'fd3f63c8', 'from': {'name': ",
+     "data.emails.03b6f876",
+     "{'id': '03b6f876', 'threadId': '553b99fa', 'from': {'name': ",
      "<absent>"
     ],
     [
-     "data.emails.300f2006",
-     "{'id': '300f2006', 'threadId': 'fd3f63c8', 'from': {'name': ",
+     "data.emails.3710bac4",
+     "{'id': '3710bac4', 'threadId': '553b99fa', 'from': {'name': ",
      "<absent>"
     ],
     [
-     "data.emails.6f0ab388",
-     "{'id': '6f0ab388', 'threadId': 'fd3f63c8', 'from': {'name': ",
+     "data.emails.b25b509c",
+     "{'id': 'b25b509c', 'threadId': '553b99fa', 'from': {'name': ",
      "<absent>"
     ]
    ],
    "reader_equal_at_rest": true,
-   "put_restore_equal": false,
+   "after_state_settled": true,
+   "put_restore_equal": true,
    "label": "NO-UNDO-FOUND",
    "undo": null,
-   "candidates_tried": 150,
-   "seconds": 626
+   "candidates_tried": 155,
+   "seconds": 641
   },
   {
    "case": "send a composed email",
    "diff": [
     [
-     "data.emails.eda713af",
+     "data.emails.0448c6fe",
+     "{'id': '0448c6fe', 'threadId': 'f6b6c810', 'from': {'name': ",
+     "<absent>"
+    ],
+    [
+     "data.emails.58af9911",
      "<absent>",
-     "{'id': 'eda713af', 'threadId': 'd28f4892', 'from': {'name': "
+     "{'id': '58af9911', 'threadId': '164b3599', 'from': {'name': "
     ]
    ],
-   "reader_equal_at_rest": false,
-   "put_restore_equal": false,
+   "reader_equal_at_rest": true,
+   "after_state_settled": true,
+   "put_restore_equal": true,
    "label": "NO-UNDO-FOUND",
    "undo": null,
-   "candidates_tried": 150,
-   "seconds": 624
+   "candidates_tried": 258,
+   "seconds": 1118
   }
  ]
 }
