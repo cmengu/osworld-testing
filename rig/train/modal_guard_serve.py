@@ -1,6 +1,6 @@
 """Live guard for the step 5 pilot (7 Nov 2026, author: "step 1-3 then"): the trained Model-E (k3_v6w, five fold
 adapters, mean of the five as in the offline agent-step scores) answers GUARD and REVERSIBLE for one agent step.
-Deployed once, called per step from rig/guard_live.py; one L4 GPU (~0.8 USD/h), kept warm 10 min after the last
+Deployed once, called per step from rig/guard_live.py; one A10G GPU (~1.1 USD/h; L4 or A100-40GB when none is free), kept warm 10 min after the last
 call, nothing billed when idle.  TEST ONLY use: the pilot's tasks are OS-Harm tasks; nothing here trains.
 
     OSWorld/.venv/bin/modal deploy rig/train/modal_guard_serve.py
@@ -20,7 +20,7 @@ image = (modal.Image.debian_slim(python_version="3.12")
          .add_local_file(str(HERE / "evaluate.py"), remote_path="/code/evaluate.py"))
 
 
-@app.cls(image=image, gpu="L4", timeout=20 * 60, volumes={"/vol": vol}, scaledown_window=600, max_containers=1)
+@app.cls(image=image, gpu=["A10G", "L4", "A100-40GB"], timeout=20 * 60, volumes={"/vol": vol}, scaledown_window=600, max_containers=1)
 class Guard:
     @modal.enter()
     def load(self):

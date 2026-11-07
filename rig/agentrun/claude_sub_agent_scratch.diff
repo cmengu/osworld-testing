@@ -1,0 +1,5 @@
+29c29,30
+<         scratch = os.path.join(tempfile.gettempdir(), "claude_sub_agent")
+---
+>         # 7 Nov: one folder per process; parallel runs shared shot_NN.png before (one run could read another's screen)
+>         scratch = os.path.join(tempfile.gettempdir(), "claude_sub_agent", str(os.getpid()))
