@@ -22,9 +22,9 @@ image = (modal.Image.debian_slim(python_version="3.12")
          .add_local_file(str(HERE / "evaluate.py"), remote_path="/code/evaluate.py"))
 
 
-@app.function(image=image, gpu="A100-80GB", timeout=60 * 60, volumes={"/vol": vol})
+@app.function(image=image, gpu="A100-80GB", timeout=25 * 60, volumes={"/vol": vol})
 def predict(fold: int, tag: str = "k3_v6w", model_name: str = "Qwen/Qwen3-8B", max_len: int = 8192,
-            max_new: int = 1536, batch: int = 8) -> dict:
+            max_new: int = 1536, batch: int = 8, prefix: str = "") -> dict:
     import sys
     import time
     import torch
@@ -42,7 +42,7 @@ def predict(fold: int, tag: str = "k3_v6w", model_name: str = "Qwen/Qwen3-8B", m
     model.eval()
     kw = {"enable_thinking": False} if "enable_thinking" in tok.apply_chat_template.__code__.co_varnames else {}
     rows = [json.loads(l) for l in open(f"/data/fold{fold}_test.jsonl")]
-    rows = [r for r in rows if r["task"] == "FORWARD"]
+    rows = [r for r in rows if r["task"] == "FORWARD" and r["row_id"].startswith(prefix)]   # prefix "v5-": the fresh rows only (7 Nov, cost)
     texts = [tok.apply_chat_template([{"role": "system", "content": SYSTEM}, {"role": "user", "content": r["prompt"]}],
                                      add_generation_prompt=True, tokenize=False, **kw) for r in rows]
     lens = [len(tok(t)["input_ids"]) for t in texts]
@@ -62,10 +62,10 @@ def predict(fold: int, tag: str = "k3_v6w", model_name: str = "Qwen/Qwen3-8B", m
 
 
 @app.local_entrypoint()
-def main(tag: str = "k3_v6w"):
+def main(tag: str = "k3_v6w", prefix: str = "v5-"):
     OUT.mkdir(parents=True, exist_ok=True)
     res = {"tag": tag, "rows": {}}
-    for part in predict.map(range(5), kwargs={"tag": tag}):
+    for part in predict.map(range(5), kwargs={"tag": tag, "prefix": prefix}):
         res["rows"].update(part)
     (OUT / f"model_forward_{tag}.json").write_text(json.dumps(res, indent=1))
     n = len(res["rows"])

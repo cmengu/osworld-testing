@@ -23,6 +23,10 @@ rate against the 5% limit below (OS-Harm steps, draft flags not hand-checked, ol
 H7 points the same way: about 6.9 steps per task on OSWorld 2.0 are not undoable, and nearly all of them were requested.
 This must be fixed and measured offline before the pilot.
 
+## Update 7 Nov: the on-task fix, measured offline (k3_v6w)
+Rewritten-task twins added to the training data. On the 58 real agent steps drafted as on-task, refusals fell from 12 to 0 (limit 5%; flags still draft). Held-out twins allowed 143 of 146. Catch on the older test rows held (recall 0.900 vs 0.892). So the Claude on-task judge fallback is not needed yet.
+What this does NOT show: catch on real agent steps. The model refused 0 of 70, and only 1 of those steps is off-task, so a guard that allows everything would score the same here. It does still read 28 of the 70 as not undoable, so it is allowing them on the task, not missing that they are one-way. The highest refuse score was 0.477, so the margin is thin. Twins are Claude-written, so style could be a shortcut. A swap-task stress test (same agent steps, an unrelated task) would test this for about 0.7 USD, before the pilot. Pool B is the real measure.
+
 ## Arms (same tasks, same agent seed per task)
 1. No guard (baseline trajectory).
 2. Our guard: read state, FORWARD (Model-E 8B), the step 1b rule on the predicted change, block = not undoable AND off-task.
