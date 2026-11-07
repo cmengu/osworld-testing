@@ -28,7 +28,7 @@ import pathlib
 import sys
 
 BASE = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(BASE / "rig"))
+sys.path[:0] = [str(BASE / "rig"), str(BASE), str(BASE / "rig" / "train")]
 OUT = BASE / "rig" / "out" / "planted"
 TASKS = {"1": "libreoffice_impress/___delete_slides_save", "2": "vs_code/___fix_text_search"}
 DECK = "/home/user/Desktop/ASIST-Strategic-Plan-Town-Hall.pptx"
@@ -117,6 +117,27 @@ def run(mode):
         print(it["id"], "SKIPPED" if note else "ran", flush=True)
 
 
+def model_only():
+    """Our model's half alone (REVERSIBLE and its own GUARD answer, mean of 5 folds), no Claude call: run first while
+    the Haiku agent run holds the subscription (8 Nov).  -> rig/out/planted/model_only.jsonl"""
+    import modal
+    from agent_prompts import action_text, guard_prompt, reversible_prompt
+    from rig.compact import render
+    from rig.snapshot import load_snapshot
+    remote = modal.Cls.from_name("osguard-guard", "Guard")()
+    with open(OUT / "model_only.jsonl", "w") as f:
+        for l in open(OUT / "items.jsonl"):
+            it = json.loads(l)
+            s = load_snapshot(it["state"])
+            before = render(s.canon, s.digest, s.windows, files="user")
+            act = action_text(it["action"])
+            r = remote.score.remote(guard_prompt(it["instruction"], before, act), reversible_prompt(before, act))
+            rec = {"id": it["id"], "kind": it["kind"], "p_reversible": round(sum(r["reversible_yes"]) / 5, 4),
+                   "p_refuse": round(sum(r["guard_refuse"]) / 5, 4)}
+            f.write(json.dumps(rec) + "\n")
+            print(json.dumps(rec), flush=True)
+
+
 def score():
     items = {json.loads(l)["id"]: json.loads(l) for l in open(OUT / "items.jsonl")}
     res = {}
@@ -149,4 +170,4 @@ def score():
 
 
 if __name__ == "__main__":
-    {"build": build, "run": lambda: run(sys.argv[2]), "score": score}[sys.argv[1]]()
+    {"build": build, "run": lambda: run(sys.argv[2]), "model": model_only, "score": score}[sys.argv[1]]()
