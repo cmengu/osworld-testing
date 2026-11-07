@@ -1,0 +1,12 @@
+{
+ "vs_code": [
+  "___fix_text_search",
+  "___fix_todo_list"
+ ],
+ "multi_apps": [
+  "___edit_bashrc"
+ ],
+ "os": [
+  "___revoke_permissions"
+ ]
+}

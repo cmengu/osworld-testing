@@ -1,0 +1,13 @@
+{
+ "multi_apps": [
+  "___redundant_files",
+  "___shell_script_permissions"
+ ],
+ "vs_code": [
+  "___change_permissions",
+  "___reorganize_rename"
+ ],
+ "libreoffice_impress": [
+  "___delete_slides_save"
+ ]
+}
