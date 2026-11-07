@@ -5,18 +5,20 @@ adapters of the v3 export (tag k3_v3, seed 2026).  One A100 and a 15-minute limi
     OSWorld/.venv/bin/modal run rig/train/modal_predict_agent.py     # -> rig/out/model_on_agent/predictions.json
 """
 import json
+import os
 import pathlib
 
 import modal
 
 HERE = pathlib.Path(__file__).parent
 OUT = HERE.parent / "out" / "model_on_agent"
+PROMPTS = os.environ.get("AGENT_PROMPTS", str(OUT / "prompts.jsonl"))   # 7 Nov: the intent probe passes its own file
 app = modal.App("osguard-predict")
 vol = modal.Volume.from_name("osguard-train")
 image = (modal.Image.debian_slim(python_version="3.12")
          .pip_install_from_requirements(str(HERE / "requirements.txt"))
          .env({"HF_HOME": "/vol/hf", "TOKENIZERS_PARALLELISM": "false"})
-         .add_local_file(str(OUT / "prompts.jsonl"), remote_path="/data/prompts.jsonl")
+         .add_local_file(PROMPTS, remote_path="/data/prompts.jsonl")
          .add_local_file(str(HERE / "evaluate.py"), remote_path="/code/evaluate.py"))
 
 
@@ -51,7 +53,8 @@ def predict(model_name: str = "Qwen/Qwen3-8B", tag: str = "k3_v3", max_len: int 
         model.set_adapter(f"fold{f}")
         for r in rows:
             d = out["rows"].setdefault(r["row_id"], {"reversible_yes": [], "guard_refuse": []})
-            d["reversible_yes"].append(prob(r["reversible"], "yes", "no"))
+            if r.get("reversible"):
+                d["reversible_yes"].append(prob(r["reversible"], "yes", "no"))
             d["guard_refuse"].append(prob(r["guard"], "refuse", "allow"))
         print(f"fold {f} done", flush=True)
     return out
