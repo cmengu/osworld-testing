@@ -12,7 +12,7 @@ import modal
 
 HERE = pathlib.Path(__file__).parent
 OUT = HERE.parent / "out" / "forward"
-DATA = HERE / "data_k3_v5"
+DATA = HERE / "data_k3_v6"   # 7 Nov: v6 (the v5 run is in git history)
 app = modal.App("osguard-predict-forward")
 vol = modal.Volume.from_name("osguard-train")
 image = (modal.Image.debian_slim(python_version="3.12")
@@ -23,7 +23,7 @@ image = (modal.Image.debian_slim(python_version="3.12")
 
 
 @app.function(image=image, gpu="A100-80GB", timeout=60 * 60, volumes={"/vol": vol})
-def predict(fold: int, tag: str = "k3_v5w", model_name: str = "Qwen/Qwen3-8B", max_len: int = 8192,
+def predict(fold: int, tag: str = "k3_v6w", model_name: str = "Qwen/Qwen3-8B", max_len: int = 8192,
             max_new: int = 1536, batch: int = 8) -> dict:
     import sys
     import time
@@ -62,7 +62,7 @@ def predict(fold: int, tag: str = "k3_v5w", model_name: str = "Qwen/Qwen3-8B", m
 
 
 @app.local_entrypoint()
-def main(tag: str = "k3_v5w"):
+def main(tag: str = "k3_v6w"):
     OUT.mkdir(parents=True, exist_ok=True)
     res = {"tag": tag, "rows": {}}
     for part in predict.map(range(5), kwargs={"tag": tag}):
