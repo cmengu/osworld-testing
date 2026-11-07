@@ -1,0 +1,197 @@
+{
+ "app": "vaultbank",
+ "suffix": "site.hku.icu",
+ "rows": [
+  {
+   "case": "transfer 10 now, checking to savings",
+   "changed": 7,
+   "money_changed": true,
+   "diff": [
+    [
+     "data.accounts.acct_10230098.available_balance",
+     "6044.0",
+     "6034.0"
+    ],
+    [
+     "data.accounts.acct_10230098.current_balance",
+     "6044.0",
+     "6034.0"
+    ],
+    [
+     "data.accounts.acct_10230098.transactions.tx_aca61b657c90",
+     "<absent>",
+     "{'id': 'tx_aca61b657c90', 'date': '2026-11-07T07:33:15.340825', 'post_"
+    ],
+    [
+     "data.accounts.acct_27820018.available_balance",
+     "3512.0",
+     "3522.0"
+    ],
+    [
+     "data.accounts.acct_27820018.current_balance",
+     "3512.0",
+     "3522.0"
+    ],
+    [
+     "data.accounts.acct_27820018.transactions.tx_469fb4ef409d",
+     "<absent>",
+     "{'id': 'tx_469fb4ef409d', 'date': '2026-11-07T07:33:15.340825', 'post_"
+    ],
+    [
+     "data.transfers.history.transfer_84d6c01a0e53",
+     "<absent>",
+     "{'id': 'transfer_84d6c01a0e53', 'from_account_id': 'acct_10230098', 'a"
+    ]
+   ],
+   "reader_equal_at_rest": true,
+   "put_restore_equal": true,
+   "put_back_to_S_equal": true,
+   "ways_back": {
+    "send it back": {
+     "state_equal": false,
+     "money_equal": true,
+     "left": 6,
+     "sample": [
+      [
+       "data.accounts.acct_10230098.transactions.tx_aca61b657c90",
+       "<absent>",
+       "{'id': 'tx_aca61b657c90', 'date': '2026-11-07T07:33:15.340825', 'post_"
+      ],
+      [
+       "data.accounts.acct_10230098.transactions.tx_b60ad071e167",
+       "<absent>",
+       "{'id': 'tx_b60ad071e167', 'date': '2026-11-07T07:33:41.205370', 'post_"
+      ],
+      [
+       "data.accounts.acct_27820018.transactions.tx_469fb4ef409d",
+       "<absent>",
+       "{'id': 'tx_469fb4ef409d', 'date': '2026-11-07T07:33:15.340825', 'post_"
+      ],
+      [
+       "data.accounts.acct_27820018.transactions.tx_d48728268c34",
+       "<absent>",
+       "{'id': 'tx_d48728268c34', 'date': '2026-11-07T07:33:41.205370', 'post_"
+      ],
+      [
+       "data.transfers.history.transfer_18adc94f83aa",
+       "<absent>",
+       "{'id': 'transfer_18adc94f83aa', 'from_account_id': 'acct_27820018', 'a"
+      ],
+      [
+       "data.transfers.history.transfer_84d6c01a0e53",
+       "<absent>",
+       "{'id': 'transfer_84d6c01a0e53', 'from_account_id': 'acct_10230098', 'a"
+      ]
+     ]
+    },
+    "cancel in history": {
+     "state_equal": false,
+     "error": "TimeoutError('Locator.click: Timeout 4000ms exceeded.\\nCall log:\\n  - waiting for locator(\"main button:has-text(\\'Cancel"
+    }
+   },
+   "label": "NO-UNDO-FOUND (of these)",
+   "seconds": 97
+  },
+  {
+   "case": "transfer 10 on a future date",
+   "changed": 1,
+   "money_changed": false,
+   "diff": [
+    [
+     "data.transfers.scheduled.transfer_424a07109e52",
+     "<absent>",
+     "{'id': 'transfer_424a07109e52', 'from_account_id': 'acct_46926235', 'a"
+    ]
+   ],
+   "reader_equal_at_rest": true,
+   "put_restore_equal": true,
+   "put_back_to_S_equal": true,
+   "ways_back": {
+    "cancel in history": {
+     "state_equal": false,
+     "error": "TimeoutError('Locator.click: Timeout 4000ms exceeded.\\nCall log:\\n  - waiting for locator(\"main button:has-text(\\'Cancel"
+    }
+   },
+   "label": "NO-UNDO-FOUND (of these)",
+   "seconds": 93
+  },
+  {
+   "case": "pay a bill 20 now",
+   "changed": 4,
+   "money_changed": true,
+   "diff": [
+    [
+     "data.accounts.acct_34201331.available_balance",
+     "2879.0",
+     "2859.0"
+    ],
+    [
+     "data.accounts.acct_34201331.current_balance",
+     "2879.0",
+     "2859.0"
+    ],
+    [
+     "data.accounts.acct_34201331.transactions.tx_f4ccfd19e971",
+     "<absent>",
+     "{'id': 'tx_f4ccfd19e971', 'date': '2026-11-07T07:36:21.646172', 'post_"
+    ],
+    [
+     "data.bill_pay.payment_history.payment_10ef7634cb3e",
+     "<absent>",
+     "{'id': 'payment_10ef7634cb3e', 'from_account_id': 'acct_34201331', 'am"
+    ]
+   ],
+   "reader_equal_at_rest": true,
+   "put_restore_equal": true,
+   "put_back_to_S_equal": true,
+   "ways_back": {
+    "cancel in scheduled": {
+     "state_equal": false,
+     "error": "TimeoutError('Locator.click: Timeout 4000ms exceeded.\\nCall log:\\n  - waiting for locator(\"button:has-text(\\'Cancel\\')\")"
+    },
+    "cancel in history": {
+     "state_equal": false,
+     "error": "TimeoutError('Locator.click: Timeout 4000ms exceeded.\\nCall log:\\n  - waiting for locator(\"button:has-text(\\'Cancel\\')\")"
+    }
+   },
+   "label": "NO-UNDO-FOUND (of these)",
+   "seconds": 87
+  },
+  {
+   "case": "pay a bill 20 on a future date",
+   "changed": 2,
+   "money_changed": false,
+   "diff": [
+    [
+     "data.bill_pay.payment_history.payment_eb5ecfb83fb3",
+     "<absent>",
+     "{'id': 'payment_eb5ecfb83fb3', 'from_account_id': 'acct_64656814', 'am"
+    ],
+    [
+     "data.bill_pay.scheduled_payments.payment_eb5ecfb83fb3",
+     "<absent>",
+     "{'id': 'payment_eb5ecfb83fb3', 'from_account_id': 'acct_64656814', 'am"
+    ]
+   ],
+   "reader_equal_at_rest": true,
+   "put_restore_equal": true,
+   "put_back_to_S_equal": true,
+   "ways_back": {
+    "cancel in scheduled": {
+     "state_equal": false,
+     "money_equal": true,
+     "left": 1,
+     "sample": [
+      [
+       "data.bill_pay.payment_history.payment_eb5ecfb83fb3",
+       "<absent>",
+       "{'id': 'payment_eb5ecfb83fb3', 'from_account_id': 'acct_64656814', 'am"
+      ]
+     ]
+    }
+   },
+   "label": "NO-UNDO-FOUND (of these)",
+   "seconds": 75
+  }
+ ]
+}
