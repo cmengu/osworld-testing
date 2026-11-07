@@ -1,0 +1,32 @@
+--- /Users/ngchenmeng/.claude/jobs/fd36bbb5/tmp/lib_run_single.py.orig-20261107	2026-11-07 17:47:11
++++ OSWorld/lib_run_single.py	2026-11-07 17:47:11
+@@ -110,14 +110,28 @@
+         _rig_record(env, example_result_dir, rig_k)
+         obs = env._get_obs()    # the agent sees the screen as recorded, not as it was before the snapshot
+     env.controller.start_recording()
++    # rig (7 Nov 2026): RIG_GUARD=ours|claude puts the guard before each action (rig/guard_live.py); unset = unchanged
++    guard, guard_note = None, ""
++    if os.environ.get("RIG_GUARD"):
++        import sys
++        sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
++        from rig.guard_live import from_env
++        guard = from_env(example_result_dir, example)
+     while not done and step_idx < max_steps:
+         response, actions = agent.predict(
+-            instruction,
++            instruction + guard_note,
+             obs
+         )
++        guard_note = ""
+         for action in actions:
+             # Capture the timestamp before executing the action
+             action_timestamp = datetime.datetime.now().strftime("%Y%m%d@%H%M%S%f")
++            if guard is not None:
++                skipped = guard.check(instruction, os.path.join(example_result_dir, "states", f"s{rig_k:02d}"), rig_k + 1, action)
++                if skipped:
++                    guard_note = skipped
++                    logger.info("Step %d: blocked by the guard, not executed: %s", step_idx + 1, action)
++                    break
+             logger.info("Step %d: %s", step_idx + 1, action)
+             obs, reward, done, info = env.step(action, args.sleep_after_execution)
+ 
