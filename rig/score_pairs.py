@@ -36,7 +36,10 @@ ROWS = {r["row_id"]: r for r in json.load(open(BASE / "rig" / "clickspots_pairs.
 
 def results():
     res = {}
-    for f in sorted(glob.glob(str(BASE / "rig/out/pr_*/results.jsonl"))):
+    # first run (pr_*), then the 8 Nov rerun (prr_?, after the rig fixes) and later relaunches (prx_?): later files win
+    files = [f for pat in ("rig/out/pr_*/results.jsonl", "rig/out/prr_?/results.jsonl", "rig/out/prx_?/results.jsonl")
+             for f in sorted(glob.glob(str(BASE / pat)))]
+    for f in files:
         for l in open(f):
             r = json.loads(l)
             if r["status"] != "error":
