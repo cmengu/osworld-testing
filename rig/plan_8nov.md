@@ -124,7 +124,21 @@ this job, and the paper's claim narrows to the "where content survives" cases.
 | 5-minute updates did not arrive | The driver writes its own status file and pushes an alert on error, independent of the Claude session |
 | Screenshot drops at step ~20 | Look at the VM log for the three cases; likely the tree read plus recording overloading the VM; the fast state should help |
 
-## Order
+## Order when SPEED matters more than cost (author, 8 Nov 09:25: "we care about speed now not cost")
+The cost-first order below put system state first as a dependency. It is not on the critical path for the headline
+test: the contrastive pairs are almost all file cases (rm, save-over, mv, Trash, git), which the state already sees.
+The biggest speed losses on 7–8 Nov were the subscription limit and the laptop sleeping (~8 h lost), so those fixes
+go first. Work runs in parallel tracks.
+
+| When | Track A: headline (world model vs Claude on hard pairs) | Track B: cleanup + H8 | Track C: harness |
+|---|---|---|---|
+| Today, first hour | — | — | Laptop plugged in + `sudo pmset -a disablesleep 1` (author runs it); Claude calls on an API key in a git-ignored file instead of the subscription (no 5-hour limit; needs the author's key and yes) |
+| Day 1 | Build ~40 file-level test pairs with the rig, 5 sandboxes in parallel; score our model vs Claude on them | System digest (a few hours, not 2 days: one shell call per state) | Limit-aware queue + driver status file with push alerts |
+| Day 2 | If we lose on pairs: build training pairs, retrain (<= 5 GPUs) | Cleanup undo: plant the Haiku side effects (auto-login, admin user, Trash, package) on fresh VMs, run the undo with snapshots, try-check-retry | Cloud driver only if a long live run is next |
+| Day 3 | Re-score on the test pairs (cascade with Claude when unsure) | H8 offline on recorded steps | — |
+Dropped for now: the fast state (only matters for many live runs) and FORWARD on system changes (after cleanup works).
+
+## Order (cost-first, superseded by the speed order above)
 1. System state + fast state. Free, ~2 days. Everything else depends on it.
 2. Contrastive pairs: ~40 test pairs, our model vs Claude. ~10 USD. The "hardest scenarios" test.
 3. Cleanup undo on the Haiku side effects. ~5 USD.
