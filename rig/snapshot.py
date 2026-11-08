@@ -12,7 +12,9 @@ how the writer stored it, v = the readable workbook view behind k.  Directories 
 and their mode; symbolic links carry l = the target.  Equality in mask.py uses k when present,
 otherwise (s, c or h).
 """
+import hashlib
 import json
+import os
 import pathlib
 import time
 from dataclasses import dataclass, field
@@ -155,6 +157,10 @@ out["cron_d"] = sorted(os.listdir("/etc/cron.d")) if os.path.isdir("/etc/cron.d"
 out["services_enabled"] = sorted(l.split()[0] for l in run("systemctl list-unit-files --state=enabled --no-legend --no-pager").splitlines() if l.split())
 out["user_services_enabled"] = sorted(l.split()[0] for l in run("systemctl --user list-unit-files --state=enabled --no-legend --no-pager").splitlines() if l.split())
 out["sudoers_d"] = sorted(os.listdir("/etc/sudoers.d")) if os.path.isdir("/etc/sudoers.d") else []
+# file contents root can read only: hashed through sudo (the rig reads them, not the user; OSWorld image password)
+out["sudoers_d_sha"] = sorted(l.split()[0][:16] + " " + l.split()[-1] for l in
+                              run("echo password | sudo -S -p '' sh -c 'sha256sum /etc/sudoers.d/* 2>/dev/null'").splitlines() if l.split())
+out["gdm_sha"] = hashlib.sha256(gdm.encode()).hexdigest()[:16]
 out["hosts"] = sorted(l.strip() for l in (read("/etc/hosts") or "").splitlines() if l.strip() and not l.strip().startswith("#"))
 dc = run("dconf dump /")
 out["dconf_sha"] = hashlib.sha256(dc.encode()).hexdigest()[:16]
@@ -235,6 +241,24 @@ def fetch_tree(env, attempts: int = 4, delay: float = 4.0, expect: str = "LibreO
     return xml, info
 
 
+SYSTEM_COMPARED = ("users", "groups", "autologin", "gdm_sha", "fstab", "packages_sha", "crontab", "cron_d", "sudoers_d",
+                   "sudoers_d_sha", "hosts", "services_enabled")
+
+
+def system_entries(system: dict) -> Dict[str, dict]:
+    """8 Nov (Track B, author: "just run on vm"): the stable part of the system state as pseudo-files "/@system/<key>",
+    so every comparison the rig makes (labels, reset checks, candidate judging) sees a system change exactly as it
+    sees a file change.  Only when RIG_SYSTEM_COMPARE=1 (the 8 Nov pair runs), so earlier labels cannot move.  Mounts
+    are kept to target, type and ro/rw; dconf, hostname and timezone are left out (dconf churns)."""
+    out = {}
+    for k in SYSTEM_COMPARED:
+        if k in system:
+            out[f"/@system/{k}"] = {"h": hashlib.sha256(json.dumps(system[k], sort_keys=True).encode()).hexdigest(), "s": len(json.dumps(system[k]))}
+    mounts = sorted(" ".join(m.split(" ")[:1] + m.split(" ")[2:3] + [m.split(" ")[3].split(",")[0]]) for m in system.get("mounts", []) if len(m.split(" ")) >= 4)
+    out["/@system/mounts"] = {"h": hashlib.sha256("\n".join(mounts).encode()).hexdigest(), "s": len(mounts)}
+    return out
+
+
 def _digest(env):
     err = ""
     for _ in range(2):
@@ -289,6 +313,8 @@ def take_snapshot(env, out_dir: pathlib.Path, meta: Optional[dict] = None, with_
         meta["system_error"] = repr(exc)[:200]
     meta["system_seconds"] = round(time.time() - t, 1)
     (out_dir / "system.json").write_text(json.dumps(system, sort_keys=True))
+    if system and os.environ.get("RIG_SYSTEM_COMPARE") == "1":
+        digest.update(system_entries(system))
     # the pointer's position (30 Oct): VS Code shows hover toolbars where the pointer rests, so a click leaves tree
     # differences no key undoes; the collector's pointer candidate moves it back here
     try:

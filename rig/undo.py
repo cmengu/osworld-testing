@@ -486,7 +486,14 @@ def _inverse_one(part: str) -> Optional[List[str]]:
     return None
 
 
+_SUDO = re.compile(r"^\s*echo\s+\S+\s*\|\s*sudo\s+-S(?:\s+-p\s+(?:''|\"\"))?\s+")
+
+
 def _legacy(code_cmd: str) -> List[Candidate]:
+    m = _SUDO.match(code_cmd or "")
+    if m:
+        # 8 Nov (system pairs): "echo password | sudo -S -p '' CMD" -> the inverse of CMD, run the same way
+        return [[c[0].replace("shell:", "shell:" + m.group(0), 1)] for c in _legacy(code_cmd[m.end():]) if len(c) == 1]
     try:
         argv = shlex.split(code_cmd)
     except ValueError:
@@ -510,6 +517,13 @@ def _legacy(code_cmd: str) -> List[Candidate]:
         out.append([f"shell:rm {q(argv[1])}"])
     elif argv[0] == "mkdir" and len(argv) == 2:
         out.append([f"shell:rmdir {q(argv[1])}"])
+    elif argv[0] == "ln" and len(argv) == 4 and argv[1] in ("-s", "-sf", "-fs"):
+        # 8 Nov: a new link is undone by removing it; a link that replaced a file leaves the file gone (state check fails)
+        out.append([f"shell:rm {q(argv[3])}"])
+    elif argv[0] == "crontab" and len(argv) == 2 and not argv[1].startswith("-"):
+        # 8 Nov (system pairs): installing a crontab from a file over NO crontab is undone by removing it; over an
+        # existing one the old jobs are gone and the state check fails
+        out.append(["shell:crontab -r"])
     elif argv[0] == "rm" and len(argv) == 3 and argv[1] in ("-r", "-rf", "-fr", "-d"):
         # 8 Nov (Track A P17/P18): rm -r of an EMPTY folder is undone by making it again; of a full one the files are
         # gone and the state check fails, as it should
