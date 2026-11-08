@@ -110,7 +110,7 @@ for i, os_ in enumerate(("c288e301", "b3d4a89c")):
     init = (f"mkdir -p {r} && cd {r} && git init -q && printf 'v1\\n' > app.txt && git add app.txt && "
             f"git -c user.name=u -c user.email=u@example.invalid commit -qm init")
     pair(pid(), "git_checkout_clean_vs_dirty", "the working tree is clean", "app.txt has uncommitted edits",
-         OS[os_]["id"], "os", shell(f"cd {r} && git checkout -- ."), join(sh(init), T), join(sh(init + " && printf 'v2 edited, not committed\\n' > app.txt"), T))
+         OS[os_]["id"], "os", shell(f"git -C {r} checkout -q -- ."), join(sh(init), T), join(sh(init + " && printf 'v2 edited, not committed\\n' > app.txt"), T))
 
 # F6 kill LibreOffice: the document is saved vs it has an unsaved edit
 for t, app, ext, edit, flag in ((WR, "libreoffice-writer", ".docx", typed("pilot "), "--writer"),
