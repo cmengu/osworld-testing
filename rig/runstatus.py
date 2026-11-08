@@ -30,6 +30,10 @@ def sh(cmd, t=30):
         return ""
 
 
+def running(out_name):
+    return f"--out rig/out/{out_name} " in sh("ps -axo command")
+
+
 def notify(msg):
     sh(f"osascript -e {json.dumps('display notification ' + json.dumps(msg[:200]) + ' with title \"osguard run\"')}")
 
@@ -44,7 +48,9 @@ def collect(pattern):
         usd = re.search(r"≈ ([\d.]+) USD", rep.read_text()) if rep.exists() else None
         st["collectors"].append({"log": pathlib.Path(log).name, "selected": int(sel.group(1)) if sel else None,
                                  "labelled": len(labels), "last": " ".join(labels[-1]) if labels else "",
-                                 "exited": "[collector exited]" in text,
+                                 # the launch line echoes "[collector exited]" to the tmux pane, not the log: also
+                                 # count the collector as exited when no process writes to its --out folder any more
+                                 "exited": "[collector exited]" in text or not running(pathlib.Path(log[:-4]).name),
                                  "tracebacks": text.count("Traceback"), "usd": float(usd.group(1)) if usd else None})
     st["containers"] = len(re.findall(r"ta-[A-Z0-9]+", sh(f"{BASE}/OSWorld/.venv/bin/modal container list 2>/dev/null", 60)))
     batt = sh("pmset -g batt")
