@@ -743,7 +743,7 @@ class Collector:
         rec["before_ok"] = S.ok
         rec["tree_before"] = str((S.path / "tree.xml").relative_to(self.out))
         files_scope = "office" if rec["app"] == "libreoffice-calc" else "user"
-        before_text = render(S.canon, S.digest, S.windows, files=files_scope)
+        before_text = render(S.canon, S.digest, S.windows, files=files_scope, system=S.system)
         rec["state_before_compact"] = before_text
         rec["state_before_tokens_est"] = len(before_text) // 4
 
@@ -887,7 +887,7 @@ class Collector:
         rec["snapshot_after"] = str(S1.path.relative_to(self.out))
         rec["after_ok"] = S1.ok
         rec["tree_after"] = str((S1.path / "tree.xml").relative_to(self.out))
-        after_text = render(S1.canon, S1.digest, S1.windows, files=files_scope)
+        after_text = render(S1.canon, S1.digest, S1.windows, files=files_scope, system=S1.system)
         rec["state_after_compact"] = after_text
         rec["file_diff"] = file_diff(S.digest, S1.digest, self.mask)
         rec["action_changed_state"] = not eq

@@ -29,7 +29,8 @@ def _name(path: str) -> str:
 USER_ROOTS = ("/home/user/Desktop/", "/home/user/Documents/", "/home/user/Downloads/", "/home/user/.local/share/Trash/")
 
 
-def render(canon: Canon, digest: Dict[str, dict], windows: str = "", max_cells: int = 900, files: str = "office") -> str:
+def render(canon: Canon, digest: Dict[str, dict], windows: str = "", max_cells: int = 900, files: str = "office",
+           system: dict = None) -> str:
     """One text block: open windows and dialogs (with their controls), the Calc document cells, home files.
     files='office' (Calc rows, unchanged since 16 Oct): office files directly in /home/user.  files='user' (Files,
     multi_apps rows, 19 Oct): every file and folder in the user's folders and the Trash, with size and mode."""
@@ -116,7 +117,40 @@ def render(canon: Canon, digest: Dict[str, dict], windows: str = "", max_cells: 
     locks = sorted(os.path.basename(p) for p in digest if os.path.basename(p).startswith(".~lock."))
     if locks:
         lines.append("OPEN-DOCUMENT LOCKS: " + ", ".join(locks))
+    if system:
+        lines.extend(system_lines(system))
     return "\n".join(lines)
+
+
+def system_lines(sy: dict) -> List[str]:
+    """8 Nov (Track B): the system part of the state, briefly: people (users from uid 1000, root), who is in which
+    group, automatic login, disks and their rw/ro flag, packages (count + hash), scheduled jobs, sudo rules, hosts."""
+    out = ["SYSTEM:"]
+    users = [u.split(":") for u in sy.get("users", [])]
+    people = [u for u in users if len(u) >= 5 and (u[1] == "0" or 1000 <= int(u[1] or 0) < 60000)]
+    out.append("  users: " + ", ".join(f"{u[0]} (uid {u[1]}, home {u[3]}, shell {u[4].rsplit('/', 1)[-1]})" for u in people))
+    names = {u[0] for u in people}
+    grp = [g.split(":") for g in sy.get("groups", [])]
+    member = [f"{g[0]}: {g[2]}" for g in grp if len(g) >= 3 and g[2] and set(g[2].split(",")) & names]
+    if member:
+        out.append("  groups with these users: " + "; ".join(member))
+    out.append("  automatic login: " + (", ".join(sy.get("autologin") or []) or "off"))
+    mounts = []
+    for m in sy.get("mounts", []):
+        f = m.split(" ")
+        if len(f) >= 4:
+            mounts.append(f"{f[0]} {f[2]} {f[3].split(',')[0]}")
+    out.append("  mounts: " + "; ".join(mounts))
+    out.append(f"  packages: {sy.get('packages_n')} installed (list hash {sy.get('packages_sha')})")
+    if sy.get("crontab") or sy.get("cron_d"):
+        out.append("  scheduled: " + "; ".join((sy.get("crontab") or []) + [f"/etc/cron.d/{x}" for x in sy.get("cron_d") or []]))
+    if sy.get("sudoers_d"):
+        out.append("  sudo rules: " + ", ".join(f"/etc/sudoers.d/{x}" for x in sy["sudoers_d"]))
+    out.append(f"  services enabled: {len(sy.get('services_enabled') or [])} system, {len(sy.get('user_services_enabled') or [])} user")
+    extra = [h for h in sy.get("hosts") or [] if not h.startswith(("127.0.0.1", "127.0.1.1", "::1", "fe00", "ff0", "ff02"))]
+    if extra:
+        out.append("  hosts: " + "; ".join(extra))
+    return out
 
 
 def _mode(v: dict) -> str:

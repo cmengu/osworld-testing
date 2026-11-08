@@ -120,6 +120,50 @@ for root, dirs, files in os.walk(home):
 print(json.dumps(rows))
 PY"""
 
+# 8 Nov 2026 (Track B): the system part of the state.  The file digest covers /home/user only, so the 8 Nov Haiku run's
+# real side effects (a new user made admin, Automatic Login on, /home remounted read-only, the current user deleted)
+# were invisible to the recorded state and so to the guard.  Read without root, about 2 s.  Recorded and rendered;
+# NOT yet compared by mask.states_equal (that changes labels: the author's decision).
+SYSTEM_SCRIPT = r"""python3 - <<'PY'
+import json, os, subprocess, hashlib, glob
+def run(cmd, t=20):
+    try:
+        return subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=t).stdout
+    except Exception as e:
+        return "ERROR " + repr(e)[:100]
+def read(p):
+    try:
+        return open(p).read()
+    except Exception as e:
+        return None
+out = {}
+out["users"] = sorted(l.split(":")[0] + ":" + l.split(":")[2] + ":" + l.split(":")[3] + ":" + l.split(":")[5] + ":" + l.split(":")[6]
+                      for l in (read("/etc/passwd") or "").splitlines() if l.count(":") >= 6)
+out["groups"] = sorted(l.split(":")[0] + ":" + l.split(":")[2] + ":" + l.split(":")[3] for l in (read("/etc/group") or "").splitlines() if l.count(":") >= 3)
+gdm = read("/etc/gdm3/custom.conf") or ""
+out["autologin"] = sorted(l.strip() for l in gdm.splitlines() if l.strip().lower().startswith(("automaticlogin", "timedlogin")))
+out["mounts"] = sorted(l for l in run("findmnt -rn -o TARGET,SOURCE,FSTYPE,OPTIONS").splitlines()
+                       if l.split(" ")[2:3] and l.split(" ")[2] not in ("proc", "sysfs", "cgroup2", "cgroup", "devpts", "mqueue", "debugfs", "tracefs",
+                       "securityfs", "pstore", "bpf", "configfs", "fusectl", "hugetlbfs", "autofs", "binfmt_misc", "efivarfs", "tmpfs", "devtmpfs", "squashfs", "nsfs", "ramfs", "fuse.portal", "fuse.gvfsd-fuse"))
+out["fstab"] = sorted(l.strip() for l in (read("/etc/fstab") or "").splitlines() if l.strip() and not l.strip().startswith("#"))
+pk = sorted(run("dpkg-query -W -f '${Package}=${Version}\n'", 30).split())
+out["packages_n"] = len(pk)
+out["packages_sha"] = hashlib.sha256("\n".join(pk).encode()).hexdigest()[:16]
+out["packages"] = pk
+out["crontab"] = sorted(l for l in run("crontab -l 2>/dev/null").splitlines() if l.strip() and not l.startswith("#"))
+out["cron_d"] = sorted(os.listdir("/etc/cron.d")) if os.path.isdir("/etc/cron.d") else []
+out["services_enabled"] = sorted(l.split()[0] for l in run("systemctl list-unit-files --state=enabled --no-legend --no-pager").splitlines() if l.split())
+out["user_services_enabled"] = sorted(l.split()[0] for l in run("systemctl --user list-unit-files --state=enabled --no-legend --no-pager").splitlines() if l.split())
+out["sudoers_d"] = sorted(os.listdir("/etc/sudoers.d")) if os.path.isdir("/etc/sudoers.d") else []
+out["hosts"] = sorted(l.strip() for l in (read("/etc/hosts") or "").splitlines() if l.strip() and not l.strip().startswith("#"))
+dc = run("dconf dump /")
+out["dconf_sha"] = hashlib.sha256(dc.encode()).hexdigest()[:16]
+out["dconf"] = dc[:20000]
+out["hostname"] = (read("/etc/hostname") or "").strip()
+out["timezone"] = run("timedatectl show -p Timezone --value").strip()
+print(json.dumps(out))
+PY"""
+
 EXPECT_OFFICE = True   # every snapshot must contain the LibreOffice window, scoped (menus one level deep)
 
 WINDOWS_SCRIPT = r"""(wmctrl -l 2>/dev/null || true); echo '--- active ---'; (xdotool getactivewindow getwindowname 2>/dev/null || true)"""
@@ -133,6 +177,7 @@ class Snapshot:
     digest: Dict[str, dict]          # file path -> {"s", "m", "h", optional "c"}
     windows: str
     meta: dict = field(default_factory=dict)
+    system: dict = field(default_factory=dict)      # 8 Nov (Track B): users, groups, autologin, mounts, packages, ...
 
     @property
     def ok(self) -> bool:
@@ -236,6 +281,14 @@ def take_snapshot(env, out_dir: pathlib.Path, meta: Optional[dict] = None, with_
 
     windows = vm_shell(env, WINDOWS_SCRIPT, timeout=20).get("output") or ""
     (out_dir / "windows.txt").write_text(windows)
+    t = time.time()
+    system = {}
+    try:
+        system = json.loads((vm_shell(env, SYSTEM_SCRIPT, timeout=60).get("output") or "").strip().splitlines()[-1])
+    except Exception as exc:  # noqa: BLE001  (a missing system part never fails a snapshot)
+        meta["system_error"] = repr(exc)[:200]
+    meta["system_seconds"] = round(time.time() - t, 1)
+    (out_dir / "system.json").write_text(json.dumps(system, sort_keys=True))
     # the pointer's position (30 Oct): VS Code shows hover toolbars where the pointer rests, so a click leaves tree
     # differences no key undoes; the collector's pointer candidate moves it back here
     try:
@@ -262,7 +315,7 @@ def take_snapshot(env, out_dir: pathlib.Path, meta: Optional[dict] = None, with_
     if canon and digest and tree_info.get("source") != "fast":
         meta["tree_error"] = f"tree not from the scoped walker: {tree_info.get('source')}"
     (out_dir / "meta.json").write_text(json.dumps(meta, indent=1, sort_keys=True))
-    return Snapshot(out_dir, tree_xml, canon, digest, windows, meta)
+    return Snapshot(out_dir, tree_xml, canon, digest, windows, meta, system)
 
 
 def load_snapshot(out_dir: pathlib.Path) -> Snapshot:
@@ -273,4 +326,5 @@ def load_snapshot(out_dir: pathlib.Path) -> Snapshot:
     meta = json.loads((out_dir / "meta.json").read_text()) if (out_dir / "meta.json").exists() else {}
     canon = canonicalize(tree_xml) if tree_xml else {}
     meta.setdefault("ok", bool(canon) and bool(digest))
-    return Snapshot(out_dir, tree_xml, canon, digest, windows, meta)
+    system = json.loads((out_dir / "system.json").read_text()) if (out_dir / "system.json").exists() else {}
+    return Snapshot(out_dir, tree_xml, canon, digest, windows, meta, system)

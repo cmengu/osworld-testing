@@ -35,6 +35,11 @@ GUESS_B_SCHEMA = {
 }
 
 
+try:
+    from rig.sublimit import limit_wait
+except ImportError:          # run as a script from rig/
+    from sublimit import limit_wait  # noqa: E402
+
 def sha(text: str) -> str:
     return hashlib.sha256(text.encode()).hexdigest()
 
@@ -65,6 +70,8 @@ def _claude(system_prompt: str, user_prompt: str, schema=None) -> dict:
             last = {"ok": False, "error": f"timeout after {TIMEOUT}s", "attempt": attempt + 1}
         except (json.JSONDecodeError, IndexError) as e:
             last = {"ok": False, "error": f"unparseable output: {e!r}", "attempt": attempt + 1}
+        if limit_wait(str(last.get("error") or ""), "teacher"):     # 8 Nov (Track C): wait out the 5-hour limit, ask again
+            continue
         time.sleep(5 * (attempt + 1))
     last["seconds"] = round(time.time() - t0, 1)
     return last
