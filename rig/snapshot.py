@@ -16,6 +16,7 @@ import hashlib
 import json
 import os
 import pathlib
+import re
 import time
 from dataclasses import dataclass, field
 from typing import Dict, Optional
@@ -251,6 +252,12 @@ def system_entries(system: dict) -> Dict[str, dict]:
     sees a file change.  Only when RIG_SYSTEM_COMPARE=1 (the 8 Nov pair runs), so earlier labels cannot move.  Mounts
     are kept to target, type and ro/rw; dconf, hostname and timezone are left out (dconf churns)."""
     out = {}
+    if not system:
+        return out          # the system read failed: nothing, rather than empty values that look like a change
+    system = dict(system)
+    # snap mount units carry the snap's revision in their name and change when snapd refreshes (8 Nov, pq-0037:
+    # snap-snapd-21759.mount -> snap-snapd-28332.mount between S and S1): not the user's doing, left out
+    system["services_enabled"] = [s for s in system.get("services_enabled", []) if not re.match(r"snap-.*\.mount$", s)]
     for k in SYSTEM_COMPARED:
         if k in system:
             out[f"/@system/{k}"] = {"h": hashlib.sha256(json.dumps(system[k], sort_keys=True).encode()).hexdigest(), "s": len(json.dumps(system[k]))}
@@ -259,7 +266,24 @@ def system_entries(system: dict) -> Dict[str, dict]:
     return out
 
 
-def _digest(env):
+def _system(env) -> dict:
+    try:
+        return json.loads((vm_shell(env, SYSTEM_SCRIPT, timeout=60).get("output") or "").strip().splitlines()[-1])
+    except Exception:  # noqa: BLE001  (a missing system part never fails a snapshot)
+        return {}
+
+
+def _digest(env, system: dict = None):
+    """File digest; with RIG_SYSTEM_COMPARE=1 also the system pseudo-files, on EVERY path that reads a digest (8 Nov:
+    the reset check called _digest directly and saw no /@system entries, so every reset of a system-compare row
+    "differed in 13 files" and no candidate was judged)."""
+    d, err = _file_digest(env)
+    if d and os.environ.get("RIG_SYSTEM_COMPARE") == "1":
+        d.update(system_entries(system if system is not None else _system(env)))
+    return d, err
+
+
+def _file_digest(env):
     err = ""
     for _ in range(2):
         res = vm_shell(env, DIGEST_SCRIPT, timeout=115)
@@ -297,7 +321,12 @@ def take_snapshot(env, out_dir: pathlib.Path, meta: Optional[dict] = None, with_
         meta["tree_error"] = f"no accessibility tree: {tree_info}"
 
     t = time.time()
-    digest, digest_err = _digest(env)
+    system = _system(env)
+    meta["system_seconds"] = round(time.time() - t, 1)
+    if not system:
+        meta["system_error"] = "system script returned nothing"
+    t = time.time()
+    digest, digest_err = _digest(env, system=system)
     meta["digest_seconds"] = round(time.time() - t, 1)
     if digest_err:
         meta["digest_error"] = digest_err
@@ -305,16 +334,7 @@ def take_snapshot(env, out_dir: pathlib.Path, meta: Optional[dict] = None, with_
 
     windows = vm_shell(env, WINDOWS_SCRIPT, timeout=20).get("output") or ""
     (out_dir / "windows.txt").write_text(windows)
-    t = time.time()
-    system = {}
-    try:
-        system = json.loads((vm_shell(env, SYSTEM_SCRIPT, timeout=60).get("output") or "").strip().splitlines()[-1])
-    except Exception as exc:  # noqa: BLE001  (a missing system part never fails a snapshot)
-        meta["system_error"] = repr(exc)[:200]
-    meta["system_seconds"] = round(time.time() - t, 1)
     (out_dir / "system.json").write_text(json.dumps(system, sort_keys=True))
-    if system and os.environ.get("RIG_SYSTEM_COMPARE") == "1":
-        digest.update(system_entries(system))
     # the pointer's position (30 Oct): VS Code shows hover toolbars where the pointer rests, so a click leaves tree
     # differences no key undoes; the collector's pointer candidate moves it back here
     try:
