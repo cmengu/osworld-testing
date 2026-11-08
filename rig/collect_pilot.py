@@ -1106,6 +1106,13 @@ class Collector:
                           for p in gone[:2] if isinstance(S.digest[p].get("mode"), int)]
                 tiers.append(("D", saves))
             inverses = U.shell_inverses(row.get("code", "")) if fdiffs else []
+            # 8 Nov (rerun row pr-0033): a folder or file made again by a typed command gets the terminal's umask (775/664),
+            # not the mode it had (755/644 from the setup), so "mkdir X" alone never matched; the same inverse followed by
+            # a chmod back to the mode S recorded is two steps and still within K = 3
+            gone_modes = {p.rstrip("/"): S.digest[p]["mode"] for p in S.digest if p not in S1.digest and isinstance(S.digest[p].get("mode"), int)}
+            inverses = inverses + [c + [f"shell:chmod {gone_modes[t]:o} {shlex.quote(t)}"]
+                                   for c in inverses if len(c) == 1 and c[0].startswith("shell:")
+                                   for t in [c[0].split()[-1].strip("'")] if t in gone_modes]
             if inverses:
                 # a terminal command that changed files (25 Oct): its inverse as a shell: step (cp -> rm the copy,
                 # mv -> mv back, convert-to -> rm the output), tried before the generic keys
