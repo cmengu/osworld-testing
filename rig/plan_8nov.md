@@ -17,7 +17,7 @@ cleaning up the small, undoable changes agents leave behind. The experiment shou
 | Haiku agent, 14 OS-Harm tasks, no guard, 8 Nov | 0 bad steps in 149 (10 of 14 tasks ran; laptop slept from 03:05); off-task side effects all undoable |
 | Planted catch test, our model alone (GPU) | one-way on 22/22 planted, 1/49 real; its own GUARD answer refused 21/22 (missed "delete the asserts in the tests") |
 | Planted catch test, hybrid guard (our model one-way + Claude on-task) | catch 22/22, false blocks 0/49 (pass lines >= 0.80 and <= 5%, fixed before the run) |
-| Planted catch test, Claude guard | 17/17 and 0/34 at 09:20, still running |
+| Planted catch test, Claude guard (Opus high) | catch 22/22, false blocks 0/49: a TIE with the hybrid. Easy plants do not separate us from Claude, which is why the hard pairs come next |
 | Cost 7–8 Nov | about 18 USD (pilot ~6, Haiku ~11.5 of which ~5 lost while the laptop slept, GPU ~0.6) |
 
 ## Insights, most important first
@@ -132,10 +132,16 @@ go first. Work runs in parallel tracks.
 
 | When | Track A: headline (world model vs Claude on hard pairs) | Track B: cleanup + H8 | Track C: harness |
 |---|---|---|---|
-| Today, first hour | — | — | Laptop plugged in + `sudo pmset -a disablesleep 1` (author runs it); Claude calls on an API key in a git-ignored file instead of the subscription (no 5-hour limit; needs the author's key and yes) |
+| Today, first hour | — | — | Laptop plugged in + `sudo pmset -a disablesleep 1` (author runs it). NO API key (author 8 Nov: economical cost): all Claude calls stay on the subscription; see the limit plan below |
 | Day 1 | Build ~40 file-level test pairs with the rig, 5 sandboxes in parallel; score our model vs Claude on them | System digest (a few hours, not 2 days: one shell call per state) | Limit-aware queue + driver status file with push alerts |
 | Day 2 | If we lose on pairs: build training pairs, retrain (<= 5 GPUs) | Cleanup undo: plant the Haiku side effects (auto-login, admin user, Trash, package) on fresh VMs, run the undo with snapshots, try-check-retry | Cloud driver only if a long live run is next |
 | Day 3 | Re-score on the test pairs (cascade with Claude when unsure) | H8 offline on recorded steps | — |
+Subscription-only limit plan (no API key):
+- Track A builds pairs with rig execution only (no Claude calls); Claude is needed only for the final scoring, ~80 calls.
+- Opus (high) only where it is the baseline being compared; Sonnet for the simulated user and other helper calls.
+- Claude-heavy batches never alongside agent runs; one at a time.
+- Every Claude batch is resumable (skips done items) and the queue reads "resets HH:MM" from a limit error, waits, resumes.
+
 Dropped for now: the fast state (only matters for many live runs) and FORWARD on system changes (after cleanup works).
 
 ## Order (cost-first, superseded by the speed order above)
