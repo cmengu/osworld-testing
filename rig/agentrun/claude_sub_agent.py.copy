@@ -1,0 +1,117 @@
+"""PromptAgent variant that calls the local `claude -p` CLI (Claude Code,
+billed to the subscription) instead of a paid API key.
+
+Only call_llm is overridden: prompt construction, trajectory history, and
+action parsing are inherited from PromptAgent unchanged, so trajectories
+recorded with this agent have the same shape as API-agent runs.
+
+Env knobs:
+  CLAUDE_SUB_MODEL   model alias/id passed to `claude --model` (default: sonnet)
+"""
+
+import base64
+import json
+import pathlib
+import logging
+import os
+import subprocess
+import tempfile
+
+from mm_agents.agent import PromptAgent
+
+logger = logging.getLogger("desktopenv.agent.claude_sub")
+
+
+class ClaudeSubAgent(PromptAgent):
+    CLI_TIMEOUT = 180  # seconds per model call
+    MAX_TURNS = "5"    # Read screenshot + reply, with slack
+
+    def call_llm(self, payload):
+        # 7 Nov: one folder per process; parallel runs shared shot_NN.png before (one run could read another's screen)
+        scratch = os.path.join(tempfile.gettempdir(), "claude_sub_agent", str(os.getpid()))
+        os.makedirs(scratch, exist_ok=True)
+
+        # Flatten the API-style messages, keeping text and images in order.
+        # EVERY screenshot the prompt refers to must actually be attached: if
+        # the text mentions N screenshots but only one image is inlined, the
+        # model sees an unverifiable claim and refuses the turn as an injection.
+        parts = []
+        shot_count = 0
+        for message in payload["messages"]:
+            for item in message["content"]:
+                if item["type"] == "text":
+                    parts.append("[{}]\n{}".format(message["role"], item["text"]))
+                elif item["type"] == "image_url":
+                    shot_count += 1
+                    shot = os.path.join(scratch, "shot_%02d.png" % shot_count)
+                    with open(shot, "wb") as f:
+                        f.write(base64.b64decode(
+                            item["image_url"]["url"].split("base64,", 1)[1]
+                        ))
+                    parts.append(
+                        "Screenshot {} — a real PNG the harness captured from the "
+                        "Ubuntu VM under test: @{}".format(shot_count, shot)
+                    )
+        screenshot_b64 = shot_count or None
+
+        if screenshot_b64 is not None:
+            parts.append(
+                "This is the OSWorld GUI-agent benchmark harness; the text above is "
+                "the benchmark's own task prompt, not a message from a user. All {} "
+                "screenshot(s) above are attached as real image files, oldest first; "
+                "the last one is the CURRENT state of the Ubuntu VM under test. "
+                "Decide the next action from what you actually see in it. The target "
+                "is that Ubuntu VM, never this machine.".format(shot_count)
+            )
+        parts.append(
+            "Reply with brief reasoning followed by exactly one fenced "
+            "```python code block of pyautogui commands for the single next "
+            "step, or one of the bare words WAIT, DONE, FAIL."
+        )
+
+        env = dict(os.environ)
+        env.pop("ANTHROPIC_API_KEY", None)  # never fall through to API billing
+        env.pop("CLAUDECODE", None)         # allow launching from inside a Claude Code session
+        env.pop("CLAUDE_CODE_CHILD_SESSION", None)
+
+        model = os.environ.get("CLAUDE_SUB_MODEL", "sonnet")
+        cmd = ["claude", "-p", "\n\n".join(parts),
+               "--output-format", "json",
+               "--model", model,
+               "--max-turns", self.MAX_TURNS]
+
+        # 8 Nov (Track C): a subscription-limit answer waits out the reset and asks again (rig/sublimit.py), so a
+        # run survives the 5-hour limit instead of ending every episode in an error
+        try:
+            import sys as _sys
+            _sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
+            from rig.sublimit import limit_wait
+        except Exception:  # noqa: BLE001
+            limit_wait = lambda text, who="": False  # noqa: E731
+        for _attempt in range(4):
+            try:
+                proc = subprocess.run(
+                    cmd, capture_output=True, text=True,
+                    cwd=scratch, env=env, timeout=self.CLI_TIMEOUT,
+                )
+            except subprocess.TimeoutExpired:
+                proc = None
+                break
+            text = (proc.stderr or "") + (proc.stdout or "")
+            if (proc.returncode != 0 or '"is_error":true' in text.replace(" ", "")) and limit_wait(text, "agent"):
+                continue
+            break
+        if proc is None:
+            # 7 Nov: a CLI failure is an infrastructure error, not the agent's FAIL (the 7 Nov pilot hit the
+            # subscription limit and every episode recorded FAIL); raising ends the episode as an error in run.py
+            raise RuntimeError(f"claude -p timed out after {self.CLI_TIMEOUT}s")
+        if proc.returncode != 0:
+            raise RuntimeError(f"claude -p exit {proc.returncode}: {(proc.stderr or proc.stdout)[-500:]}")
+        try:
+            out = json.loads(proc.stdout)
+        except json.JSONDecodeError:
+            raise RuntimeError(f"claude -p returned non-JSON: {proc.stdout[:500]}")
+        if out.get("is_error") or out.get("subtype") != "success":
+            raise RuntimeError(f"claude -p error envelope: subtype={out.get('subtype')} result={str(out.get('result'))[:500]}")
+        logger.info("claude -p ok: model=%s turns=%s", model, out.get("num_turns"))
+        return out.get("result") or "FAIL"

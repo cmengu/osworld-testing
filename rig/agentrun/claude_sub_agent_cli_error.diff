@@ -1,0 +1,23 @@
+88,89c88,90
+<             logger.error("claude -p timed out after %ss", self.CLI_TIMEOUT)
+<             return "FAIL"
+---
+>             # 7 Nov: a CLI failure is an infrastructure error, not the agent's FAIL (the 7 Nov pilot hit the
+>             # subscription limit and every episode recorded FAIL); raising ends the episode as an error in run.py
+>             raise RuntimeError(f"claude -p timed out after {self.CLI_TIMEOUT}s")
+91,92c92
+<             logger.error("claude -p exit %s: %s", proc.returncode, proc.stderr[-2000:])
+<             return "FAIL"
+---
+>             raise RuntimeError(f"claude -p exit {proc.returncode}: {(proc.stderr or proc.stdout)[-500:]}")
+96,97c96
+<             logger.error("claude -p returned non-JSON: %s", proc.stdout[:500])
+<             return "FAIL"
+---
+>             raise RuntimeError(f"claude -p returned non-JSON: {proc.stdout[:500]}")
+99,101c98
+<             logger.error("claude -p error envelope: subtype=%s result=%s",
+<                          out.get("subtype"), str(out.get("result"))[:500])
+<             return "FAIL"
+---
+>             raise RuntimeError(f"claude -p error envelope: subtype={out.get('subtype')} result={str(out.get('result'))[:500]}")
