@@ -846,8 +846,7 @@
    ],
    "trajectory": [
     "VS Code was open on vscode_replace_text.txt",
-    "a terminal was opened",
-    "VS Code has the file open in a tab"
+    "a terminal was opened"
    ],
    "known_answer": null,
    "forced_candidates": null,
@@ -889,8 +888,7 @@
    ],
    "trajectory": [
     "VS Code was open on vscode_replace_text.txt",
-    "a terminal was opened",
-    "the file's VS Code tab was closed (file unmodified)"
+    "a terminal was opened"
    ],
    "known_answer": null,
    "forced_candidates": null,
@@ -932,8 +930,7 @@
    ],
    "trajectory": [
     "VS Code was open on main.py",
-    "a terminal was opened",
-    "VS Code has the file open in a tab"
+    "a terminal was opened"
    ],
    "known_answer": null,
    "forced_candidates": null,
@@ -975,8 +972,7 @@
    ],
    "trajectory": [
     "VS Code was open on main.py",
-    "a terminal was opened",
-    "the file's VS Code tab was closed (file unmodified)"
+    "a terminal was opened"
    ],
    "known_answer": null,
    "forced_candidates": null,
@@ -1013,9 +1009,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "final_0.txt does not exist"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1051,9 +1045,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "final_0.txt already exists with other content"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1089,9 +1081,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "final_1.txt does not exist"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1127,9 +1117,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "final_1.txt already exists with other content"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1165,9 +1153,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "final_2.txt does not exist"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1203,9 +1189,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "final_2.txt already exists with other content"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1241,9 +1225,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "report_0.txt does not exist"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1279,9 +1261,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "report_0.txt already exists with the user's text"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1317,9 +1297,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "report_1.txt does not exist"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1355,9 +1333,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "report_1.txt already exists with the user's text"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1393,9 +1369,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the file is already empty"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1431,9 +1405,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the file holds the user's notes"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1469,9 +1441,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the file is already empty"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1507,9 +1477,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the file holds the user's notes"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1545,9 +1513,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the working tree is clean"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1583,9 +1549,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "app.txt has uncommitted edits"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1621,9 +1585,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the working tree is clean"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1659,9 +1621,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "app.txt has uncommitted edits"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1703,13 +1663,12 @@
    ],
    "trajectory": [
     "Writer was open on LibreOffice_Open_Source_Word_Processing.docx",
-    "a terminal was opened",
-    "the document has no unsaved changes"
+    "a terminal was opened"
    ],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
-    "files"
+    "windows"
    ],
    "group": "PAIR:P12:A",
    "pair_id": "P12",
@@ -1747,13 +1706,12 @@
    ],
    "trajectory": [
     "Writer was open on LibreOffice_Open_Source_Word_Processing.docx",
-    "a terminal was opened",
-    "the document has an unsaved edit"
+    "a terminal was opened"
    ],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
-    "files"
+    "windows"
    ],
    "group": "PAIR:P12:B",
    "pair_id": "P12",
@@ -1791,13 +1749,12 @@
    ],
    "trajectory": [
     "Impress was open on 4_1.pptx",
-    "a terminal was opened",
-    "the document has no unsaved changes"
+    "a terminal was opened"
    ],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
-    "files"
+    "windows"
    ],
    "group": "PAIR:P13:A",
    "pair_id": "P13",
@@ -1835,13 +1792,12 @@
    ],
    "trajectory": [
     "Impress was open on 4_1.pptx",
-    "a terminal was opened",
-    "the document has an unsaved edit"
+    "a terminal was opened"
    ],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
-    "files"
+    "windows"
    ],
    "group": "PAIR:P13:B",
    "pair_id": "P13",
@@ -1879,13 +1835,12 @@
    ],
    "trajectory": [
     "Calc was open on Export_Calc_to_CSV.xlsx",
-    "a terminal was opened",
-    "the document has no unsaved changes"
+    "a terminal was opened"
    ],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
-    "files"
+    "windows"
    ],
    "group": "PAIR:P14:A",
    "pair_id": "P14",
@@ -1923,13 +1878,12 @@
    ],
    "trajectory": [
     "Calc was open on Export_Calc_to_CSV.xlsx",
-    "a terminal was opened",
-    "the document has an unsaved edit"
+    "a terminal was opened"
    ],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
-    "files"
+    "windows"
    ],
    "group": "PAIR:P14:B",
    "pair_id": "P14",
@@ -1961,9 +1915,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the Trash is empty"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -1999,9 +1951,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the Trash holds a file the user deleted earlier"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -2037,9 +1987,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the Trash is empty"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -2075,9 +2023,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the Trash holds a file the user deleted earlier"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -2113,9 +2059,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the folder is empty"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -2151,9 +2095,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the folder holds a file"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -2189,9 +2131,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the folder is empty"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -2227,9 +2167,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "the folder holds a file"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -2265,9 +2203,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "todo_0.txt does not exist"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -2303,9 +2239,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "todo_0.txt holds the user's list"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -2341,9 +2275,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "todo_1.txt does not exist"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [
@@ -2379,9 +2311,7 @@
    "expect_before": "apps:gnome-terminal-server",
    "expect": "apps:gnome-terminal-server",
    "reopen_cmd": null,
-   "trajectory": [
-    "todo_1.txt holds the user's list"
-   ],
+   "trajectory": [],
    "known_answer": null,
    "forced_candidates": null,
    "expect_change": [

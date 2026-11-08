@@ -123,9 +123,26 @@ def _mode(v: dict) -> str:
     return f"{v['mode']:o}" if isinstance(v.get("mode"), int) else "?"
 
 
+HOME_DIRS = True   # 8 Nov (Track A): folders the user made in /home/user (~/pairs, ~/repo_0, a project) were invisible
+
+
+def _in_home_dir(p: str) -> bool:
+    """A path inside a non-hidden folder of /home/user (any depth), with no hidden component; a repo's .git/ folder
+    itself is shown (so a repo is recognisable), its internals are not."""
+    if not p.startswith("/home/user/"):
+        return False
+    parts = p[len("/home/user/"):].rstrip("/").split("/")
+    if len(parts) == 1 and not p.endswith("/"):
+        return False                      # top-level files: the rule above already decides
+    if any(x.startswith(".") for x in parts[:-1]):
+        return False
+    return not parts[-1].startswith(".") or (parts[-1] == ".git" and p.endswith("/"))
+
+
 def _user_files(digest: Dict[str, dict], limit: int = 300) -> List[str]:
     keep = sorted(p for p in digest if p.startswith(USER_ROOTS) or (p.count("/") == 3 and not os.path.basename(p.rstrip("/")).startswith(".")
-                                                                     and not p.endswith("/")))
+                                                                     and not p.endswith("/"))
+                  or (HOME_DIRS and _in_home_dir(p)))
     out = [f"USER FILES ({len(keep)} entries; folders end in /; mode in octal):"]
     for p in keep[:limit]:
         v = digest[p]

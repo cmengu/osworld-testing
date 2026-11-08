@@ -510,4 +510,12 @@ def _legacy(code_cmd: str) -> List[Candidate]:
         out.append([f"shell:rm {q(argv[1])}"])
     elif argv[0] == "mkdir" and len(argv) == 2:
         out.append([f"shell:rmdir {q(argv[1])}"])
+    elif argv[0] == "rm" and len(argv) == 3 and argv[1] in ("-r", "-rf", "-fr", "-d"):
+        # 8 Nov (Track A P17/P18): rm -r of an EMPTY folder is undone by making it again; of a full one the files are
+        # gone and the state check fails, as it should
+        out.append([f"shell:mkdir {q(argv[2])}"])
+    elif len(argv) >= 3 and argv[-2] == ">" and argv[0] not in (":",):
+        # 8 Nov (Track A P20): output redirected into a NEW file is undone by removing it; over an existing file the old
+        # content is gone and the state check fails
+        out.append([f"shell:rm {q(argv[-1])}"])
     return out

@@ -21,6 +21,7 @@ import argparse
 import hashlib
 import signal
 import json
+import shlex
 import os
 import pathlib
 import random
@@ -89,6 +90,30 @@ WATCHDOG_SECONDS = 900        # no single candidate, snapshot or reset may take 
 
 # spots whose action may legitimately leave no trace (saving an unchanged file); every other "no change" is a
 # broken key route
+_TYPEWRITE = re.compile(r"""pyautogui\.typewrite\(("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')""")
+_PROMPT = re.compile(r"^\S+@\S+:.*\$\s*$")
+
+
+def shell_ran_clean(code: str, tree_xml: str) -> bool:
+    """True when the terminal text in the after-state shows the row's typed command followed by a fresh prompt and
+    nothing else (8 Nov): the command ran and printed no error.  False when the action is not a typed command."""
+    import ast
+    import html
+    m = _TYPEWRITE.search(code or "")
+    if not m or "press('enter')" not in (code or "") or not tree_xml:
+        return False
+    cmd = ast.literal_eval(m.group(1)).strip()
+    terms = re.findall(r"<terminal[^>]*>(.*?)</terminal>", tree_xml, flags=re.S)
+    if not terms:
+        return False
+    lines = [l.rstrip() for l in html.unescape(terms[-1]).splitlines()]
+    for i in range(len(lines) - 1, -1, -1):
+        if lines[i].endswith("$ " + cmd) and _PROMPT.match(lines[i][: -len(cmd) - 1].rstrip() + "$"):
+            rest = [l for l in lines[i + 1:] if l.strip()]
+            return bool(rest) and bool(_PROMPT.match(rest[0]))
+    return False
+
+
 NO_CHANGE_EXPECTED = frozenset({"save_clean", "imp_save_clean", "wr_save_clean", "ma_wr_save_clean", "ma_calc_save_clean", "select_all",   # select_all: the selection is not state (19 Oct)
                                 "noop", "term_ls",            # probe rows: a bare Shift press; a command that writes nothing
                                 "t3_readonly",                # v3 rows: ls / wc / head in a terminal (26 Oct; v3-0100 was marked broken without this)
@@ -844,6 +869,12 @@ class Collector:
                 changed.add("tree")
             if not want_change or changed & want_change:
                 break
+            if not changed and shell_ran_clean(row.get("code", ""), S1.tree_xml):
+                # 8 Nov (author: "count a step as undoable only when the rig can prove the command actually ran and
+                # simply had nothing to change"): the terminal shows the typed command and then a fresh prompt with no
+                # output between, so the keys landed and the command exited quietly; nothing to undo, not a misfire
+                rec["no_change_proof"] = "shell command echoed, then a clean prompt"
+                break
             misfires.append({"try": action_try + 1, "changed": sorted(changed), "instance": rec["action_instance"]})
             print(f"  [{rid}] the action changed {sorted(changed) or 'nothing'}, not {sorted(want_change)}: again on a fresh instance", flush=True)
             kept = rdir / f"S1_misfire_{action_try}"
@@ -852,7 +883,7 @@ class Collector:
         if S1.ok and S1.tree_xml:
             self._warm_refs = [m for m in self._warm_refs[:1]] + [S1.tree_xml.count("<")]
         rec["action_misfires"] = misfires
-        rec["action_misfired"] = bool(want_change) and not (changed & want_change)
+        rec["action_misfired"] = bool(want_change) and not (changed & want_change) and not rec.get("no_change_proof")
         rec["snapshot_after"] = str(S1.path.relative_to(self.out))
         rec["after_ok"] = S1.ok
         rec["tree_after"] = str((S1.path / "tree.xml").relative_to(self.out))
@@ -1029,7 +1060,7 @@ class Collector:
             rec["undo_length"] = 0
             rec["found_tier"] = 0
             rec["no_change"] = True
-            if row["spot_id"] not in NO_CHANGE_EXPECTED:
+            if row["spot_id"] not in NO_CHANGE_EXPECTED and not rec.get("no_change_proof"):
                 # the action was meant to change something and changed nothing: its key route is broken on this image
                 # (Ctrl+0 for hide column on 17 Oct, Alt+D for "Don't Save" in pilot2 0266).  Not a data row.
                 rec["broken_action"] = True
@@ -1066,6 +1097,14 @@ class Collector:
                            "key:ctrl+y", "key:ctrl+y", "key:ctrl+y", "key:ctrl+y"]])
                 tiers.append(("F2", saves))
                 rec["files_changed_first"] = True
+            gone = [p for p in S.digest if p not in S1.digest and not p.endswith("/")]
+            if rec["app"] == "vs_code" and gone:
+                # 8 Nov (Track A P01/P02): a file VS Code holds open was deleted from a terminal; VS Code still has its
+                # text, so saving the editor writes it back (the mode may come back as 664, hence the chmod variant)
+                saves = [["focus:doc", "key:ctrl+s", "wait:2"]]
+                saves += [["focus:doc", "key:ctrl+s", "wait:2", f"shell:chmod {S.digest[p]['mode']:o} {shlex.quote(p)}"]
+                          for p in gone[:2] if isinstance(S.digest[p].get("mode"), int)]
+                tiers.append(("D", saves))
             inverses = U.shell_inverses(row.get("code", "")) if fdiffs else []
             if inverses:
                 # a terminal command that changed files (25 Oct): its inverse as a shell: step (cp -> rm the copy,

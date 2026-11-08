@@ -226,7 +226,10 @@ def apply_file_mask(digest: Digest, mask: dict) -> Digest:
     masked_dirs = tuple(d.rstrip("/") + "/" for d in mask.get("file_dirs", []))
     return {p: v for p, v in digest.items()
             if p not in masked_paths and not p.startswith(masked_dirs) and not p.startswith(IGNORED_FILE_PREFIXES)
-            and not (p.startswith(_TB) and p.endswith(IGNORED_FILE_SUFFIXES))}
+            and not (p.startswith(_TB) and p.endswith(IGNORED_FILE_SUFFIXES))
+            # git's index is a stat cache that git rewrites on every status/checkout (8 Nov, Track A pairs P10/P11: every
+            # reset differed only in .git/index, so no candidate was ever judged); the work tree files still count
+            and not p.endswith("/.git/index")}
 
 
 _CELL = re.compile(r"(.*/table\[[^\]]*\]#\d+)/table-cell\[([A-Z]+)(\d+)\]#\d+$")
