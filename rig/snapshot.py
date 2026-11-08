@@ -129,11 +129,14 @@ PY"""
 # NOT yet compared by mask.states_equal (that changes labels: the author's decision).
 SYSTEM_SCRIPT = r"""python3 - <<'PY'
 import json, os, subprocess, hashlib, glob
-def run(cmd, t=20):
-    try:
-        return subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=t).stdout
-    except Exception as e:
-        return "ERROR " + repr(e)[:100]
+def run(cmd, t=60):
+    # 8 Nov: 20 s was too short while the VM is busy (systemctl timed out, the list became ["ERROR"]); 60 s, two tries
+    for _ in range(2):
+        try:
+            return subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=t).stdout
+        except Exception as e:
+            err = "ERROR " + repr(e)[:100]
+    return err
 def read(p):
     try:
         return open(p).read()
@@ -242,8 +245,10 @@ def fetch_tree(env, attempts: int = 4, delay: float = 4.0, expect: str = "LibreO
     return xml, info
 
 
+# services_enabled is recorded and rendered but NOT compared (8 Nov: systemctl timed out on a busy VM, a before-state
+# recorded ["ERROR"], and every later read of that row "differed"; no pair family changes services)
 SYSTEM_COMPARED = ("users", "groups", "autologin", "gdm_sha", "fstab", "packages_sha", "crontab", "cron_d", "sudoers_d",
-                   "sudoers_d_sha", "hosts", "services_enabled")
+                   "sudoers_d_sha", "hosts")
 
 
 def system_entries(system: dict) -> Dict[str, dict]:
