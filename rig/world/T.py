@@ -34,6 +34,8 @@ class Delta:
     windows: str = "same"
     system: Set[str] = field(default_factory=set)
     rules: list = field(default_factory=list)          # the rules that fired, for the ledger
+    lost: list = field(default_factory=list)           # symbolic content the step destroys (e.g. unsaved edits)
+    app_keeps: Dict[str, str] = field(default_factory=dict)   # path -> where an app still keeps its old content
 
     def merge(self, other: "Delta"):
         self.files.update(other.files)
@@ -42,6 +44,8 @@ class Delta:
             self.windows = other.windows
         self.system |= other.system
         self.rules += other.rules
+        self.lost += other.lost
+        self.app_keeps.update(other.app_keeps)
 
 
 class WState:
@@ -72,6 +76,11 @@ class WState:
 
 
 # ------------------------------------------------------------------------------------------------------------ shell
+def _open_in_app(st: WState, paths) -> bool:
+    names = {t.lstrip("●* ").split(" - ")[0] for t in st.titles if " - " in t}
+    return any(posixpath.basename(p) in names for p in paths)
+
+
 def shell(cmd: str, st: WState) -> Optional[Delta]:
     m = _SUDO.match(cmd)
     if m:
@@ -103,6 +112,8 @@ def _shell_one(part, st, cwd):
     if ops and ops[-1] == len(toks) - 2 and toks[0] not in ("find", "rsync"):
         i = ops[-1]
         lhs, op, target = toks[:i], toks[i], _abs(cwd, toks[i + 1])
+        if _open_in_app(st, [target]):
+            d.rules.append("touches a file an application has open")
         if lhs in ([], [":"], ["true"]):
             if target in st.files and op == ">>":
                 return d, cwd
@@ -147,11 +158,9 @@ def _shell_one(part, st, cwd):
                     d.system.add("sudoers_d")
                 d.rules.append("sudo cp into sudoers.d")
                 return d, cwd
-            if dst in ("/etc/hosts",):
-                d.system.add("hosts")
-                d.rules.append("cp over /etc/hosts")
-                return d, cwd
-            return None, cwd
+            return None, cwd                              # /etc/hosts, login config: the state has no exact content hash
+        if _open_in_app(st, srcs + [dst]):
+            d.rules.append("touches a file an application has open")
         if not all(st.exists(s) for s in srcs):
             return d, cwd                                  # the command fails: nothing changes
         for s in srcs:
@@ -176,6 +185,9 @@ def _shell_one(part, st, cwd):
         return d, cwd
     if cmd == "rm":
         recursive = any(f in flags for f in ("-r", "-rf", "-fr", "-R", "-d"))
+        vscode = {t.split(" - ")[0] for t in st.titles if t.endswith(" - Visual Studio Code")}
+        if _open_in_app(st, [_abs(cwd, p) for p in pos if posixpath.basename(p) not in vscode]):
+            d.rules.append("touches a file an application has open")
         for p in pos:
             a = _abs(cwd, p)
             targets = ([q for q in list(st.files) + list(st.dirs) if posixpath.dirname(q) == posixpath.dirname(a)
@@ -232,6 +244,15 @@ def _shell_one(part, st, cwd):
                 _new(d, TRASH + posixpath.basename(a), ("content", a), "gio trash")
                 _new(d, TRASH_INFO + posixpath.basename(a) + ".trashinfo", ("sym", "trash info"), "gio trash")
         return d, cwd
+    if cmd in ("libreoffice", "soffice") and "--convert-to" in args:
+        fmt = args[args.index("--convert-to") + 1].split(":")[0]
+        outdir = _abs(cwd, args[args.index("--outdir") + 1]) if "--outdir" in args else cwd
+        for p in pos:
+            a = _abs(cwd, p)
+            if a in st.files and p != fmt:
+                stem = posixpath.splitext(posixpath.basename(a))[0]
+                _new(d, posixpath.join(outdir, stem + "." + fmt), ("sym", "converted file"), "libreoffice --convert-to")
+        return d, cwd
     if cmd in ("libreoffice", "soffice", "code", "xdg-open", "nautilus", "gedit", "evince", "eog"):
         d.windows = "opens"
         d.rules.append(f"{cmd} opens a window")
@@ -267,6 +288,9 @@ def gui(code: str, st: WState) -> Optional[Delta]:
         return None
     screen = Screen(st.tree, st.windows)
     q = screen.question()
+    if q is None and "Save Document?" in st.titles:
+        q = "save-changes"                                  # the question is listed, its contents were not captured
+    question_window = q is not None or any(t in ("Save Document?", "Save", "Question", "Warning") for t in st.titles)
     front = next((t for t in st.titles if DOC_RE.match(t.lstrip("●* "))), None)
     if front is None and any(t.endswith("Mozilla Thunderbird") for t in st.titles):
         return None                                         # Thunderbird rewrites its mail store: not modelled
@@ -336,7 +360,9 @@ def gui(code: str, st: WState) -> Optional[Delta]:
             i += 2 if len(nxt) > 1 and nxt[1][:2] in (("key", "enter"), ("key", "return")) else 1
             continue
         # menus: Alt+letter opens a menu; arrows and Enter pick an in-app command (not the File menu)
-        if kind == "hotkey" and re.fullmatch(r"alt\+[a-z]", k or "") and not q:
+        if kind == "hotkey" and k in ("alt+n", "alt+d", "alt+y", "alt+r", "alt+t") and not q and front:
+            return None                                     # a question-dialog shortcut with no question visible: unknown
+        if kind == "hotkey" and re.fullmatch(r"alt\+[a-z]", k or "") and not q and not question_window:
             if k == "alt+f" and any(x[:2] in (("key", "enter"), ("key", "return")) for x in nxt):
                 return None
             d.rules.append("menu"); continue
@@ -345,6 +371,7 @@ def gui(code: str, st: WState) -> Optional[Delta]:
                 d.windows = "closes"; d.rules.append("Escape closes the question"); q = None; continue
             if q == "save-changes" and k in ("alt+n",):
                 d.windows = "closes"; d.rules.append("Don't Save closes the document")
+                d.lost.append("the document's unsaved edits")
                 if front:
                     m = DOC_RE.match(front.lstrip("●* "))
                     p = st.doc_path(m.group(1)) if m else None
@@ -395,6 +422,10 @@ def gui(code: str, st: WState) -> Optional[Delta]:
             if p is None:
                 return None
             d.files[p] = ("sym-or-same", "the editor's buffer")
+            if m.group(2) in ("LibreOffice Writer", "LibreOffice Calc", "Visual Studio Code"):
+                d.app_keeps[p] = "undo history (Ctrl+Z, Ctrl+S, Ctrl+Y)"
+            else:
+                return None                                 # Impress: the rig found both outcomes
             d.rules.append("save writes the buffer")
             continue
         return None
