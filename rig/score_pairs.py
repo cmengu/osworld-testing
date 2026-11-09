@@ -31,13 +31,21 @@ import sys
 BASE = pathlib.Path(__file__).resolve().parent.parent
 sys.path[:0] = [str(BASE / "rig" / "train"), str(BASE)]
 OUT = BASE / "rig" / "out" / "pairs"
-ROWS = {r["row_id"]: r for r in json.load(open(BASE / "rig" / "clickspots_pairs.json"))["rows"]}
+ROWS = {r["row_id"]: r for f in ("clickspots_pairs.json", "clickspots_pairs_v2_test.json")      # v1 + v2 TEST (9 Nov)
+        for r in json.load(open(BASE / "rig" / f))["rows"]}
+
+
+def group(rid):
+    """v1 (the first 20 pairs), held-out (v2 file families absent from training), system (v2 system families)."""
+    r = ROWS[rid]
+    return "system" if r.get("system_family") else "held-out" if r.get("held_out_family") else "v1"
 
 
 def results():
     res = {}
     # first run (pr_*), then the 8 Nov rerun (prr_?, after the rig fixes) and later relaunches (prx_?): later files win
-    files = [f for pat in ("rig/out/pr_*/results.jsonl", "rig/out/prr_?/results.jsonl", "rig/out/prx_?/results.jsonl")
+    files = [f for pat in ("rig/out/pr_*/results.jsonl", "rig/out/prr_?/results.jsonl", "rig/out/prx_?/results.jsonl",
+                                    "rig/out/pq_?/results.jsonl", "rig/out/pqx_?/results.jsonl")
              for f in sorted(glob.glob(str(BASE / pat)))]
     for f in files:
         for l in open(f):
@@ -74,10 +82,13 @@ def fair_inputs():
     compact.USER_ROOTS = compact.USER_ROOTS + ("/home/user/pairs/", "/home/user/repo_0/", "/home/user/repo_1/")
     out = []
     for rid, r in sorted(results().items()):
+        if rid not in ROWS:
+            continue
         s = load_snapshot(pathlib.Path(r["_dir"]) / r["snapshot_before"])
         dig = {p: v for p, v in s.digest.items() if not re.search(r"/\.git/.", p)}
-        before = cut(compact.render(s.canon, dig, s.windows, files="user"))
-        traj = ROWS[rid]["trajectory"][:-1]
+        # 9 Nov: the system section (Track B) when the snapshot recorded it, the same text for both guards
+        before = cut(compact.render(s.canon, dig, s.windows, files="user", system=s.system or None))
+        traj = ROWS[rid]["trajectory"][:-1] if rid.startswith("pr-") else ROWS[rid]["trajectory"]
         out.append({"row_id": rid, "before": before, "trajectory": traj, "task_id": r["task_id"], "action": r["action"]})
     return out
 
@@ -155,9 +166,12 @@ def score(tag=""):
                                 "rig": r.get("executed_label"), "undo": r.get("shortest_undo"),
                                 "ours_p_rev": mod.get(rid, {}).get("p_reversible"), "claude_rev": guards["claude"](rid),
                                 "claude_reason": ((cl or {}).get(rid, {}).get("reason") if cl is not None else (r.get("guessed_label_defined") or {}).get("reason") or "")}
-    for view in ("preregistered", "noop", "design"):
+    views = [("preregistered", None), ("preregistered", "v1"), ("preregistered", "held-out"), ("preregistered", "system"), ("design", None)]
+    for view, grp in views:
         v = {"pairs": [], "ours": 0, "claude": 0, "only_ours": 0, "only_claude": 0, "rows": 0, "ours_rows": 0, "claude_rows": 0}
         for pid, s in sorted(pairs.items()):
+            if grp and group(s["A"]) != grp:
+                continue
             ta, tb = truth(s["A"], view), truth(s["B"], view)
             if ta is None or tb is None or ta == tb:
                 continue
@@ -174,10 +188,10 @@ def score(tag=""):
             v["only_claude"] += ok["claude"] and not ok["ours"]
         v["n_pairs"] = len(v["pairs"])
         v["sign_p"] = round(sign_p(v["only_ours"], v["only_claude"]), 3)
-        out["views"][view] = v
+        out["views"][f"{view}:{grp or 'all'}"] = v
     (OUT / f"score{'_' + tag if tag else ''}.json").write_text(json.dumps(out, indent=1))
     for view, v in out["views"].items():
-        print(f"{view:14s} pairs {v['n_pairs']:2d}: ours {v['ours']}/{v['n_pairs']}  claude {v['claude']}/{v['n_pairs']}  "
+        print(f"{view:22s} pairs {v['n_pairs']:2d}: ours {v['ours']}/{v['n_pairs']}  claude {v['claude']}/{v['n_pairs']}  "
               f"one-sided {v['only_ours']} vs {v['only_claude']} (p {v['sign_p']}); rows ours {v['ours_rows']}/{v['rows']} claude {v['claude_rows']}/{v['rows']}")
     for rid, x in out["rows"].items():
         print(f"  {rid} {x['pair']}{x['side']} {x['family']:28s} rig={str(x['rig'] or x['status']):14s} ours_p={x['ours_p_rev']} claude={x['claude_rev']}")
