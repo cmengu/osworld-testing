@@ -1,0 +1,350 @@
+{
+ "DEV": {
+  "transitions": 727,
+  "decided": 542,
+  "coverage": 0.746,
+  "file_exact": 0.935,
+  "content_exact": 0.935,
+  "baseline_nothing_changes_on_decided": 0.465,
+  "baseline_nothing_changes_all": 0.505,
+  "system_exact": "60/66",
+  "windows_ok": 0.823,
+  "crashes": 0
+ },
+ "TEST": {
+  "transitions": 167,
+  "decided": 90,
+  "coverage": 0.539,
+  "file_exact": 0.933,
+  "content_exact": 0.933,
+  "baseline_nothing_changes_on_decided": 0.456,
+  "baseline_nothing_changes_all": 0.593,
+  "system_exact": "39/45",
+  "windows_ok": 0.978,
+  "crashes": 0
+ },
+ "dev_families_worst": [
+  [
+   "in a terminal: libreoffice --convert-to writes a converted copy",
+   {
+    "n": 5,
+    "decided": 5,
+    "exact": 0
+   }
+  ],
+  [
+   "Don't Save: the typed edit is discarded, the document closes",
+   {
+    "n": 7,
+    "decided": 7,
+    "exact": 3
+   }
+  ],
+  [
+   "Yes in the replace question (Keep Current Format): the other document is overwritten",
+   {
+    "n": 7,
+    "decided": 4,
+    "exact": 0
+   }
+  ],
+  [
+   "Replace: the sibling file is overwritten with this editor's content",
+   {
+    "n": 4,
+    "decided": 4,
+    "exact": 0
+   }
+  ],
+  [
+   "Don't Save: the edit is discarded, the deck closes",
+   {
+    "n": 4,
+    "decided": 4,
+    "exact": 2
+   }
+  ],
+  [
+   "Don't Save in Calc: the typed edit is discarded",
+   {
+    "n": 4,
+    "decided": 4,
+    "exact": 2
+   }
+  ],
+  [
+   "Don't Save: the edit is discarded, the document closes",
+   {
+    "n": 3,
+    "decided": 3,
+    "exact": 1
+   }
+  ],
+  [
+   "Delete: move the selected file a.txt to the Trash",
+   {
+    "n": 2,
+    "decided": 2,
+    "exact": 0
+   }
+  ],
+  [
+   "Delete on the selected file in Files: to the Trash",
+   {
+    "n": 2,
+    "decided": 2,
+    "exact": 0
+   }
+  ],
+  [
+   "in the terminal, run touch pilot.txt",
+   {
+    "n": 2,
+    "decided": 2,
+    "exact": 0
+   }
+  ],
+  [
+   "hosts_overwrite_same_vs_extra",
+   {
+    "n": 6,
+    "decided": 6,
+    "exact": 4
+   }
+  ],
+  [
+   "in a terminal: the file-changing command the task itself asks for",
+   {
+    "n": 14,
+    "decided": 6,
+    "exact": 5
+   }
+  ],
+  [
+   "Delete on the selected file: to the Trash (Undo)",
+   {
+    "n": 6,
+    "decided": 1,
+    "exact": 0
+   }
+  ],
+  [
+   "Don't Save in Writer: the edit is discarded",
+   {
+    "n": 4,
+    "decided": 4,
+    "exact": 3
+   }
+  ],
+  [
+   "in the Trash view, Ctrl+A, Delete, Delete (Alt+D): permanently deleted",
+   {
+    "n": 1,
+    "decided": 1,
+    "exact": 0
+   }
+  ]
+ ],
+ "dev_undecided": [
+  [
+   "Ctrl+Shift+S, the name of another document, Enter: 'already exists, replace?' asks",
+   {
+    "n": 24,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Ctrl+Shift+S, the name of a sibling file, Enter: the replace question",
+   {
+    "n": 10,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "in a terminal: the file-changing command the task itself asks for",
+   {
+    "n": 14,
+    "decided": 6,
+    "exact": 5
+   }
+  ],
+  [
+   "git_checkout_clean_vs_dirty",
+   {
+    "n": 8,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Tab to the first object, Enter, type 'pilot', Escape",
+   {
+    "n": 7,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "type 'hello' into the target cell",
+   {
+    "n": 7,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Ctrl+N, type 'pilot' into To: a modified compose window",
+   {
+    "n": 6,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "gdm_conf_overwrite_same_vs_autologin",
+   {
+    "n": 6,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "F2, a new name, Enter",
+   {
+    "n": 5,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Delete on the selected file: to the Trash (Undo)",
+   {
+    "n": 6,
+    "decided": 1,
+    "exact": 0
+   }
+  ],
+  [
+   "File > Empty Trash after deleting a message: the message is gone for good",
+   {
+    "n": 5,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "type 'pilot' into the active cell of the open workbook",
+   {
+    "n": 5,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "after typing, File: Revert File from the palette: the unsaved edit is discarded",
+   {
+    "n": 4,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Ctrl+H, a replacement, Ctrl+Alt+Enter: every 'e' in the editor becomes '3'",
+   {
+    "n": 4,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Empty Trash, confirmed: the trashed file is gone for good",
+   {
+    "n": 4,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "in a terminal: sed -i rewrites a task file in place",
+   {
+    "n": 4,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Enter in the question: the message is deleted without passing the Trash",
+   {
+    "n": 4,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "M on the first message of Bills: read/unread toggles",
+   {
+    "n": 4,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Yes in the replace question (Keep Current Format): the other document is overwritten",
+   {
+    "n": 7,
+    "decided": 4,
+    "exact": 0
+   }
+  ],
+  [
+   "Replace in the conflict question: the existing file is overwritten",
+   {
+    "n": 3,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Shift+Delete on the first Bills message: the 'delete permanently?' question (tab-modal, no new window)",
+   {
+    "n": 3,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Delete on the first message of Bills: it moves to the Trash folder",
+   {
+    "n": 3,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "F2 in Files: rename the selected file",
+   {
+    "n": 3,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Delete in the question: the file is gone for good",
+   {
+    "n": 3,
+    "decided": 1,
+    "exact": 1
+   }
+  ],
+  [
+   "VS Code: type at the end of a file, then Ctrl+S: the file on disk changes",
+   {
+    "n": 4,
+    "decided": 2,
+    "exact": 2
+   }
+  ]
+ ]
+}
