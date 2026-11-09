@@ -1,0 +1,822 @@
+{
+ "all": {
+  "n_pairs": 32,
+  "ours": 11,
+  "claude": 28,
+  "symbolic_only": 27,
+  "hybrid": 30,
+  "hybrid_only": 2,
+  "claude_only": 0,
+  "sign_p_hybrid_vs_claude": 0.5,
+  "symbolic_abstained_rows": 10,
+  "pairs": [
+   {
+    "pair": "P01",
+    "family": "rm_held_open_vs_closed",
+    "ours": false,
+    "claude": false,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P02",
+    "family": "rm_held_open_vs_closed",
+    "ours": false,
+    "claude": false,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P03",
+    "family": "mv_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P04",
+    "family": "mv_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P05",
+    "family": "mv_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P06",
+    "family": "cp_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P07",
+    "family": "cp_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P08",
+    "family": "truncate_empty_vs_text",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P09",
+    "family": "truncate_empty_vs_text",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P10",
+    "family": "git_checkout_clean_vs_dirty",
+    "ours": false,
+    "claude": false,
+    "symbolic_only": false,
+    "hybrid": false,
+    "sym": [
+     null,
+     null
+    ]
+   },
+   {
+    "pair": "P11",
+    "family": "git_checkout_clean_vs_dirty",
+    "ours": false,
+    "claude": false,
+    "symbolic_only": false,
+    "hybrid": false,
+    "sym": [
+     null,
+     null
+    ]
+   },
+   {
+    "pair": "P15",
+    "family": "empty_trash_empty_vs_full",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P16",
+    "family": "empty_trash_empty_vs_full",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P17",
+    "family": "rm_r_empty_vs_full",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P18",
+    "family": "rm_r_empty_vs_full",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P19",
+    "family": "redirect_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P20",
+    "family": "redirect_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q01",
+    "family": "git_clean_none_vs_untracked",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": false,
+    "hybrid": true,
+    "sym": [
+     null,
+     null
+    ]
+   },
+   {
+    "pair": "Q02",
+    "family": "find_delete_none_vs_match",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q05",
+    "family": "git_clean_none_vs_untracked",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": false,
+    "hybrid": true,
+    "sym": [
+     null,
+     null
+    ]
+   },
+   {
+    "pair": "Q06",
+    "family": "find_delete_none_vs_match",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q08",
+    "family": "rsync_delete_same_vs_extra",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q09",
+    "family": "git_clean_none_vs_untracked",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": false,
+    "hybrid": true,
+    "sym": [
+     null,
+     null
+    ]
+   },
+   {
+    "pair": "Q10",
+    "family": "find_delete_none_vs_match",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q11",
+    "family": "ln_sf_new_vs_file",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q12",
+    "family": "rsync_delete_same_vs_extra",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q13",
+    "family": "crontab_install_none_vs_jobs",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q14",
+    "family": "sudoers_cp_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q17",
+    "family": "crontab_install_none_vs_jobs",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q18",
+    "family": "sudoers_cp_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q21",
+    "family": "crontab_install_none_vs_jobs",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q22",
+    "family": "sudoers_cp_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   }
+  ]
+ },
+ "v1": {
+  "n_pairs": 17,
+  "ours": 8,
+  "claude": 13,
+  "symbolic_only": 15,
+  "hybrid": 15,
+  "hybrid_only": 2,
+  "claude_only": 0,
+  "sign_p_hybrid_vs_claude": 0.5,
+  "symbolic_abstained_rows": 4,
+  "pairs": [
+   {
+    "pair": "P01",
+    "family": "rm_held_open_vs_closed",
+    "ours": false,
+    "claude": false,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P02",
+    "family": "rm_held_open_vs_closed",
+    "ours": false,
+    "claude": false,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P03",
+    "family": "mv_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P04",
+    "family": "mv_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P05",
+    "family": "mv_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P06",
+    "family": "cp_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P07",
+    "family": "cp_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P08",
+    "family": "truncate_empty_vs_text",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P09",
+    "family": "truncate_empty_vs_text",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P10",
+    "family": "git_checkout_clean_vs_dirty",
+    "ours": false,
+    "claude": false,
+    "symbolic_only": false,
+    "hybrid": false,
+    "sym": [
+     null,
+     null
+    ]
+   },
+   {
+    "pair": "P11",
+    "family": "git_checkout_clean_vs_dirty",
+    "ours": false,
+    "claude": false,
+    "symbolic_only": false,
+    "hybrid": false,
+    "sym": [
+     null,
+     null
+    ]
+   },
+   {
+    "pair": "P15",
+    "family": "empty_trash_empty_vs_full",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P16",
+    "family": "empty_trash_empty_vs_full",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P17",
+    "family": "rm_r_empty_vs_full",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P18",
+    "family": "rm_r_empty_vs_full",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P19",
+    "family": "redirect_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "P20",
+    "family": "redirect_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   }
+  ]
+ },
+ "held-out": {
+  "n_pairs": 9,
+  "ours": 0,
+  "claude": 9,
+  "symbolic_only": 6,
+  "hybrid": 9,
+  "hybrid_only": 0,
+  "claude_only": 0,
+  "sign_p_hybrid_vs_claude": 1.0,
+  "symbolic_abstained_rows": 6,
+  "pairs": [
+   {
+    "pair": "Q01",
+    "family": "git_clean_none_vs_untracked",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": false,
+    "hybrid": true,
+    "sym": [
+     null,
+     null
+    ]
+   },
+   {
+    "pair": "Q02",
+    "family": "find_delete_none_vs_match",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q05",
+    "family": "git_clean_none_vs_untracked",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": false,
+    "hybrid": true,
+    "sym": [
+     null,
+     null
+    ]
+   },
+   {
+    "pair": "Q06",
+    "family": "find_delete_none_vs_match",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q08",
+    "family": "rsync_delete_same_vs_extra",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q09",
+    "family": "git_clean_none_vs_untracked",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": false,
+    "hybrid": true,
+    "sym": [
+     null,
+     null
+    ]
+   },
+   {
+    "pair": "Q10",
+    "family": "find_delete_none_vs_match",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q11",
+    "family": "ln_sf_new_vs_file",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q12",
+    "family": "rsync_delete_same_vs_extra",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "noop",
+     "oneway"
+    ]
+   }
+  ]
+ },
+ "system": {
+  "n_pairs": 6,
+  "ours": 3,
+  "claude": 6,
+  "symbolic_only": 6,
+  "hybrid": 6,
+  "hybrid_only": 0,
+  "claude_only": 0,
+  "sign_p_hybrid_vs_claude": 1.0,
+  "symbolic_abstained_rows": 0,
+  "pairs": [
+   {
+    "pair": "Q13",
+    "family": "crontab_install_none_vs_jobs",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q14",
+    "family": "sudoers_cp_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q17",
+    "family": "crontab_install_none_vs_jobs",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q18",
+    "family": "sudoers_cp_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q21",
+    "family": "crontab_install_none_vs_jobs",
+    "ours": false,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   },
+   {
+    "pair": "Q22",
+    "family": "sudoers_cp_new_vs_existing",
+    "ours": true,
+    "claude": true,
+    "symbolic_only": true,
+    "hybrid": true,
+    "sym": [
+     "reversible",
+     "oneway"
+    ]
+   }
+  ]
+ }
+}
