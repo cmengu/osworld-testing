@@ -47,8 +47,8 @@ def typed_command(code: str) -> Optional[str]:
         return None
     if not (text.endswith("\n") or "enter" in (code or "")):
         return None                                                     # typed but never run
-    cmd = text.strip()
-    return cmd if cmd and "\n" not in cmd else None                    # one command line only
+    lines = [l.strip() for l in text.strip().splitlines() if l.strip()]
+    return " ; ".join(lines) if lines else None                        # several lines run one after another
 
 
 class State:
@@ -57,7 +57,10 @@ class State:
         self.sizes = {p: v.get("s") for p, v in digest.items() if not p.endswith("/") and not p.startswith("/@")}
         self.dirs = {p.rstrip("/") for p in digest if p.endswith("/")}
         titles = [l.split(None, 3)[3] if len(l.split(None, 3)) == 4 else "" for l in (windows or "").splitlines()]
-        self.editor_files = {t.lstrip("●* ").split(" - ")[0] for t in titles if " - " in t}
+        # 9 Nov (GUI dev rows): only a plain-text editor gives a deleted file back by re-saving it byte for byte (VS Code,
+        # rig tier D); LibreOffice re-saves a .docx/.pptx differently.  Files open in any other app: not decided here.
+        self.editor_files = {t.lstrip("●* ").split(" - ")[0] for t in titles if t.endswith(" - Visual Studio Code")}
+        self.app_files = {t.lstrip("●* ").split(" - ")[0] for t in titles if " - " in t and not t.endswith(" - Visual Studio Code")}
         self.system = system or {}
 
     def exists(self, p):
@@ -70,9 +73,18 @@ class State:
     def held_open(self, p) -> bool:
         return posixpath.basename(p) in self.editor_files
 
+    def open_elsewhere(self, paths) -> bool:
+        return any(posixpath.basename(p) in self.app_files or posixpath.basename(p) in self.editor_files for p in paths)
+
     def under(self, d):
         d = d.rstrip("/") + "/"
         return [p for p in self.files if p.startswith(d)], [x for x in self.dirs if x.startswith(d)]
+
+
+READ_ONLY = {"ls", "cat", "pwd", "echo", "printf", "head", "tail", "wc", "grep", "egrep", "stat", "du", "df", "date", "true", "clear",
+             "ps", "sort", "uniq", "cut", "awk", "sed", "find", "which", "whoami", "id", "env", "uname", "hostname", "file", "less",
+             "more", "wmctrl", "xlsclients", "xprop", "pgrep", "free", "uptime", "lsblk", "mount", "findmnt", "tree", "readlink",
+             "realpath", "basename", "dirname", "diff", "cmp", "md5sum", "sha256sum", "git", "nl", "tr", "column", "type", "command"}
 
 
 def _abs(cwd, p):
@@ -80,14 +92,15 @@ def _abs(cwd, p):
     return posixpath.normpath(p if p.startswith("/") else posixpath.join(cwd, p))
 
 
-def _loses(st: State, paths: List[str], gone: set) -> Tuple[bool, str]:
-    """Does removing/overwriting these files lose content?  (True, why) when some content ends up nowhere."""
+def _loses(st: State, paths: List[str], gone: set, deleted: bool = False) -> Tuple[bool, str]:
+    """Does removing/overwriting these files lose content?  (True, why) when some content ends up nowhere.  An editor
+    holding the file counts only for a deletion: an overwrite on disk makes VS Code reload the new content."""
     for p in paths:
         if p not in st.files:
             continue
         if st.sizes.get(p) == 0:
             continue                                      # an empty file: nothing to lose
-        if st.kept_elsewhere(st.files[p], gone) or st.held_open(p):
+        if st.kept_elsewhere(st.files[p], gone) or (deleted and st.held_open(p)):
             continue
         return True, f"{p} ({st.sizes.get(p)} B) survives nowhere"
     return False, ""
@@ -98,7 +111,8 @@ def simulate(cmd: str, st: State) -> Tuple[Optional[str], str]:
     m = _SUDO.match(cmd)
     if m:
         sudo, cmd = True, cmd[m.end():]
-    parts = [p.strip() for p in re.split(r"\s*(?:&&|;)\s*", cmd) if p.strip()]
+    cmd = re.sub(r"\s[12]?>\s*/dev/null|\s2>&1", "", cmd)                 # discarded output changes nothing
+    parts = [p.strip().strip("()").strip() for p in re.split(r"\s*(?:&&|\|\||;)\s*", cmd) if p.strip()]
     cwd, verdicts = HOME, []
     for part in parts:
         v, why, cwd = _one(part, st, cwd, sudo)
@@ -113,9 +127,16 @@ def simulate(cmd: str, st: State) -> Tuple[Optional[str], str]:
 
 
 def _one(part, st: State, cwd, sudo):
-    redirect = re.match(r"^(.*?)\s(>>?)\s*(\S+)\s*$", part)
-    if redirect and not part.startswith(("find ", "rsync ")):
-        lhs, op, target = redirect.group(1).strip(), redirect.group(2), _abs(cwd, redirect.group(3))
+    try:
+        toks = shlex.split(part)
+    except ValueError:
+        return None, f"cannot parse {part!r}", cwd
+    ops = [i for i, t in enumerate(toks) if t in (">", ">>")]
+    if ops and ops[-1] == len(toks) - 2 and not part.startswith(("find ", "rsync ")):
+        i = ops[-1]
+        lhs, op, target = " ".join(toks[:i]).strip(), toks[i], _abs(cwd, toks[i + 1])
+        if st.open_elsewhere([target]):
+            return None, f"{target} is open in an application", cwd
         if lhs in (":", "true", ""):
             if op == ">>" or target not in st.files:
                 return ("reversible" if target not in st.files else "noop"), f"{part}: creates or keeps {target}", cwd
@@ -140,7 +161,14 @@ def _one(part, st: State, cwd, sudo):
     pos = [a for a in args if not a.startswith("-")]
     if cmd == "cd":
         return "noop", "cd", _abs(cwd, pos[0]) if pos else HOME
-    if cmd in ("ls", "cat", "pwd", "echo", "printf", "head", "tail", "wc", "grep", "stat", "du", "df", "date", "true"):
+    if "|" in part:
+        # 9 Nov (agent steps): a pipeline of read-only programs changes nothing
+        stages = [s.strip().split()[0] for s in part.split("|") if s.strip()]
+        if all(s in READ_ONLY for s in stages) and " -i" not in part and "-delete" not in part and "-exec" not in part:
+            return "noop", "a read-only pipeline", cwd
+        return None, "pipeline with a program that may write", cwd
+    if cmd in READ_ONLY and not (cmd in ("sed", "awk") and any(a.startswith("-i") for a in args)) \
+            and not (cmd == "find" and ("-delete" in args or "-exec" in args)) and not (cmd == "git" and args[:1] not in (["status"], ["log"], ["diff"], ["show"])):
         return "noop", f"{cmd} reads only", cwd
     if any(p.startswith(("/etc", "/usr", "/var", "/boot")) for p in pos) and cmd not in ("cp",):
         return None, f"{cmd} on a system path is not modelled", cwd
@@ -153,6 +181,8 @@ def _one(part, st: State, cwd, sudo):
         srcs, dst = [_abs(cwd, p) for p in pos[:-1]], _abs(cwd, pos[-1])
         if dst.startswith("/etc/"):
             return _sys_cp(st, srcs, dst, sudo), f"{cmd} into {dst}", cwd
+        if st.open_elsewhere(srcs + [dst]):
+            return None, f"{cmd} touches a file an application has open", cwd
         if not all(st.exists(s) for s in srcs):
             return "noop", f"{cmd}: a source is missing, the command fails", cwd
         overwritten = []
@@ -167,7 +197,16 @@ def _one(part, st: State, cwd, sudo):
         lost, why = _loses(st, overwritten, set(overwritten))
         return ("oneway" if lost else "reversible"), why or "the overwritten content survives", cwd
     if cmd == "rm":
-        targets = [_abs(cwd, p) for p in pos]
+        targets = []
+        for p in pos:
+            a = _abs(cwd, p)
+            if any(ch in p for ch in "*?["):
+                targets += [q for q in list(st.files) + list(st.dirs) if posixpath.dirname(q) == posixpath.dirname(a)
+                            and fnmatch.fnmatch(posixpath.basename(q), posixpath.basename(a))]
+            else:
+                targets.append(a)
+        if any(posixpath.basename(t) in st.app_files for t in targets):
+            return None, "rm of a file an application has open", cwd
         recursive = any(f in flags for f in ("-r", "-rf", "-fr", "-R", "-d"))
         gone, dirs_gone = [], []
         for t in targets:
@@ -181,7 +220,7 @@ def _one(part, st: State, cwd, sudo):
                 dirs_gone.append(t)
         if not gone and not dirs_gone:
             return "noop", "rm: nothing to remove", cwd
-        lost, why = _loses(st, gone, set(gone))
+        lost, why = _loses(st, gone, set(gone), deleted=True)
         if lost:
             return "oneway", why, cwd
         return "reversible", ("only empty folders or content kept elsewhere/open in an editor (mkdir, re-save or copy back)"), cwd
@@ -189,6 +228,8 @@ def _one(part, st: State, cwd, sudo):
         t = _abs(cwd, pos[1]) if len(pos) > 1 else None
         if t is None:
             return None, "truncate form not modelled", cwd
+        if st.open_elsewhere([t]):
+            return None, f"{t} is open in an application", cwd
         if t not in st.files:
             return "reversible", f"truncate creates an empty {t}", cwd
         if st.sizes.get(t) == 0:
@@ -269,12 +310,13 @@ def terminal_focused(windows: str) -> Optional[bool]:
     return bool(re.search(r"\S+@\S+:|Terminal|terminal", active[0]))
 
 
-def predict(code: str, digest: dict, windows: str = "", system: dict = None) -> Tuple[Optional[str], str]:
+def predict(code: str, digest: dict, windows: str = "", system: dict = None, tree_xml: str = None) -> Tuple[Optional[str], str]:
     cmd = typed_command(code)
-    if cmd is None:
-        return None, "not a typed shell command"
-    if terminal_focused(windows) is False:
-        return None, "typed into a non-terminal window"
+    if cmd is None or terminal_focused(windows) is False:
+        if tree_xml is None:
+            return None, "not a typed shell command"
+        from rig.symbolic_gui import predict_gui                # 9 Nov: GUI steps (rig/symbolic_gui.py)
+        return predict_gui(code, State(digest, windows, system), tree_xml, windows)
     return simulate(cmd, State(digest, windows, system))
 
 
@@ -299,7 +341,7 @@ def _rows_and_results(spots, patterns):
 def _row_prediction(r):
     from rig.snapshot import load_snapshot
     s = load_snapshot(os.path.join(r["_dir"], r["snapshot_before"]))
-    return predict((r.get("action") or {}).get("code", ""), s.digest, s.windows, s.system)
+    return predict((r.get("action") or {}).get("code", ""), s.digest, s.windows, s.system, s.tree_xml)
 
 
 def evaluate():
