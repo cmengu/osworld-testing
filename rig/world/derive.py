@@ -55,6 +55,27 @@ def apply(st: WState, d):
     return files, dirs
 
 
+def backup_restore(out, dst):
+    """Shell for the backup to take BEFORE a one-way step, and the restore script that undoes the step (P4/P5).
+    Files and any folders the step removes go into one tar (permission bits kept); a crontab is saved with crontab -l.
+    Returns (backup shell line, restore command)."""
+    import shlex
+    files = [p for p in out.get("lost", []) if p.startswith("/")]
+    dirs = out.get("removed_dirs", [])
+    lines = [f"mkdir -p {dst}"]
+    restore = []
+    if files or dirs:
+        rel = [p.lstrip("/") for p in dirs]
+        relf = [p.lstrip("/") for p in files]
+        lines.append(f"tar -cpf {dst}/b.tar -C / --no-recursion {' '.join(shlex.quote(x) for x in rel + relf)}")
+        restore.append(f"tar -xpf {dst}/b.tar -C /")
+    if any("crontab" in p for p in out.get("lost", [])):
+        lines.append(f"crontab -l > {dst}/crontab")
+        restore.append(f"crontab {dst}/crontab")
+    lines.append(f"printf '%s\\n' {shlex.quote(' && '.join(restore) or 'true')} > {dst}/restore.sh")
+    return " ; ".join(lines), f"sh {dst}/restore.sh"
+
+
 def derive(code, snap):
     st = WState(snap)
     d = T(code, st)
@@ -113,7 +134,8 @@ def derive(code, snap):
     if d.lost:
         backup.append("save the document under a backup name first")
     if lost:
-        return {"verdict": "oneway", "lost": lost, "backup": backup, "plan": plan, "rules": d.rules}
+        removed_dirs = sorted(x for x in st.dirs - after_dirs if x.startswith("/home/user/"))
+        return {"verdict": "oneway", "lost": lost, "backup": backup, "plan": plan, "rules": d.rules, "removed_dirs": removed_dirs}
     if not d.files and not d.system and d.windows == "same":
         return {"verdict": "noop", "plan": [], "rules": d.rules}
     return {"verdict": "reversible", "plan": plan or ["Escape / Ctrl+Z / close or reopen the window"], "ops": len(set(plan)),

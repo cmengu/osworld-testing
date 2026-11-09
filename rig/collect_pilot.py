@@ -747,6 +747,24 @@ class Collector:
         rec["state_before_compact"] = before_text
         rec["state_before_tokens_est"] = len(before_text) // 4
 
+        # ---- P5 (9 Nov, rig/plan_forward_model.md): the world-model guard with backup, judged by the rig itself.  The
+        # forward model reads S; a one-way verdict prepends its backup to the action (so every replay of the action
+        # replays the backup too) and puts its restore script first among the undo candidates (tier F): the rig's own
+        # strict state comparison then says whether the revert plan really restores S.
+        if getattr(self.args, "world_backup", False):
+            from rig.world.derive import backup_restore, derive
+            try:
+                out = derive(row["code"], S)
+            except Exception as exc:  # noqa: BLE001
+                out = {"verdict": None, "why": f"world model crashed: {exc!r}"[:200]}
+            rec["world"] = {k: v for k, v in out.items() if k != "delta"}
+            if out.get("verdict") == "oneway":
+                backup, restore = backup_restore(out, f"/var/tmp/osguard/{rid}")
+                rec["world"].update(backup=backup, restore=restore)
+                row = dict(row, code=f"__import__('subprocess').run(['sh', '-c', {json.dumps(backup)}], timeout=120); time.sleep(1); "
+                                     + row["code"],
+                           forced_candidates=[[f"shell:{restore}"]] + list(row.get("forced_candidates") or []))
+
         # ---- agent rows: is S the screen the agent saw before this step?  (rig/agentrun/fidelity.py, 28 Oct)
         if row.get("band") == "agent" and row.get("recorded_before") and (BASE / row["recorded_before"] / "tree.xml").exists():
             # the agent's own state before this step was recorded during its run (OSWorld/lib_run_single.py,
@@ -1592,6 +1610,7 @@ def main():
     ap.add_argument("--provider", default="modal")
     ap.add_argument("--mnemonics", default="", help='JSON overrides for menu mnemonics, e.g. {"MN_DELETE_SHEET":"d"}')
     ap.add_argument("--no-teacher", action="store_true")
+    ap.add_argument("--world-backup", action="store_true", help="P5: world-model backup before one-way steps, its restore as tier F")
     ap.add_argument("--no-proposer", action="store_true")
     ap.add_argument("--no-replay", action="store_true")
     ap.add_argument("--no-confirm-matches", action="store_true", help="accept a match without re-running it from a verified S'")
