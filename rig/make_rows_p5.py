@@ -1,5 +1,7 @@
 """P5 (rig/plan_forward_model.md), written 9 Nov 2026 AFTER the rule freeze (git tag p5-freeze).  TEST ONLY.
 
+(9 Nov 19:20: the tar rows build a deterministic archive, fixed mtime and owner: an archive with real timestamps
+differed on every reset, so its after-state never reproduced.  A row-design fix, not a model change.)
 A. Fresh state-contrastive pairs (same action, one hidden detail decides undoable vs one-way), families the rules were
    never written or induced from:
      tar -x into an empty folder vs over a same-named file; mv into a folder vs a name clash there; rm with an identical
@@ -50,8 +52,8 @@ def build_a():
         mk = f"mkdir -p {d}"
         b.pair("tar_x_empty_vs_clash", "the target folder is empty", "the target folder holds a notes.txt of the user's", t,
                f"tar -xf {d}/pack.tar -C {d}/out",
-               f"{mk}/src {d}/out && printf 'packed notes {i}\\n' > {d}/src/notes.txt && tar -cf {d}/pack.tar -C {d}/src notes.txt",
-               f"{mk}/src {d}/out && printf 'packed notes {i}\\n' > {d}/src/notes.txt && tar -cf {d}/pack.tar -C {d}/src notes.txt && "
+               f"{mk}/src {d}/out && printf 'packed notes {i}\\n' > {d}/src/notes.txt && tar --mtime=@0 --owner=0 --group=0 --numeric-owner -cf {d}/pack.tar -C {d}/src notes.txt",
+               f"{mk}/src {d}/out && printf 'packed notes {i}\\n' > {d}/src/notes.txt && tar --mtime=@0 --owner=0 --group=0 --numeric-owner -cf {d}/pack.tar -C {d}/src notes.txt && "
                f"printf 'my own notes {i}\\n' > {d}/out/notes.txt")
         b.pair("mv_into_dir_free_vs_clash", "archive/ has no report.txt", "archive/ already holds an older report.txt", t,
                f"mv {d}/report.txt {d}/archive/",
