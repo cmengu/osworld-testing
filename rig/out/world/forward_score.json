@@ -1,29 +1,37 @@
 {
  "DEV": {
   "transitions": 727,
-  "decided": 502,
-  "coverage": 0.691,
-  "file_exact": 0.984,
-  "content_exact": 0.984,
-  "baseline_nothing_changes_on_decided": 0.482,
+  "decided": 602,
+  "coverage": 0.828,
+  "file_exact": 0.987,
+  "content_exact": 0.987,
+  "baseline_nothing_changes_on_decided": 0.533,
   "baseline_nothing_changes_all": 0.505,
-  "system_exact": "60/60",
-  "windows_ok": 0.841,
+  "system_exact": "74/74",
+  "windows_ok": 0.852,
   "crashes": 0
  },
  "TEST": {
   "transitions": 167,
   "decided": 84,
   "coverage": 0.503,
-  "file_exact": 0.964,
-  "content_exact": 0.964,
-  "baseline_nothing_changes_on_decided": 0.452,
+  "file_exact": 0.976,
+  "content_exact": 0.976,
+  "baseline_nothing_changes_on_decided": 0.357,
   "baseline_nothing_changes_all": 0.593,
-  "system_exact": "39/39",
-  "windows_ok": 0.976,
+  "system_exact": "51/51",
+  "windows_ok": 0.917,
   "crashes": 0
  },
  "dev_families_worst": [
+  [
+   "in a terminal: the file-changing command the task itself asks for",
+   {
+    "n": 14,
+    "decided": 12,
+    "exact": 10
+   }
+  ],
   [
    "Delete: move the selected file a.txt to the Trash",
    {
@@ -41,19 +49,11 @@
    }
   ],
   [
-   "in the terminal, run touch pilot.txt",
+   "Ctrl+Shift+S, the name of a sibling file, Enter: the replace question",
    {
-    "n": 2,
-    "decided": 2,
-    "exact": 0
-   }
-  ],
-  [
-   "Delete on the selected file: to the Trash (Undo)",
-   {
-    "n": 6,
-    "decided": 1,
-    "exact": 0
+    "n": 10,
+    "decided": 10,
+    "exact": 9
    }
   ],
   [
@@ -67,30 +67,6 @@
  ],
  "dev_undecided": [
   [
-   "Ctrl+Shift+S, the name of another document, Enter: 'already exists, replace?' asks",
-   {
-    "n": 24,
-    "decided": 0,
-    "exact": 0
-   }
-  ],
-  [
-   "Ctrl+Shift+S, the name of a sibling file, Enter: the replace question",
-   {
-    "n": 10,
-    "decided": 0,
-    "exact": 0
-   }
-  ],
-  [
-   "in a terminal: the file-changing command the task itself asks for",
-   {
-    "n": 14,
-    "decided": 6,
-    "exact": 6
-   }
-  ],
-  [
    "after typing into the title, Ctrl+S, Keep Current Format: the file on disk changes",
    {
     "n": 8,
@@ -99,39 +75,7 @@
    }
   ],
   [
-   "git_checkout_clean_vs_dirty",
-   {
-    "n": 8,
-    "decided": 0,
-    "exact": 0
-   }
-  ],
-  [
-   "Yes in the replace question (Keep Current Format): the other document is overwritten",
-   {
-    "n": 7,
-    "decided": 0,
-    "exact": 0
-   }
-  ],
-  [
-   "Tab to the first object, Enter, type 'pilot', Escape",
-   {
-    "n": 7,
-    "decided": 0,
-    "exact": 0
-   }
-  ],
-  [
-   "type 'hello' into the target cell",
-   {
-    "n": 7,
-    "decided": 0,
-    "exact": 0
-   }
-  ],
-  [
-   "Impress: type into the first text box, then Ctrl+S: the file on disk changes",
+   "Delete on the selected file: to the Trash (Undo)",
    {
     "n": 6,
     "decided": 0,
@@ -139,7 +83,7 @@
    }
   ],
   [
-   "Ctrl+N, type 'pilot' into To: a modified compose window",
+   "Impress: type into the first text box, then Ctrl+S: the file on disk changes",
    {
     "n": 6,
     "decided": 0,
@@ -155,26 +99,10 @@
    }
   ],
   [
-   "gdm_conf_overwrite_same_vs_autologin",
-   {
-    "n": 6,
-    "decided": 0,
-    "exact": 0
-   }
-  ],
-  [
    "F2, a new name, Enter",
    {
     "n": 5,
     "decided": 0,
-    "exact": 0
-   }
-  ],
-  [
-   "Delete on the selected file: to the Trash (Undo)",
-   {
-    "n": 6,
-    "decided": 1,
     "exact": 0
    }
   ],
@@ -187,23 +115,7 @@
    }
   ],
   [
-   "type 'pilot' into the active cell of the open workbook",
-   {
-    "n": 5,
-    "decided": 0,
-    "exact": 0
-   }
-  ],
-  [
    "Don't Save in the close question: the unsaved edit is discarded",
-   {
-    "n": 4,
-    "decided": 0,
-    "exact": 0
-   }
-  ],
-  [
-   "after typing, File: Revert File from the palette: the unsaved edit is discarded",
    {
     "n": 4,
     "decided": 0,
@@ -262,6 +174,94 @@
    "Replace in the conflict question: the existing file is overwritten",
    {
     "n": 3,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Shift+Delete on the first Bills message: the 'delete permanently?' question (tab-modal, no new window)",
+   {
+    "n": 3,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Delete on the first message of Bills: it moves to the Trash folder",
+   {
+    "n": 3,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "F2 in Files: rename the selected file",
+   {
+    "n": 3,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "after typing, Ctrl+S in Impress: the file on disk changes",
+   {
+    "n": 3,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Delete in the question: the file is gone for good",
+   {
+    "n": 3,
+    "decided": 1,
+    "exact": 1
+   }
+  ],
+  [
+   "in a terminal: the file-changing command the task itself asks for",
+   {
+    "n": 14,
+    "decided": 12,
+    "exact": 10
+   }
+  ],
+  [
+   "VS Code: type at the end of a file, then Ctrl+S: the file on disk changes",
+   {
+    "n": 4,
+    "decided": 2,
+    "exact": 2
+   }
+  ],
+  [
+   "after typing into the title, Ctrl+S: the file on disk changes",
+   {
+    "n": 2,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Shift+Delete on the first Bills message: the 'delete permanently?' question",
+   {
+    "n": 2,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "Discard changes: the compose window and its text are gone",
+   {
+    "n": 2,
+    "decided": 0,
+    "exact": 0
+   }
+  ],
+  [
+   "F2, rename a.txt to c.txt",
+   {
+    "n": 2,
     "decided": 0,
     "exact": 0
    }

@@ -81,12 +81,12 @@ def _open_in_app(st: WState, paths) -> bool:
     return any(posixpath.basename(p) in names for p in paths)
 
 
-def shell(cmd: str, st: WState) -> Optional[Delta]:
+def shell(cmd: str, st: WState, cwd0: str = HOME) -> Optional[Delta]:
     m = _SUDO.match(cmd)
     if m:
         cmd = cmd[m.end():]
     cmd = re.sub(r"\s[12]?>\s*/dev/null|\s2>&1", "", cmd)
-    d, cwd = Delta(), HOME
+    d, cwd = Delta(), cwd0
     for part in [p.strip().strip("()").strip() for p in re.split(r"\s*(?:&&|\|\||;)\s*", cmd) if p.strip()]:
         one, cwd = _shell_one(part, st, cwd)
         if one is None:
@@ -342,6 +342,8 @@ def gui(code: str, st: WState) -> Optional[Delta]:
             d.windows = "unknown"; d.rules.append("Replace: the other file is overwritten"); q = None
             continue
         # GNOME Files: Delete -> Trash, Shift+Delete -> question, F2 name Enter -> rename
+        if k == "delete" and front and _files_folder(st):
+            return None                                     # Files and a document are both open: which gets the key is unknown
         if folder and k == "delete" and selected:
             for p in selected:
                 name = posixpath.basename(p)
@@ -449,7 +451,40 @@ def _selected(st: WState, folder: str):
 
 
 def T(code: str, st: WState) -> Optional[Delta]:
+    d = _base(code, st)
+    if d is None:
+        from rig.world.rules_induced import try_rules       # rules induced from DEV data (P3)
+        d = try_rules(code, st)
+    return d
+
+
+def _base(code: str, st: WState) -> Optional[Delta]:
     cmd = typed_command(code)
-    if cmd is not None and terminal_focused(st.windows) is not False:
-        return shell(cmd, st)
+    ev = events(code) or []
+    first = next((e for e in ev if e[0] not in ("view", "maybe-enter")), None)
+    # typed text + Enter is a shell command only when typing is the first thing the step does and a terminal is open
+    # (9 Nov: Ctrl+Shift+S, a name, Enter was read as the shell command "pilot_other")
+    if cmd is not None and terminal_focused(st.windows) is not False and (first is None or first[0] == "type") and _looks_like_command(cmd):
+        return shell(cmd, st, _terminal_cwd(st))        # an unknown command stays unknown (no GUI fallback)
     return gui(code, st)
+
+
+SHELL_WORDS = {"mv", "cp", "rm", "mkdir", "rmdir", "touch", "git", "sed", "chmod", "chown", "ln", "find", "rsync", "gio", "crontab",
+               "echo", "printf", "python3", "python", "sudo", "truncate", "libreoffice", "soffice", "code", "tee", "dd", "apt",
+               "apt-get", "pip", "npm", "tar", "zip", "unzip", "gzip", "kill", "pkill", "useradd", "userdel", "usermod",
+               "passwd", "systemctl", "mount", "umount", "bash", "sh", "nano", "vim", "xdg-open", "nautilus", "wget", "curl", ":"}
+
+
+def _looks_like_command(cmd: str) -> bool:
+    w = cmd.split()[0] if cmd.split() else ""
+    return w in SHELL_WORDS or w in READ_ONLY or w.startswith(("./", "/", "~")) or "|" in cmd or ">" in cmd or " -" in cmd
+
+
+def _terminal_cwd(st: WState) -> str:
+    """The folder a GNOME Terminal shows in its title ("user@host: ~/Desktop"); the home folder otherwise."""
+    for t in st.titles:
+        m = re.match(r"^\S+@\S+:\s*(\S+)$", t)
+        if m:
+            p = m.group(1)
+            return HOME + p[1:] if p.startswith("~") else p
+    return HOME

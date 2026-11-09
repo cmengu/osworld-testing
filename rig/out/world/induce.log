@@ -1,0 +1,15 @@
+start: {"DEV": {"n": 727, "coverage": 0.691, "exact": 0.984}, "TEST": {"n": 167, "coverage": 0.503, "exact": 0.964}}
+{"round": 0, "family": "Ctrl+Shift+S, the name of another document, Enter: 'already exists, replace?' asks", "group_size": 24, "fixes": 0, "breaks": 0, "accepted": false, "date": "2026-11-09 15:20"}
+{"round": 1, "family": "Ctrl+Shift+S, the name of a sibling file, Enter: the replace question", "group_size": 10, "fixes": 0, "breaks": 0, "accepted": false, "date": "2026-11-09 15:20"}
+{"round": 2, "family": "in a terminal: the file-changing command the task itself asks for", "group_size": 8, "fixes": 4, "breaks": 0, "accepted": true, "date": "2026-11-09 15:21", "rule": "r_001", "after": {"DEV": {"n": 727, "coverage": 0.696, "exact": 0.984}, "TEST": {"n": 167, "coverage": 0.503, "exact": 0.964}}}
+{"round": 3, "family": "after typing into the title, Ctrl+S, Keep Current Format: the file on disk changes", "group_size": 8, "fixes": 19, "breaks": 2, "accepted": false, "date": "2026-11-09 15:21"}
+{"round": 4, "family": "git_checkout_clean_vs_dirty", "group_size": 8, "fixes": 8, "breaks": 0, "accepted": true, "date": "2026-11-09 15:22", "rule": "r_002", "after": {"DEV": {"n": 727, "coverage": 0.707, "exact": 0.984}, "TEST": {"n": 167, "coverage": 0.563, "exact": 0.968}}}
+{"round": 5, "family": "Yes in the replace question (Keep Current Format): the other document is overwritten", "group_size": 7, "fixes": 8, "breaks": 0, "accepted": true, "date": "2026-11-09 15:22", "rule": "r_003", "after": {"DEV": {"n": 727, "coverage": 0.718, "exact": 0.985}, "TEST": {"n": 167, "coverage": 0.563, "exact": 0.968}}}
+{"round": 6, "family": "Tab to the first object, Enter, type 'pilot', Escape", "group_size": 7, "fixes": 0, "breaks": 0, "accepted": false, "date": "2026-11-09 15:22"}
+{"round": 7, "family": "type 'hello' into the target cell", "group_size": 7, "fixes": 0, "breaks": 0, "accepted": false, "date": "2026-11-09 15:23"}
+{"round": 8, "family": "Impress: type into the first text box, then Ctrl+S: the file on disk changes", "group_size": 6, "fixes": 19, "breaks": 2, "accepted": false, "date": "2026-11-09 15:23"}
+{"round": 9, "family": "Ctrl+N, type 'pilot' into To: a modified compose window", "group_size": 6, "fixes": 8, "breaks": 0, "accepted": true, "date": "2026-11-09 15:23", "rule": "r_004", "after": {"DEV": {"n": 727, "coverage": 0.729, "exact": 0.985}, "TEST": {"n": 167, "coverage": 0.563, "exact": 0.968}}}
+{"round": 10, "family": "hosts_overwrite_same_vs_extra", "group_size": 6, "fixes": 7, "breaks": 5, "accepted": false, "date": "2026-11-09 15:24"}
+{"round": 11, "family": "gdm_conf_overwrite_same_vs_autologin", "group_size": 6, "fixes": 6, "breaks": 0, "accepted": true, "date": "2026-11-09 15:24", "rule": "r_005", "after": {"DEV": {"n": 727, "coverage": 0.737, "exact": 0.985}, "TEST": {"n": 167, "coverage": 0.599, "exact": 0.97}}}
+end: {"DEV": {"n": 727, "coverage": 0.737, "exact": 0.985}, "TEST": {"n": 167, "coverage": 0.599, "exact": 0.97}}
+[induce exited]
