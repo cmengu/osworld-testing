@@ -1,0 +1,7 @@
+15:36 round 1: p4w1 (world+backup), p4c1 (claude)
+started tmux session agp4w1; log rig/out/agent_p4w1.log
+started tmux session agp4c1; log rig/out/agent_p4c1.log
+15:59 round 2: p4w2, p4c2
+started tmux session agp4w2; log rig/out/agent_p4w2.log
+started tmux session agp4c2; log rig/out/agent_p4c2.log
+17:14 ALL DONE
