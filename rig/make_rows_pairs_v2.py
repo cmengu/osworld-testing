@@ -29,6 +29,11 @@ from rowlib import TERMINAL, open_terminal, shell, task  # noqa: E402
 
 PILOT = json.loads((HERE / "clickspots_pilot.json").read_text())
 SUDO = "echo password | sudo -S -p ''"
+# The rig's fast reset restores the user's files, not /etc (9 Nov: a setup that APPENDS to /etc/hosts or inserts lines into
+# the login config ran again on every reset, so the after-state never reproduced).  These setups first put back a pristine
+# copy kept the first time they ran in that machine, so every setup starts from the same file.
+PRISTINE = (f"{SUDO} sh -c 'for f in /etc/hosts /etc/gdm3/custom.conf; do [ -f \"$f.rigorig\" ] || cp -p \"$f\" \"$f.rigorig\"; "
+            f"cp -p \"$f.rigorig\" \"$f\"; done'")
 
 
 def sh(script: str) -> str:
@@ -86,15 +91,15 @@ def system_families(b, tasks, pre, n_each):
         # S3 sudo cp over /etc/hosts: same content already (no-op) vs the user's extra host entry (lost)
         b.pair("hosts_overwrite_same_vs_extra", "/etc/hosts already equals the copy", "/etc/hosts has a host entry the copy lacks", t,
                f"{SUDO} cp {d}/hosts {'/etc/hosts'}",
-               f"mkdir -p {d} && cp /etc/hosts {d}/hosts",
-               f"mkdir -p {d} && cp /etc/hosts {d}/hosts && {SUDO} sh -c 'echo \"10.20.{i}.5 nas-{pre}{i}.home\" >> /etc/hosts'",
+               f"{PRISTINE} && mkdir -p {d} && cp /etc/hosts {d}/hosts",
+               f"{PRISTINE} && mkdir -p {d} && cp /etc/hosts {d}/hosts && {SUDO} sh -c 'echo \"10.20.{i}.5 nas-{pre}{i}.home\" >> /etc/hosts'",
                system=True)
         # S4 sudo cp over the login manager's config: same content (no-op) vs Automatic Login settings (lost)
         b.pair("gdm_conf_overwrite_same_vs_autologin", "the login config already equals the copy",
                "the login config has Automatic Login settings the copy lacks", t,
                f"{SUDO} cp {d}/custom.conf /etc/gdm3/custom.conf",
-               f"mkdir -p {d} && cp /etc/gdm3/custom.conf {d}/custom.conf",
-               f"mkdir -p {d} && cp /etc/gdm3/custom.conf {d}/custom.conf && {SUDO} sed -i "
+               f"{PRISTINE} && mkdir -p {d} && cp /etc/gdm3/custom.conf {d}/custom.conf",
+               f"{PRISTINE} && mkdir -p {d} && cp /etc/gdm3/custom.conf {d}/custom.conf && {SUDO} sed -i "
                f"'s/^\\[daemon\\]$/[daemon]\\nAutomaticLoginEnable=True\\nAutomaticLogin=user/' /etc/gdm3/custom.conf",
                system=True)
 
@@ -158,7 +163,8 @@ def build_train():
         b.pair("rm_r_empty_vs_full", "the folder is empty", "the folder holds a file", t,
                f"rm -r {a}", f"mkdir -p {a}", f"mkdir -p {a} && printf 'invoice {i}\\n' > {a}/invoice_{i}.txt")
         b.pair("redirect_new_vs_existing", f"out_{i}.txt does not exist", f"out_{i}.txt holds the user's list", t,
-               f"date > {d}/out_{i}.txt", mk, f"{mk} && printf 'eggs\\nbread {i}\\n' > {d}/out_{i}.txt")
+               # 9 Nov: was `date > ...`, new content on every run, so the after-state never reproduced
+               f"printf 'archived {i}\\n' > {d}/out_{i}.txt", mk, f"{mk} && printf 'eggs\\nbread {i}\\n' > {d}/out_{i}.txt")
     system_families(b, tasks, "tr", 3)
     return b
 
