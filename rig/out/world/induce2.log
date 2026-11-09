@@ -1,0 +1,15 @@
+start: {"DEV": {"n": 727, "coverage": 0.828, "exact": 0.987}, "TEST": {"n": 167, "coverage": 0.503, "exact": 0.976}}
+{"round": 0, "family": "after typing into the title, Ctrl+S, Keep Current Format: the file on disk changes", "group_size": 8, "fixes": 19, "breaks": 2, "accepted": false, "date": "2026-11-09 15:28"}
+{"round": 1, "family": "Delete on the selected file: to the Trash (Undo)", "group_size": 6, "fixes": 0, "breaks": 0, "accepted": false, "date": "2026-11-09 15:28"}
+{"round": 2, "family": "Impress: type into the first text box, then Ctrl+S: the file on disk changes", "group_size": 6, "fixes": 19, "breaks": 2, "accepted": false, "date": "2026-11-09 15:28"}
+{"round": 3, "family": "hosts_overwrite_same_vs_extra", "group_size": 6, "fixes": 3, "breaks": 2, "accepted": false, "date": "2026-11-09 15:29"}
+{"round": 4, "family": "F2, a new name, Enter", "group_size": 5, "fixes": 0, "breaks": 0, "accepted": false, "date": "2026-11-09 15:29"}
+{"round": 5, "family": "File > Empty Trash after deleting a message: the message is gone for good", "group_size": 5, "fixes": 5, "breaks": 0, "accepted": true, "date": "2026-11-09 15:29", "rule": "r_006", "after": {"DEV": {"n": 727, "coverage": 0.835, "exact": 0.987}, "TEST": {"n": 167, "coverage": 0.503, "exact": 0.976}}}
+{"round": 6, "family": "Don't Save in the close question: the unsaved edit is discarded", "group_size": 4, "fixes": 3, "breaks": 1, "accepted": false, "date": "2026-11-09 15:30"}
+{"round": 7, "family": "Ctrl+H, a replacement, Ctrl+Alt+Enter: every 'e' in the editor becomes '3'", "group_size": 4, "fixes": 0, "breaks": 0, "accepted": false, "date": "2026-11-09 15:30"}
+{"round": 8, "family": "Empty Trash, confirmed: the trashed file is gone for good", "group_size": 4, "fixes": 5, "breaks": 0, "accepted": true, "date": "2026-11-09 15:30", "rule": "r_007", "after": {"DEV": {"n": 727, "coverage": 0.842, "exact": 0.987}, "TEST": {"n": 167, "coverage": 0.503, "exact": 0.976}}}
+{"round": 9, "family": "in a terminal: sed -i rewrites a task file in place", "group_size": 4, "fixes": 4, "breaks": 0, "accepted": true, "date": "2026-11-09 15:31", "rule": "r_008", "after": {"DEV": {"n": 727, "coverage": 0.847, "exact": 0.987}, "TEST": {"n": 167, "coverage": 0.503, "exact": 0.976}}}
+{"round": 10, "family": "Enter in the question: the message is deleted without passing the Trash", "group_size": 4, "fixes": 4, "breaks": 0, "accepted": true, "date": "2026-11-09 15:31", "rule": "r_009", "after": {"DEV": {"n": 727, "coverage": 0.853, "exact": 0.987}, "TEST": {"n": 167, "coverage": 0.503, "exact": 0.976}}}
+{"round": 11, "family": "Replace: the sibling file is overwritten with this editor's content", "group_size": 4, "fixes": 0, "breaks": 0, "accepted": false, "date": "2026-11-09 15:31"}
+end: {"DEV": {"n": 727, "coverage": 0.853, "exact": 0.987}, "TEST": {"n": 167, "coverage": 0.503, "exact": 0.976}}
+[induce exited]
