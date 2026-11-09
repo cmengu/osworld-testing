@@ -7,6 +7,11 @@ when RIG_GUARD is set (needs RIG_RECORD_STATES=1: the state before the action is
                      The model's own GUARD answer is logged beside it (p_refuse), not used.
   RIG_GUARD=claude   Claude (subscription) with the same guard question, JSON answer (definition prompt, as the 3 Nov
                      injection items): block when decision == refuse
+  RIG_GUARD=world    (9 Nov, P4 of rig/plan_forward_model.md) the symbolic forward world model first
+                     (rig/world/derive.py: T(s, a) -> s', conservation of content): undoable or no-op -> runs, revert plan
+                     logged; ONE-WAY -> Claude says only whether the task asks for it; off-task -> blocked, or with
+                     RIG_GUARD_BACKUP=1 the content that would be lost is copied to /var/tmp/osguard/<step>/ first and the
+                     step runs (the revert plan restores it).  The model says nothing -> the Claude guard decides (hybrid).
   unset              no guard (the baseline arm); nothing here runs
 
 A block is not final: a simulated user (Claude, sees only the task text and the action) is asked whether the task asks
@@ -17,6 +22,7 @@ TEST ONLY: the pilot's tasks are OS-Harm tasks; nothing logged here may enter tr
 import json
 import os
 import pathlib
+import posixpath
 import statistics
 import sys
 import time
@@ -51,6 +57,7 @@ class LiveGuard:
         apps = " ".join(example.get("related_apps", [])) + " " + str(example.get("snapshot", ""))
         self.files = "office" if "calc" in apps else "user"
         self._remote = None
+        self.env = None                                 # set by the runner for RIG_GUARD_BACKUP (rig/guard_live.from_env)
 
     def _ours(self, gp, rp):
         if self._remote is None:
@@ -80,8 +87,44 @@ class LiveGuard:
         a = r.get("structured_output") or {}
         return bool(a.get("approve")), a.get("reason") or r.get("error")
 
+    def _world(self, instruction, s, gp, step):
+        from rig.world.derive import derive
+        out = derive(self._action, s)
+        info = {"world": {k: (v if k != "delta" else None) for k, v in out.items() if k != "delta"}}
+        v = out["verdict"]
+        if v is None:                                   # not modelled: the Claude guard decides
+            block, c = self._claude(gp)
+            info.update(claude=c, decided_by="claude")
+            return block, info
+        info["decided_by"] = "world model"
+        if v != "oneway":
+            return False, info
+        _, c = self._claude(gp)
+        on = (c.get("answer") or {}).get("on_task")
+        info.update(claude=c, on_task=on)
+        if on is False and os.environ.get("RIG_GUARD_BACKUP") == "1" and self.env is not None:
+            info["backup"] = self._backup(out, step)
+            return False, info                          # backed up, so the step is undoable now: it runs
+        return (on is False), info
+
+    def _backup(self, out, step):
+        """Copy what the step would destroy to /var/tmp/osguard/<step>/ (outside the tracked home folder)."""
+        from rig.vm import vm_shell
+        import shlex
+        dst = f"/var/tmp/osguard/{step:02d}"
+        cmds = [f"mkdir -p {dst}"]
+        for p in out.get("lost", []):
+            if p.startswith("/"):
+                cmds.append(f"mkdir -p {shlex.quote(dst + posixpath.dirname(p))} && cp -p {shlex.quote(p)} {shlex.quote(dst + p)}")
+            elif "crontab" in p:
+                cmds.append(f"crontab -l > {dst}/crontab 2>/dev/null")
+        r = vm_shell(self.env, " ; ".join(cmds), timeout=60)
+        return {"dir": dst, "commands": cmds, "ok": not r.get("error"),
+                "restore": [f"cp -p {shlex.quote(dst + p)} {shlex.quote(p)}" for p in out.get("lost", []) if p.startswith("/")]}
+
     def check(self, instruction, state_dir, step, action):
         """-> None to run the action, or the note to give the agent when it is skipped."""
+        self._action = action
         if not isinstance(action, str) or action.strip() in SPECIAL:
             return None
         rec = {"step": step, "mode": self.mode, "action": action, "state": str(state_dir), "t": time.time()}
@@ -96,7 +139,8 @@ class LiveGuard:
         act = action_text(action)
         gp, rp = guard_prompt(instruction, before, act), reversible_prompt(before, act)
         try:
-            block, info = self._ours(gp, rp) if self.mode == "ours" else self._claude(gp)
+            block, info = (self._ours(gp, rp) if self.mode == "ours" else self._world(instruction, s, gp, step)
+                           if self.mode == "world" else self._claude(gp))
         except Exception as e:
             block, info = False, {"error": repr(e)[:300], "fail_open": True}
         rec.update(block=block, guard_seconds=round(time.time() - t0, 1), **info)
@@ -119,8 +163,8 @@ def from_env(result_dir, example):
     mode = os.environ.get("RIG_GUARD", "").strip()
     if not mode:
         return None
-    if mode not in ("ours", "claude"):
-        raise ValueError(f"RIG_GUARD={mode!r}: use ours or claude")
+    if mode not in ("ours", "claude", "world"):
+        raise ValueError(f"RIG_GUARD={mode!r}: use ours, claude or world")
     if os.environ.get("RIG_RECORD_STATES") != "1":
         raise ValueError("RIG_GUARD needs RIG_RECORD_STATES=1 (the guard reads the recorded state before each action)")
     return LiveGuard(mode, result_dir, example)

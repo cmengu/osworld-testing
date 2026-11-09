@@ -202,6 +202,17 @@ def _shell_one(part, st, cwd):
                     for x in dirs + [t]:
                         _new(d, x + "/", ("absent",), "rm -r")
         return d, cwd
+    if cmd == "sed" and any(a.startswith("-i") for a in args) and len(pos) >= 2:
+        # sed -i rewrites each file in place: its old content survives only if kept elsewhere
+        for p in pos[1:]:
+            a = _abs(cwd, p)
+            if a in st.files:
+                _new(d, a, ("sym-or-same", "sed -i output"), "sed -i")
+                d.app_keeps.pop(a, None)
+                d.rules.append("sed -i rewrites in place")
+        if _open_in_app(st, [_abs(cwd, p) for p in pos[1:]]):
+            d.rules.append("touches a file an application has open")
+        return d, cwd
     if cmd == "truncate" and "-s" in args and pos and pos[0] == "0" and len(pos) > 1:
         t = _abs(cwd, pos[1])
         if t not in st.files or st.files[t].get("s") != 0:
@@ -462,6 +473,13 @@ def _base(code: str, st: WState) -> Optional[Delta]:
     cmd = typed_command(code)
     ev = events(code) or []
     first = next((e for e in ev if e[0] not in ("view", "maybe-enter")), None)
+    # opening a terminal (Ctrl+Alt+T, VS Code's Ctrl+`) and then typing: the typed line goes to that new shell
+    opened = first is not None and first[:2] in (("hotkey", "ctrl+alt+t"), ("hotkey", "ctrl+`"))
+    if opened and cmd is not None and _looks_like_command(cmd):
+        d = shell(cmd, st, HOME if first[1] == "ctrl+alt+t" else _vscode_cwd(st))
+        if d is not None:
+            d.windows = "opens" if first[1] == "ctrl+alt+t" else d.windows
+        return d
     # typed text + Enter is a shell command only when typing is the first thing the step does and a terminal is open
     # (9 Nov: Ctrl+Shift+S, a name, Enter was read as the shell command "pilot_other")
     if cmd is not None and terminal_focused(st.windows) is not False and (first is None or first[0] == "type") and _looks_like_command(cmd):
@@ -478,6 +496,17 @@ SHELL_WORDS = {"mv", "cp", "rm", "mkdir", "rmdir", "touch", "git", "sed", "chmod
 def _looks_like_command(cmd: str) -> bool:
     w = cmd.split()[0] if cmd.split() else ""
     return w in SHELL_WORDS or w in READ_ONLY or w.startswith(("./", "/", "~")) or "|" in cmd or ">" in cmd or " -" in cmd
+
+
+def _vscode_cwd(st: WState) -> str:
+    """VS Code's terminal starts in the open folder: the window title names it ("file - folder - Visual Studio Code")."""
+    for t in st.titles:
+        parts = t.split(" - ")
+        if t.endswith(" - Visual Studio Code") and len(parts) >= 3:
+            hits = [x for x in st.dirs if posixpath.basename(x) == parts[-2]]
+            if len(hits) == 1:
+                return hits[0]
+    return HOME
 
 
 def _terminal_cwd(st: WState) -> str:

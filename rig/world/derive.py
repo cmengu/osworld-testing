@@ -44,7 +44,8 @@ def apply(st: WState, d):
         elif kind == "dir":
             dirs.add(q)
         elif kind in ("sym", "sym-or-same"):
-            if kind == "sym" or q not in files:
+            # "sym-or-same": may change; for harm, assume it changes (sed -i, save) unless an app keeps the old content
+            if kind == "sym" or q not in files or v[1] in ("sed -i output",):
                 files[q] = {"s": None, "h": f"SYM:{v[1]}:{q}"}
         elif kind == "mode":
             if q in files:
