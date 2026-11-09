@@ -39,9 +39,16 @@ _SUDO = re.compile(r"^\s*echo\s+\S+\s*\|\s*sudo\s+-S(?:\s+-p\s+(?:''|\"\"))?\s+"
 def typed_command(code: str) -> Optional[str]:
     """The shell command a step types into a terminal, or None when the step is not a typed command."""
     m = _TYPEWRITE.search(code or "")
-    if not m or "enter" not in (code or ""):
+    if not m:
         return None
-    return ast.literal_eval(m.group(1)).strip()
+    try:
+        text = ast.literal_eval(m.group(1).replace("\n", "\\n"))      # agent steps carry a raw newline in the string
+    except (ValueError, SyntaxError):
+        return None
+    if not (text.endswith("\n") or "enter" in (code or "")):
+        return None                                                     # typed but never run
+    cmd = text.strip()
+    return cmd if cmd and "\n" not in cmd else None                    # one command line only
 
 
 class State:
@@ -251,10 +258,23 @@ def _sys_cp(st: State, srcs, dst, sudo):
     return None                                          # /etc/hosts, gdm config: content not hashed in the state
 
 
+def terminal_focused(windows: str) -> Optional[bool]:
+    """Is the active window a terminal?  (9 Nov: agents also type file names into Save As dialogs and values into
+    cells and press Enter; that is not a shell command.)  None when the windows text names no active window."""
+    if "--- active ---" not in (windows or ""):
+        return None
+    active = windows.split("--- active ---", 1)[1].strip().splitlines()
+    if not active:
+        return None
+    return bool(re.search(r"\S+@\S+:|Terminal|terminal", active[0]))
+
+
 def predict(code: str, digest: dict, windows: str = "", system: dict = None) -> Tuple[Optional[str], str]:
     cmd = typed_command(code)
     if cmd is None:
         return None, "not a typed shell command"
+    if terminal_focused(windows) is False:
+        return None, "typed into a non-terminal window"
     return simulate(cmd, State(digest, windows, system))
 
 
