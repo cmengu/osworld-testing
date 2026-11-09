@@ -120,6 +120,13 @@ def _shell_one(part, st, cwd):
             if not (target in st.files and st.files[target].get("s") == 0):   # an empty file stays as it is
                 _new(d, target, ("empty",), "truncate with a redirect")
             return d, cwd
+        if op == ">>":
+            # appending keeps the old content as a prefix: truncating back to the old size undoes it (9 Nov bug fix:
+            # ">>" was treated like ">", an overwrite).  Whether it runs at all may depend on the command before (||).
+            _new(d, target, ("sym-or-same", "appended output"), "append")
+            if target in st.files:
+                d.app_keeps[target] = f"old content as a prefix (truncate -s {st.files[target].get('s')})"
+            return d, cwd
         _new(d, target, ("sym", f"output of {lhs[0]}"), "redirect")
         return d, cwd
     if "|" in part:
@@ -317,6 +324,55 @@ def gui(code: str, st: WState) -> Optional[Delta]:
         if kind in ("maybe-enter", "view"):
             continue
         nxt = ev[i:]
+        if kind == "click":
+            # 9 Nov (P5 prep, parity with rig/symbolic_gui.py): a click is resolved to the element under the pointer
+            tag, name = screen.at(e[1], e[2])
+            if name is None:
+                return None
+            low = name.strip().lower().replace("_", "").replace("’", "'")
+            if tag == "terminal":
+                typed = "".join(x[1] for x in nxt if x[0] == "type")
+                runs = "\n" in typed or any(x[:2] in (("key", "enter"), ("key", "return")) for x in nxt)
+                if typed and runs:
+                    cmd = " ; ".join(l.strip() for l in typed.splitlines() if l.strip())
+                    if not _looks_like_command(cmd):
+                        return None
+                    sd = shell(cmd, st, _terminal_cwd(st))
+                    if sd is None:
+                        return None
+                    d.merge(sd)
+                    return d
+                d.rules.append("click focuses the terminal")
+                continue
+            if q and low == "cancel":
+                d.windows = "closes"; d.rules.append("Cancel in the question"); q = None
+                continue
+            mapped = None
+            if q == "save-changes" and low in ("don't save", "discard", "close without saving"):
+                mapped = "alt+n"
+            elif q == "delete" and low == "delete":
+                mapped = "alt+d"
+            elif q == "empty-trash" and low == "empty trash":
+                mapped = "alt+t"
+            elif q == "replace" and low in ("replace", "yes"):
+                mapped = "alt+r"
+            elif tag in ("menu-item", "push-button") and low in ("save",) and not q:
+                mapped = "ctrl+s"
+            elif tag in ("menu-item", "push-button") and low in ("close", "close document", "exit", "quit") and not q:
+                mapped = "ctrl+w"
+            if mapped:
+                kind, k = "hotkey", mapped                   # answered like its shortcut, below
+            elif q:
+                return None                                  # some other control while a question is open
+            elif tag in ("menu", "page-tab", "table-cell", "paragraph", "text", "entry", "tree-item", "list-item", "static", "section",
+                         "link", "image", "tool-bar", "page-tab-list", "list", "tree", "table", "document-web", "form", "check-box",
+                         "radio-button", "toggle-button", "combo-box", "icon", "label", "heading", "scroll-bar", "panel",
+                         "document-text", "document-spreadsheet", "document-presentation", "canvas", "filler", "frame"):
+                d.rules.append(f"click on {tag}: in-app"); continue
+            elif tag in ("push-button", "menu-item") and not re.search(r"delete|remove|discard|send|empty|erase|format|reset|uninstall|trash|move|rename|save|close|exit|quit|replace", low):
+                d.rules.append(f"click on {tag} {name!r}: in-app"); continue
+            else:
+                return None
         # Save As: Ctrl+Shift+S, a name, Enter -> a new file, or the replace question when the name exists
         if k == "ctrl+shift+s" and nxt[:1] and nxt[0][0] == "type" and front and (len(nxt) > 1 and nxt[1][:2] in (("key", "enter"), ("key", "return"))):
             m = DOC_RE.match(front.lstrip("●* "))
