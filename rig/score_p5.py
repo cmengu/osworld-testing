@@ -56,6 +56,9 @@ def part_a(ask_claude=True):
     from rig import teacher
     rows = {r["row_id"]: r for r in json.load(open(BASE / "rig/clickspots_p5_a.json"))["rows"]}
     res = results("rig/out/p5a_?/results.jsonl")
+    if "--rerun" in sys.argv:
+        # 10 Nov: the 12 rows re-run after the rig fixes (p5r_*) replace the P5 originals.  Not the frozen P5 result.
+        res.update(results("rig/out/p5r_?/results.jsonl"))
     snaps, world, fwd = {}, {}, {}
     for rid, r in res.items():
         S = load_snapshot(pathlib.Path(r["_dir"]) / r["snapshot_before"])
@@ -111,7 +114,7 @@ def part_a(ask_claude=True):
 
 if __name__ == "__main__":
     out = {"B": part_b(), "A": part_a(ask_claude="--no-claude" not in sys.argv)}
-    (BASE / "rig/out/p5_score.json").write_text(json.dumps(out, indent=1))
+    (BASE / ("rig/out/p5_score_rerun.json" if "--rerun" in sys.argv else "rig/out/p5_score.json")).write_text(json.dumps(out, indent=1))
     b, a = out["B"], out["A"]
     print("B: catch", b["catch"], "| revert", b["revert"], "| false alarms", b["false_alarms"], "| missed", b["missed"], "| revert failed", b["revert_failed"])
     print(f"A: pairs scored {a['pairs_scored']}: world {a['world']}, Claude {a['claude']}, hybrid {a['hybrid']} (one-sided {a['one_sided']}, p {a['sign_p']}); forward {a['forward']}")
