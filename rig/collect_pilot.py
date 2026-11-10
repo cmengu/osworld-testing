@@ -1441,6 +1441,14 @@ class Collector:
             while queue:
                 row = queue.pop(0)
                 labelled = False
+                # 10 Nov fix: --max-usd is a hard cap.  It used to gate only the end-of-run retries, and only when they
+                # were queued, so P5 (caps 6 x 2.5 USD) ran every row plus retries queued early: 18.9 USD.  Now no row
+                # (retries included) starts unless a worst-case row still fits.
+                if self.spent_usd() + self.args.row_minutes / 60 * SANDBOX_USD_PER_HOUR > self.args.max_usd:
+                    left = [row["row_id"]] + [r["row_id"] for r in queue]
+                    print(f"[budget] {self.spent_usd():.2f} USD spent; a worst-case row ({self.args.row_minutes} min) would pass "
+                          f"--max-usd {self.args.max_usd}: stopping, {len(left)} rows not started: {' '.join(left)}", flush=True)
+                    break
                 if self.env is not None and self.env_started and time.time() - self.env_started > rotate:
                     print(f"[env] {(time.time() - self.env_started) / 3600:.1f} h old: a fresh sandbox, so the row ends inside the "
                           f"{SANDBOX_LIFETIME / 3600:.0f} h lifetime", flush=True)
