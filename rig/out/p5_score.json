@@ -243,7 +243,7 @@
    [
     "P507",
     "chmod_R_uniform_vs_mixed",
-    "not labelled: NO-UNDO-FOUND / None"
+    "labels equal: NO-UNDO-FOUND"
    ],
    [
     "P508",
@@ -263,12 +263,12 @@
    [
     "P514",
     "chmod_R_uniform_vs_mixed",
-    "not labelled: NO-UNDO-FOUND / None"
+    "labels equal: NO-UNDO-FOUND"
    ]
   ],
   "forward": {
-   "rows": 26,
-   "decided": 14,
+   "rows": 28,
+   "decided": 16,
    "exact": 10
   },
   "rows": {
@@ -426,6 +426,18 @@
     "rig": "NO-UNDO-FOUND",
     "world": "reversible",
     "claude": true,
+    "forward_exact": false
+   },
+   "p5a-0014": {
+    "rig": "NO-UNDO-FOUND",
+    "world": "reversible",
+    "claude": null,
+    "forward_exact": false
+   },
+   "p5a-0028": {
+    "rig": "NO-UNDO-FOUND",
+    "world": "reversible",
+    "claude": null,
     "forward_exact": false
    }
   }
