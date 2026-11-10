@@ -392,6 +392,21 @@ def mode_restores(before_digest: dict, after_digest: dict) -> List[Candidate]:
     return [[f"shell:{' && '.join(cmds)}"]] if cmds else []
 
 
+def created_removals(before_digest: dict, after_digest: dict, changed) -> List[Candidate]:
+    """10 Nov (P5 cp -r into an empty folder, tar -x into an empty folder): remove what the step CREATED, one shell
+    command: the new files the rig's own comparison counts as changed, then the new folders, deepest first.  A step that
+    also overwrote or removed something is not undone by this and the state check says so."""
+    import shlex as _sh
+    new = [p for p in changed if p not in before_digest and p in after_digest]
+    if not new or len(new) > 30 or not all(p.startswith("/home/user/") for p in new):
+        return []
+    files = sorted(p for p in new if not p.endswith("/"))
+    dirs = sorted((p.rstrip("/") for p in new if p.endswith("/")), key=lambda x: -x.count("/"))
+    cmds = ([f"rm -f {' '.join(_sh.quote(p) for p in files)}"] if files else []) + \
+           ([f"rmdir {' '.join(_sh.quote(d) for d in dirs)}"] if dirs else [])
+    return [[f"shell:{' && '.join(cmds)}"]]
+
+
 def action_count(c: Candidate) -> int:
     """Actions in a candidate, the unit of K: waits are not actions, a reopen is one; a confirm counts as none
     (on this image the question it would answer never appears, 24 Oct); moving the pointer back counts as none
@@ -442,6 +457,12 @@ def guess_parse(steps):
 # rows use; rm, mv over and cp over have no inverse (the overwritten or removed content is gone).
 # ---------------------------------------------------------------------------------------------------------
 _TYPED = re.compile(r"pyautogui\.typewrite\((['\"])(.*?)\1")
+
+
+def shell_command(code: str) -> Optional[str]:
+    """The command line a row types into a terminal, or None (10 Nov)."""
+    m = _TYPED.search(code or "")
+    return m.group(2).replace("\\n", "").strip() if m else None
 
 
 def shell_inverses(code: str) -> List[Candidate]:
@@ -505,7 +526,11 @@ def _legacy(code_cmd: str) -> List[Candidate]:
     if argv[0] == "cp" and len(argv) == 3:
         out.append([f"shell:rm {q(argv[2])}"])                          # a new copy; over an existing file it fails, as it should
     elif argv[0] == "mv" and len(argv) == 3:
-        out.append([f"shell:mv {q(argv[2])} {q(argv[1])}"])             # a rename back; over an existing file the old one is gone
+        # 10 Nov (P5 "mv report.txt archive/"): into a folder, the file is at folder/basename; the plain swap
+        # ("mv archive/ report.txt") moved the folder.  Both are tried, the likelier first; the state check decides.
+        into = f"shell:mv {q(argv[2].rstrip('/') + '/' + argv[1].rstrip('/').rsplit('/', 1)[-1])} {q(argv[1])}"
+        back = f"shell:mv {q(argv[2])} {q(argv[1])}"                     # a rename back; over an existing file the old one is gone
+        out += [[into], [back]] if argv[2].endswith("/") else [[back], [into]]
     elif argv[0] == "libreoffice" and "--convert-to" in argv:
         fmt = argv[argv.index("--convert-to") + 1].split(":")[0]
         src = next((a for a in argv[1:] if not a.startswith("-") and a not in (fmt,) and "." in a.rsplit("/", 1)[-1]), None)

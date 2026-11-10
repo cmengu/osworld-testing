@@ -1131,6 +1131,11 @@ class Collector:
             inverses = inverses + [c + [f"shell:chmod {gone_modes[t]:o} {shlex.quote(t)}"]
                                    for c in inverses if len(c) == 1 and c[0].startswith("shell:")
                                    for t in [c[0].split()[-1].strip("'")] if t in gone_modes]
+            if fdiffs and U.shell_command(row.get("code", "")):
+                # 10 Nov (P5): a typed command's state-based restores, before the generic keys (P5 chmod -R rows spent the
+                # 40-minute cap on Ctrl+Z / Escape and never reached tier M, which ran on agent rows only): remove what it
+                # created; put back the permissions it changed.  Each is one shell command (one action).
+                inverses = inverses + U.created_removals(S.digest, S1.digest, fdiffs) + U.mode_restores(S.digest, S1.digest)
             if inverses:
                 # a terminal command that changed files (25 Oct): its inverse as a shell: step (cp -> rm the copy,
                 # mv -> mv back, convert-to -> rm the output), tried before the generic keys
