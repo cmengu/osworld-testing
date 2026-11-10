@@ -87,12 +87,40 @@ def shell(cmd: str, st: WState, cwd0: str = HOME) -> Optional[Delta]:
         cmd = cmd[m.end():]
     cmd = re.sub(r"\s[12]?>\s*/dev/null|\s2>&1", "", cmd)
     d, cwd = Delta(), cwd0
-    for part in [p.strip().strip("()").strip() for p in re.split(r"\s*(?:&&|\|\||;)\s*", cmd) if p.strip()]:
+    for part in [p.strip().strip("()").strip() for p in split_list(cmd) if p.strip()]:
         one, cwd = _shell_one(part, st, cwd)
         if one is None:
             return None
         d.merge(one)
     return d
+
+
+def split_list(cmd, seps=("&&", "||", ";")):
+    """Split a shell list on && || ; (or a pipeline on |) OUTSIDE quotes (10 Nov fix: sed -i 's/,/;/' was cut at the
+    quoted ';', the part did not parse, and the base rule never fired)."""
+    out, cur, q, i = [], "", None, 0
+    while i < len(cmd):
+        c = cmd[i]
+        if q:
+            cur += c
+            if c == q:
+                q = None
+            elif c == "\\" and q == '"' and i + 1 < len(cmd):
+                cur += cmd[i + 1]; i += 1
+        elif c in "'\"":
+            q = c; cur += c
+        elif c == "\\" and i + 1 < len(cmd):
+            cur += c + cmd[i + 1]; i += 1
+        else:
+            if "|" in seps and "||" not in seps and cmd.startswith("||", i):
+                cur += "||"; i += 2; continue
+            sep = next((x for x in seps if cmd.startswith(x, i)), None)
+            if sep:
+                out.append(cur); cur = ""; i += len(sep); continue
+            cur += c
+        i += 1
+    out.append(cur)
+    return out
 
 
 def _new(d, path, value, rule):
@@ -130,13 +158,25 @@ def _shell_one(part, st, cwd):
         _new(d, target, ("sym", f"output of {lhs[0]}"), "redirect")
         return d, cwd
     if "|" in part:
-        stages = [s.strip().split()[0] for s in part.split("|") if s.strip()]
+        stages = [s.strip().split()[0] for s in split_list(part, ("|",)) if s.strip()]
         return (d, cwd) if all(s in READ_ONLY for s in stages) and " -i" not in part else (None, cwd)
     cmd, args = toks[0], toks[1:]
     flags = {a for a in args if a.startswith("-")}
     pos = [a for a in args if not a.startswith("-")]
     if cmd == "cd":
         return d, (_abs(cwd, pos[0]) if pos else HOME)
+    if cmd == "sort" and any(a == "-o" or a.startswith(("-o", "--output")) for a in args):
+        # sort -o FILE writes FILE (10 Nov fix: sort was read-only).  Whether the content changes depends on the order
+        # of the lines, which the state (sizes and hashes only) does not hold: "may change".
+        o = next((args[i + 1] for i, a in enumerate(args) if a in ("-o", "--output") and i + 1 < len(args)), None)
+        o = o or next((a.split("=", 1)[1] if a.startswith("--output=") else a[2:] for a in args if a.startswith(("--output=", "-o")) and len(a) > 2), None)
+        if not o:
+            return None, cwd
+        a = _abs(cwd, o)
+        _new(d, a, ("sym-or-same", "sort output") if a in st.files else ("sym", "sort output"), "sort -o")
+        if _open_in_app(st, [a]):
+            d.rules.append("touches a file an application has open")
+        return d, cwd
     if cmd in READ_ONLY and not (cmd in ("sed", "awk") and any(a.startswith("-i") for a in args)) \
             and not (cmd == "find" and ("-delete" in args or "-exec" in args)) and not (cmd == "git" and args[:1] not in (["status"], ["log"], ["diff"], ["show"])):
         return d, cwd

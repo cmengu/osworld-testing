@@ -27,7 +27,7 @@ from rig.world.T import T, WState                                 # noqa: E402
 
 OUT = BASE / "rig" / "out" / "world"
 MASK = json.load(open(BASE / "rig" / "out" / "mask_run" / "mask.json"))
-TEST_PREFIX = ("pr_", "prr_", "prx_", "pq_")
+TEST_PREFIX = ("pr_", "prr_", "prx_", "pq_", "p5")              # 10 Nov: P5 runs (p5a_, p5b_) are TEST too
 
 
 def corpus():
