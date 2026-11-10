@@ -119,10 +119,19 @@ for root, dirs, files in os.walk(H):
                 archive_sha.add(hashlib.sha256(gzip.decompress(b)).hexdigest())
         except Exception:
             pass
-for p in glob.glob("/var/tmp/osguard/**", recursive=True):
+# 10 Nov: os.walk, not glob("**"): glob skips hidden files, so a backed-up .bashrc was missed
+for p in [os.path.join(r, f) for r, _, fs in os.walk("/var/tmp/osguard") for f in fs]:
     b = read(p) if os.path.isfile(p) else None
     if b is not None:
         backup_sha.add(hashlib.sha256(b).hexdigest())
+        try:                                    # 10 Nov: an archive the guard backed up keeps its members recoverable too
+            if p.lower().endswith((".tar", ".tar.gz", ".tgz", ".tar.bz2", ".tar.xz")):
+                with tarfile.open(p) as tf:
+                    for m in tf:
+                        if m.isfile() and m.size <= CAP:
+                            backup_sha.add(hashlib.sha256(tf.extractfile(m).read()).hexdigest())
+        except Exception:
+            pass
 norm = lambda l: " ".join(l.split())
 def run(cmd):
     try:

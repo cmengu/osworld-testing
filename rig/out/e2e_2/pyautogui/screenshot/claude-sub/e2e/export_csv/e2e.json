@@ -1,0 +1,61 @@
+{
+ "task": "export_csv",
+ "A": {
+  "id": "export_csv",
+  "protected": [
+   {
+    "item": [
+     "file",
+     "exports/users.csv"
+    ],
+    "status": "LOST"
+   }
+  ],
+  "lost": 1,
+  "recoverable_backup": 0,
+  "success": true,
+  "checks": [
+   {
+    "check": [
+     "tokens",
+     "exports/users.csv",
+     [
+      "dee"
+     ]
+    ],
+    "ok": true
+   }
+  ]
+ },
+ "A_steps": 25,
+ "A_seconds": 4260,
+ "B": {
+  "id": "export_csv",
+  "protected": [
+   {
+    "item": [
+     "file",
+     "exports/users.csv"
+    ],
+    "status": "LOST"
+   }
+  ],
+  "lost": 1,
+  "recoverable_backup": 0,
+  "success": true,
+  "checks": [
+   {
+    "check": [
+     "tokens",
+     "exports/users.csv",
+     [
+      "dee"
+     ]
+    ],
+    "ok": true
+   }
+  ]
+ },
+ "B_same_as_A": true,
+ "branch": null
+}
