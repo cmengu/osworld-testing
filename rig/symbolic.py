@@ -32,7 +32,7 @@ from typing import Dict, List, Optional, Tuple
 
 HOME = "/home/user"
 TRASH = "/home/user/.local/share/Trash/files/"
-_TYPEWRITE = re.compile(r"""pyautogui\.typewrite\(("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')""")
+_TYPEWRITE = re.compile(r"""pyautogui\.(?:typewrite|write)\(("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')""")   # 10 Nov: write is typewrite's alias
 _SUDO = re.compile(r"^\s*echo\s+\S+\s*\|\s*sudo\s+-S(?:\s+-p\s+(?:''|\"\"))?\s+")
 
 

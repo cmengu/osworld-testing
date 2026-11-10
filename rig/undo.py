@@ -456,7 +456,7 @@ def guess_parse(steps):
 # Terminal rows (25 Oct): the inverse of the command the action typed, as shell: candidates.  Only the forms the
 # rows use; rm, mv over and cp over have no inverse (the overwritten or removed content is gone).
 # ---------------------------------------------------------------------------------------------------------
-_TYPED = re.compile(r"pyautogui\.typewrite\((['\"])(.*?)\1")
+_TYPED = re.compile(r"pyautogui\.(?:typewrite|write)\((['\"])(.*?)\1")
 
 
 def shell_command(code: str) -> Optional[str]:
