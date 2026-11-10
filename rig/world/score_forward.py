@@ -82,6 +82,8 @@ def holds(p, value, a, b):
     if kind == "content":
         src = a.get(value[1])
         return src is not None and (v.get("c") or v.get("h")) == (src.get("c") or src.get("h")) and v.get("s") == src.get("s")
+    if kind == "bytes":
+        return v.get("h") == value[1] and v.get("s") == value[2]
     if kind == "empty":
         return v.get("s") == 0
     if kind == "dir":

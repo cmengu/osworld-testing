@@ -12,15 +12,15 @@
   "crashes": 0
  },
  "TEST": {
-  "transitions": 210,
-  "decided": 136,
-  "coverage": 0.648,
-  "file_exact": 0.956,
-  "content_exact": 0.956,
-  "baseline_nothing_changes_on_decided": 0.404,
-  "baseline_nothing_changes_all": 0.5,
-  "system_exact": "82/82",
-  "windows_ok": 0.904,
+  "transitions": 222,
+  "decided": 148,
+  "coverage": 0.667,
+  "file_exact": 0.932,
+  "content_exact": 0.932,
+  "baseline_nothing_changes_on_decided": 0.372,
+  "baseline_nothing_changes_all": 0.473,
+  "system_exact": "94/94",
+  "windows_ok": 0.912,
   "crashes": 0
  },
  "dev_families_worst": [

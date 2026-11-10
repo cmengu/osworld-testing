@@ -38,7 +38,9 @@ _OFF = {}
 exec(compile(""" + repr(_OFFICESIG_SRC) + r""", "officesig", "exec"), _OFF)
 doc_view = _OFF["doc_view"]
 view_signature = _OFF["view_signature"]
-import os, hashlib, json, zipfile
+import os, hashlib, json, zipfile, tarfile
+TEXT_CAP, TEXT_TOTAL, AR_CAP = 4096, 2 * 1024 * 1024, 10 * 1024 * 1024
+text_total = [0]
 VIEW_CAP = 3 * 1024 * 1024   # 18 Oct: raised from 400 KB so big workbooks (pilot-0231, 105 KB xlsx) keep a readable view
 home = os.path.expanduser("~")
 # 19 Oct: the Trash is recorded (a delete to Trash and Empty Trash were invisible), and so are directories (d),
@@ -85,6 +87,7 @@ for root, dirs, files in os.walk(home):
         if not os.path.isfile(p):
             continue
         h = None
+        data = None
         size = st.st_size
         if st.st_size <= cap:
             try:
@@ -97,6 +100,35 @@ for root, dirs, files in os.walk(home):
             except OSError:
                 h = None
         row = {"p": p, "s": size, "m": st.st_mtime_ns, "h": h, "mode": st.st_mode & 0o7777, "u": st.st_uid}
+        # 10 Nov (world model): the text of small plain files outside dot-folders (t), so T can compute what sort -o or
+        # sed -i writes; and the members of small tar archives (ar: name, type, size, sha256), so T can predict tar -x.
+        # Neither is compared (mask.file_sig reads s, h, c, k, mode, u only): no label changes.
+        if h and size <= TEXT_CAP and data is not None and "/." not in p[len(home):] and text_total[0] + size <= TEXT_TOTAL:
+            try:
+                t = data.decode("utf-8")
+                if "\x00" not in t:
+                    row["t"] = t
+                    text_total[0] += size
+            except UnicodeDecodeError:
+                pass
+        if p.lower().endswith((".tar", ".tar.gz", ".tgz", ".tar.bz2", ".tar.xz")) and size <= AR_CAP:
+            try:
+                with tarfile.open(p) as tf:
+                    mem = []
+                    for m in tf:
+                        if len(mem) >= 300:
+                            mem = None
+                            break
+                        if m.isdir():
+                            mem.append([m.name, "d", 0, None])
+                        elif m.isfile():
+                            mem.append([m.name, "f", m.size, hashlib.sha256(tf.extractfile(m).read()).hexdigest()])
+                        else:
+                            mem.append([m.name, "o", 0, None])
+                    if mem is not None:
+                        row["ar"] = mem
+            except Exception as exc:
+                row["ar_error"] = str(exc)[:120]
         if p.lower().endswith(office) and st.st_size <= cap:
             c = content_hash(p)
             if c:

@@ -41,6 +41,8 @@ def apply(st: WState, d):
         elif kind == "content":
             if v[1] in st.files:
                 files[q] = dict(st.files[v[1]])
+        elif kind == "bytes":                         # 10 Nov: content the model computed (sha256, size)
+            files[q] = {"s": v[2], "h": v[1]}
         elif kind == "empty":
             files[q] = {"s": 0, "h": "EMPTY"}
         elif kind == "dir":

@@ -16,6 +16,7 @@ Rules are those of rig/symbolic.py and rig/symbolic_gui.py, rewritten to say WHA
 undone; harm and reversibility are derived from the Delta in P2.
 """
 import fnmatch
+import hashlib
 import posixpath
 import re
 import shlex
@@ -123,6 +124,103 @@ def split_list(cmd, seps=("&&", "||", ";")):
     return out
 
 
+def _bytes(text):
+    b = text.encode()
+    return ("bytes", hashlib.sha256(b).hexdigest(), len(b))
+
+
+def _sorted_text(text):
+    """What `sort` writes for this text, when the order does not depend on the locale (10 Nov): byte order and a
+    letters-and-digits, case-folded order (roughly glibc's first level) agree and neither has ties.  Else None."""
+    lines = text.splitlines()
+    a = sorted(lines)
+    key = lambda l: re.sub(r"[^0-9a-z]", "", l.casefold())
+    b = sorted(lines, key=key)
+    if a != b or len({key(l) for l in lines}) < len(lines) or len(set(lines)) < len(lines):
+        return None
+    return "".join(l + "\n" for l in a)
+
+
+_SED_S = re.compile(r"^s(.)(.*?)(?<!\\)\1(.*?)(?<!\\)\1(g?)$")
+
+
+def _sed_text(expr, text):
+    """sed 's/A/B/[g]' on text when A and B are literal (10 Nov).  Else None."""
+    m = _SED_S.match(expr)
+    if not m:
+        return None
+    a, b, g = m.group(2), m.group(3), m.group(4)
+    if not a or re.search(r"[.\[\]*^$\\+?(){}|]", a) or re.search(r"[&\\]", b):
+        return None
+    lines = text.split("\n")
+    return "\n".join(l.replace(a, b) if g else l.replace(a, b, 1) for l in lines)
+
+
+def _tar(args, st, cwd, d):
+    """tar -x (10 Nov) from the archive's member list the snapshot keeps (ar).  Other tar modes: listing changes
+    nothing; creating writes the archive (sym)."""
+    short = "".join(a.lstrip("-") for a in args[:1] if not a.startswith("--")) + "".join(a[1:] for a in args[1:] if a.startswith("-") and not a.startswith("--"))
+    longs = [a for a in args if a.startswith("--")]
+    mode = "x" if ("x" in short or "--extract" in longs or "--get" in longs) else "t" if ("t" in short or "--list" in longs) \
+        else "c" if ("c" in short or "--create" in longs) else None
+    arch, cdir, rest, i = None, cwd, [], 0
+    while i < len(args):
+        a = args[i]
+        if a in ("-f", "--file") and i + 1 < len(args):
+            arch = args[i + 1]; i += 2; continue
+        if a.startswith("--file="):
+            arch = a.split("=", 1)[1]
+        elif a in ("-C", "--directory") and i + 1 < len(args):
+            cdir = _abs(cwd, args[i + 1]); i += 2; continue
+        elif a.startswith("--directory="):
+            cdir = _abs(cwd, a.split("=", 1)[1])
+        elif (i == 0 and not a.startswith("--") and "f" in a) or (a.startswith("-") and not a.startswith("--") and a.endswith("f")):
+            if i + 1 < len(args):
+                arch = args[i + 1]; i += 2; continue
+        elif not a.startswith("-") and i > 0:
+            rest.append(a)
+        i += 1
+    if mode == "t":
+        return d, cwd
+    if mode == "c" and arch:
+        _new(d, _abs(cwd, arch), ("sym", "tar archive"), "tar -c")
+        return d, cwd
+    if mode != "x" or not arch:
+        return None, cwd
+    keep = any(x in longs for x in ("--keep-old-files", "--skip-old-files")) or "k" in short
+    if set(longs) - {"--extract", "--get", "--keep-old-files", "--skip-old-files", "--overwrite", "--verbose"} - {x for x in longs if x.startswith(("--file=", "--directory="))}:
+        return None, cwd
+    a = _abs(cwd, arch)
+    mem = st.files.get(a, {}).get("ar")
+    if mem is None or cdir not in st.dirs:
+        return None, cwd
+    for name, kind, size, sha in mem:
+        name = posixpath.normpath(name.lstrip("/"))
+        if rest and not any(name == r or name.startswith(r.rstrip("/") + "/") for r in rest):
+            continue
+        if name in (".", "") or name.startswith(".."):
+            continue
+        q = posixpath.join(cdir, name)
+        if kind == "d":
+            if q in st.files:
+                return None, cwd
+            if q not in st.dirs:
+                _new(d, q + "/", ("dir",), "tar -x")
+        elif kind == "f":
+            if q in st.dirs:
+                return None, cwd
+            if q in st.files and (keep or st.files[q].get("h") == sha):
+                continue
+            _new(d, q, ("bytes", sha, size), "tar -x")
+            par = posixpath.dirname(q)
+            while par not in st.dirs and par.startswith(cdir + "/") and par + "/" not in d.files:
+                _new(d, par + "/", ("dir",), "tar -x")
+                par = posixpath.dirname(par)
+        else:
+            return None, cwd
+    return d, cwd
+
+
 def _new(d, path, value, rule):
     d.files[path] = value
     d.rules.append(rule)
@@ -173,6 +271,17 @@ def _shell_one(part, st, cwd):
         if not o:
             return None, cwd
         a = _abs(cwd, o)
+        ins = [_abs(cwd, x) for i, x in enumerate(args) if not x.startswith("-") and not (i and args[i - 1] in ("-o", "--output"))]
+        opts = [x for x in args if x.startswith("-") and not x.startswith(("-o", "--output"))]
+        texts = [st.files.get(x, {}).get("t") for x in ins]
+        out = _sorted_text("".join(texts)) if ins and not opts and None not in texts else None
+        if out is not None:
+            # 10 Nov: the state holds the text: compute the output
+            if a in st.files and st.files[a].get("h") == _bytes(out)[1]:
+                d.rules.append("sort -o: already sorted, same bytes")
+            else:
+                _new(d, a, _bytes(out), "sort -o computed")
+            return d, cwd
         _new(d, a, ("sym-or-same", "sort output") if a in st.files else ("sym", "sort output"), "sort -o")
         if _open_in_app(st, [a]):
             d.rules.append("touches a file an application has open")
@@ -180,6 +289,8 @@ def _shell_one(part, st, cwd):
     if cmd in READ_ONLY and not (cmd in ("sed", "awk") and any(a.startswith("-i") for a in args)) \
             and not (cmd == "find" and ("-delete" in args or "-exec" in args)) and not (cmd == "git" and args[:1] not in (["status"], ["log"], ["diff"], ["show"])):
         return d, cwd
+    if cmd == "tar":
+        return _tar(args, st, cwd, d)
     if cmd == "mkdir":
         for p in pos:
             a = _abs(cwd, p)
@@ -212,6 +323,33 @@ def _shell_one(part, st, cwd):
             return d, cwd                                  # the command fails: nothing changes
         for s in srcs:
             t = posixpath.join(dst, posixpath.basename(s)) if dst in st.dirs else dst
+            if s in st.dirs and cmd == "cp":
+                # 10 Nov: cp -r / -R / -a.  "SRC/." copies the folder's contents into DST; otherwise DST/basename(SRC)
+                # when DST is a folder, else DST is made.  Existing files are overwritten (-n keeps them).
+                raw = pos[srcs.index(s)]
+                if not (flags & {"-r", "-R", "-a", "-rp", "-pr", "-ra", "-ar", "-rf", "-fr", "-Rf", "-fR", "--recursive", "--archive"}) \
+                        or flags - {"-r", "-R", "-a", "-rp", "-pr", "-ra", "-ar", "-rf", "-fr", "-Rf", "-fR", "--recursive", "--archive", "-n", "-v", "-f"}:
+                    return None, cwd
+                into = dst if (raw.rstrip("/").endswith("/.") or raw in (".",)) or dst not in st.dirs else posixpath.join(dst, posixpath.basename(s))
+                if into in st.files:
+                    return None, cwd
+                files, dirs = st.under(s)
+                if into not in st.dirs:
+                    _new(d, into + "/", ("dir",), "cp -r")
+                for x in sorted(dirs):
+                    q = into + x[len(s):]
+                    if q in st.files:
+                        return None, cwd
+                    if q not in st.dirs:
+                        _new(d, q + "/", ("dir",), "cp -r")
+                for f in files:
+                    q = into + f[len(s):]
+                    if q in st.dirs:
+                        return None, cwd
+                    if q in st.files and ("-n" in flags or st.files[q].get("h") == st.files[f].get("h")):
+                        continue
+                    _new(d, q, ("content", f), "cp -r")
+                continue
             if s in st.dirs:
                 if cmd == "mv":
                     files, dirs = st.under(s)
@@ -251,8 +389,18 @@ def _shell_one(part, st, cwd):
         return d, cwd
     if cmd == "sed" and any(a.startswith("-i") for a in args) and len(pos) >= 2:
         # sed -i rewrites each file in place: its old content survives only if kept elsewhere
+        plain_i = [x for x in args if x.startswith("-i")] == ["-i"] and not any(x.startswith("-") and x not in ("-i", "-E", "-r") for x in args)
         for p in pos[1:]:
             a = _abs(cwd, p)
+            t = st.files.get(a, {}).get("t")
+            out = _sed_text(pos[0], t) if (t is not None and plain_i) else None
+            if out is not None:
+                # 10 Nov: literal s/A/B/ on a file whose text the state holds: compute it
+                if out == t:
+                    d.rules.append("sed -i: no match, same bytes")
+                else:
+                    _new(d, a, _bytes(out), "sed -i computed")
+                continue
             if a in st.files:
                 _new(d, a, ("sym-or-same", "sed -i output"), "sed -i")
                 d.app_keeps.pop(a, None)
