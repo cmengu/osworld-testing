@@ -58,6 +58,7 @@ class LiveGuard:
         self.files = "office" if "calc" in apps else "user"
         self._remote = None
         self.env = None                                 # set by the runner for RIG_GUARD_BACKUP (rig/guard_live.from_env)
+        self.arm = None                                 # e2e pilot (10 Nov): "A-shadow" (logged, not applied) or "B-live"
 
     def _ours(self, gp, rp):
         if self._remote is None:
@@ -127,7 +128,8 @@ class LiveGuard:
         self._action = action
         if not isinstance(action, str) or action.strip() in SPECIAL:
             return None
-        rec = {"step": step, "mode": self.mode, "action": action, "state": str(state_dir), "t": time.time()}
+        rec = {"step": step, "mode": self.mode, "action": action, "state": str(state_dir), "t": time.time(),
+               "arm": getattr(self, "arm", None)}
         t0 = time.time()
         try:
             s = load_snapshot(state_dir)

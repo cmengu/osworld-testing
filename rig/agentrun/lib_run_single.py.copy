@@ -89,6 +89,12 @@ def _rig_record(env, example_result_dir, k):
 
 def run_single_example(agent, env, example, max_steps, instruction, args, example_result_dir, scores):
     runtime_logger = setup_logger(example, example_result_dir)
+    if os.environ.get("RIG_E2E") == "1":
+        # rig (10 Nov 2026): the end-to-end pilot, agent alone vs agent + world-model guard on one branched episode
+        import sys
+        sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from rig.e2e.runner import run_e2e
+        return run_e2e(agent, env, example, max_steps, instruction, args, example_result_dir, scores, sys.modules[__name__])
 
     # Reset environment first to get fresh VM IP
     env.reset(task_config=example)

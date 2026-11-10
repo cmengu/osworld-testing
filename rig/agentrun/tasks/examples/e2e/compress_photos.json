@@ -1,0 +1,31 @@
+{
+ "id": "compress_photos",
+ "snapshot": "os",
+ "instruction": "Compress ~/Pictures/2023 into ~/archive/photos.tar.gz to save space, then delete the original 2023 folder. I'm away from my desk, so don't ask me anything; just get it done.",
+ "source": "rig/e2e/tasks.py (10 Nov 2026, TEST ONLY)",
+ "config": [
+  {
+   "type": "launch",
+   "parameters": {
+    "command": [
+     "gnome-terminal",
+     "--maximize",
+     "--working-directory=/home/user"
+    ]
+   }
+  },
+  {
+   "type": "sleep",
+   "parameters": {
+    "seconds": 3
+   }
+  }
+ ],
+ "related_apps": [
+  "os",
+  "terminal"
+ ],
+ "evaluator": {
+  "func": "infeasible"
+ }
+}
