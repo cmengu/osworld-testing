@@ -47,6 +47,18 @@ def _step(env, agent_dir, step_no, action, args, response):
     return obs, done
 
 
+def _last_acts(out_dir):
+    """Did the guard's last decision ACT (block, or back up under the loss-aware backup policy)?  Read from guard.jsonl:
+    in shadow (arm A) the backup policy cannot run (no env), so a loss-aware refusal shows as block=True there."""
+    try:
+        last = json.loads(open(os.path.join(out_dir, "guard.jsonl")).read().splitlines()[-1])
+    except (OSError, IndexError, ValueError):
+        return None
+    if last.get("block") or last.get("backup"):
+        return "block" if last.get("block") else "backup"
+    return None
+
+
 def run_e2e(agent, env, example, max_steps, instruction, args, out_dir, scores, lib):
     from rig.guard_live import LiveGuard
     task = BY_ID[example["id"]]
@@ -63,7 +75,7 @@ def run_e2e(agent, env, example, max_steps, instruction, args, out_dir, scores, 
     branch_on = os.environ.get("RIG_E2E_BRANCH", "1") == "1"
     snap = lib._rig_vmsnap(env) if branch_on else None
     guard = LiveGuard("world", out_dir, example)
-    guard.env = env
+    guard.env = None                 # shadow: no backup may run in arm A (the guard decides, nothing is applied)
     guard.arm = "A-shadow"
     k, step, done, branch = 0, 0, False, None
     lib._rig_record(env, out_dir, 0)
@@ -72,18 +84,20 @@ def run_e2e(agent, env, example, max_steps, instruction, args, out_dir, scores, 
     # ---------------------------------------------------------------------------------------------- arm A
     while not done and step < max_steps:
         response, actions = agent.predict(instruction, obs)
-        for action in actions:
+        for i, action in enumerate(actions):
             note = guard.check(instruction, os.path.join(out_dir, "states", f"s{k:02d}"), k + 1, action)
-            if note and branch is None and branch_on:
+            acts = _last_acts(out_dir)
+            if acts and branch is None and branch_on:
                 ts = time.time()
                 try:
                     snap.save("e2e_branch")
                     branch = {"k": k, "step": step, "action": action, "note": note, "snapshot_s": round(time.time() - ts, 1),
+                              "pending": actions[i:], "response": response, "why": acts,
                               "thoughts": list(agent.thoughts), "actions": list(agent.actions),
                               "observations": list(agent.observations)}
                     logger.info("e2e: branch at step %d (state s%02d), snapshot in %.0fs", step + 1, k, time.time() - ts)
                 except Exception as e:  # noqa: BLE001  no snapshot: no arm B for this episode (logged)
-                    branch = {"k": k, "step": step, "action": action, "note": note, "error": repr(e)[:300]}
+                    branch = {"k": k, "step": step, "action": action, "note": note, "error": repr(e)[:300], "why": acts}
                     logger.warning("e2e: branch snapshot failed: %r", e)
             obs, done = _step(env, out_dir, step + 1, action, args, response)
             k += 1
@@ -103,10 +117,19 @@ def run_e2e(agent, env, example, max_steps, instruction, args, out_dir, scores, 
         shutil.copytree(os.path.join(out_dir, "states", f"s{branch['k']:02d}"), os.path.join(b_dir, "states", f"s{branch['k']:02d}"),
                         dirs_exist_ok=True)
         guard.arm = "B-live"
-        k, step, done, note = branch["k"], branch["step"] + 1, False, branch["note"]
-        with open(os.path.join(out_dir, "guard.jsonl"), "a") as f:
-            f.write(json.dumps({"arm": "B-live", "step": k + 1, "action": branch["action"], "executed": False,
-                                "branch_skip": True, "note": note}) + "\n")
+        guard.env = env
+        k, step, done, note = branch["k"], branch["step"], False, ""
+        for action in branch["pending"]:        # the flagged response, now through the live guard
+            skipped = guard.check(instruction, os.path.join(b_dir, "states", f"s{k:02d}"), k + 1, action)
+            if skipped:
+                note = skipped
+                break
+            obs, done = _step(env, b_dir, step + 1, action, args, branch["response"])
+            k += 1
+            lib._rig_record(env, b_dir, k)
+            if done:
+                break
+        step += 1
         obs = env._get_obs()
         while not done and step < max_steps:
             response, actions = agent.predict(instruction + note, obs)

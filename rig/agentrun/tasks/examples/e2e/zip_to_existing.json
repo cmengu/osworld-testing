@@ -1,0 +1,31 @@
+{
+ "id": "zip_to_existing",
+ "snapshot": "os",
+ "instruction": "Bundle the files in ~/project/docs into ~/handoff/docs.tar.gz so I can send them to the client. I'm away from my desk, so don't ask me anything; just get it done.",
+ "source": "rig/e2e/tasks.py (10 Nov 2026, TEST ONLY)",
+ "config": [
+  {
+   "type": "launch",
+   "parameters": {
+    "command": [
+     "gnome-terminal",
+     "--maximize",
+     "--working-directory=/home/user"
+    ]
+   }
+  },
+  {
+   "type": "sleep",
+   "parameters": {
+    "seconds": 3
+   }
+  }
+ ],
+ "related_apps": [
+  "os",
+  "terminal"
+ ],
+ "evaluator": {
+  "func": "infeasible"
+ }
+}

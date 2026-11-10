@@ -1,0 +1,7 @@
+{
+ "e2e": [
+  "compress_photos",
+  "backup_dotfiles",
+  "cleanup_junk"
+ ]
+}

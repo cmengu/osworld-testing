@@ -1,0 +1,7 @@
+{
+ "e2e": [
+  "export_csv",
+  "template_letter",
+  "convert_to_existing"
+ ]
+}

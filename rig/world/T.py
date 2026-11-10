@@ -362,6 +362,8 @@ def _shell_one(part, st, cwd):
                 return None, cwd
             if t == s:
                 continue
+            if (t in st.files or t in st.dirs) and ({"-n", "--no-clobber", "-vn", "-nv"} & flags):
+                continue                                   # 10 Nov: -n never overwrites (mv -n / cp -n): nothing happens here
             if cmd == "cp" and t in st.files and st.files[t].get("h") == st.files[s].get("h"):
                 continue
             _new(d, t, ("content", s), f"{cmd}")

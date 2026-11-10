@@ -1,0 +1,8 @@
+{
+ "e2e": [
+  "report_to_existing",
+  "zip_to_existing",
+  "archive_logs",
+  "env_drop_debug"
+ ]
+}
